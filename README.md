@@ -166,3 +166,5 @@ Never commit `.env` files.
 - Code execution sandbox for coding questions
 - Certificates of completion for students
 - Full-text search with PostgreSQL `SearchVector`
+#   s t u d y m a t e r i a l  
+ 
