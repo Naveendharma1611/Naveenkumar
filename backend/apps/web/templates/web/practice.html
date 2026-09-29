@@ -1,0 +1,14 @@
+{% extends "web/base.html" %}
+{% block title %}Practice quizzes{% endblock %}
+{% block content %}
+<section class="wrap section">
+  <h1>Practice quizzes</h1>
+  <div class="grid">{% for q in quizzes %}
+    <a class="card card-link" href="/practice/{{ q.slug }}/">
+      <span class="badge">{{ q.get_difficulty_display }}</span>
+      <h3>{{ q.title }}</h3><p class="muted">{{ q.description|truncatechars:140 }}</p>
+      <small class="muted">{{ q.q_count }} questions{% if q.time_limit_minutes %} · {{ q.time_limit_minutes }} min{% endif %}{% if q.category %} · {{ q.category.name }}{% endif %}</small>
+    </a>
+  {% empty %}<p class="muted">No quizzes yet.</p>{% endfor %}</div>
+</section>
+{% endblock %}

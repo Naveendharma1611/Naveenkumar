@@ -1,0 +1,19 @@
+{% extends "web/base.html" %}{% load web_tags %}
+{% block title %}About{% endblock %}
+{% block content %}
+<section class="wrap section narrow">
+  <h1>About me</h1>
+  {% if profile.short_bio %}<p class="lead">{{ profile.short_bio }}</p>{% endif %}
+  <div class="prose">{{ profile.about|markdown }}</div>
+  {% if profile.career_objective %}<h2>Career objective</h2><p>{{ profile.career_objective|linebreaksbr }}</p>{% endif %}
+  {% if profile.professional_goals %}<h2>Professional goals</h2><p>{{ profile.professional_goals|linebreaksbr }}</p>{% endif %}
+  <div class="grid two">
+    {% if profile.technical_interests %}<div class="card"><h3>Technical interests</h3><ul>{% for i in profile.technical_interests|split:"lines" %}<li>{{ i }}</li>{% endfor %}</ul></div>{% endif %}
+    {% if profile.current_learning %}<div class="card"><h3>Currently learning</h3><ul>{% for i in profile.current_learning|split:"lines" %}<li>{{ i }}</li>{% endfor %}</ul></div>{% endif %}
+  </div>
+  {% if education %}<h2>Education</h2>{% include "web/_education.html" %}{% endif %}
+  {% if achievements %}<h2>Achievements</h2>
+    <ul class="timeline">{% for a in achievements %}<li><strong>{{ a.title }}</strong>{% if a.date %} <small class="muted">{{ a.date|date:"M Y" }}</small>{% endif %}<p class="muted">{{ a.description }}</p></li>{% endfor %}</ul>
+  {% endif %}
+</section>
+{% endblock %}

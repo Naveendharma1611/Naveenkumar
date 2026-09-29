@@ -1,0 +1,9 @@
+{% extends "web/base.html" %}
+{% block title %}Experience{% endblock %}
+{% block content %}
+<section class="wrap section narrow">
+  <h1>Experience</h1>
+  {% include "web/_jobs.html" %}
+  {% if education %}<h2>Education</h2>{% include "web/_education.html" %}{% endif %}
+</section>
+{% endblock %}

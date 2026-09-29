@@ -1,0 +1,5 @@
+<ul class="timeline">{% for e in education %}
+  <li><strong>{{ e.degree }}</strong> — {{ e.institution }}{% if e.location %}, {{ e.location }}{% endif %}
+    {% if e.start_year or e.end_year or e.score %}<br><small class="muted">{% if e.start_year %}{{ e.start_year }} – {{ e.end_year|default:"Present" }}{% elif e.end_year %}{{ e.end_year }}{% endif %}{% if e.score %}{% if e.start_year or e.end_year %} · {% endif %}{{ e.score }}{% endif %}</small>{% endif %}
+    {% if e.description %}<p class="muted">{{ e.description }}</p>{% endif %}</li>
+{% endfor %}</ul>

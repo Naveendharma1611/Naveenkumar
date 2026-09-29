@@ -1,0 +1,14 @@
+{% extends "web/base.html" %}{% load web_tags %}
+{% block title %}Certifications{% endblock %}
+{% block content %}
+<section class="wrap section">
+  <h1>Certifications</h1>
+  <div class="grid">{% for c in certificates %}
+    <a class="card card-link" href="/certificate/{{ c.credential_id }}/">
+      {% if c.image %}<img src="{{ c.image.url }}" alt="" class="cover" loading="lazy">{% endif %}
+      <h3>{{ c.name }}</h3><p class="muted">{{ c.provider }} · {{ c.issue_date|date:"M Y" }}</p>
+      <div class="chips">{% for s in c.skills|split %}<span class="chip">{{ s }}</span>{% endfor %}</div>
+    </a>
+  {% empty %}<p class="muted">No certificates yet.</p>{% endfor %}</div>
+</section>
+{% endblock %}

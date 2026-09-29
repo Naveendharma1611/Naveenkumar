@@ -1,0 +1,36 @@
+{% extends "web/base.html" %}{% load web_tags %}
+{% block title %}{{ project.title }}{% endblock %}
+{% block description %}{{ project.summary }}{% endblock %}
+{% block content %}
+<article class="wrap section narrow">
+  <a href="/projects/" class="muted">← All projects</a>
+  <p><span class="badge">{{ project.get_category_display }}</span></p>
+  <h1>{{ project.title }}</h1>
+  <p class="lead">{{ project.summary }}</p>
+  <div class="chips">{% for t in project.technologies.all %}<span class="chip">{{ t.name }}</span>{% endfor %}</div>
+  <div class="actions">
+    {% if project.github_url %}<a class="btn" href="{{ project.github_url }}" target="_blank" rel="noopener">GitHub</a>{% endif %}
+    {% if project.live_demo_url %}<a class="btn btn-ghost" href="{{ project.live_demo_url }}" target="_blank" rel="noopener">Live demo</a>{% endif %}
+    {% if project.documentation_pdf %}<a class="btn btn-ghost" href="{{ project.documentation_pdf.url }}">Documentation PDF</a>{% endif %}
+    {% if project.model_3d %}<a class="btn btn-ghost" href="{{ project.model_3d.url }}" download>3D model</a>{% endif %}
+  </div>
+  {% if project.cover_image %}<img src="{{ project.cover_image.url }}" alt="{{ project.title }}" class="cover-lg">{% endif %}
+
+  {% if project.pipeline_steps %}
+  <h2>Pipeline</h2>
+  <ol class="pipeline">{% for step in project.pipeline_steps %}<li>{{ step }}</li>{% endfor %}</ol>
+  {% endif %}
+
+  {% for label, text in sections %}<h2>{{ label }}</h2><div class="prose">{{ text|markdown }}</div>{% endfor %}
+
+  {% if project.images.all %}<h2>Screenshots</h2>
+  <div class="grid">{% for img in project.images.all %}<figure><img src="{{ img.image.url }}" alt="{{ img.alt_text|default:img.caption }}" loading="lazy"><figcaption class="muted">{{ img.caption }}</figcaption></figure>{% endfor %}</div>{% endif %}
+
+  {% if project.demo_video_url or project.videos.all %}<h2>Videos</h2>
+    {% if project.demo_video_url %}<p><a href="{{ project.demo_video_url }}" target="_blank" rel="noopener">▶ Watch demo</a></p>{% endif %}
+    {% for v in project.videos.all %}{% if v.video %}<video src="{{ v.video.url }}" controls preload="metadata"></video>{% else %}<p><a href="{{ v.url }}" target="_blank" rel="noopener">▶ {{ v.title|default:"Video" }}</a></p>{% endif %}{% endfor %}
+  {% endif %}
+
+  {% for s in project.code_snippets.all %}<h3>{{ s.title }}</h3><pre><code class="language-{{ s.language }}">{{ s.code }}</code></pre>{% endfor %}
+</article>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "web/base.html" %}{% load web_tags %}
+{% block title %}Blog{% endblock %}
+{% block content %}
+<section class="wrap section">
+  <h1>Blog</h1>
+  <form class="filters">
+    <input name="q" value="{{ q }}" placeholder="Search posts">
+    <select name="category" data-autosubmit>
+      <option value="">All categories</option>
+      {% for c in categories %}<option value="{{ c.slug }}" {% if request.GET.category == c.slug %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+    </select>
+    <button class="btn">Filter</button>
+  </form>
+  {% if tags %}<div class="chips">{% for t in tags %}<a class="chip {% if request.GET.tag == t.slug %}on{% endif %}" href="{% query tag=t.slug %}">#{{ t.name }}</a>{% endfor %}</div>{% endif %}
+  <div class="grid">{% for post in page %}
+    <a class="card card-link" href="/blog/{{ post.slug }}/">
+      {% if post.featured_image %}<img src="{{ post.featured_image.url }}" alt="" class="cover" loading="lazy">{% endif %}
+      {% if post.category %}<span class="badge">{{ post.category.name }}</span>{% endif %}
+      <h3>{{ post.title }}</h3><p class="muted">{{ post.excerpt }}</p>
+      <small class="muted">{{ post.published_at|date:"M d, Y" }} · {{ post.reading_minutes }} min read</small>
+    </a>
+  {% empty %}<p class="muted">No posts found.</p>{% endfor %}</div>
+  {% include "web/_pagination.html" %}
+</section>
+{% endblock %}

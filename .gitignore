@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.sqlite3
+backend/staticfiles/
+backend/media/*
+!backend/media/.gitkeep
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

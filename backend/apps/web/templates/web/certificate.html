@@ -1,0 +1,17 @@
+{% extends "web/base.html" %}{% load web_tags %}
+{% block title %}{{ cert.name }}{% endblock %}
+{% block content %}
+<section class="wrap section narrow">
+  <div class="alert success">✔ Verified certificate · ID {{ cert.credential_id }}</div>
+  <h1>{{ cert.name }}</h1>
+  <p class="lead">{{ cert.provider }}</p>
+  <p class="muted">Issued {{ cert.issue_date|date:"M d, Y" }}{% if cert.expiry_date %} · Expires {{ cert.expiry_date|date:"M d, Y" }}{% endif %}</p>
+  {% if cert.image %}<img src="{{ cert.image.url }}" alt="{{ cert.name }}" class="cover-lg">{% endif %}
+  <p>{{ cert.description|linebreaksbr }}</p>
+  <div class="chips">{% for s in cert.skills|split %}<span class="chip">{{ s }}</span>{% endfor %}</div>
+  <div class="actions">
+    {% if cert.credential_url %}<a class="btn" href="{{ cert.credential_url }}" target="_blank" rel="noopener">Verify with provider</a>{% endif %}
+    {% if cert.pdf %}<a class="btn btn-ghost" href="{{ cert.pdf.url }}">Download PDF</a>{% endif %}
+  </div>
+</section>
+{% endblock %}

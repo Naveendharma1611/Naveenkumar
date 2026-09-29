@@ -1,0 +1,20 @@
+{% extends "web/base.html" %}
+{% block title %}{{ category.name }}{% endblock %}
+{% block content %}
+<section class="wrap section narrow">
+  <a href="/study-materials/" class="muted">← All topics</a>
+  <h1>{{ category.name }}</h1>
+  <p class="lead">{{ category.description }}</p>
+  {% if user.is_authenticated %}<p class="muted">You have completed {{ done|length }} of {{ total }} lessons.</p>{% endif %}
+  {% for course, lessons in courses %}
+  <div class="card">
+    <h2>{{ course.title }} <span class="badge">{{ course.get_level_display }}</span></h2>
+    {% if course.description %}<p class="muted">{{ course.description }}</p>{% endif %}
+    <ol class="lessons">{% for l in lessons %}
+      <li><a href="/study-materials/{{ category.slug }}/{{ l.slug }}/">{% if l.id in done %}✔ {% endif %}{{ l.title }}</a>{% if l.estimated_minutes %} <small class="muted">{{ l.estimated_minutes }} min</small>{% endif %}</li>
+    {% empty %}<li class="muted">Lessons coming soon.</li>{% endfor %}</ol>
+    {% for m in course.materials.all %}{% include "web/_material.html" %}{% endfor %}
+  </div>
+  {% empty %}<p class="muted">No courses yet.</p>{% endfor %}
+</section>
+{% endblock %}

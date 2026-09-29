@@ -1,0 +1,55 @@
+{% extends "web/base.html" %}{% load web_tags %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    {% if profile.photo %}<img src="{{ profile.photo.url }}" alt="{{ profile.full_name }}" class="avatar-lg">{% endif %}
+    <p class="eyebrow">{{ profile.headline }}</p>
+    <h1>Hi, I'm {{ profile.full_name }}</h1>
+    <p class="lead">{{ profile.tagline }}</p>
+    <div class="chips center">{% for b in profile.hero_badges|split %}<span class="chip">{{ b }}</span>{% endfor %}</div>
+    <div class="actions center">
+      <a href="/projects/" class="btn">View projects</a>
+      <a href="/resume/" class="btn btn-ghost">Resume</a>
+      <a href="/contact/" class="btn btn-ghost">Contact me</a>
+    </div>
+  </div>
+</section>
+
+<section class="wrap stats">
+  {% for label, n in stats %}<div class="stat"><strong>{{ n }}</strong><span>{{ label }}</span></div>{% endfor %}
+</section>
+
+{% if projects %}
+<section class="wrap section">
+  <div class="section-head"><h2>Featured projects</h2><a href="/projects/">All projects →</a></div>
+  <div class="grid">{% for p in projects %}{% include "web/_project_card.html" %}{% endfor %}</div>
+</section>
+{% endif %}
+
+{% if skills %}
+<section class="wrap section">
+  <div class="section-head"><h2>Core skills</h2><a href="/skills/">All skills →</a></div>
+  <div class="chips">{% for s in skills %}<span class="chip chip-lg">{{ s.name }}</span>{% endfor %}</div>
+</section>
+{% endif %}
+
+<section class="wrap section">
+  <h2>Learn with me</h2>
+  <div class="grid">
+    <a class="card card-link" href="/study-materials/"><h3>📘 Study materials</h3><p class="muted">Structured lessons from beginner to advanced.</p></a>
+    <a class="card card-link" href="/interview/"><h3>💬 Interview prep</h3><p class="muted">Common questions with clear answers and code.</p></a>
+    <a class="card card-link" href="/practice/"><h3>✅ Practice quizzes</h3><p class="muted">Test yourself with timed quizzes.</p></a>
+  </div>
+</section>
+
+{% if posts %}
+<section class="wrap section">
+  <div class="section-head"><h2>Latest posts</h2><a href="/blog/">Blog →</a></div>
+  <div class="grid">{% for post in posts %}
+    <a class="card card-link" href="/blog/{{ post.slug }}/"><h3>{{ post.title }}</h3><p class="muted">{{ post.excerpt }}</p><small class="muted">{{ post.published_at|date:"M d, Y" }} · {{ post.reading_minutes }} min read</small></a>
+  {% endfor %}</div>
+</section>
+{% endif %}
+{% endblock %}

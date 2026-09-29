@@ -1,0 +1,5 @@
+<p class="material">📎 <strong>{{ m.title }}</strong> <span class="badge">{{ m.get_kind_display }}</span>
+  {% if m.requires_login and not user.is_authenticated %}<a href="/login/?next={{ request.path }}">Log in to access</a>
+  {% else %}{% if m.file %}<a href="{{ m.file.url }}" {% if m.is_downloadable %}download{% else %}target="_blank"{% endif %}>Open</a>{% endif %}
+  {% if m.external_url %}<a href="{{ m.external_url }}" target="_blank" rel="noopener">Link</a>{% endif %}{% endif %}
+  {% if m.description %}<br><small class="muted">{{ m.description }}</small>{% endif %}</p>

@@ -1,0 +1,6 @@
+{% load web_tags %}{% if page.has_other_pages %}
+<nav class="pagination">
+  {% if page.has_previous %}<a class="btn btn-ghost" href="{% query page=page.previous_page_number %}">← Prev</a>{% endif %}
+  <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+  {% if page.has_next %}<a class="btn btn-ghost" href="{% query page=page.next_page_number %}">Next →</a>{% endif %}
+</nav>{% endif %}

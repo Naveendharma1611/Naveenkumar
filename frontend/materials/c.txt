@@ -1,0 +1,1230 @@
+@page 💻 C Programming Complete Study Material
+@intro Beginner → advanced C with short explanations, working examples and practice questions — for learning, interviews and coding practice.
+
+@module m1 | 🧭 | 1 · Intro | Module 1 — Introduction to C | What is C · History · Features · C vs C++ vs Python · Program structure · Compilation
+@topic 📜 What is C?
+C is a general-purpose, **procedural** programming language. It is fast, close to the hardware, and is used to build operating systems, embedded software, compilers and databases.
+@table
+Aspect | Detail
+Created by | Dennis Ritchie
+Where / when | Bell Labs, 1972
+Built for | Writing the UNIX operating system
+Standards | C89/C90, C99, C11, C17, C23
+@end
+@topic ⚡ Features of C
+- **Fast** — compiled directly to machine code
+- **Portable** — the same source compiles on many platforms
+- **Low-level access** — pointers and direct memory handling
+- **Structured** — programs are split into functions
+- **Small core** — 32 keywords (C89) plus a rich standard library
+- **Foundation** — C++, Java and CPython all build on ideas from C
+@topic ⚖️ C vs C++ vs Python
+@table
+Feature | C | C++ | Python
+Paradigm | Procedural | Procedural + OOP | Multi-paradigm
+Execution | Compiled | Compiled | Interpreted
+Speed | Very fast | Very fast | Slower
+Memory | Manual (`malloc`/`free`) | Manual + RAII | Automatic (garbage collected)
+Typing | Static | Static | Dynamic
+@end
+@topic 🔄 Compiler vs Interpreter
+@table
+Compiler | Interpreter
+Translates the whole program before running | Translates and runs line by line
+Produces an executable file | No separate executable
+Faster execution | Slower execution
+Examples: GCC, Clang | Examples: Python, JavaScript engines
+@end
+@topic 🏗️ Structure of a C Program
+@code
+#include <stdio.h>      // 1. Header file (preprocessor directive)
+
+int main() {            // 2. main(): execution starts here
+    printf("Hello World\n");   // 3. Statements end with ;
+    return 0;           // 4. 0 = program ended successfully
+}
+@end
+- `#include <stdio.h>` brings in `printf` and `scanf`.
+- Every program has exactly one `main()` function.
+- Comments: `// single line` and `/* multi-line */`.
+@topic ⚙️ Compilation and Execution (GCC)
+@code bash
+gcc hello.c -o hello     # compile
+./hello                  # run on Linux/macOS
+hello.exe                # run on Windows
+@end
+@table
+Stage | What happens | Output
+Preprocessing | Handles `#include` and `#define` | Expanded source (.i)
+Compilation | C → assembly | .s file
+Assembly | Assembly → machine code | Object file (.o)
+Linking | Joins object files and libraries | Executable
+@end
+@practice
+1. Write a program that prints your name and city on two lines.
+2. Compile and run a program with gcc, then remove a semicolon and read the error message.
+3. List the four stages of compilation in order.
+4. What does `return 0;` in `main()` mean?
+@interview C is a fast, portable, procedural language; GCC turns source code into an executable through preprocessing, compilation, assembly and linking.
+
+@module m2 | 📦 | 2 · Variables | Module 2 — Variables & Constants | Variables · Constants · Identifiers · Keywords · Scope · Lifetime
+@topic 📦 Variables
+A variable is a **named memory location** whose value can change. In C every variable must be declared with a type before it is used.
+@code
+int age;            // declaration
+age = 21;           // assignment
+int marks = 90;     // declaration + initialization
+float price = 99.5f;
+char grade = 'A';
+@end
+@topic 🔒 Constants
+@code
+const float PI = 3.14159f;   // const variable: cannot be changed
+#define MAX 100              // macro constant (preprocessor)
+
+// PI = 3.14;                // error: assignment of read-only variable
+@end
+@table
+Constant type | Examples
+Integer | `10`, `-5`, `0x1F` (hex), `017` (octal)
+Floating | `3.14`, `2.5e3`
+Character | `'A'`, `'\n'`
+String | `"Hello"`
+@end
+@topic 🏷️ Identifiers and Naming Rules
+- Letters, digits and underscore only: `total_marks`, `_count`, `sum1`
+- Must not start with a digit: `1sum` ❌
+- Case sensitive: `Age` and `age` are different
+- Cannot be a keyword: `int`, `return` ❌
+@topic 🔑 Keywords
+C89 has **32 reserved keywords**:
+@info `auto break case char const continue default do double else enum extern float for goto if int long register return short signed sizeof static struct switch typedef union unsigned void volatile while`
+@topic 🔭 Scope and Lifetime
+@code
+#include <stdio.h>
+int count = 0;              // global: visible in every function
+
+void show() {
+    int x = 5;              // local: exists only while show() runs
+    printf("%d %d\n", x, count);
+}
+
+int main() {
+    { int y = 10; }         // block scope: y is gone after }
+    show();
+    return 0;
+}
+@end
+@table
+Variable | Scope | Lifetime
+Local | Inside its block or function | Until the block ends
+Global | Whole file (other files via `extern`) | Whole program
+Static local | Inside its function | Whole program (keeps its value)
+@end
+@warn An uninitialized local variable holds a **garbage value**. Always initialize before use.
+@practice
+1. Declare variables for a roll number, a grade letter and a percentage, then print them.
+2. Define PI with `#define` and with `const`. What is the difference?
+3. Which identifiers are valid: `_total`, `2ndValue`, `my-name`, `float`, `count2`?
+4. Create a global and a local variable with the same name. Which one does `printf` use inside the function?
+@interview A variable is a named memory location; `const` and `#define` create constants; scope decides where a name is visible and lifetime decides how long it exists.
+
+@module m3 | 🔢 | 3 · Data Types | Module 3 — Data Types | int · float · double · char · void · Modifiers · sizeof · Format specifiers
+@topic 🔢 Basic Data Types
+@table
+Type | Typical size | Range / use | Format
+`char` | 1 byte | -128 to 127, one character | `%c`
+`int` | 4 bytes | about ±2.1 billion | `%d`
+`float` | 4 bytes | about 6–7 decimal digits | `%f`
+`double` | 8 bytes | about 15–16 decimal digits | `%lf`
+`void` | — | "no value" (functions, generic pointers) | —
+@end
+@info Sizes depend on the compiler and platform. Always check with `sizeof`.
+@topic 🎛️ Modifiers
+@table
+Modifier | Effect | Example
+`short` | Smaller integer (usually 2 bytes) | `short s = 100;`
+`long` | Larger integer (4 or 8 bytes) | `long l = 100000L;`
+`long long` | At least 8 bytes | `long long big = 9000000000LL;`
+`unsigned` | No negatives, bigger positive range | `unsigned int u = 40000;`
+`signed` | Allows negatives (default for int) | `signed int s = -5;`
+@end
+@topic 📏 sizeof and Format Specifiers
+@code
+#include <stdio.h>
+
+int main() {
+    printf("char   = %zu byte\n", sizeof(char));
+    printf("int    = %zu bytes\n", sizeof(int));
+    printf("float  = %zu bytes\n", sizeof(float));
+    printf("double = %zu bytes\n", sizeof(double));
+
+    int n = 25;  float f = 3.5f;  double d = 2.718281828;
+    char c = 'Z';  char name[] = "Naveen";
+    unsigned int u = 300;  long l = 123456L;
+
+    printf("%d %f %lf %c %s %u %ld\n", n, f, d, c, name, u, l);
+    printf("%.2f\n", f);     // 2 decimal places: 3.50
+    return 0;
+}
+@end
+@table
+Specifier | Type
+`%d` / `%i` | int
+`%u` | unsigned int
+`%ld` / `%lld` | long / long long
+`%f` | float or double in printf
+`%lf` | double in scanf
+`%c` / `%s` | char / string
+`%x` / `%o` | hexadecimal / octal
+`%p` | pointer address
+`%zu` | size_t (result of sizeof)
+@end
+@topic 🧱 Derived and User-Defined Types
+Built from the basic types: **arrays** (Module 10), **pointers** (Module 12), **structures** (Module 16), **unions** (Module 17) and **enums** (Module 18).
+@practice
+1. Print the size of every basic type on your computer.
+2. Store 40000 in a `short` and in an `unsigned int`. Print both and explain the result.
+3. Print 22.0 / 7 with 2, 4 and 6 decimal places.
+4. What is the difference between `%f` and `%lf` in `scanf`?
+@interview C's basic types are char, int, float, double and void; modifiers change size or sign; `sizeof` gives the size in bytes and format specifiers tell printf/scanf the type.
+
+@module m4 | 💬 | 4 · Input/Output | Module 4 — Input & Output | printf · scanf · puts · putchar · getchar · fgets
+@topic 📤 Output Functions
+@code
+printf("Sum = %d\n", 10 + 5);   // formatted output
+puts("Hello");                  // prints a string + newline
+putchar('A');                   // prints one character
+@end
+@topic 📥 Input Functions
+@code
+#include <stdio.h>
+
+int main() {
+    int age;
+    float height;
+    char name[50];
+
+    printf("Enter age and height: ");
+    scanf("%d %f", &age, &height);      // & passes the variable's address
+    getchar();                          // consume the leftover newline
+
+    printf("Enter full name: ");
+    fgets(name, sizeof(name), stdin);   // reads spaces too
+
+    printf("Name: %sAge: %d, Height: %.1f\n", name, age, height);
+    return 0;
+}
+@end
+@table
+Function | Reads | Note
+`scanf("%d", &x)` | A formatted value | Stops at whitespace; needs `&`
+`scanf("%49s", s)` | One word | No `&` for arrays; give a width
+`fgets(s, n, stdin)` | A whole line | Safe; keeps the `'\n'`
+`getchar()` | One character | Also clears a leftover newline
+@end
+@warn Forgetting `&` in scanf (`scanf("%d", age)`) is a classic crash. Never use `gets()` — it was removed in C11 because it is unsafe.
+@topic ↩️ Escape Sequences
+@table
+Sequence | Meaning
+`\n` | New line
+`\t` | Tab
+`\\` | Backslash
+`\"` | Double quote
+`\0` | Null character (end of a string)
+@end
+@practice
+1. Read two integers and print their sum, difference, product and quotient.
+2. Read a full name with spaces using `fgets` and print "Welcome, name".
+3. Read a character and print its ASCII value.
+4. Print a small bill using `\t` to line up the columns.
+@interview printf and scanf do formatted I/O; scanf needs the address of the variable (`&`), and fgets is the safe way to read a whole line.
+
+@module m5 | ➕ | 5 · Operators | Module 5 — Operators | Arithmetic · Relational · Logical · Assignment · ++/-- · Bitwise · Ternary · sizeof · & and *
+@topic ➕ Arithmetic Operators (a = 10, b = 3)
+@table
+Operator | Meaning | Example | Result
+`+` | Add | `a + b` | 13
+`-` | Subtract | `a - b` | 7
+`*` | Multiply | `a * b` | 30
+`/` | Divide | `a / b` | 3 (integer division)
+`%` | Remainder | `a % b` | 1
+@end
+@warn `10 / 3` is 3 because both values are int. Use `10.0 / 3` or `(float)a / b` to get 3.333.
+@topic ⚖️ Relational and Logical Operators
+@code
+int a = 10, b = 20;
+printf("%d\n", a < b);              // 1 (true)
+printf("%d\n", a == b);             // 0 (false)
+printf("%d\n", a > 5 && b > 5);     // 1: both true
+printf("%d\n", a > 50 || b > 5);    // 1: at least one true
+printf("%d\n", !(a > 5));           // 0: NOT
+@end
+@info In C, **0 means false** and any non-zero value means true.
+@topic 📝 Assignment and Increment/Decrement
+@code
+int x = 5;
+x += 3;    // x = 8
+x *= 2;    // x = 16
+x %= 5;    // x = 1
+
+int i = 5;
+int a = i++;   // a = 5, then i becomes 6  (post-increment)
+int b = ++i;   // i becomes 7, then b = 7  (pre-increment)
+@end
+@topic 💡 Bitwise Operators (a = 5 → 0101, b = 3 → 0011)
+@table
+Operator | Name | Example | Result
+`&` | AND | `a & b` | 1 (0001)
+`\|` | OR | `a \| b` | 7 (0111)
+`^` | XOR | `a ^ b` | 6 (0110)
+`~` | NOT | `~a` | -6
+`<<` | Left shift | `a << 1` | 10 (× 2)
+`>>` | Right shift | `a >> 1` | 2 (÷ 2)
+@end
+@topic ❓ Ternary, sizeof, & and *
+@code
+int age = 20;
+const char *status = (age >= 18) ? "Adult" : "Minor";   // condition ? value1 : value2
+
+int n = 42;
+int *p = &n;                    // & = address of n
+printf("%s %zu %d\n", status, sizeof(n), *p);   // * = value at the address: 42
+@end
+@topic 📊 Precedence (high → low)
+@table
+Level | Operators
+1 | `()` `[]` `->` `.`
+2 | `!` `~` `++` `--` unary `&` `*` `sizeof`
+3 | `*` `/` `%`
+4 | `+` `-`
+5 | `<<` `>>`
+6 | `<` `<=` `>` `>=`
+7 | `==` `!=`
+8 | `&` then `^` then `\|`
+9 | `&&` then `\|\|`
+10 | `?:`
+11 | `=` `+=` `-=` and other assignments
+@end
+@practice
+1. Swap two numbers without a third variable using arithmetic operators.
+2. Check whether a number is even or odd with `%`, then again with `&`.
+3. Find the largest of three numbers using the ternary operator.
+4. Why is `printf("%d %d", i++, ++i);` a bad idea? (Hint: undefined behaviour.)
+5. Multiply a number by 8 using only a shift operator.
+@interview Integer division truncates; `&&` and `||` short-circuit; `i++` uses the value then increments while `++i` increments first; shifts multiply or divide by powers of two.
+
+@module m6 | 🔀 | 6 · Decisions | Module 6 — Decision Making | if · if-else · else-if ladder · Nested if · switch-case
+@topic 1️⃣ if and if-else
+@code
+int age = 20;
+if (age >= 18) {
+    printf("Adult\n");
+} else {
+    printf("Minor\n");
+}
+@end
+@topic 2️⃣ else-if Ladder
+@code
+int marks = 78;
+if (marks >= 90)      printf("Grade A\n");
+else if (marks >= 75) printf("Grade B\n");   // prints Grade B
+else if (marks >= 50) printf("Grade C\n");
+else                  printf("Fail\n");
+@end
+@topic 3️⃣ Nested if
+@code
+int age = 25, hasLicence = 1;
+if (age >= 18) {
+    if (hasLicence) printf("You can drive\n");
+    else            printf("Get a licence first\n");
+} else {
+    printf("Too young\n");
+}
+@end
+@topic 4️⃣ switch-case
+@code
+int choice = 2;
+switch (choice) {
+    case 1:  printf("One\n");   break;
+    case 2:  printf("Two\n");   break;    // prints Two
+    case 3:  printf("Three\n"); break;
+    default: printf("Invalid\n");
+}
+@end
+- `switch` works with **int and char** values, not float or strings.
+- `break` stops fall-through; without it, execution continues into the next case.
+- `default` runs when no case matches.
+@warn `if (x = 5)` assigns 5 and is always true. Use `==` to compare.
+@topic 📊 if vs switch
+@table
+if-else | switch
+Any condition (ranges, `&&`, `\|\|`) | Only equality with constant values
+Works with float and strings (via `strcmp`) | Only int, char and enum
+Best for ranges | Best for menus and fixed choices
+@end
+@practice
+1. Check whether a number is positive, negative or zero.
+2. Check whether a year is a leap year.
+3. Build a calculator menu with `switch` (+, -, *, /).
+4. Print the day name for a number 1–7 using `switch`.
+5. Check whether a character is a vowel or a consonant.
+@interview Use if-else for ranges and complex conditions and switch for fixed int/char choices; remember `break` to stop fall-through.
+
+@module m7 | 🔄 | 7 · Loops | Module 7 — Loops | for · while · do-while · Nested loops · break · continue
+@topic 🔁 for Loop
+@code
+for (int i = 1; i <= 5; i++) {
+    printf("%d ", i);          // 1 2 3 4 5
+}
+@end
+@topic 🔂 while Loop
+@code
+int n = 1234, sum = 0;
+while (n > 0) {
+    sum += n % 10;             // add the last digit
+    n /= 10;                   // remove the last digit
+}
+printf("Digit sum = %d\n", sum);   // 10
+@end
+@topic 🔃 do-while Loop
+@code
+int choice;
+do {
+    printf("1. Play  2. Exit\nChoice: ");
+    scanf("%d", &choice);
+} while (choice != 2);         // the body runs at least once
+@end
+@table
+Loop | Checks condition | Runs at least once? | Best for
+`for` | Before each pass | No | A known number of repetitions
+`while` | Before each pass | No | Unknown count (counter or sentinel)
+`do-while` | After each pass | Yes | Menus and input validation
+@end
+@topic 🔲 Nested Loops
+@code
+for (int i = 1; i <= 4; i++) {
+    for (int j = 1; j <= i; j++) printf("* ");
+    printf("\n");
+}
+/* Output:
+*
+* *
+* * *
+* * * *        */
+@end
+@topic 🛑 break and continue
+@code
+for (int i = 1; i <= 10; i++) {
+    if (i == 3) continue;      // skip 3
+    if (i == 7) break;         // stop at 7
+    printf("%d ", i);          // 1 2 4 5 6
+}
+@end
+- **Infinite loop:** `while (1) { ... }` must exit with `break`.
+- **Counter-controlled:** repeats a known number of times.
+- **Sentinel-controlled:** repeats until a special value, e.g. the user types -1.
+@practice
+1. Print the multiplication table of a number.
+2. Find the factorial of n using a loop.
+3. Check whether a number is prime.
+4. Reverse a number and check whether it is a palindrome.
+5. Print a pyramid of stars with n rows.
+6. Read numbers until the user enters -1, then print their sum.
+@interview for and while are entry-controlled, do-while is exit-controlled and runs at least once; `break` leaves the loop and `continue` skips to the next pass.
+
+@module m8 | 🧩 | 8 · Functions | Module 8 — Functions | Declaration · Definition · Call · Parameters · Return · Prototypes · 4 types
+@topic 🧩 What is a Function?
+A function is a named block of code that does **one task**. It avoids repetition and splits a program into small, testable parts.
+@code
+#include <stdio.h>
+
+int add(int a, int b);            // declaration (prototype)
+
+int main() {
+    int result = add(5, 3);       // call: 5 and 3 are arguments
+    printf("Sum = %d\n", result);
+    return 0;
+}
+
+int add(int a, int b) {           // definition: a and b are parameters
+    return a + b;                 // return value
+}
+@end
+@table
+Term | Meaning
+Prototype (declaration) | Tells the compiler the name, return type and parameter types
+Definition | The actual body of the function
+Parameters | Variables in the definition (`a`, `b`)
+Arguments | Values passed in the call (`5`, `3`)
+Return type | Type of the value sent back; `void` means nothing
+@end
+@topic 🗂️ Four Types of Functions
+@code
+void greet(void)      { printf("Hello\n"); }                    // no argument, no return
+void square(int n)    { printf("%d\n", n * n); }                // argument, no return
+int  readNumber(void) { int x; scanf("%d", &x); return x; }    // no argument, return
+int  cube(int n)      { return n * n * n; }                     // argument and return
+@end
+@tip A function should do one job. If you can't describe it in one short sentence, split it.
+@practice
+1. Write `int max(int a, int b)` and use it to find the largest of three numbers.
+2. Write `int isPrime(int n)` that returns 1 or 0, and print all primes up to 50.
+3. Write a void function that prints a line of n stars.
+4. Write a function that returns the area of a circle for a given radius.
+5. What happens if you call a function before it is declared and there is no prototype?
+@interview A prototype declares a function's signature and the definition holds its body; parameters receive copies of the arguments (call by value).
+
+@module m9 | 🔁 | 9 · Recursion | Module 9 — Recursion | Base condition · Recursive step · Factorial · Fibonacci · GCD · Reverse
+@topic 🔁 What is Recursion?
+A recursive function **calls itself** on a smaller version of the problem. It needs a **base condition** to stop and a **recursive step** that moves towards it.
+@code
+int factorial(int n) {
+    if (n == 0)                      // base condition
+        return 1;
+    return n * factorial(n - 1);     // recursive step
+}
+// factorial(4) = 4 * 3 * 2 * 1 * 1 = 24
+@end
+@topic 📚 Classic Examples
+@code
+int fib(int n)          { return n <= 1 ? n : fib(n - 1) + fib(n - 2); }  // 0 1 1 2 3 5 8
+int sumTo(int n)        { return n == 0 ? 0 : n + sumTo(n - 1); }         // 1 + 2 + ... + n
+int gcd(int a, int b)   { return b == 0 ? a : gcd(b, a % b); }            // Euclid's method
+int power(int b, int e) { return e == 0 ? 1 : b * power(b, e - 1); }
+
+void reverseDigits(int n) {          // prints 1234 as 4321
+    if (n == 0) return;
+    printf("%d", n % 10);
+    reverseDigits(n / 10);
+}
+@end
+@topic ⚖️ Recursion vs Iteration
+@table
+Recursion | Iteration (loops)
+Function calls itself | Uses for / while
+Uses the call stack (more memory) | Constant memory
+Short and elegant for trees and divide-and-conquer | Usually faster
+Missing base case → stack overflow | Missing condition → infinite loop
+@end
+@warn `fib()` above recalculates the same values again and again (exponential time). For large n use a loop or store earlier results.
+@practice
+1. Find the sum of the digits of a number recursively.
+2. Check whether a string is a palindrome using recursion.
+3. Print numbers from n down to 1, then from 1 up to n, recursively.
+4. Compute x to the power n in O(log n) with fast exponentiation.
+5. Solve the Tower of Hanoi for 3 disks and print every move.
+@interview Recursion solves a problem by calling itself on smaller inputs; it needs a base case, and every call uses stack memory.
+
+@module m10 | 📊 | 10 · Arrays | Module 10 — Arrays | 1D arrays · Traversal · Searching · Sorting · 2D arrays · Matrices
+@topic 📊 One-Dimensional Arrays
+An array stores many values of the **same type** in contiguous memory. Indexes start at **0**.
+@code
+int marks[5] = {80, 92, 67, 74, 88};   // declaration + initialization
+marks[2] = 70;                         // update index 2
+
+int sum = 0;
+for (int i = 0; i < 5; i++) {          // traversal
+    sum += marks[i];
+}
+printf("Average = %.2f\n", sum / 5.0);
+@end
+@warn C does not check array bounds. `marks[5]` on a 5-element array is undefined behaviour.
+@topic 🔍 Searching and Sorting
+@code
+// Linear search: returns the index or -1
+int find(int a[], int n, int key) {
+    for (int i = 0; i < n; i++)
+        if (a[i] == key) return i;
+    return -1;
+}
+
+// Bubble sort (ascending)
+void bubbleSort(int a[], int n) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = 0; j < n - 1 - i; j++)
+            if (a[j] > a[j + 1]) { int t = a[j]; a[j] = a[j + 1]; a[j + 1] = t; }
+}
+@end
+@topic 🧮 Two-Dimensional Arrays (Matrices)
+@code
+int A[2][2] = {{1, 2}, {3, 4}};
+int B[2][2] = {{5, 6}, {7, 8}};
+int C[2][2] = {0};
+
+for (int i = 0; i < 2; i++)            // matrix multiplication
+    for (int j = 0; j < 2; j++)
+        for (int k = 0; k < 2; k++)
+            C[i][j] += A[i][k] * B[k][j];
+// C = {{19, 22}, {43, 50}}
+@end
+@table
+Operation | Rule
+Addition / subtraction | `C[i][j] = A[i][j] ± B[i][j]` (same size)
+Multiplication | A (m×n) × B (n×p) → C (m×p)
+Transpose | `T[j][i] = A[i][j]`
+@end
+Multidimensional arrays extend the same idea: `int cube[3][3][3];`
+@practice
+1. Find the largest and smallest element in an array.
+2. Reverse an array in place.
+3. Count the even and odd numbers in an array.
+4. Implement binary search on a sorted array.
+5. Add, subtract and transpose 3×3 matrices.
+6. Remove duplicates from a sorted array.
+@interview Arrays are fixed-size, same-type, contiguous blocks with 0-based indexes; the array name acts as the address of the first element, and C does no bounds checking.
+
+@module m11 | 🔤 | 11 · Strings | Module 11 — Strings | Character arrays · '\0' · string.h functions · String programs
+@topic 🔤 Strings are Character Arrays
+C has no separate string type. A string is a **char array ending with the null character** `'\0'`.
+@code
+char name[20] = "Naveen";    // stored as N a v e e n \0
+char city[] = {'C', 'h', 'e', 'n', 'n', 'a', 'i', '\0'};
+printf("%s lives in %s\n", name, city);
+@end
+@topic 🧰 string.h Functions
+@code
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char a[30] = "Hello", b[] = "World", c[30];
+    printf("%zu\n", strlen(a));            // 5
+    strcat(a, " ");  strcat(a, b);         // a = "Hello World"
+    strcpy(c, a);                          // copy a into c
+    printf("%d\n", strcmp("abc", "abd"));  // negative: "abc" < "abd"
+    printf("%s\n", strchr(a, 'W'));        // World
+    printf("%s\n", strstr(a, "lo W"));     // lo World
+    return 0;
+}
+@end
+@table
+Function | Purpose
+`strlen(s)` | Length, not counting `'\0'`
+`strcpy(d, s)` / `strncpy(d, s, n)` | Copy (n = maximum characters)
+`strcat(d, s)` | Append s to the end of d
+`strcmp(a, b)` | 0 if equal, negative or positive otherwise
+`strchr(s, c)` | First occurrence of a character
+`strstr(s, sub)` | First occurrence of a substring
+@end
+@warn Never compare strings with `==` — that compares addresses. Use `strcmp()`. Make sure the destination array is big enough for `strcpy` and `strcat`.
+@topic 🔄 Example: Palindrome Check
+@code
+char s[] = "madam";
+int n = strlen(s), isPal = 1;
+for (int i = 0; i < n / 2; i++)
+    if (s[i] != s[n - 1 - i]) { isPal = 0; break; }
+printf(isPal ? "Palindrome\n" : "Not palindrome\n");
+@end
+@practice
+1. Reverse a string without using any library function.
+2. Count the vowels, consonants, digits and spaces in a string.
+3. Count the words in a sentence.
+4. Remove all spaces from a string.
+5. Find the duplicate characters in a string.
+6. Write your own versions of `strlen()` and `strcmp()`.
+@interview A C string is a char array terminated by `'\0'`; use string.h functions such as strlen, strcpy and strcmp, and compare contents with strcmp, never `==`.
+
+@module m12 | 📍 | 12 · Pointers | Module 12 — Pointers ⭐ | Address · Declaration · Dereference · Arithmetic · NULL · Wild · Dangling · void · Pointer to pointer
+@topic 📍 What is a Pointer?
+A pointer is a variable that stores the **memory address** of another variable. `&` gives an address; `*` reads the value at an address (dereference).
+@code
+int x = 10;
+int *p = &x;                    // p stores the address of x
+
+printf("%d\n", x);              // 10
+printf("%p\n", (void *)&x);     // address of x
+printf("%p\n", (void *)p);      // the same address
+printf("%d\n", *p);             // 10 (value at that address)
+
+*p = 20;                        // changes x through the pointer
+printf("%d\n", x);              // 20
+@end
+@topic ➕ Pointer Arithmetic
+@code
+int a[3] = {10, 20, 30};
+int *p = a;
+p++;                            // moves by sizeof(int) bytes, to a[1]
+printf("%d\n", *p);             // 20
+printf("%d\n", *(p + 1));       // 30
+@end
+@info Adding 1 to a pointer moves it by the **size of the type it points to**, not by 1 byte.
+@topic ⚠️ Special Pointers
+@table
+Pointer | Meaning | Example
+NULL pointer | Points to nothing; the safe "empty" value | `int *p = NULL;`
+Wild pointer | Declared but never initialized | `int *p;` (dangerous)
+Dangling pointer | Points to memory that was freed or went out of scope | after `free(p)`
+void pointer | Generic; holds any address, cast before use | `void *vp = &x;`
+Pointer to pointer | Stores the address of a pointer | `int **pp = &p;`
+@end
+@code
+int x = 5;
+int *p = &x;
+int **pp = &p;
+printf("%d\n", **pp);           // 5
+
+void *vp = &x;
+printf("%d\n", *(int *)vp);     // cast before dereferencing
+@end
+@warn Initialize every pointer (to a valid address or NULL) and set it to NULL after `free()` to avoid wild and dangling pointers.
+@practice
+1. Swap two numbers using pointers.
+2. Print the address and value of an int, a float and a char through pointers.
+3. Find the sum of array elements with a pointer instead of indexes.
+4. Change a variable through a pointer to a pointer.
+5. Explain what is wrong with: `int *f() { int x = 5; return &x; }`
+@interview A pointer holds an address; `&` takes an address and `*` dereferences it; pointer arithmetic moves in units of the pointed type; initialize pointers to NULL to avoid wild and dangling pointers.
+
+@module m13 | 🧮 | 13 · Pointers & Arrays | Module 13 — Pointers & Arrays | Array address · Pointer to array · Array of pointers · Passing arrays
+@topic 🔗 Arrays and Pointers are Closely Related
+@code
+int arr[] = {10, 20, 30};
+int *p = arr;                   // same as &arr[0]
+
+printf("%d\n", *(p + 1));       // 20
+printf("%d\n", arr[1]);         // 20: arr[i] is *(arr + i)
+printf("%d\n", p[2]);           // 30: pointers can use [] too
+@end
+@table
+Expression | Meaning
+`arr` | Address of `arr[0]`
+`&arr[i]` | Address of element i (same as `arr + i`)
+`arr[i]` | Value of element i (same as `*(arr + i)`)
+`&arr` | Address of the whole array, type `int (*)[3]`
+@end
+@info An array name is not a variable: `arr++` is an error, but `p++` is fine.
+@topic 🎯 Pointer to an Array vs Array of Pointers
+@code
+int nums[3] = {1, 2, 3};
+int (*pa)[3] = &nums;           // pointer to an array of 3 ints
+printf("%d\n", (*pa)[1]);       // 2
+
+const char *names[] = {"Asha", "Ravi", "Naveen"};   // array of pointers
+for (int i = 0; i < 3; i++) printf("%s\n", names[i]);
+@end
+@topic 📨 Passing Arrays to Functions
+@code
+int sum(int *a, int n) {        // same as int a[]
+    int s = 0;
+    for (int i = 0; i < n; i++) s += a[i];
+    return s;
+}
+
+int main() {
+    int marks[] = {70, 80, 90};
+    printf("%d\n", sum(marks, 3));   // 240: the array decays to a pointer
+    return 0;
+}
+@end
+@warn Inside the function, `sizeof(a)` is the size of a pointer, not of the array. Always pass the length separately.
+@practice
+1. Print an array using pointer arithmetic only (no `[]`).
+2. Reverse an array using two pointers.
+3. Write a function that returns the maximum element of an array passed as a pointer.
+4. Store 5 names in an array of pointers and print them in sorted order.
+5. Find the length of a string using a pointer.
+@interview An array name decays to a pointer to its first element, so `arr[i]` equals `*(arr + i)`; arrays reach functions as pointers, so pass the size too.
+
+@module m14 | 🔗 | 14 · Pointers & Functions | Module 14 — Pointers & Functions | Call by value · Call by address · Returning pointers · Function pointers
+@topic 🔗 Call by Value vs Call by Address
+@code
+void byValue(int x)    { x = 100; }    // changes a copy only
+void byAddress(int *x) { *x = 100; }   // changes the original
+
+int main() {
+    int a = 5;
+    byValue(a);     printf("%d\n", a);   // 5
+    byAddress(&a);  printf("%d\n", a);   // 100
+    return 0;
+}
+@end
+@table
+Call by value | Call by address
+Passes a copy | Passes the address
+The original cannot change | The original can change
+Safer | Needed to return several results or modify arrays
+@end
+@topic 🔄 Classic Swap
+@code
+void swap(int *a, int *b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+// usage: swap(&x, &y);
+@end
+@topic ↩️ Returning a Pointer
+@code
+int *largest(int *a, int *b) {
+    return (*a > *b) ? a : b;   // OK: returns one of the caller's addresses
+}
+@end
+@warn Never return the address of a local variable — it is destroyed when the function ends. Return a caller's address, a `static` variable or `malloc`ed memory instead.
+@topic 🎛️ Function Pointers
+@code
+int add(int a, int b) { return a + b; }
+int mul(int a, int b) { return a * b; }
+
+int main() {
+    int (*op)(int, int) = add;    // pointer to a function
+    printf("%d\n", op(3, 4));     // 7
+    op = mul;
+    printf("%d\n", op(3, 4));     // 12
+    return 0;
+}
+@end
+@tip Function pointers power callbacks, such as the comparison function you pass to `qsort()`.
+@practice
+1. Return both the sum and the product of two numbers through pointer parameters.
+2. Write `void minMax(int *a, int n, int *min, int *max)`.
+3. Build a calculator using an array of function pointers.
+4. Sort an array with `qsort()` and your own comparison function.
+@interview C always passes arguments by value; passing an address lets a function modify the caller's variables, and function pointers store a function's address for callbacks.
+
+@module m15 | 🧠 | 15 · Dynamic Memory | Module 15 — Dynamic Memory Allocation ⭐ | malloc · calloc · realloc · free · Stack vs heap
+@topic 🧠 Why Dynamic Memory?
+Array sizes are fixed when you write the code. Dynamic allocation requests memory from the **heap at run time**, so the size can depend on user input.
+@table
+Area | Holds | Managed by
+Stack | Local variables and function calls | Automatically
+Heap | Memory from malloc / calloc / realloc | You (must `free`)
+Static / data | Global and static variables | Lives for the whole program
+Code (text) | Compiled instructions | Read-only
+@end
+@topic 🛠️ malloc, calloc, realloc and free
+@code
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int n = 5;
+    int *p = malloc(n * sizeof(int));        // uninitialized block
+    if (p == NULL) { printf("Out of memory\n"); return 1; }
+
+    for (int i = 0; i < n; i++) p[i] = (i + 1) * 10;
+
+    int *q = realloc(p, 2 * n * sizeof(int));   // grow to 10 ints
+    if (q != NULL) p = q;
+
+    int *z = calloc(n, sizeof(int));         // n ints, all set to 0
+
+    free(p);  p = NULL;                      // always free, then reset
+    free(z);  z = NULL;
+    return 0;
+}
+@end
+@table
+Function | Purpose | Initializes memory?
+`malloc(bytes)` | Allocate one block | No (garbage values)
+`calloc(count, size)` | Allocate an array of count items | Yes, to 0
+`realloc(ptr, bytes)` | Resize a block (it may move) | New part: no
+`free(ptr)` | Release the memory | —
+@end
+@warn A **memory leak** happens when you forget `free()`. Freeing twice or using memory after `free` is undefined behaviour. Always check for NULL.
+@practice
+1. Read n, allocate an int array of size n, fill it and print the average.
+2. Keep growing a dynamic array with `realloc` while the user enters numbers.
+3. Allocate a rows × cols matrix dynamically and free it correctly.
+4. Show the difference between `malloc` and `calloc` by printing new memory.
+5. Find the leak: `int *p = malloc(40); p = malloc(80); free(p);`
+@interview malloc allocates uninitialized heap memory, calloc zero-initializes, realloc resizes and free releases; every allocation must be freed exactly once.
+
+@module m16 | 🏗️ | 16 · Structures | Module 16 — Structures | Declaration · Members · Arrays of structures · Nested · Pointers · Functions
+@topic 🏗️ Creating a Structure
+A structure groups variables of **different types** under one name — your own data type.
+@code
+struct Student {
+    int id;
+    char name[50];
+    float marks;
+};
+
+struct Student s1 = {1, "Naveen", 88.5f};   // initialization
+s1.marks = 91.0f;                           // access with the dot operator
+printf("%d %s %.1f\n", s1.id, s1.name, s1.marks);
+@end
+@topic 📚 Array of Structures
+@code
+struct Student list[3] = {
+    {1, "Asha", 78}, {2, "Ravi", 91}, {3, "Meena", 85}
+};
+for (int i = 0; i < 3; i++)
+    printf("%s: %.0f\n", list[i].name, list[i].marks);
+@end
+@topic 🪆 Nested Structures and Pointers
+@code
+struct Date { int d, m, y; };
+struct Employee {
+    char name[40];
+    struct Date joined;           // nested structure
+};
+
+struct Employee e = {"Kavin", {1, 6, 2024}};
+struct Employee *ptr = &e;
+printf("%s joined in %d\n", ptr->name, ptr->joined.y);   // -> for pointers
+@end
+@table
+Access through | Syntax
+A variable | `s.member`
+A pointer | `p->member` (same as `(*p).member`)
+@end
+@topic 🔧 Structures with Functions
+@code
+void printStudent(const struct Student *s) {   // pass a pointer: no copy
+    printf("%d %s %.1f\n", s->id, s->name, s->marks);
+}
+
+float average(struct Student a[], int n) {
+    float sum = 0;
+    for (int i = 0; i < n; i++) sum += a[i].marks;
+    return sum / n;
+}
+@end
+@practice
+1. Store 5 students and print the topper.
+2. Create a Book structure (title, author, price) and sort books by price.
+3. Add two complex numbers stored in a structure.
+4. Store employees with a nested Date and print those who joined after 2020.
+5. Increase an employee's salary by 10% through a pointer to the structure.
+@interview A structure is a user-defined type that groups members of different types; use `.` with variables and `->` with pointers, and pass large structures by pointer.
+
+@module m17 | 🤝 | 17 · Unions | Module 17 — Unions | Shared memory · Structure vs union · Use cases
+@topic 🤝 What is a Union?
+A union looks like a structure, but **all members share the same memory**. Only one member holds a valid value at a time, and the size equals the largest member.
+@code
+union Data {
+    int i;
+    float f;
+    char c;
+};
+
+union Data d;
+d.i = 10;    printf("%d\n", d.i);
+d.f = 3.5f;  printf("%.1f\n", d.f);   // now d.i is no longer meaningful
+printf("%zu\n", sizeof(d));           // 4: size of the largest member
+@end
+@topic ⚖️ Structure vs Union
+@table
+Structure | Union
+Each member has its own memory | All members share one block
+Size ≥ sum of members (plus padding) | Size = largest member (plus padding)
+All members valid at the same time | Only the last written member is valid
+Keyword `struct` | Keyword `union`
+@end
+@topic 💼 Use Cases
+- Saving memory when only one of several values is needed at a time
+- **Tagged unions:** a struct with a type field plus a union of possible values
+- Reading the same bytes in different ways (embedded systems, network protocols)
+@code
+struct Value {
+    enum { INT, FLOAT } type;         // which member is valid
+    union { int i; float f; } as;
+};
+
+struct Value v = { FLOAT, .as.f = 2.5f };
+if (v.type == FLOAT) printf("%.1f\n", v.as.f);
+@end
+@practice
+1. Print `sizeof` for a struct and a union with the same members, and explain the difference.
+2. Write to one union member and read another; explain the output.
+3. Build a tagged union that stores an int, a float or a char and prints the right one.
+@interview In a union all members share memory, so its size is the largest member and only one member is valid at a time; a structure gives every member its own memory.
+
+@module m18 | 🏷️ | 18 · Enums | Module 18 — Enumerations | enum · Values · Practical use
+@topic 🏷️ What is an enum?
+An enum gives **names to a set of integer constants**, which makes code easier to read.
+@code
+enum Day { MON, TUE, WED, THU, FRI, SAT, SUN };   // MON = 0, TUE = 1, ...
+
+enum Day today = WED;
+printf("%d\n", today);                            // 2
+
+enum Level { LOW = 1, MEDIUM = 5, HIGH = 10 };    // custom values
+enum Color { RED, GREEN = 5, BLUE };              // RED = 0, GREEN = 5, BLUE = 6
+@end
+@topic 🚦 Practical Use with switch
+@code
+enum Signal { STOP, WAIT, GO };
+
+void action(enum Signal s) {
+    switch (s) {
+        case STOP: printf("Stop\n"); break;
+        case WAIT: printf("Wait\n"); break;
+        case GO:   printf("Go\n");   break;
+    }
+}
+@end
+@tip Prefer enums to "magic numbers": `if (state == GO)` explains itself, `if (state == 2)` does not.
+@table
+enum | #define
+Grouped under one type name | Separate, unrelated macros
+Values assigned automatically | Every value written by hand
+Visible in the debugger | Replaced as text before compiling
+@end
+@practice
+1. Create an enum for the months and print the number of days in each.
+2. Simulate a traffic light with an enum and `switch`.
+3. Create a menu enum (ADD, VIEW, DELETE, EXIT) and use it in a loop.
+@interview An enum defines named integer constants that start at 0 by default; it improves readability and pairs naturally with switch.
+
+@module m19 | ✏️ | 19 · typedef | Module 19 — typedef | Type aliases · Structures · Function pointer types
+@topic ✏️ What is typedef?
+`typedef` creates a **new name (alias)** for an existing type. It does not create a new type.
+@code
+typedef unsigned int uint;
+typedef unsigned char byte;
+
+uint count = 10;
+byte flags = 0xFF;
+@end
+@topic 🏗️ typedef with Structures
+@code
+typedef struct {
+    int id;
+    char name[50];
+} Student;                     // no need to write "struct" every time
+
+Student s = {1, "Naveen"};
+Student *p = &s;
+printf("%s\n", p->name);
+@end
+@topic 🎛️ typedef with Function Pointers
+@code
+typedef int (*Operation)(int, int);
+
+int add(int a, int b) { return a + b; }
+
+Operation op = add;
+printf("%d\n", op(2, 3));      // 5
+@end
+@table
+typedef | #define
+Handled by the compiler | Handled by the preprocessor (text replacement)
+Follows scope rules | Active from its definition to the end of the file
+Correct for pointer types | With `#define PTR int*`, `PTR a, b;` makes only a a pointer
+@end
+@practice
+1. Create a `Point` type with typedef and write a function that returns the distance between two points.
+2. Use typedef to simplify an array of function pointers for a calculator.
+3. Explain the difference between `typedef int *IP; IP a, b;` and `#define IP int *` followed by `IP a, b;`.
+@interview typedef gives an existing type a new name; it is mainly used to shorten structure and function-pointer types.
+
+@module m20 | 📁 | 20 · File Handling | Module 20 — File Handling ⭐ | fopen · fclose · fprintf · fscanf · fgets · fread · fwrite · File modes
+@topic 📁 Why Files?
+Variables disappear when the program ends. **Files store data permanently** on disk. File functions live in `<stdio.h>` and work through a `FILE *` pointer.
+@topic ✍️ Writing and Reading a Text File
+@code
+#include <stdio.h>
+
+int main() {
+    FILE *fp = fopen("students.txt", "w");        // open for writing
+    if (fp == NULL) { perror("fopen"); return 1; }
+    fprintf(fp, "%d %s %.1f\n", 1, "Naveen", 88.5);
+    fprintf(fp, "%d %s %.1f\n", 2, "Asha", 92.0);
+    fclose(fp);
+
+    fp = fopen("students.txt", "r");              // open for reading
+    if (fp == NULL) { perror("fopen"); return 1; }
+    int id;  char name[50];  float marks;
+    while (fscanf(fp, "%d %49s %f", &id, name, &marks) == 3)
+        printf("%d %s %.1f\n", id, name, marks);
+    fclose(fp);
+    return 0;
+}
+@end
+@topic 🗝️ File Modes
+@table
+Mode | Meaning | If the file does not exist
+`r` | Read | Returns NULL
+`w` | Write (erases existing content) | Creates it
+`a` | Append at the end | Creates it
+`r+` | Read and write | Returns NULL
+`w+` | Read and write (erases) | Creates it
+`a+` | Read and append | Creates it
+`rb`, `wb`, `ab` | Binary versions of r, w, a | Same as above
+@end
+@topic 🧰 File Functions
+@table
+Function | Purpose
+`fopen` / `fclose` | Open / close a file
+`fprintf` / `fscanf` | Formatted write / read
+`fputc` / `fgetc` | Write / read one character
+`fputs` / `fgets` | Write / read one line
+`fwrite` / `fread` | Write / read binary blocks (e.g. structures)
+`feof` / `ferror` | Check end of file / an error
+`fseek` / `ftell` / `rewind` | Move / get the position in the file
+@end
+@topic 💾 Binary Files with Structures
+@code
+typedef struct { int id; char name[30]; } Student;
+
+Student s = {1, "Naveen"}, r;
+FILE *fp = fopen("data.bin", "wb");
+fwrite(&s, sizeof(Student), 1, fp);
+fclose(fp);
+
+fp = fopen("data.bin", "rb");
+fread(&r, sizeof(Student), 1, fp);
+fclose(fp);
+printf("%d %s\n", r.id, r.name);
+@end
+@warn Always check that `fopen` did not return NULL, and always `fclose` every file you open.
+@practice
+1. Count the characters, words and lines in a text file.
+2. Copy one file into another.
+3. Append a new line to an existing file without erasing it.
+4. **Mini project:** Student record system — add, list, search and delete records stored in a binary file.
+5. **Mini project:** Contact manager or employee management system using files.
+@interview Files are used through a FILE pointer from fopen; the mode (r, w, a with + and b variants) decides reading, writing, appending and binary access; check for NULL and always fclose.
+
+@module m21 | ⚙️ | 21 · Preprocessor | Module 21 — Preprocessor | #include · #define · Macros · Conditional compilation · Header guards
+@topic ⚙️ What is the Preprocessor?
+Before compiling, the preprocessor handles every line that starts with `#`: it **includes files, replaces macros and removes code conditionally**.
+@topic 📥 #include and #define
+@code
+#include <stdio.h>             // system header (searched in system folders)
+#include "myutils.h"           // your own header (searched in the project first)
+
+#define PI 3.14159
+#define SQUARE(x) ((x) * (x))  // macro with a parameter
+
+printf("%.2f\n", PI * SQUARE(2));   // 12.57
+#undef PI                          // PI is no longer defined
+@end
+@warn Always wrap macro parameters in parentheses. With `#define SQ(x) x * x`, `SQ(1 + 2)` becomes `1 + 2 * 1 + 2` = 5, not 9.
+@topic 🔀 Conditional Compilation
+@code
+#define DEBUG 1
+
+#if DEBUG
+    printf("Debug mode\n");
+#else
+    printf("Release mode\n");
+#endif
+
+#ifdef _WIN32
+    printf("Windows\n");
+#elif defined(__linux__)
+    printf("Linux\n");
+#endif
+@end
+@topic 🛡️ Header Guards
+@code
+// myutils.h
+#ifndef MYUTILS_H
+#define MYUTILS_H
+
+int add(int a, int b);
+
+#endif
+@end
+@table
+Directive | Purpose
+`#include` | Insert a header file
+`#define` / `#undef` | Create / remove a macro
+`#ifdef` / `#ifndef` | Compile only if a macro is / is not defined
+`#if` / `#elif` / `#else` / `#endif` | Compile based on a condition
+@end
+@practice
+1. Write `MAX(a, b)` and `MIN(a, b)` macros and test them.
+2. Show why `SQUARE` without parentheses gives a wrong answer.
+3. Print extra debug information only when `DEBUG` is defined.
+4. Split a program into `main.c`, `calc.c` and `calc.h` with a header guard.
+@interview The preprocessor runs before compilation and handles #include, #define macros and conditional compilation; header guards stop a header from being included twice.
+
+@module m22 | 🗄️ | 22 · Storage Classes | Module 22 — Storage Classes | auto · static · extern · register · Scope · Lifetime · Visibility
+@topic 🗄️ The Four Storage Classes
+@table
+Storage class | Default value | Scope | Lifetime | Stored in
+`auto` | Garbage | Block | Until the block ends | Stack
+`static` | 0 | Block (local) or file (global) | Whole program | Data segment
+`extern` | 0 | Global, across files | Whole program | Data segment
+`register` | Garbage | Block | Until the block ends | CPU register (a hint)
+@end
+@topic 🔁 auto vs static
+@code
+void counter() {
+    auto int a = 0;       // auto is the default for local variables
+    static int s = 0;     // initialized once, keeps its value between calls
+    a++; s++;
+    printf("auto = %d, static = %d\n", a, s);
+}
+// Calling counter() three times prints:
+// auto = 1, static = 1
+// auto = 1, static = 2
+// auto = 1, static = 3
+@end
+@topic 🌍 extern
+@code
+// file1.c
+int total = 100;               // definition
+
+// file2.c
+extern int total;              // declaration: defined in another file
+void show() { printf("%d\n", total); }
+@end
+@topic ⚡ register
+@code
+register int i;                // hint: keep i in a CPU register
+for (i = 0; i < 1000; i++) { /* ... */ }
+// &i is not allowed for a register variable
+@end
+@tip A `static` global variable or function is visible only in its own file — a simple way to keep helpers private.
+@practice
+1. Count how many times a function is called using a static variable.
+2. Share a global variable between two .c files using `extern`.
+3. Print the default values of uninitialized static and global variables.
+4. Explain why you cannot take the address of a register variable.
+@interview Storage classes decide a variable's scope, lifetime, default value and location: auto (local), static (keeps its value / file-private), extern (defined elsewhere) and register (speed hint).
+
+@module m23 | ⌨️ | 23 · Command-Line Args | Module 23 — Command-Line Arguments | argc · argv · Converting arguments
+@topic ⌨️ Passing Arguments to main
+Programs can receive values when they start, for example `program.exe hello 5`.
+@code
+#include <stdio.h>
+
+int main(int argc, char *argv[]) {
+    printf("Argument count: %d\n", argc);
+    for (int i = 0; i < argc; i++)
+        printf("argv[%d] = %s\n", i, argv[i]);
+    return 0;
+}
+@end
+@code bash
+gcc args.c -o program
+./program hello 5
+# Argument count: 3
+# argv[0] = ./program
+# argv[1] = hello
+# argv[2] = 5
+@end
+@table
+Name | Meaning
+`argc` | Number of arguments, including the program name
+`argv` | Array of strings; `argv[0]` is the program name
+`argv[argc]` | Always NULL
+@end
+@topic 🔢 Converting Arguments
+@code
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        printf("Usage: %s num1 num2\n", argv[0]);
+        return 1;
+    }
+    int a = atoi(argv[1]);           // use strtol for error checking
+    int b = atoi(argv[2]);
+    printf("Sum = %d\n", a + b);
+    return 0;
+}
+@end
+@info Every argument arrives as a **string**. Convert with `atoi`, `atof` or `strtol` before doing arithmetic.
+@practice
+1. Print all command-line arguments in reverse order.
+2. Write a calculator: `calc 10 + 5` prints 15.
+3. Copy a file whose source and destination names are given as arguments.
+4. Count the characters in every argument.
+@interview `main(int argc, char *argv[])` receives the number of arguments and an array of argument strings; `argv[0]` is the program name and values must be converted from strings.

@@ -1,0 +1,19 @@
+{% extends "web/base.html" %}
+{% block title %}Skills{% endblock %}
+{% block content %}
+<section class="wrap section">
+  <h1>Skills</h1>
+  {% regroup skills by get_category_display as groups %}
+  {% for g in groups %}
+  <h2>{{ g.grouper }}</h2>
+  <div class="grid">{% for s in g.list %}
+    <div class="card">
+      <h3>{{ s.name }}{% if s.proficiency_label %} <small class="badge">{{ s.proficiency_label }}</small>{% endif %}</h3>
+      {% if s.description %}<p class="muted">{{ s.description }}</p>{% endif %}
+      {% if s.proficiency_percent %}<div class="bar"><span style="width:{{ s.proficiency_percent }}%"></span></div>{% endif %}
+    </div>
+  {% endfor %}</div>
+  {% empty %}<p class="muted">No skills added yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}

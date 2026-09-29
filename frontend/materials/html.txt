@@ -1,0 +1,1035 @@
+@page 🌐 HTML Complete Study Material
+@intro HTML end to end — from your first page to forms, semantic HTML, SEO, accessibility, HTML5 APIs, responsive design and publishing, with examples and practice questions.
+
+@module m1 | 🧭 | 1 · Intro | Module 1 — Introduction to HTML | What is HTML · How the web works · HTML, CSS & JavaScript · Tools · First page
+@topic 📜 What is HTML?
+HTML (**HyperText Markup Language**) describes the **structure and content** of a web page using elements such as headings, paragraphs, links, images and forms. It is a markup language, not a programming language — it has no logic, loops or variables.
+@table
+Aspect | Detail
+Created by | Tim Berners-Lee, CERN, 1991
+Current version | HTML5 — a "living standard" maintained by WHATWG
+File extension | `.html` (or `.htm`)
+Runs in | Every web browser
+@end
+@topic 🌍 How a Web Page Reaches You
+1. You type a URL or click a link.
+2. The browser sends an HTTP request to a web server.
+3. The server sends back HTML (plus CSS, JavaScript and images).
+4. The browser parses the HTML into the **DOM** (Document Object Model) and draws the page.
+@topic 🧱 HTML, CSS and JavaScript
+@table
+Language | Role | Analogy
+HTML | Structure and content | The walls and rooms of a house
+CSS | Presentation: colours, layout, fonts | Paint and furniture
+JavaScript | Behaviour: interactivity, data | Electricity and plumbing
+@end
+@topic 🛠️ Tools You Need
+- A text editor: **VS Code** (with the Live Server extension) or any editor
+- A browser with **DevTools** (F12) to inspect elements
+- The W3C validator (validator.w3.org) to check your markup
+@topic 👋 Your First Page
+@code html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My First Page</title>
+</head>
+<body>
+  <h1>Hello, World!</h1>
+  <p>This is my first web page.</p>
+</body>
+</html>
+@end
+Save it as `index.html` and open it in a browser (double-click it, or right-click → Open with).
+@practice
+1. Create `index.html` with your name as a heading and a short paragraph about yourself.
+2. Open any website, press F12 and find its `<h1>` element in DevTools.
+3. Explain the role of HTML, CSS and JavaScript in one sentence each.
+4. What does the browser build from HTML before drawing the page?
+@interview HTML is the markup language that defines the structure of web pages; the browser parses it into the DOM, CSS styles it and JavaScript adds behaviour.
+
+@module m2 | 🏗️ | 2 · Structure | Module 2 — Document Structure & Syntax | DOCTYPE · html · head · body · Elements, tags & attributes · Nesting · Comments
+@topic 🔬 Anatomy of an Element
+@code html
+<a href="https://example.com" target="_blank">Visit site</a>
+<!-- opening tag with attributes  |  content  |  closing tag -->
+@end
+@table
+Term | Meaning | Example
+Tag | The markup inside angle brackets | `<p>`, `</p>`
+Element | Opening tag + content + closing tag | `<p>Hello</p>`
+Attribute | Extra information in the opening tag, as name="value" | `href="page.html"`
+Void (empty) element | Has no content and no closing tag | `<br>`, `<img>`, `<input>`, `<meta>`, `<hr>`
+@end
+@topic 🦴 The Page Skeleton
+@code html
+<!DOCTYPE html>                <!-- this is an HTML5 document -->
+<html lang="en">               <!-- root element; lang helps screen readers and SEO -->
+<head>                         <!-- information ABOUT the page (not shown) -->
+  <meta charset="UTF-8">       <!-- supports every character: ₹, é, தமிழ் -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page title</title>    <!-- shown on the browser tab -->
+</head>
+<body>                         <!-- everything visible goes here -->
+  ...
+</body>
+</html>
+@end
+@topic 🪆 Nesting Rules
+- Close elements in the reverse order you opened them: `<p><strong>Hi</strong></p>` ✅, `<p><strong>Hi</p></strong>` ❌
+- Tag names are case-insensitive, but **lowercase** is the convention.
+- Always quote attribute values: `class="card"`.
+- Extra spaces and line breaks in the source collapse into a single space on the page.
+@topic 💭 Comments
+@code html
+<!-- This is a comment. The browser ignores it. -->
+<!--
+  Comments can span
+  several lines.
+-->
+@end
+@warn Anyone can read comments with View Source — never put passwords or secrets in them.
+@practice
+1. Write the full HTML5 skeleton from memory.
+2. In `<img src="cat.jpg" alt="A cat">`, label the tag name, attribute names and attribute values.
+3. Fix the nesting: `<p>Hello <em>world</p></em>`.
+4. List five void elements.
+5. What goes wrong if you leave out `<meta charset="UTF-8">` and write Tamil text?
+@interview An HTML document starts with `<!DOCTYPE html>` and has one `<html>` root containing `<head>` (metadata) and `<body>` (visible content); elements are made of tags, content and attributes.
+
+@module m3 | ✍️ | 3 · Text | Module 3 — Text Formatting | Headings · Paragraphs · Line breaks · Emphasis · Quotes · Code · Entities
+@topic 🔠 Headings and Paragraphs
+@code html
+<h1>Main title (one per page)</h1>
+<h2>Section</h2>
+<h3>Sub-section</h3>             <!-- h1 to h6 -->
+<p>A paragraph of text.</p>
+<p>First line<br>Second line</p> <!-- br = line break -->
+<hr>                             <!-- thematic break (horizontal line) -->
+@end
+@tip Use headings in order (h1 → h2 → h3) to build an outline. Never choose a heading for its size — change size with CSS.
+@topic 🎨 Formatting Elements
+@table
+Element | Meaning | Displays as
+`<strong>` | Important text | Bold
+`<em>` | Stressed emphasis | Italic
+`<b>` / `<i>` | Bold / italic without extra importance | Bold / italic
+`<mark>` | Highlighted text | Yellow background
+`<small>` | Side comments, fine print | Smaller text
+`<del>` / `<ins>` | Deleted / inserted text | Strikethrough / underline
+`<sub>` / `<sup>` | Subscript / superscript | H₂O, x²
+`<abbr title="...">` | Abbreviation, full form on hover | Dotted underline
+@end
+@topic 💬 Quotes and Code
+@code html
+<blockquote cite="https://www.who.int">
+  Health is a state of complete physical, mental and social well-being.
+</blockquote>
+<p>He said <q>HTML is easy</q>.</p>
+
+<p>Use the <code>print()</code> function.</p>
+<pre>
+  Preformatted text
+      keeps   its spaces
+  and line breaks
+</pre>
+<p>Press <kbd>Ctrl</kbd> + <kbd>S</kbd> to save.</p>
+@end
+@topic 🔣 Character Entities
+@table
+Entity | Shows | Why
+`&lt;` / `&gt;` | < / > | Show angle brackets as text
+`&amp;` | & | Ampersand
+`&quot;` | " | A quote inside an attribute
+`&nbsp;` | (space) | Space that never breaks a line
+`&copy;` / `&reg;` | © / ® | Symbols
+`&#8377;` | ₹ | Any Unicode character by its number
+@end
+@practice
+1. Create a recipe page with a heading hierarchy h1 → h2 → h3.
+2. Write H₂SO₄ and a² + b² using sub and sup.
+3. Display the text `<p>` literally on the page using entities.
+4. Show a famous quote with blockquote and its author.
+5. What is the difference between `<strong>` and `<b>`?
+@interview Headings h1–h6 build the page outline, strong/em add meaning while b/i are only visual, and entities such as `&lt;` display reserved characters.
+
+@module m4 | 🔗 | 4 · Links | Module 4 — Links & Navigation | Anchor tag · Absolute vs relative URLs · New tab · Email & phone · Page anchors · Downloads
+@topic 🔗 The Anchor Element
+@code html
+<a href="https://www.google.com">Google</a>        <!-- absolute URL -->
+<a href="about.html">About me</a>                 <!-- same folder -->
+<a href="pages/contact.html">Contact</a>          <!-- sub-folder -->
+<a href="../index.html">Home</a>                  <!-- parent folder -->
+<a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+@end
+@table
+Path | Meaning
+`https://site.com/page` | Absolute: the full address
+`page.html` | Relative: same folder as the current file
+`folder/page.html` | Inside a sub-folder
+`../page.html` | One folder up
+`/page.html` | From the website root
+@end
+@topic ✉️ Special Links
+@code html
+<a href="mailto:hello@example.com?subject=Hi">Email me</a>
+<a href="tel:+919876543210">Call me</a>
+<a href="files/resume.pdf" download>Download my resume</a>
+
+<!-- Jump to a section on the same page -->
+<a href="#contact">Go to contact</a>
+<section id="contact">...</section>
+@end
+@topic 🧭 A Navigation Menu
+@code html
+<nav>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="projects.html">Projects</a></li>
+    <li><a href="contact.html" aria-current="page">Contact</a></li>
+  </ul>
+</nav>
+@end
+@warn Add `rel="noopener noreferrer"` whenever you use `target="_blank"`, and write meaningful link text — "Download the syllabus", not "click here".
+@practice
+1. Build a 3-page site (Home, About, Contact) connected by a navigation menu.
+2. Add a "Back to top" link at the bottom of a long page.
+3. Create email and phone links.
+4. Link to a PDF so it downloads instead of opening.
+5. Explain the difference between `about.html`, `/about.html` and `../about.html`.
+@interview The `<a>` element creates hyperlinks with href; paths can be absolute or relative, `#id` jumps within a page, and `target="_blank"` should be paired with `rel="noopener"`.
+
+@module m5 | 🖼️ | 5 · Media | Module 5 — Images, Audio & Video | img · alt · figure · picture & srcset · audio · video · iframe
+@topic 🖼️ Images
+@code html
+<img src="images/taj-mahal.jpg" alt="The Taj Mahal at sunrise"
+     width="600" height="400" loading="lazy">
+
+<figure>
+  <img src="chart.png" alt="Sales grew 40% from January to June">
+  <figcaption>Figure 1: Sales, Jan–Jun 2026</figcaption>
+</figure>
+@end
+@table
+Attribute | Purpose
+`src` | Image path or URL (required)
+`alt` | Text alternative for screen readers and broken images (required)
+`width` / `height` | Reserve space so the page doesn't jump while loading
+`loading="lazy"` | Load only when the image is about to scroll into view
+@end
+@topic 🗂️ Image Formats
+@table
+Format | Best for
+JPEG | Photos
+PNG | Screenshots and graphics that need transparency
+WebP / AVIF | Modern, smaller replacements for JPEG and PNG
+SVG | Logos and icons (vector: sharp at any size)
+GIF | Tiny animations (use video for anything large)
+@end
+@topic 📐 Responsive Images
+@code html
+<img src="photo-800.jpg"
+     srcset="photo-400.jpg 400w, photo-800.jpg 800w, photo-1600.jpg 1600w"
+     sizes="(max-width: 600px) 100vw, 50vw"
+     alt="Mountain view">
+
+<picture>
+  <source srcset="hero.avif" type="image/avif">
+  <source srcset="hero.webp" type="image/webp">
+  <img src="hero.jpg" alt="Team working together">   <!-- fallback -->
+</picture>
+@end
+@topic 🎬 Audio and Video
+@code html
+<audio controls>
+  <source src="song.mp3" type="audio/mpeg">
+  Your browser does not support audio.
+</audio>
+
+<video controls width="640" poster="thumbnail.jpg">
+  <source src="intro.mp4" type="video/mp4">
+  <track src="captions-en.vtt" kind="captions" srclang="en" label="English">
+</video>
+@end
+@table
+Attribute | Effect
+`controls` | Shows play, pause and volume
+`autoplay` | Starts automatically (browsers also require `muted`)
+`muted` / `loop` | No sound / repeat forever
+`poster` | Image shown before the video plays
+@end
+@topic 📺 Embedding with iframe
+@code html
+<iframe width="560" height="315"
+        src="https://www.youtube.com/embed/VIDEO_ID"
+        title="HTML tutorial video" loading="lazy" allowfullscreen></iframe>
+@end
+@tip Write alt text that explains the image's purpose. Use `alt=""` for purely decorative images so screen readers skip them.
+@practice
+1. Create a photo gallery of 6 images using figure and figcaption.
+2. Add a video with controls, a poster image and captions.
+3. Serve a WebP image with a JPEG fallback using picture.
+4. Embed a YouTube video or Google Map with iframe.
+5. Write good alt text for a company logo, a bar chart and a decorative divider.
+@interview `<img>` needs src and alt; width and height prevent layout shift; srcset and `<picture>` deliver responsive images; `<audio>` and `<video>` embed media with controls.
+
+@module m6 | 📋 | 6 · Lists | Module 6 — Lists | Unordered · Ordered · Nested · Description lists
+@topic 📋 Unordered and Ordered Lists
+@code html
+<ul>                         <!-- bullets: order doesn't matter -->
+  <li>HTML</li>
+  <li>CSS</li>
+  <li>JavaScript</li>
+</ul>
+
+<ol>                         <!-- numbers: order matters -->
+  <li>Install VS Code</li>
+  <li>Create index.html</li>
+  <li>Open it in a browser</li>
+</ol>
+
+<ol type="A" start="3" reversed>   <!-- C, B, A -->
+  <li>Third</li><li>Second</li><li>First</li>
+</ol>
+@end
+@table
+Attribute (on `<ol>`) | Values
+`type` | `1` (default), `A`, `a`, `I`, `i`
+`start` | The first number, e.g. `start="5"`
+`reversed` | Count down instead of up
+@end
+@topic 🪆 Nested Lists
+@code html
+<ul>
+  <li>Frontend
+    <ul>
+      <li>HTML</li>
+      <li>CSS</li>
+    </ul>
+  </li>
+  <li>Backend</li>
+</ul>
+@end
+@info A nested list goes **inside an `<li>`**, not directly inside `<ul>`.
+@topic 📖 Description Lists
+@code html
+<dl>
+  <dt>HTML</dt>
+  <dd>Structure of web pages</dd>
+  <dt>CSS</dt>
+  <dd>Style of web pages</dd>
+</dl>
+@end
+@practice
+1. Write your daily routine as an ordered list.
+2. Create a nested list of courses and their topics.
+3. Build a glossary of 5 web terms with a description list.
+4. Make an ordered list with Roman numerals that starts at 4.
+@interview Use `<ul>` for unordered items, `<ol>` for sequences and `<dl>` for term–description pairs; nested lists belong inside an `<li>`.
+
+@module m7 | 📊 | 7 · Tables | Module 7 — Tables | table · tr · th · td · thead · tbody · tfoot · caption · colspan · rowspan
+@topic 📊 A Complete Table
+@code html
+<table>
+  <caption>Semester marks</caption>
+  <thead>
+    <tr><th scope="col">Subject</th><th scope="col">Marks</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Maths</td><td>92</td></tr>
+    <tr><td>Physics</td><td>85</td></tr>
+  </tbody>
+  <tfoot>
+    <tr><th scope="row">Total</th><td>177</td></tr>
+  </tfoot>
+</table>
+@end
+@table
+Element | Purpose
+`<table>` | The table
+`<caption>` | Title of the table
+`<thead>` / `<tbody>` / `<tfoot>` | Header, body and footer row groups
+`<tr>` | A row
+`<th>` | Header cell (bold and centred by default)
+`<td>` | Data cell
+@end
+@topic 🔀 Merging Cells
+@code html
+<table>
+  <tr><th colspan="2">Name</th><th rowspan="2">Age</th></tr>
+  <tr><th>First</th><th>Last</th></tr>
+  <tr><td>Naveen</td><td>Kumar</td><td>21</td></tr>
+</table>
+@end
+- `colspan="2"` stretches a cell across 2 columns.
+- `rowspan="2"` stretches a cell down 2 rows.
+@warn Use tables only for **tabular data**, never for page layout — use CSS Grid or Flexbox for layout.
+@practice
+1. Create your class timetable (days × periods) with a caption.
+2. Build a price list with thead, tbody and a tfoot total.
+3. Recreate a mark sheet that uses both colspan and rowspan.
+4. Why should header cells use the `scope` attribute?
+@interview Tables are for tabular data; `<th>` marks headers (with scope for accessibility), thead/tbody/tfoot group rows, and colspan/rowspan merge cells.
+
+@module m8 | 📝 | 8 · Forms | Module 8 — Forms: Basics | form · label · Input types · name & value · Buttons
+@topic 📝 A Simple Form
+@code html
+<form action="/register" method="post">
+  <label for="name">Full name</label>
+  <input type="text" id="name" name="name" placeholder="Your name" required>
+
+  <label for="email">Email</label>
+  <input type="email" id="email" name="email" required>
+
+  <label for="pwd">Password</label>
+  <input type="password" id="pwd" name="password" minlength="8" required>
+
+  <button type="submit">Register</button>
+</form>
+@end
+- `action` is where the data is sent; `method` is how (GET or POST).
+- `name` is the key sent to the server; `id` connects the field to its `<label for>`.
+@topic 🎛️ Input Types
+@table
+Type | Use | Keyboard / widget
+`text` | Short text | Normal keyboard
+`email` | Email address (validated) | Keyboard with @
+`password` | Hidden text | Masked characters
+`number` | Numbers (`min`, `max`, `step`) | Number keypad
+`tel` | Phone number | Phone keypad
+`url` | Web address | Keyboard with .com
+`date` / `time` / `datetime-local` | Dates and times | Date picker
+`checkbox` | Several on/off choices | Tick box
+`radio` | One choice from a group (same `name`) | Round button
+`file` | Upload files (`accept`, `multiple`) | File chooser
+`range` | A value on a slider | Slider
+`color` | Pick a colour | Colour picker
+`search` | Search box | Keyboard with a Search key
+`hidden` | Invisible value sent with the form | —
+@end
+@topic ☑️ Checkboxes and Radio Buttons
+@code html
+<p>Gender:</p>
+<label><input type="radio" name="gender" value="male"> Male</label>
+<label><input type="radio" name="gender" value="female"> Female</label>
+
+<p>Skills:</p>
+<label><input type="checkbox" name="skills" value="html" checked> HTML</label>
+<label><input type="checkbox" name="skills" value="css"> CSS</label>
+@end
+@topic 🔘 Buttons
+@table
+Button | Behaviour
+`<button type="submit">` | Sends the form (the default inside a form)
+`<button type="reset">` | Clears all fields
+`<button type="button">` | Does nothing by itself; used with JavaScript
+@end
+@tip Give every field a visible `<label>`. Clicking the label focuses the field, and screen readers read it aloud.
+@practice
+1. Build a login form with email, password and a "Remember me" checkbox.
+2. Create a feedback form with a 1–5 rating using radio buttons.
+3. Add a file upload that accepts only images.
+4. Add a colour picker and a volume slider from 0 to 100.
+5. What is the difference between `id` and `name` on an input?
+@interview A `<form>` sends named field values to its action URL using GET or POST; input types give built-in validation and the right mobile keyboard, and every field needs a `<label>`.
+
+@module m9 | ✅ | 9 · Validation | Module 9 — Forms: Advanced & Validation | select · textarea · fieldset · datalist · Validation attributes · GET vs POST
+@topic 🧩 More Form Controls
+@code html
+<label for="city">City</label>
+<select id="city" name="city">
+  <option value="">-- Choose --</option>
+  <optgroup label="Tamil Nadu">
+    <option value="chennai">Chennai</option>
+    <option value="madurai" selected>Madurai</option>
+  </optgroup>
+</select>
+
+<label for="msg">Message</label>
+<textarea id="msg" name="message" rows="4" cols="40"></textarea>
+
+<label for="lang">Favourite language</label>
+<input list="langs" id="lang" name="lang">
+<datalist id="langs">
+  <option value="Python"><option value="JavaScript"><option value="C">
+</datalist>
+
+<fieldset>
+  <legend>Address</legend>
+  <input name="street" placeholder="Street">
+  <input name="pincode" placeholder="PIN code">
+</fieldset>
+@end
+@topic ✅ Built-in Validation
+@code html
+<input type="text" name="username" required minlength="4" maxlength="15">
+<input type="number" name="age" min="18" max="60">
+<input type="text" name="pincode" pattern="[0-9]{6}" title="6-digit PIN code">
+<input type="email" name="email" autocomplete="email">
+<input type="text" name="id" value="STU-101" readonly>
+<input type="text" name="coupon" disabled>
+@end
+@table
+Attribute | Rule
+`required` | The field must be filled
+`minlength` / `maxlength` | Text length limits
+`min` / `max` / `step` | Number and date limits
+`pattern` | A regular expression the value must match
+`readonly` | Can't be edited, but is submitted
+`disabled` | Can't be edited and is **not** submitted
+`autocomplete` | Lets the browser fill saved values (`name`, `email`, `off`…)
+`novalidate` (on the form) | Turns off browser validation
+@end
+@topic 📮 GET vs POST
+@table
+GET | POST
+Data goes in the URL: `?q=html&page=2` | Data goes in the request body
+Visible, bookmarkable and cached | Not shown in the URL
+Limited length | Large data and file uploads
+Searches and filters | Logins, sign-ups and payments
+@end
+@warn Browser validation helps users but can be bypassed. The **server must always validate again**.
+@practice
+1. Build a job application form with fieldsets for personal details, education and a resume upload.
+2. Validate an Indian mobile number (10 digits starting with 6–9) with pattern.
+3. Add a country dropdown grouped by continent with optgroup.
+4. Create a search form that uses GET and check the query in the URL.
+5. When would you use `readonly` instead of `disabled`?
+@interview select, textarea, datalist and fieldset extend forms; required, pattern and min/max give built-in validation; GET puts data in the URL while POST sends it in the request body.
+
+@module m10 | 🏛️ | 10 · Semantic | Module 10 — Semantic HTML | header · nav · main · section · article · aside · footer · Block vs inline · div & span
+@topic 🏛️ Why Semantic HTML?
+Semantic elements describe their **meaning**, not their look. They help screen readers, search engines and other developers understand the page.
+@code html
+<body>
+  <header>
+    <h1>My Blog</h1>
+    <nav>...</nav>
+  </header>
+
+  <main>
+    <article>
+      <h2>Learning HTML</h2>
+      <p>Published <time datetime="2026-09-25">25 Sep 2026</time></p>
+      <section>
+        <h3>Why HTML?</h3>
+        <p>...</p>
+      </section>
+    </article>
+    <aside>Related posts</aside>
+  </main>
+
+  <footer>
+    <address>Contact: <a href="mailto:me@example.com">me@example.com</a></address>
+  </footer>
+</body>
+@end
+@table
+Element | Use for
+`<header>` | Intro area: logo, title, navigation
+`<nav>` | Main navigation links
+`<main>` | The main content (one per page)
+`<article>` | Self-contained content: blog post, news story, product card
+`<section>` | A themed group of content, usually with a heading
+`<aside>` | Related side content: sidebar, tips
+`<footer>` | Closing information: copyright, contacts, links
+`<figure>` / `<figcaption>` | Image, chart or code with a caption
+`<time>` | Dates and times in machine-readable form
+@end
+@topic 📦 Block vs Inline Elements
+@table
+Block elements | Inline elements
+Start on a new line and take the full width | Sit inside a line and take only the width they need
+`<div>`, `<p>`, `<h1>`–`<h6>`, `<ul>`, `<section>` | `<span>`, `<a>`, `<strong>`, `<img>`, `<code>`
+Can contain block and inline elements | Should contain only inline content
+@end
+@topic 🧺 div and span
+@code html
+<div class="card">                                 <!-- generic block container -->
+  <p>Price: <span class="price">₹499</span></p>    <!-- generic inline container -->
+</div>
+@end
+@tip Reach for a semantic element first; use `<div>` and `<span>` only when nothing more specific fits.
+@topic 🎁 Interactive Elements Without JavaScript
+@code html
+<details>
+  <summary>What is HTML?</summary>
+  <p>HTML is the markup language of the web.</p>
+</details>
+
+<dialog id="info" open>
+  <p>This is a dialog box.</p>
+</dialog>
+@end
+@practice
+1. Convert a "div soup" layout (header, menu, content, sidebar, footer) into semantic elements.
+2. Build a blog post with article, section, time and figure.
+3. Make an FAQ page with details and summary.
+4. List 5 block elements and 5 inline elements.
+@interview Semantic elements such as header, nav, main, article and footer describe meaning, which improves accessibility and SEO; div and span are generic containers for when nothing more specific fits.
+
+@module m11 | 🏷️ | 11 · Attributes | Module 11 — Attributes | Global attributes · id vs class · data-* · Boolean attributes
+@topic 🌐 Global Attributes
+Global attributes work on **every** element.
+@table
+Attribute | Purpose | Example
+`id` | Unique name for one element | `id="contact"`
+`class` | Group name(s) for styling and scripting | `class="card featured"`
+`style` | Inline CSS | `style="color: green"`
+`title` | Tooltip text | `title="More info"`
+`lang` | Language of the content | `lang="ta"`
+`hidden` | Hides the element | `<p hidden>`
+`tabindex` | Keyboard focus order | `tabindex="0"`
+`contenteditable` | Lets the user edit the text | `contenteditable="true"`
+`dir` | Text direction | `dir="rtl"`
+`data-*` | Custom data for JavaScript | `data-price="499"`
+@end
+@topic 🆔 id vs class
+@table
+id | class
+Unique: one element per page | Reusable on many elements
+`#menu` in CSS | `.card` in CSS
+One id per element | Several classes: `class="btn btn-primary"`
+Can be a link target: `href="#menu"` | Mainly for styling groups
+@end
+@topic 🗃️ Custom Data Attributes
+@code html
+<button class="add-to-cart" data-product-id="42" data-price="499">Add to cart</button>
+
+<script>
+  const btn = document.querySelector(".add-to-cart");
+  console.log(btn.dataset.productId);   // "42"
+  console.log(btn.dataset.price);       // "499"
+</script>
+@end
+@topic ☑️ Boolean Attributes
+Their presence alone means "true" — no value is needed.
+@code html
+<input type="checkbox" checked>
+<input type="text" disabled>
+<video src="clip.mp4" controls autoplay muted loop></video>
+@end
+@practice
+1. Give three paragraphs a shared class and one of them a unique id.
+2. Store a product's price and stock in data-* attributes and read them in JavaScript.
+3. Make a paragraph editable in the browser.
+4. Why must an id be unique on a page?
+@interview Global attributes like id, class, title, lang, hidden and data-* work on every element; id is unique while class is reusable, and data-* stores custom values for JavaScript.
+
+@module m12 | 🔎 | 12 · Head & SEO | Module 12 — Head, Meta Tags & SEO | meta · title · description · Open Graph · favicon · link · Script loading
+@topic 🧠 What Goes in the head
+@code html
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Course for Beginners | Naveen</title>
+  <meta name="description" content="Learn HTML from scratch with examples and practice questions.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://example.com/html-course">
+
+  <!-- Preview when shared on social media (Open Graph) -->
+  <meta property="og:title" content="HTML Course for Beginners">
+  <meta property="og:description" content="Learn HTML with examples.">
+  <meta property="og:image" content="https://example.com/preview.png">
+
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/app.js" defer></script>
+</head>
+@end
+@table
+Tag | Purpose
+`<title>` | Tab text and the headline in search results (about 50–60 characters)
+`meta description` | Summary shown in search results (about 150–160 characters)
+`meta viewport` | Makes the page scale correctly on phones
+`meta robots` | Tells search engines whether to index the page
+`link rel="canonical"` | The preferred URL when duplicates exist
+`og:` meta tags | Title, text and image when shared on social media
+`link rel="icon"` | The favicon shown on the tab
+@end
+@topic ⏱️ Loading Scripts: defer vs async
+@table
+Attribute | Downloads | Runs | Use for
+(none) in the head | Blocks the page | Immediately | Avoid
+`defer` | In parallel | After the HTML is parsed, in order | Your own scripts
+`async` | In parallel | As soon as it arrives, in any order | Independent scripts (analytics)
+@end
+@topic 📈 SEO Basics in HTML
+- One clear `<h1>` per page and a logical heading order
+- A unique, descriptive `<title>` and meta description on every page
+- Meaningful link text and `alt` text on images
+- Semantic elements and fast-loading pages
+- Readable URLs: `/html-course`, not `/page?id=123`
+@practice
+1. Write a complete head for your portfolio home page, including Open Graph tags.
+2. Add a favicon and check it on the browser tab.
+3. Move a script from the end of the body into the head using defer.
+4. Write a title and meta description for a pizza shop's menu page.
+@interview The `<head>` holds metadata — charset, viewport, title, description and links to CSS and scripts; good titles, descriptions and semantic markup help SEO, and defer loads scripts without blocking the page.
+
+@module m13 | ♿ | 13 · Accessibility | Module 13 — Accessibility (a11y) | alt text · Labels · Headings · Landmarks · Keyboard · ARIA basics
+@topic ♿ Why Accessibility?
+Accessible pages work for everyone — people using screen readers, only a keyboard, magnifiers or voice control. Many countries require it by law, and it also improves SEO.
+@topic ✅ Accessibility Checklist
+- Every image has meaningful `alt` text (`alt=""` if decorative)
+- Every form field has a `<label>`
+- Headings follow order and describe their sections
+- Semantic landmarks: `header`, `nav`, `main`, `footer`
+- Everything clickable is a `<button>` or `<a>`, so it works with a keyboard
+- The page language is set: `<html lang="en">`
+- Strong colour contrast, and colour is never the only way information is shown
+- Captions on videos
+@topic ⚖️ Bad vs Good
+@code html
+<!-- ❌ Bad -->
+<div onclick="save()">Save</div>
+<img src="logo.png">
+<input placeholder="Email">
+
+<!-- ✅ Good -->
+<button type="button" onclick="save()">Save</button>
+<img src="logo.png" alt="Naveen Tech logo">
+<label for="email">Email</label> <input id="email" type="email">
+@end
+@topic 🗣️ ARIA Basics
+ARIA attributes give assistive technology extra information when HTML alone is not enough.
+@code html
+<button aria-label="Close menu">✕</button>
+<nav aria-label="Breadcrumb">...</nav>
+<div role="alert">Your changes were saved.</div>
+<button aria-expanded="false" aria-controls="faq1">Show answer</button>
+<a href="#main" class="skip-link">Skip to main content</a>
+@end
+@warn The first rule of ARIA: **don't use ARIA if a native HTML element already does the job.** A real `<button>` beats `<div role="button">`.
+@practice
+1. Audit a page with Lighthouse (DevTools → Lighthouse → Accessibility) and fix three issues.
+2. Use a website with only the Tab, Shift+Tab and Enter keys.
+3. Add a "Skip to main content" link to your page.
+4. Rewrite a clickable div as a proper button.
+@interview Accessibility means everyone can use the page: use semantic HTML, alt text, labels, logical headings and keyboard-friendly controls, and add ARIA only when native HTML is not enough.
+
+@module m14 | 🎨 | 14 · HTML + CSS | Module 14 — HTML with CSS | Inline · Internal · External CSS · Selectors · Classes & ids
+@topic 🎨 Three Ways to Add CSS
+@code html
+<!-- 1. Inline: on one element (avoid) -->
+<p style="color: green; font-size: 18px;">Inline style</p>
+
+<!-- 2. Internal: inside the head of one page -->
+<style>
+  p { color: navy; }
+</style>
+
+<!-- 3. External: one file for the whole site (best) -->
+<link rel="stylesheet" href="css/style.css">
+@end
+@table
+Method | Scope | When to use
+Inline | One element | Quick tests only
+Internal | One page | Single-page demos
+External | The whole site | Real projects (cached and reusable)
+@end
+@topic 🎯 Selectors Connect HTML and CSS
+@code html
+<h1 id="title">Welcome</h1>
+<p class="intro">Hello!</p>
+<p class="intro highlight">Learn HTML.</p>
+
+<style>
+  h1 { color: green; }              /* element selector */
+  #title { text-align: center; }    /* id selector */
+  .intro { font-size: 18px; }       /* class selector */
+  .highlight { background: yellow; }
+</style>
+@end
+@info When rules conflict: inline style beats id, id beats class, and class beats element. With equal strength, the later rule wins.
+@practice
+1. Style the same page in all three ways (inline, internal, external) and compare.
+2. Create a `.card` class and apply it to three different elements.
+3. Link one stylesheet to two HTML pages.
+@interview CSS can be inline, internal or external — external stylesheets are preferred — and elements are targeted with element, class (`.name`) and id (`#name`) selectors.
+
+@module m15 | ⚡ | 15 · HTML + JS | Module 15 — HTML with JavaScript | script tag · DOM · Selecting elements · Events · Changing content
+@topic ⚡ Adding JavaScript
+@code html
+<!-- External file (best), runs after the HTML is parsed -->
+<script src="js/app.js" defer></script>
+
+<!-- Internal -->
+<script>
+  console.log("Page loaded");
+</script>
+
+<noscript>Please enable JavaScript to use this page.</noscript>
+@end
+@topic 🌳 The DOM: Reading and Changing the Page
+@code html
+<h2 id="greeting">Hello</h2>
+<input id="name" placeholder="Your name">
+<button id="btn" type="button">Greet me</button>
+<ul id="list"></ul>
+
+<script>
+  const btn = document.getElementById("btn");
+  btn.addEventListener("click", () => {
+    const name = document.querySelector("#name").value;
+    document.getElementById("greeting").textContent = `Hello, ${name}!`;
+
+    const li = document.createElement("li");   // add a new element
+    li.textContent = name;
+    document.getElementById("list").append(li);
+  });
+</script>
+@end
+@table
+Method | Purpose
+`getElementById("id")` | Find one element by its id
+`querySelector(".css")` / `querySelectorAll()` | Find elements with any CSS selector
+`element.textContent` / `.innerHTML` | Read or change the content
+`element.classList.add("x")` | Add a CSS class
+`addEventListener("click", fn)` | Run code when an event happens
+`createElement()` / `append()` | Build and insert new elements
+@end
+@topic 🖱️ Common Events
+@table
+Event | Fires when
+`click` | The element is clicked
+`input` / `change` | A field's value changes
+`submit` | A form is submitted
+`keydown` | A key is pressed
+`DOMContentLoaded` / `load` | The HTML / the whole page has finished loading
+`mouseover` | The pointer moves onto an element
+@end
+@warn Show user input with `textContent`. Putting user input into `innerHTML` can run injected scripts (XSS).
+@practice
+1. Build a counter with + and − buttons.
+2. Show a live character count under a textarea.
+3. Validate a form with JavaScript and show an error under each field.
+4. Toggle dark mode by adding a class to `<body>`.
+5. Build a to-do list that adds and removes items.
+@interview The browser turns HTML into the DOM, which JavaScript reads and changes with methods like querySelector and addEventListener; load scripts with defer and prefer textContent over innerHTML for user data.
+
+@module m16 | 🚀 | 16 · HTML5 APIs | Module 16 — HTML5 APIs & Advanced Elements | canvas · SVG · localStorage · Geolocation · Drag & drop · template
+@topic 🖌️ canvas and SVG
+@code html
+<canvas id="c" width="200" height="100"></canvas>
+<script>
+  const ctx = document.getElementById("c").getContext("2d");
+  ctx.fillStyle = "green";
+  ctx.fillRect(10, 10, 80, 50);        // draw a rectangle in pixels
+</script>
+
+<svg width="100" height="100">
+  <circle cx="50" cy="50" r="40" fill="orange" />   <!-- vector shape -->
+</svg>
+@end
+@table
+canvas | SVG
+Pixel-based (raster) | Shape-based (vector)
+Drawn with JavaScript | Written as markup
+Great for games and charts with many points | Great for icons, logos and diagrams
+Blurry when scaled up | Sharp at any size
+@end
+@topic 💾 Web Storage
+@code html
+<script>
+  localStorage.setItem("theme", "dark");        // stays after the browser closes
+  console.log(localStorage.getItem("theme"));   // "dark"
+  sessionStorage.setItem("step", "2");          // cleared when the tab closes
+  localStorage.removeItem("theme");
+</script>
+@end
+@topic 📍 Geolocation and Drag & Drop
+@code html
+<script>
+  navigator.geolocation.getCurrentPosition(
+    (pos) => console.log(pos.coords.latitude, pos.coords.longitude),
+    () => console.log("Permission denied")
+  );
+</script>
+
+<div draggable="true" id="item">Drag me</div>
+<div id="box" style="border: 2px dashed; padding: 20px">Drop here</div>
+<script>
+  const box = document.getElementById("box");
+  document.getElementById("item").addEventListener("dragstart", (e) => e.dataTransfer.setData("text", e.target.id));
+  box.addEventListener("dragover", (e) => e.preventDefault());
+  box.addEventListener("drop", (e) => box.append(document.getElementById(e.dataTransfer.getData("text"))));
+</script>
+@end
+@topic 🧩 The template Element
+@code html
+<template id="card-tpl">
+  <div class="card"><h3></h3><p></p></div>
+</template>
+
+<script>
+  const card = document.getElementById("card-tpl").content.cloneNode(true);
+  card.querySelector("h3").textContent = "HTML";
+  document.body.append(card);
+</script>
+@end
+@tip Geolocation, the camera and notifications need the user's permission and only work on HTTPS (or localhost).
+@practice
+1. Draw a house (a square and a triangle) on a canvas.
+2. Save a user's name in localStorage and greet them on their next visit.
+3. Show the user's latitude and longitude when a button is clicked.
+4. Build a simple Kanban board where cards can be dragged between columns.
+@interview HTML5 added APIs such as canvas (pixel drawing), SVG (vector graphics), localStorage/sessionStorage (browser storage), geolocation and drag-and-drop, plus `<template>` for reusable markup.
+
+@module m17 | 📱 | 17 · Responsive | Module 17 — Responsive HTML | Viewport · Fluid media · Responsive images · Mobile-first
+@topic 📱 The Viewport Meta Tag
+@code html
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+@end
+Without it, phones draw the page at desktop width (about 980px) and zoom out, so the text becomes tiny.
+@topic 🌊 Fluid Images, Video and Tables
+@code html
+<style>
+  img, video { max-width: 100%; height: auto; }   /* never wider than the screen */
+  .table-wrap { overflow-x: auto; }               /* wide tables scroll sideways */
+  .video { aspect-ratio: 16 / 9; }
+  .video iframe { width: 100%; height: 100%; }
+</style>
+
+<div class="table-wrap"><table>...</table></div>
+<div class="video"><iframe src="https://www.youtube.com/embed/VIDEO_ID" title="Demo"></iframe></div>
+@end
+@topic 📐 Mobile-First Media Queries
+@code html
+<style>
+  .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }                 /* phones */
+  @media (min-width: 768px)  { .grid { grid-template-columns: 1fr 1fr; } }         /* tablets */
+  @media (min-width: 1024px) { .grid { grid-template-columns: repeat(3, 1fr); } }  /* laptops */
+</style>
+@end
+@table
+Device | Common width
+Phone | 360–430px
+Tablet | 768–1024px
+Laptop / desktop | 1280px and wider
+@end
+@tip Test with DevTools device mode (Ctrl + Shift + M in Chrome and Edge) and on a real phone.
+@practice
+1. Make an image gallery with 1 column on phones, 2 on tablets and 3 on laptops.
+2. Make a wide table scroll sideways on small screens.
+3. Embed a YouTube video that keeps a 16:9 shape at any width.
+4. Remove the viewport tag and compare the page on a phone.
+@interview Responsive pages need the viewport meta tag, fluid images (max-width: 100%), responsive images with srcset or picture, and mobile-first CSS media queries.
+
+@module m18 | 🧹 | 18 · Best Practices | Module 18 — Best Practices, Validation & Deployment | Clean code · Validation · Performance · Folder structure · Publishing
+@topic 🧹 Clean HTML Checklist
+- Lowercase tags and attributes, quoted values, consistent 2-space indentation
+- Close every non-void element and nest correctly
+- One `<h1>`, logical headings and semantic elements
+- `alt` on images and a `<label>` for every input
+- Separate files: HTML for structure, CSS for style, JavaScript for behaviour
+- Lowercase file names without spaces: `about-me.html`
+@topic 📁 Project Folder Structure
+@code bash
+my-website/
+├── index.html
+├── about.html
+├── contact.html
+├── css/
+│   └── style.css
+├── js/
+│   └── app.js
+└── images/
+    ├── logo.svg
+    └── hero.webp
+@end
+@topic 🔍 Validate and Test
+- W3C Markup Validator: validator.w3.org
+- Lighthouse in DevTools: performance, accessibility and SEO scores
+- Test in Chrome, Firefox and Edge, and on a phone
+@topic ⚡ Performance Tips
+- Compress images, use WebP/AVIF, and always set `width` and `height`
+- `loading="lazy"` on images and iframes further down the page
+- `defer` on scripts; stylesheets in the head
+- Minify CSS and JavaScript for production
+@topic 🌍 Publish Your Site for Free
+@table
+Host | How
+GitHub Pages | Push to a GitHub repository → Settings → Pages
+Netlify | Drag and drop your folder onto app.netlify.com/drop
+Vercel | Import the GitHub repository; no build step needed
+Render | New → Static Site, publish directory `.`
+@end
+@practice
+1. Validate your portfolio with the W3C validator and fix every error.
+2. Run Lighthouse and get Accessibility and SEO scores above 90.
+3. Organise a project into the folder structure above.
+4. Publish your site on GitHub Pages or Netlify and share the link.
+@interview Good HTML is valid, semantic, accessible and well organised; check it with the W3C validator and Lighthouse, optimise images and scripts, and deploy static sites to GitHub Pages or Netlify.
+
+@module m19 | 🏆 | 19 · Projects | Module 19 — End-to-End Projects | Portfolio · Registration form · Blog · Landing page · Restaurant site · Quiz
+@topic 🏆 Projects to Build
+@table
+Project | You practise
+Personal portfolio | Semantic layout, navigation, images, links, contact form
+Student registration form | Every input type, fieldset, select, validation
+Blog page | article, section, time, figure and a comment form
+Product landing page | Hero section, features, pricing table, responsive images, SEO head
+Restaurant website | Menu table, gallery, map iframe, opening hours, several linked pages
+Online resume | Headings, lists, description lists, print-friendly layout
+Quiz app | Forms, radio buttons, JavaScript scoring
+Tribute page | Images, blockquote, links, responsive layout
+@end
+@topic 🚀 Starter: Portfolio Page
+@code html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Naveen | Web Developer</title>
+  <meta name="description" content="Portfolio of Naveen, a web developer.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Naveen</h1>
+    <nav>
+      <a href="#about">About</a> <a href="#projects">Projects</a> <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="about">
+      <h2>About me</h2>
+      <img src="images/me.jpg" alt="Photo of Naveen" width="200" height="200">
+      <p>I build websites with HTML, CSS and JavaScript.</p>
+    </section>
+
+    <section id="projects">
+      <h2>Projects</h2>
+      <article>
+        <h3>Weather App</h3>
+        <p>Shows live weather using a public API.</p>
+        <a href="https://github.com/" target="_blank" rel="noopener noreferrer">View code</a>
+      </article>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <form action="https://formspree.io/f/your-id" method="post">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required>
+        <label for="message">Message</label>
+        <textarea id="message" name="message" required></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </section>
+  </main>
+
+  <footer><p>&copy; 2026 Naveen</p></footer>
+</body>
+</html>
+@end
+@practice
+1. Finish the portfolio: add three projects, a skills list and a downloadable resume.
+2. Build the student registration form with at least 10 different fields and validation.
+3. Build a responsive landing page and score 90+ in Lighthouse.
+4. Publish one project online and add the link to your portfolio.
+@interview An end-to-end HTML project combines semantic structure, accessible forms and media, a proper head for SEO, responsive design, validation and deployment.

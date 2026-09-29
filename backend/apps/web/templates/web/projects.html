@@ -1,0 +1,17 @@
+{% extends "web/base.html" %}
+{% block title %}Projects{% endblock %}
+{% block content %}
+<section class="wrap section">
+  <h1>Projects</h1>
+  <form class="filters">
+    <input name="q" value="{{ q }}" placeholder="Search projects or technologies">
+    <select name="category" data-autosubmit>
+      <option value="">All categories</option>
+      {% for value, label in categories %}<option value="{{ value }}" {% if request.GET.category == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <button class="btn">Filter</button>
+  </form>
+  <div class="grid">{% for p in page %}{% include "web/_project_card.html" %}{% empty %}<p class="muted">No projects found.</p>{% endfor %}</div>
+  {% include "web/_pagination.html" %}
+</section>
+{% endblock %}

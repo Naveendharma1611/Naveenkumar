@@ -1,0 +1,2111 @@
+@page 🌿 Django Zero to Hero
+@intro Django from zero to hero, in order — build one complete blog step by step: URLs, views, templates, models and the ORM, admin, forms, authentication, REST APIs, testing, security, performance and deployment.
+
+@module m1 | 🧭 | 1 · Intro | Module 1 — Introduction to Django | What is Django · MVT architecture · Request–response cycle · Django vs Flask vs FastAPI
+@topic 🌿 What is Django?
+Django is a high-level **Python web framework** for building secure, maintainable websites quickly. It follows the **"batteries included"** idea: authentication, an admin panel, an ORM, forms, security protections and much more come built in.
+@table
+Aspect | Detail
+Created | 2003–2005 at the Lawrence Journal-World newspaper (Adrian Holovaty, Simon Willison)
+Maintained by | The Django Software Foundation (open source, BSD licence)
+Language | Python
+Used by | Instagram, Pinterest, Mozilla, Disqus, Eventbrite, NASA
+Motto | "The web framework for perfectionists with deadlines"
+@end
+@topic ⚡ Key Features
+- **ORM** — work with the database using Python classes instead of SQL
+- **Admin panel** — a complete content-management UI generated from your models
+- **Authentication** — users, passwords, sessions, permissions and groups
+- **Forms** — validation and HTML rendering
+- **Security** — protection against SQL injection, XSS, CSRF and clickjacking by default
+- **Scalable ecosystem** — Django REST Framework, Celery, Channels and thousands of packages
+@topic 🏛️ MVT Architecture
+@table
+Part | Role | File
+Model | Data and business rules; talks to the database through the ORM | `models.py`
+View | Receives a request, runs the logic, returns a response | `views.py`
+Template | The HTML presentation with placeholders | `templates/*.html`
+URL dispatcher | Maps each URL to a view | `urls.py`
+@end
+@info MVT is Django's version of MVC: Django's **view** plays the role of the MVC controller, and the **template** is the MVC view.
+@topic 🔄 The Request–Response Cycle
+1. The browser requests a URL, for example `/post/hello-django/`.
+2. Middleware processes the request (sessions, security, authentication).
+3. `urls.py` matches the URL and calls the right view.
+4. The view uses models (the ORM) to read or save data.
+5. The view renders a template with that data.
+6. An `HttpResponse` travels back through the middleware to the browser.
+@topic ⚖️ Django vs Flask vs FastAPI
+@table
+Feature | Django | Flask | FastAPI
+Style | Full-stack, batteries included | Micro-framework, add what you need | API-first, async
+Admin, ORM, auth built in | Yes | No (extensions) | No
+Best for | Content sites, dashboards, SaaS, large apps | Small apps, custom stacks | High-performance JSON APIs
+Learning curve | Medium | Easy | Easy–medium
+@end
+@practice
+1. Name the four parts of Django's architecture and what each does.
+2. Describe the request–response cycle for opening a blog post.
+3. Name three well-known websites built with Django.
+4. When would you choose FastAPI over Django?
+@interview Django is a batteries-included Python web framework using the MVT pattern: URLs route requests to views, views use models through the ORM and render templates, and middleware wraps every request and response.
+
+@module m2 | 🚀 | 2 · Setup | Module 2 — Setup & Your First Project | Virtual environment · Install · startproject · runserver · startapp · Project vs app
+@topic 🚀 Install Django
+@code bash
+python -m venv venv
+venv\Scripts\activate              # Windows   (macOS/Linux: source venv/bin/activate)
+pip install django
+django-admin --version             # e.g. 5.2 or 6.0
+
+django-admin startproject mysite .  # the dot creates it in the current folder
+python manage.py migrate            # create the default database tables (SQLite)
+python manage.py runserver          # open http://127.0.0.1:8000
+@end
+@tip Always work inside a **virtual environment** so each project has its own package versions. Save them with `pip freeze > requirements.txt`.
+@topic 📁 Project Structure
+@code bash
+blog-project/
+├── manage.py              # command-line tool for the project
+├── db.sqlite3             # default development database
+├── mysite/                # the project package (configuration)
+│   ├── __init__.py
+│   ├── settings.py        # all settings
+│   ├── urls.py            # root URL routes
+│   ├── asgi.py            # entry point for async servers
+│   └── wsgi.py            # entry point for WSGI servers (gunicorn)
+└── blog/                  # an app (created below)
+    ├── migrations/        # database change history
+    ├── admin.py  apps.py  models.py  tests.py  views.py
+@end
+@topic 🧩 Create an App
+A **project** is the whole website; an **app** is one feature (blog, accounts, shop). A project contains many apps, and a good app can be reused in other projects.
+@code bash
+python manage.py startapp blog
+@end
+@code python
+# In mysite/settings.py — tell Django about the new app
+INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "blog",                         # our app
+]
+@end
+@topic 🛠️ Everyday manage.py Commands
+@table
+Command | Purpose
+`runserver` | Start the development server
+`startapp name` | Create a new app
+`makemigrations` / `migrate` | Create / apply database changes
+`createsuperuser` | Create an admin user
+`shell` | Python shell with your project loaded
+`test` | Run the test suite
+`collectstatic` | Gather static files for production
+`check` / `check --deploy` | Find configuration problems
+@end
+@practice
+1. Create a virtual environment, install Django and start a project called `mysite`.
+2. Run the server and open the welcome page.
+3. Create an app called `blog` and add it to INSTALLED_APPS.
+4. Explain the difference between a project and an app.
+@interview A Django project (created with django-admin startproject) holds settings and root URLs, while apps (manage.py startapp) hold features; apps must be added to INSTALLED_APPS, and manage.py runs commands such as runserver and migrate.
+
+@module m3 | 🔗 | 3 · URLs & Views | Module 3 — URLs & Views | Function views · HttpResponse · path() · include() · Converters · Named URLs · reverse()
+@topic 👁️ Your First Views
+A view is a Python function that takes a `request` and returns a `response`.
+@code python
+# blog/views.py
+from django.http import HttpResponse, JsonResponse
+
+
+def home(request):
+    return HttpResponse("<h1>Welcome to my blog</h1>")
+
+
+def post_detail(request, post_id):
+    return HttpResponse(f"You are reading post {post_id}")
+
+
+def api_status(request):
+    return JsonResponse({"status": "ok", "posts": 3})
+@end
+@topic 🗺️ Mapping URLs to Views
+@code python
+# blog/urls.py
+from django.urls import path
+
+from . import views
+
+app_name = "blog"          # namespace: use "blog:home" when reversing
+
+urlpatterns = [
+    path("", views.home, name="home"),
+    path("posts/<int:post_id>/", views.post_detail, name="post_detail"),
+    path("api/status/", views.api_status, name="api_status"),
+]
+@end
+@code python
+# mysite/urls.py
+from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("", include("blog.urls")),   # hand everything else to the blog app
+]
+@end
+Visiting `/posts/7/` calls `post_detail(request, post_id=7)`.
+@topic 🔢 Path Converters
+@table
+Converter | Matches | Example URL
+`<int:id>` | Positive integers | `/posts/7/`
+`<str:name>` | Any text without `/` (the default) | `/users/asha/`
+`<slug:slug>` | Letters, numbers, hyphens, underscores | `/post/hello-django/`
+`<uuid:uid>` | A UUID | `/orders/075194d3-…/`
+`<path:file>` | Any text including `/` | `/files/docs/a.pdf`
+@end
+@topic 🏷️ Named URLs and reverse()
+Never hard-code URLs. Give each route a **name** and build URLs from it, so changing a path later updates every link.
+@code python
+from django.urls import reverse
+
+reverse("blog:post_detail", args=[5])      # "/posts/5/"
+reverse("blog:home")                       # "/"
+@end
+@code html
+<!-- In a template -->
+<a href="{% url 'blog:post_detail' 5 %}">Read post 5</a>
+@end
+@topic 📨 The Request Object and Shortcuts
+@table
+Attribute | Contains
+`request.method` | `"GET"`, `"POST"` …
+`request.GET` / `request.POST` | Query-string / form data (dictionary-like)
+`request.FILES` | Uploaded files
+`request.user` | The logged-in user (or `AnonymousUser`)
+`request.path`, `request.headers` | The URL path and HTTP headers
+@end
+@code python
+from django.http import Http404
+from django.shortcuts import redirect
+
+
+def old_url(request):
+    return redirect("blog:home")          # 302 redirect to a named URL
+
+
+def secret(request):
+    raise Http404("Nothing here")         # shows the 404 page
+@end
+@practice
+1. Create an `about` view and route `/about/` to it.
+2. Add a route `/tag/<slug:tag>/` that displays the tag name.
+3. Return a JSON response with your name and skills.
+4. Use `reverse()` to print the URL of a post with id 10.
+5. Why use named URLs instead of writing paths directly?
+@interview URLconfs map paths to views with path() and include(), converters like int and slug capture values as arguments, and named URLs with reverse() or the url tag avoid hard-coded links; views take a request and return a response.
+
+@module m4 | 🎨 | 4 · Templates | Module 4 — Templates | render() · Variables · Tags · Filters · Inheritance · include · Static files
+@topic 🎨 Rendering a Template
+@code python
+# In mysite/settings.py — look for templates in a project-level folder
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {"context_processors": [
+            "django.template.context_processors.request",
+            "django.contrib.auth.context_processors.auth",
+            "django.contrib.messages.context_processors.messages",
+        ]},
+    },
+]
+@end
+@code python
+# In blog/views.py
+from django.shortcuts import render
+
+
+def home(request):
+    posts = [
+        {"title": "Hello Django", "views": 120},
+        {"title": "Learning the ORM", "views": 45},
+    ]
+    return render(request, "blog/post_list.html", {"posts": posts})
+@end
+`render()` fills the template with the **context** dictionary and returns an HttpResponse.
+@topic 🧩 Template Language
+@table
+Syntax | Meaning | Example
+`{{ variable }}` | Output a value (HTML-escaped automatically) | `{{ post.title }}`
+`{% tag %}` | Logic: loops, conditions, URLs | `{% for post in posts %}`
+`{{ value\|filter }}` | Transform a value | `{{ post.title\|upper }}`
+`{# comment #}` | Template comment | `{# not shown #}`
+@end
+@code html
+{% if posts %}
+  <ul>
+  {% for post in posts %}
+    <li>{{ forloop.counter }}. {{ post.title }} ({{ post.views }} views)</li>
+  {% empty %}
+    <li>No posts yet.</li>
+  {% endfor %}
+  </ul>
+{% endif %}
+@end
+@topic 🧪 Useful Filters
+@table
+Filter | Example | Result
+`upper`, `lower`, `title` | `{{ "django"\|title }}` | Django
+`date` | `{{ post.created\|date:"d M Y" }}` | 25 Sep 2026
+`truncatewords` | `{{ body\|truncatewords:20 }}` | First 20 words…
+`default` | `{{ bio\|default:"No bio" }}` | Fallback text
+`length`, `pluralize` | `{{ n }} post{{ n\|pluralize }}` | 1 post / 3 posts
+`linebreaks` | `{{ body\|linebreaks }}` | Paragraphs from line breaks
+`safe` | `{{ html\|safe }}` | Turns off escaping (only for trusted HTML!)
+@end
+@topic 🏗️ Template Inheritance
+A **base** template defines the page skeleton with `{% block %}` placeholders; child templates **extend** it and fill the blocks.
+@code html
+<!-- templates/base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}My Blog{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <nav><a href="{% url 'blog:home' %}">Home</a></nav>
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>
+@end
+@code html
+<!-- templates/blog/post_list.html -->
+{% extends "base.html" %}
+{% block title %}Blog{% endblock %}
+{% block content %}
+  <h1>Latest posts</h1>
+  {% for post in posts %}
+    <h2>{{ post.title }}</h2>
+  {% endfor %}
+{% endblock %}
+@end
+@tip Reuse fragments with `{% include "partials/post_card.html" %}`, and load CSS, JavaScript and images with `{% load static %}` and `{% static 'path' %}`.
+@practice
+1. Create `base.html` with a navigation bar and footer, and two pages that extend it.
+2. Loop over a list of posts and show "No posts yet" when it is empty.
+3. Display a date as "25 September 2026" with the date filter.
+4. Move the navigation into `partials/nav.html` and include it.
+5. Why is `|safe` dangerous with user input?
+@interview render() combines a template with a context; templates use {{ }} for escaped variables, {% %} for tags such as for/if/url, filters to transform values, and inheritance via extends and block to share layouts.
+
+@module m5 | 🗃️ | 5 · Models | Module 5 — Models & Migrations | Model classes · Field types · Field options · Meta · __str__ · makemigrations · migrate
+@topic 🗃️ Defining a Model
+A model is a Python class that describes a database table. Each attribute is a column.
+@code python
+# blog/models.py
+from django.db import models
+from django.urls import reverse
+
+
+class Post(models.Model):
+    class Status(models.TextChoices):
+        DRAFT = "DR", "Draft"
+        PUBLISHED = "PB", "Published"
+
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
+    body = models.TextField()
+    status = models.CharField(max_length=2, choices=Status.choices, default=Status.DRAFT)
+    views = models.PositiveIntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True)   # set once, on creation
+    updated = models.DateTimeField(auto_now=True)       # set on every save
+
+    class Meta:
+        ordering = ["-created"]                         # newest first by default
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse("blog:post_detail", args=[self.slug])
+@end
+@topic 🔤 Common Field Types
+@table
+Field | Stores | Notes
+`CharField(max_length=…)` | Short text | `max_length` is required
+`TextField` | Long text | No length limit
+`IntegerField`, `PositiveIntegerField` | Whole numbers |
+`DecimalField(max_digits, decimal_places)` | Exact decimals | Use for money
+`BooleanField` | True / False |
+`DateField`, `DateTimeField` | Dates and times | `auto_now_add`, `auto_now`
+`EmailField`, `URLField`, `SlugField` | Validated text |
+`ImageField`, `FileField` | Uploaded files | ImageField needs Pillow
+`JSONField`, `UUIDField` | JSON data, UUIDs |
+`ForeignKey`, `ManyToManyField`, `OneToOneField` | Relationships | Module 8
+@end
+@topic ⚙️ Field Options
+@table
+Option | Meaning
+`null=True` | The **database** column may be NULL
+`blank=True` | **Forms and validation** allow the field to be empty
+`default=…` | Value used when none is given
+`unique=True` | No two rows may share the value
+`choices=…` | Limit to a list of options (shown as a dropdown)
+`db_index=True` | Add a database index
+`verbose_name`, `help_text` | Labels and help shown in forms and the admin
+@end
+@info For text fields use `blank=True` alone — Django stores an empty string instead of NULL. Use `null=True, blank=True` for optional numbers, dates and foreign keys.
+@topic 🔁 Migrations
+Migrations are Python files that record every change to your models, so the database schema can be created and updated step by step on any machine.
+@code bash
+python manage.py makemigrations          # create migration files from model changes
+python manage.py migrate                 # apply them to the database
+python manage.py showmigrations          # list applied / pending migrations
+python manage.py sqlmigrate blog 0001    # show the SQL a migration will run
+@end
+@warn Commit migration files to Git, and never edit the database tables by hand — always change the model and make a new migration.
+@practice
+1. Create the Post model above and apply its migrations.
+2. Add a `summary` CharField with `blank=True` and make a new migration.
+3. Use `sqlmigrate` to see the SQL Django generated.
+4. Explain the difference between `null=True` and `blank=True`.
+5. What do `auto_now_add` and `auto_now` do?
+@interview Models are Python classes mapped to tables, with field types and options such as null, blank, default, unique and choices; makemigrations records model changes as migration files and migrate applies them to the database.
+
+@module m6 | 🛡️ | 6 · Admin | Module 6 — The Django Admin | createsuperuser · Registering models · ModelAdmin options · Actions
+@topic 🛡️ Your Free Admin Panel
+@code bash
+python manage.py createsuperuser     # choose a username, email and password
+python manage.py runserver           # open http://127.0.0.1:8000/admin/
+@end
+@code python
+# blog/admin.py
+from django.contrib import admin
+
+from .models import Post
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = ["title", "status", "views", "created"]
+    list_filter = ["status", "created"]
+    search_fields = ["title", "body"]
+    prepopulated_fields = {"slug": ("title",)}   # fill the slug while typing the title
+    date_hierarchy = "created"
+    ordering = ["-created"]
+@end
+@topic ⚙️ ModelAdmin Options
+@table
+Option | Effect
+`list_display` | Columns in the list page
+`list_filter` | Filter sidebar
+`search_fields` | Search box (uses `icontains`)
+`list_editable` | Edit fields directly in the list
+`prepopulated_fields` | Auto-fill a slug from another field
+`raw_id_fields`, `autocomplete_fields` | Better widgets for foreign keys with many rows
+`filter_horizontal` | Nicer many-to-many selector
+`readonly_fields` | Show but don't allow editing
+`inlines` | Edit related objects on the same page (Module 8)
+`actions` | Bulk operations on selected rows
+@end
+@tip Customise the headings: `admin.site.site_header = "My Blog Admin"`.
+@practice
+1. Create a superuser and add three posts through the admin.
+2. Show title, status and views in the list, with filters by status.
+3. Make the slug fill in automatically from the title.
+4. Add a search box that searches the title and body.
+@interview The Django admin is an automatic CRUD interface for registered models; ModelAdmin options like list_display, list_filter, search_fields, prepopulated_fields, inlines and actions customise it.
+
+@module m7 | 🔍 | 7 · ORM Queries | Module 7 — Querying with the ORM | Create · Read · Update · Delete · Field lookups · Lazy QuerySets · get_object_or_404
+@topic 🐚 Try Queries in the Shell
+@code bash
+python manage.py shell
+@end
+@code python
+from blog.models import Post
+
+# CREATE
+post = Post.objects.create(title="Hello Django", slug="hello-django", body="My first post")
+# or: post = Post(title=…); post.save()
+
+# READ
+Post.objects.all()                          # every post (a QuerySet)
+Post.objects.get(slug="hello-django")       # exactly one object
+Post.objects.filter(status="PB")            # matching posts
+Post.objects.exclude(status="PB")           # non-matching posts
+Post.objects.order_by("-views")[:5]         # top 5 by views (LIMIT 5)
+Post.objects.filter(title__icontains="django").count()
+Post.objects.filter(views__gt=100).exists()
+Post.objects.values_list("title", flat=True)   # just the titles
+Post.objects.first(), Post.objects.last()
+
+# UPDATE
+post.title = "Hello, Django!"
+post.save()
+Post.objects.filter(status="DR").update(status="PB")   # many rows at once
+
+# DELETE
+post.delete()
+@end
+@warn `get()` raises `Post.DoesNotExist` when nothing matches and `MultipleObjectsReturned` when more than one row matches. Use `filter().first()` when "none" is a normal case.
+@topic 🔎 Field Lookups
+Lookups are written as `field__lookup=value`.
+@table
+Lookup | SQL equivalent | Example
+`exact` / `iexact` | `=` / case-insensitive `=` | `title__iexact="hello"`
+`contains` / `icontains` | `LIKE '%x%'` | `body__icontains="orm"`
+`startswith` / `endswith` | `LIKE 'x%'` / `LIKE '%x'` | `slug__startswith="how-to"`
+`gt`, `gte`, `lt`, `lte` | `>`, `>=`, `<`, `<=` | `views__gte=100`
+`in` | `IN (…)` | `id__in=[1, 2, 3]`
+`range` | `BETWEEN` | `views__range=(10, 100)`
+`isnull` | `IS NULL` | `category__isnull=True`
+`year`, `month`, `date` | Date parts | `created__year=2026`
+@end
+@topic 💤 QuerySets are Lazy
+Building a QuerySet doesn't touch the database. The query runs only when you **use** the results — loop over them, slice with a step, call `list()`, `len()`, `count()` or print them. That's why you can chain filters freely:
+@code python
+qs = Post.objects.filter(status="PB")        # no query yet
+qs = qs.filter(views__gt=50).order_by("-created")
+print(qs.query)                               # see the SQL
+for post in qs:                               # the query runs here, once
+    print(post.title)
+@end
+@topic 🧯 get_object_or_404 in Views
+@code python
+# In blog/views.py
+from django.shortcuts import get_object_or_404, render
+
+from .models import Post
+
+
+def post_detail(request, slug):
+    post = get_object_or_404(Post, slug=slug, status=Post.Status.PUBLISHED)
+    return render(request, "blog/post_detail.html", {"post": post})
+@end
+@practice
+1. In the shell, create three posts and publish two of them.
+2. Find published posts containing "django" in the title, newest first.
+3. Count posts with more than 100 views.
+4. Increase every draft's status to published in one query.
+5. Print the SQL of a QuerySet using `.query`.
+@interview The ORM performs CRUD with Model.objects: create, all/filter/exclude/get, update and delete; field lookups like icontains, gte and in build WHERE clauses, and QuerySets are lazy — they run only when evaluated.
+
+@module m8 | 🔗 | 8 · Relationships | Module 8 — Relationships | ForeignKey · ManyToMany · OneToOne · on_delete · related_name · Querying across tables
+@topic 🔗 The Complete Blog Models
+Now the blog gets authors, categories, tags and comments.
+@code python
+# blog/models.py
+from django.conf import settings
+from django.db import models
+from django.urls import reverse
+
+
+class PostQuerySet(models.QuerySet):
+    def published(self):
+        return self.filter(status=Post.Status.PUBLISHED)
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
+
+    class Meta:
+        verbose_name_plural = "categories"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Post(models.Model):
+    class Status(models.TextChoices):
+        DRAFT = "DR", "Draft"
+        PUBLISHED = "PB", "Published"
+
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts")
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts")
+    tags = models.ManyToManyField(Tag, blank=True, related_name="posts")
+    body = models.TextField()
+    image = models.ImageField(upload_to="posts/", blank=True)
+    status = models.CharField(max_length=2, choices=Status.choices, default=Status.DRAFT)
+    views = models.PositiveIntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    objects = PostQuerySet.as_manager()      # adds Post.objects.published() (Module 9)
+
+    class Meta:
+        ordering = ["-created"]
+        indexes = [models.Index(fields=["status", "-created"])]
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse("blog:post_detail", args=[self.slug])
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
+    name = models.CharField(max_length=80)
+    body = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["created"]
+
+    def __str__(self):
+        return f"Comment by {self.name} on {self.post}"
+@end
+@table
+Relationship | Field | Example
+Many-to-one | `ForeignKey` | Many posts → one author, one category
+Many-to-many | `ManyToManyField` | Posts ↔ tags (Django creates the junction table)
+One-to-one | `OneToOneField` | User ↔ profile
+@end
+@topic 🗑️ on_delete Options
+@table
+Option | When the referenced object is deleted…
+`CASCADE` | Delete this object too (delete a user → delete their posts)
+`PROTECT` | Refuse the delete (raises ProtectedError)
+`RESTRICT` | Refuse, unless it's being deleted through a CASCADE
+`SET_NULL` | Set the field to NULL (needs `null=True`)
+`SET_DEFAULT` | Set the field to its default
+`DO_NOTHING` | Do nothing (the database decides — rarely what you want)
+@end
+@topic 🧭 Querying Across Relationships
+Double underscores follow relationships; `related_name` names the reverse direction.
+@code python
+from blog.models import Category, Post, Tag
+
+Post.objects.filter(author__username="asha")          # forward: post → author
+Post.objects.filter(category__name="Django")
+Post.objects.filter(tags__name__in=["python", "orm"]).distinct()
+
+asha.posts.all()                                      # reverse: author → posts (related_name)
+django_category.posts.count()
+post.comments.filter(active=True)
+
+post.tags.add(python_tag, orm_tag)                    # many-to-many helpers
+post.tags.remove(orm_tag)
+post.tags.set([python_tag])
+post.tags.clear()
+@end
+@info Without `related_name`, the reverse accessor is `<model>_set`, for example `user.post_set.all()`.
+@topic 👤 One-to-One: a User Profile
+@code python
+# In accounts/models.py (the full file is in Module 13)
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile")
+    bio = models.TextField(blank=True)
+
+# usage:  request.user.profile.bio
+@end
+@topic 🛡️ Admin for the New Models
+@code python
+# blog/admin.py
+from django.contrib import admin
+
+from .models import Category, Comment, Post, Tag
+
+
+class CommentInline(admin.TabularInline):
+    model = Comment
+    extra = 0
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = ["title", "author", "category", "status", "views", "created"]
+    list_filter = ["status", "category", "created"]
+    search_fields = ["title", "body"]
+    prepopulated_fields = {"slug": ("title",)}
+    raw_id_fields = ["author"]
+    filter_horizontal = ["tags"]
+    date_hierarchy = "created"
+    inlines = [CommentInline]
+    actions = ["make_published"]
+
+    @admin.action(description="Mark selected posts as published")
+    def make_published(self, request, queryset):
+        updated = queryset.update(status=Post.Status.PUBLISHED)
+        self.message_user(request, f"{updated} post(s) published.")
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ["name", "slug"]
+    prepopulated_fields = {"slug": ("name",)}
+
+
+admin.site.register(Tag)
+admin.site.register(Comment)
+@end
+@practice
+1. Add the Category, Tag and Comment models and run the migrations.
+2. In the shell, give a post a category and three tags.
+3. List every post written by one author using the reverse relation.
+4. Find posts that have the tag "django" and are in the category "Tutorials".
+5. When would you use PROTECT instead of CASCADE?
+@interview ForeignKey models many-to-one, ManyToManyField many-to-many (with an automatic junction table) and OneToOneField one-to-one; on_delete controls what happens to children, related_name names the reverse accessor, and double underscores query across relations.
+
+@module m9 | ⚙️ | 9 · Advanced ORM | Module 9 — Advanced ORM | Q · F · aggregate · annotate · select_related · prefetch_related · Custom QuerySets · Transactions
+@topic 🔀 Q Objects: OR and NOT
+@code python
+from django.db.models import Q
+
+Post.objects.filter(Q(title__icontains="django") | Q(body__icontains="django"))   # OR
+Post.objects.filter(Q(status="PB") & ~Q(category__name="News"))                 # AND NOT
+@end
+@topic 🧮 F Expressions: Use Column Values
+@code python
+from django.db.models import F
+
+# Increase views in the database itself — safe even with many simultaneous visitors
+Post.objects.filter(pk=post.pk).update(views=F("views") + 1)
+
+Post.objects.filter(updated__gt=F("created"))     # compare two columns
+@end
+@topic 📊 aggregate and annotate
+@code python
+from django.db.models import Avg, Count, Max, Sum
+
+Post.objects.aggregate(total=Sum("views"), average=Avg("views"), most=Max("views"))
+# {'total': 1520, 'average': 76.0, 'most': 410}   ← one dictionary for the whole table
+
+Category.objects.annotate(num_posts=Count("posts")).order_by("-num_posts")
+# every category with an extra .num_posts attribute   ← one value per row (GROUP BY)
+@end
+@topic 🚀 The N+1 Problem: select_related and prefetch_related
+@code python
+# ❌ 1 query for posts + 1 query PER post for its author = N+1 queries
+for post in Post.objects.all():
+    print(post.author.username)
+
+# ✅ select_related: follows ForeignKey / OneToOne with a SQL JOIN → 1 query
+for post in Post.objects.select_related("author", "category"):
+    print(post.author.username, post.category)
+
+# ✅ prefetch_related: many-to-many and reverse relations → 1 extra query in total
+for post in Post.objects.prefetch_related("tags", "comments"):
+    print([tag.name for tag in post.tags.all()])
+@end
+@table
+Method | Use for | How
+`select_related` | ForeignKey, OneToOne (forward) | SQL JOIN in the same query
+`prefetch_related` | ManyToMany, reverse ForeignKey | A second query, joined in Python
+@end
+@topic 🧰 Custom QuerySets, Transactions and Bulk Operations
+@code python
+# In blog/models.py (already part of the Module 8 file)
+class PostQuerySet(models.QuerySet):
+    def published(self):
+        return self.filter(status=Post.Status.PUBLISHED)
+
+# usage: Post.objects.published().filter(category__slug="django")
+@end
+@code python
+from django.db import transaction
+
+with transaction.atomic():               # all or nothing
+    order = Order.objects.create(customer=customer)
+    OrderItem.objects.create(order=order, product=product, quantity=2)
+
+Tag.objects.bulk_create([Tag(name="python"), Tag(name="orm"), Tag(name="admin")])   # one INSERT
+
+Post.objects.raw("SELECT * FROM blog_post WHERE views > %s", [100])   # raw SQL, parameterised
+@end
+@practice
+1. Search posts where the title OR body contains a word, using Q.
+2. Add 1 to a post's views with an F expression.
+3. List categories with their number of published posts, most first.
+4. Use django-debug-toolbar or `connection.queries` to count queries before and after `select_related`.
+5. Create a post and its tags inside `transaction.atomic()`.
+@interview Q objects build OR/NOT conditions, F expressions reference columns in the database, aggregate returns totals and annotate adds per-row values; select_related (JOIN) and prefetch_related (extra query) fix the N+1 problem, and transaction.atomic makes operations all-or-nothing.
+
+@module m10 | 📝 | 10 · Forms | Module 10 — Forms | forms.Form · Fields · Validation · CSRF · GET vs POST pattern · Messages
+@topic 📝 Defining a Form
+@code python
+# In blog/forms.py (the full file is in Module 11)
+from django import forms
+
+
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    subject = forms.CharField(max_length=150)
+    message = forms.CharField(widget=forms.Textarea)
+
+    def clean_name(self):                       # validate one field
+        name = self.cleaned_data["name"].strip()
+        if len(name) < 2:
+            raise forms.ValidationError("Please enter your full name.")
+        return name
+
+    def clean(self):                            # validate fields together
+        cleaned = super().clean()
+        if "http" in cleaned.get("subject", "") and "http" in cleaned.get("message", ""):
+            raise forms.ValidationError("Links in both subject and message look like spam.")
+        return cleaned
+@end
+@topic 🔁 The Standard View Pattern
+@code python
+# In blog/views.py (the full file is in Module 12)
+from django.contrib import messages
+from django.shortcuts import redirect, render
+
+from .forms import ContactForm
+
+
+def contact(request):
+    if request.method == "POST":
+        form = ContactForm(request.POST)          # bound form with the submitted data
+        if form.is_valid():                       # runs every validation
+            name = form.cleaned_data["name"]      # clean, converted values
+            messages.success(request, f"Thanks {name}, we'll reply soon!")
+            return redirect("blog:contact")       # Post/Redirect/Get: avoids resubmitting
+    else:
+        form = ContactForm()                      # empty form
+    return render(request, "blog/contact.html", {"form": form})
+@end
+@topic 🖼️ Rendering the Form
+@code html
+<!-- templates/blog/contact.html -->
+{% extends "base.html" %}
+{% block title %}Contact{% endblock %}
+{% block content %}
+  <h1>Contact</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+      <p>
+        {{ field.label_tag }} {{ field }}
+        {% for error in field.errors %}<span class="error">{{ error }}</span>{% endfor %}
+      </p>
+    {% endfor %}
+    <button type="submit">Send</button>
+  </form>
+{% endblock %}
+@end
+@warn Every POST form needs `{% csrf_token %}`. Without it Django rejects the request with **403 Forbidden** — this protects your users against cross-site request forgery.
+@tip Quick layouts: `{{ form.as_p }}`, `{{ form.as_div }}` or `{{ form.as_table }}`. Packages like django-crispy-forms give Bootstrap/Tailwind styling.
+@practice
+1. Build the contact form and show a success message after submitting.
+2. Add a `phone` field that must be exactly 10 digits (validate it in `clean_phone`).
+3. Render each field manually with its label and errors.
+4. What is the Post/Redirect/Get pattern and why is it used?
+5. What does `cleaned_data` contain?
+@interview A Form class declares fields and validation (clean_<field> and clean); views bind request.POST, call is_valid() and use cleaned_data, templates render fields with {% csrf_token %}, and Post/Redirect/Get prevents duplicate submissions.
+
+@module m11 | 🧾 | 11 · ModelForms | Module 11 — ModelForms & File Uploads | ModelForm · save(commit=False) · Editing · Uploads · request.FILES
+@topic 🧾 Forms Built from Models
+A **ModelForm** creates form fields from a model and can save straight to the database.
+@code python
+# blog/forms.py
+from django import forms
+
+from .models import Comment, Post
+
+
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    subject = forms.CharField(max_length=150)
+    message = forms.CharField(widget=forms.Textarea)
+
+    def clean_name(self):
+        name = self.cleaned_data["name"].strip()
+        if len(name) < 2:
+            raise forms.ValidationError("Please enter your full name.")
+        return name
+
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ["title", "slug", "category", "tags", "body", "image", "status"]
+        widgets = {"body": forms.Textarea(attrs={"rows": 10})}
+
+    def clean_slug(self):
+        return self.cleaned_data["slug"].lower()
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ["name", "body"]
+@end
+@topic 💾 Saving with Extra Data
+@code python
+# A function-based create view (Module 12 shows the class-based version)
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def post_create(request):
+    form = PostForm(request.POST or None, request.FILES or None)
+    if request.method == "POST" and form.is_valid():
+        post = form.save(commit=False)    # build the object without saving
+        post.author = request.user        # add data the form doesn't have
+        post.save()
+        form.save_m2m()                   # needed for many-to-many fields after commit=False
+        return redirect(post)             # uses get_absolute_url()
+    return render(request, "blog/post_form.html", {"form": form})
+@end
+@info To **edit**, pass the existing object: `PostForm(request.POST or None, instance=post)`.
+@topic 📤 File and Image Uploads
+@code python
+# In mysite/settings.py
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+@end
+@code python
+# In mysite/urls.py — serve uploads during development only
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+@end
+@code html
+<form method="post" enctype="multipart/form-data">   <!-- required for file uploads -->
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Save</button>
+</form>
+
+<img src="{{ post.image.url }}" alt="{{ post.title }}">
+@end
+@warn File uploads need **three things**: `enctype="multipart/form-data"` on the form, `request.FILES` passed to the form, and `pip install Pillow` for ImageField.
+@practice
+1. Create a PostForm and a view that lets logged-in users write posts.
+2. Add an edit view that loads an existing post with `instance=`.
+3. Let users upload a cover image and display it on the post page.
+4. Why must you call `save_m2m()` after `save(commit=False)`?
+@interview A ModelForm generates fields from a model and saves instances; save(commit=False) lets you set extra fields before saving (then call save_m2m), instance= edits existing objects, and uploads need multipart/form-data, request.FILES and MEDIA settings.
+
+@module m12 | 🏛️ | 12 · Class-Based Views | Module 12 — Class-Based Views | ListView · DetailView · CreateView · UpdateView · DeleteView · Mixins · Pagination
+@topic 🏛️ Generic Class-Based Views
+Class-based views (CBVs) package common patterns — list, detail, create, update, delete — so you only write what's different.
+@table
+View | Does | Default template
+`ListView` | List of objects (+ pagination) | `blog/post_list.html`
+`DetailView` | One object by pk or slug | `blog/post_detail.html`
+`CreateView` | Form to create an object | `blog/post_form.html`
+`UpdateView` | Form to edit an object | `blog/post_form.html`
+`DeleteView` | Confirm and delete | `blog/post_confirm_delete.html`
+`TemplateView` | Just render a template | you choose
+@end
+@topic 🧱 The Blog's Views
+@code python
+# blog/views.py
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models import F, Q
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+
+from .forms import CommentForm, ContactForm, PostForm
+from .models import Post
+
+
+class PostListView(ListView):
+    template_name = "blog/post_list.html"
+    context_object_name = "posts"
+    paginate_by = 5
+
+    def get_queryset(self):
+        qs = Post.objects.published().select_related("author", "category")
+        query = self.request.GET.get("q")
+        if query:
+            qs = qs.filter(Q(title__icontains=query) | Q(body__icontains=query))
+        return qs
+
+
+class PostDetailView(DetailView):
+    template_name = "blog/post_detail.html"
+    context_object_name = "post"
+
+    def get_queryset(self):
+        return Post.objects.published().select_related("author").prefetch_related("tags", "comments")
+
+    def get_object(self, queryset=None):
+        post = super().get_object(queryset)
+        Post.objects.filter(pk=post.pk).update(views=F("views") + 1)
+        return post
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["comment_form"] = CommentForm()
+        return context
+
+
+class AuthorRequiredMixin(UserPassesTestMixin):
+    """Only the post's author may edit or delete it."""
+
+    def test_func(self):
+        return self.get_object().author == self.request.user
+
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = "blog/post_form.html"
+    success_url = reverse_lazy("blog:post_list")
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        messages.success(self.request, "Post created.")
+        return super().form_valid(form)
+
+
+class PostUpdateView(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = "blog/post_form.html"
+    success_url = reverse_lazy("blog:post_list")
+
+
+class PostDeleteView(LoginRequiredMixin, AuthorRequiredMixin, DeleteView):
+    model = Post
+    template_name = "blog/post_confirm_delete.html"
+    success_url = reverse_lazy("blog:post_list")
+
+
+@require_POST
+def add_comment(request, slug):
+    post = get_object_or_404(Post.objects.published(), slug=slug)
+    form = CommentForm(request.POST)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.post = post
+        comment.save()
+        messages.success(request, "Comment added.")
+    return redirect(post)
+
+
+def contact(request):
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            messages.success(request, f"Thanks {form.cleaned_data['name']}, we'll reply soon!")
+            return redirect("blog:contact")
+    else:
+        form = ContactForm()
+    return render(request, "blog/contact.html", {"form": form})
+@end
+@code python
+# blog/urls.py
+from django.urls import path
+
+from . import views
+
+app_name = "blog"
+
+urlpatterns = [
+    path("", views.PostListView.as_view(), name="post_list"),
+    path("contact/", views.contact, name="contact"),
+    path("post/new/", views.PostCreateView.as_view(), name="post_create"),
+    path("post/<slug:slug>/", views.PostDetailView.as_view(), name="post_detail"),
+    path("post/<slug:slug>/edit/", views.PostUpdateView.as_view(), name="post_update"),
+    path("post/<slug:slug>/delete/", views.PostDeleteView.as_view(), name="post_delete"),
+    path("post/<slug:slug>/comment/", views.add_comment, name="add_comment"),
+]
+@end
+@info Put mixins **before** the view class: `LoginRequiredMixin` first, then permission mixins, then the generic view.
+@topic 🖼️ The Templates
+@code html
+<!-- templates/blog/post_list.html -->
+{% extends "base.html" %}
+{% block title %}Blog{% endblock %}
+{% block content %}
+  <form method="get">
+    <input name="q" value="{{ request.GET.q }}" placeholder="Search posts">
+    <button type="submit">Search</button>
+  </form>
+
+  {% for post in posts %}
+    <article>
+      <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+      <p>By {{ post.author.username }} · {{ post.created|date:"d M Y" }}{% if post.category %} · {{ post.category }}{% endif %}</p>
+      <p>{{ post.body|truncatewords:30 }}</p>
+    </article>
+  {% empty %}
+    <p>No posts yet.</p>
+  {% endfor %}
+
+  {% if is_paginated %}
+    <nav>
+      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">← Newer</a>{% endif %}
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Older →</a>{% endif %}
+    </nav>
+  {% endif %}
+{% endblock %}
+@end
+@code html
+<!-- templates/blog/post_detail.html -->
+{% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+  <h1>{{ post.title }}</h1>
+  <p>By {{ post.author.username }} · {{ post.views }} views</p>
+  {% if post.image %}<img src="{{ post.image.url }}" alt="{{ post.title }}">{% endif %}
+  {{ post.body|linebreaks }}
+  <p>{% for tag in post.tags.all %}#{{ tag.name }} {% endfor %}</p>
+
+  {% if user == post.author %}
+    <a href="{% url 'blog:post_update' post.slug %}">Edit</a>
+    <a href="{% url 'blog:post_delete' post.slug %}">Delete</a>
+  {% endif %}
+
+  <h2>Comments</h2>
+  {% for comment in post.comments.all %}
+    <p><strong>{{ comment.name }}</strong>: {{ comment.body }}</p>
+  {% empty %}
+    <p>Be the first to comment.</p>
+  {% endfor %}
+
+  <form method="post" action="{% url 'blog:add_comment' post.slug %}">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit">Add comment</button>
+  </form>
+{% endblock %}
+@end
+@code html
+<!-- templates/blog/post_form.html -->
+{% extends "base.html" %}
+{% block content %}
+  <h1>{% if object %}Edit post{% else %}New post{% endif %}</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+  </form>
+{% endblock %}
+@end
+@code html
+<!-- templates/blog/post_confirm_delete.html -->
+{% extends "base.html" %}
+{% block content %}
+  <form method="post">
+    {% csrf_token %}
+    <p>Delete "{{ object.title }}"?</p>
+    <button type="submit">Yes, delete</button>
+    <a href="{{ object.get_absolute_url }}">Cancel</a>
+  </form>
+{% endblock %}
+@end
+@topic ⚖️ Function-Based vs Class-Based Views
+@table
+Function-based views | Class-based views
+Plain Python, easy to read and debug | Less code for common CRUD patterns
+Full control of every step | Customise by overriding methods (`get_queryset`, `form_valid` …)
+Great for unusual logic | Reuse behaviour with mixins
+@end
+@practice
+1. Build the list, detail, create, edit and delete views and templates above.
+2. Show only published posts and paginate 5 per page.
+3. Add a `CategoryPostListView` at `/category/<slug>/`.
+4. Make sure only the author can edit or delete a post.
+5. Which methods would you override to change the queryset and the context?
+@interview Generic CBVs (ListView, DetailView, CreateView, UpdateView, DeleteView) implement CRUD with little code; customise them by overriding get_queryset, get_context_data or form_valid, and add behaviour with mixins such as LoginRequiredMixin and UserPassesTestMixin.
+
+@module m13 | 🔐 | 13 · Auth | Module 13 — Authentication & Users | Custom user model · Login/logout · Sign-up · login_required · Permissions & groups
+@topic 👤 Start with a Custom User Model
+Create a custom user **before your first migrate** — changing it later is painful. Even an empty subclass lets you add fields whenever you need them.
+@code bash
+python manage.py startapp accounts
+@end
+@code python
+# accounts/models.py
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+
+
+class User(AbstractUser):
+    """Custom user. Add fields here any time, e.g. phone = models.CharField(...)."""
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile")
+    bio = models.TextField(blank=True)
+    avatar = models.ImageField(upload_to="avatars/", blank=True)
+
+    def __str__(self):
+        return f"Profile of {self.user.username}"
+@end
+@code python
+# In mysite/settings.py
+INSTALLED_APPS += ["accounts"]
+AUTH_USER_MODEL = "accounts.User"
+
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "blog:post_list"
+LOGOUT_REDIRECT_URL = "blog:post_list"
+@end
+@code python
+# accounts/admin.py
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+
+from .models import Profile, User
+
+admin.site.register(User, UserAdmin)
+admin.site.register(Profile)
+@end
+@tip Always refer to the user model through `settings.AUTH_USER_MODEL` (in models) or `get_user_model()` (in code), never by importing `User` directly.
+@topic 🔑 Built-in Login, Logout and Password Views
+Adding `path("accounts/", include("django.contrib.auth.urls"))` gives you all of these:
+@table
+URL | Name | Purpose
+`accounts/login/` | `login` | Log in (template: `registration/login.html`)
+`accounts/logout/` | `logout` | Log out — **POST only** since Django 5
+`accounts/password_change/` | `password_change` | Change password
+`accounts/password_reset/` | `password_reset` | Email a reset link
+`accounts/reset/<uidb64>/<token>/` | `password_reset_confirm` | Choose a new password
+@end
+@code html
+<!-- templates/registration/login.html -->
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+  <h1>Log in</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit">Log in</button>
+  </form>
+  <p><a href="{% url 'password_reset' %}">Forgot password?</a> · <a href="{% url 'signup' %}">Create an account</a></p>
+{% endblock %}
+@end
+@topic ✍️ Sign-up
+@code python
+# accounts/forms.py
+from django.contrib.auth.forms import UserCreationForm
+
+from .models import User
+
+
+class SignUpForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ["username", "email"]
+@end
+@code python
+# accounts/views.py
+from django.contrib.auth import login
+from django.shortcuts import redirect, render
+
+from .forms import SignUpForm
+
+
+def signup(request):
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)              # log the new user in straight away
+            return redirect("blog:post_list")
+    else:
+        form = SignUpForm()
+    return render(request, "registration/signup.html", {"form": form})
+@end
+@code python
+# accounts/urls.py
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path("signup/", views.signup, name="signup"),
+]
+@end
+@code html
+<!-- templates/registration/signup.html -->
+{% extends "base.html" %}
+{% block title %}Sign up{% endblock %}
+{% block content %}
+  <h1>Create an account</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign up</button>
+  </form>
+{% endblock %}
+@end
+@topic 🧭 The Final Base Template
+@code html
+<!-- templates/base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}My Blog{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <nav>
+    <a href="{% url 'blog:post_list' %}">Home</a>
+    <a href="{% url 'blog:contact' %}">Contact</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'blog:post_create' %}">New post</a>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Log out ({{ user.username }})</button>
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}">Log in</a>
+      <a href="{% url 'signup' %}">Sign up</a>
+    {% endif %}
+  </nav>
+
+  {% for message in messages %}
+    <p class="message {{ message.tags }}">{{ message }}</p>
+  {% endfor %}
+
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>
+@end
+@topic 🔒 Protecting Views, Permissions and Groups
+@code python
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
+
+
+@login_required                                   # function views
+def dashboard(request):
+    ...
+
+
+@permission_required("blog.change_post", raise_exception=True)
+def edit_any_post(request, slug):
+    ...
+
+
+class ModerationView(PermissionRequiredMixin, ListView):   # class-based views
+    permission_required = "blog.delete_comment"
+
+
+request.user.has_perm("blog.add_post")            # check in code
+@end
+@info Django creates `add_`, `change_`, `delete_` and `view_` permissions for every model. Put permissions into **Groups** (e.g. "Editors") in the admin, then add users to groups.
+@practice
+1. Create the accounts app with a custom User before migrating, and register it in the admin.
+2. Add login, logout (as a POST form) and sign-up pages.
+3. Show "Log in" or the username in the navigation bar depending on login state.
+4. Create an "Editors" group that can change any post, and test it.
+5. Why should the custom user model be created at the start of a project?
+@interview Django auth provides users, sessions, login/logout/password views, permissions and groups; start projects with a custom AbstractUser model, protect views with login_required or LoginRequiredMixin, and check permissions with has_perm or PermissionRequiredMixin.
+
+@module m14 | 🖼️ | 14 · Static & Media | Module 14 — Static & Media Files | STATIC settings · collectstatic · WhiteNoise · MEDIA uploads
+@topic 🖼️ Static vs Media
+@table
+Type | What it is | Settings
+Static files | Your CSS, JavaScript, images, fonts — part of the code | `STATIC_URL`, `STATICFILES_DIRS`, `STATIC_ROOT`
+Media files | Files **users upload** at run time | `MEDIA_URL`, `MEDIA_ROOT`
+@end
+@code python
+# In mysite/settings.py
+STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]      # your project's static folder
+STATIC_ROOT = BASE_DIR / "staticfiles"        # where collectstatic copies everything
+
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+@end
+@code bash
+static/
+├── css/style.css
+├── js/app.js
+└── images/logo.png
+
+python manage.py collectstatic    # copy all static files into STATIC_ROOT for production
+@end
+@topic 🚚 Serving Static Files in Production with WhiteNoise
+@code bash
+pip install whitenoise
+@end
+@code python
+# In mysite/settings.py
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",     # right after SecurityMiddleware
+    # ... the rest
+]
+
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}
+@end
+@warn In production, user uploads (media) are usually stored in cloud storage such as **Amazon S3 or Cloudflare R2** via `django-storages`, because many hosts wipe the local disk on each deploy.
+@practice
+1. Add a stylesheet and a logo to `static/` and load them in `base.html`.
+2. Run `collectstatic` and look inside `staticfiles/`.
+3. Set up WhiteNoise and test with `DEBUG = False`.
+4. Explain the difference between static and media files.
+@interview Static files are the site's own CSS/JS/images collected with collectstatic and served in production by WhiteNoise or a CDN, while media files are user uploads stored under MEDIA_ROOT locally or in cloud storage.
+
+@module m15 | 🧬 | 15 · Middleware & Signals | Module 15 — Middleware, Context Processors & Signals | Custom middleware · Context processors · post_save signals
+@topic 🧅 Middleware
+Middleware wraps every request and response — like layers of an onion. Django's defaults handle security, sessions, CSRF, authentication and messages.
+@code python
+# blog/middleware.py
+import time
+
+
+class TimingMiddleware:
+    """Adds an X-Response-Time header to every response."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response          # runs once, at startup
+
+    def __call__(self, request):
+        start = time.perf_counter()               # before the view
+        response = self.get_response(request)
+        elapsed = (time.perf_counter() - start) * 1000
+        response["X-Response-Time"] = f"{elapsed:.1f}ms"   # after the view
+        return response
+@end
+@code python
+# In mysite/settings.py — order matters: requests run top to bottom, responses bottom to top
+MIDDLEWARE += ["blog.middleware.TimingMiddleware"]
+@end
+@topic 🌍 Context Processors
+A context processor adds variables to **every** template — perfect for navigation menus.
+@code python
+# blog/context_processors.py
+from .models import Category
+
+
+def categories(request):
+    return {"nav_categories": Category.objects.all()}
+@end
+@code python
+# In mysite/settings.py → TEMPLATES[0]["OPTIONS"]["context_processors"]
+"blog.context_processors.categories",
+@end
+@topic 📡 Signals
+Signals let code react to events elsewhere — for example, create a profile whenever a user is created.
+@code python
+# accounts/signals.py
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+from .models import Profile
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+@end
+@code python
+# accounts/apps.py
+from django.apps import AppConfig
+
+
+class AccountsConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "accounts"
+
+    def ready(self):
+        from . import signals  # noqa: F401  (importing registers the handlers)
+@end
+@table
+Signal | Sent when
+`pre_save` / `post_save` | Before / after `save()`
+`pre_delete` / `post_delete` | Before / after `delete()`
+`m2m_changed` | A many-to-many relation changes
+`user_logged_in` / `user_logged_out` | A user logs in / out
+@end
+@warn Signals hide logic in unexpected places, and `update()` / `bulk_create()` don't send them. Prefer calling functions explicitly when you can.
+@practice
+1. Add the timing middleware and check the header in the browser's DevTools.
+2. Show category links in the navbar using a context processor.
+3. Create a Profile automatically for every new user with a signal.
+4. Write middleware that blocks requests from a list of IP addresses.
+@interview Middleware processes every request/response in order, context processors inject variables into all templates, and signals such as post_save run receivers when events happen (registered in AppConfig.ready).
+
+@module m16 | 🔧 | 16 · Settings & DB | Module 16 — Settings, Environment Variables & Databases | Secrets · .env · DEBUG · ALLOWED_HOSTS · PostgreSQL · dj-database-url
+@topic 🔑 Keep Secrets Out of the Code
+@code bash
+# .env   (never commit this file — add it to .gitignore)
+SECRET_KEY=change-me-to-a-long-random-string
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+DATABASE_URL=postgres://blog:secret@localhost:5432/blog
+@end
+@code python
+# In mysite/settings.py
+import os
+from pathlib import Path
+
+import dj_database_url                  # pip install dj-database-url psycopg[binary]
+from dotenv import load_dotenv          # pip install python-dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
+
+SECRET_KEY = os.environ["SECRET_KEY"]
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
+
+DATABASES = {
+    "default": dj_database_url.config(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
+}
+
+TIME_ZONE = "Asia/Kolkata"
+USE_TZ = True
+@end
+@topic 🐘 PostgreSQL Without dj-database-url
+@code python
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "blog",
+        "USER": "blog",
+        "PASSWORD": os.environ["DB_PASSWORD"],
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
+}
+@end
+@table
+Setting | Purpose
+`DEBUG` | Detailed error pages — **must be False in production**
+`SECRET_KEY` | Signs sessions, tokens and password-reset links — keep it secret
+`ALLOWED_HOSTS` | Domain names the site may be served on
+`DATABASES` | Database connection(s)
+`INSTALLED_APPS` / `MIDDLEWARE` | Enabled apps and middleware
+`TIME_ZONE`, `USE_TZ` | Time zone handling (store UTC, display local)
+`EMAIL_*` | Email server settings (Module 21)
+@end
+@tip Large projects often split settings into `settings/base.py`, `settings/dev.py` and `settings/prod.py`, choosing one with the `DJANGO_SETTINGS_MODULE` environment variable.
+@practice
+1. Move SECRET_KEY, DEBUG and ALLOWED_HOSTS into a `.env` file.
+2. Install PostgreSQL, create a database and connect Django to it with DATABASE_URL.
+3. Run `migrate` on PostgreSQL and load your data with `dumpdata` / `loaddata`.
+4. What can go wrong if DEBUG is True in production?
+@interview Settings control the whole project; secrets and environment-specific values like SECRET_KEY, DEBUG, ALLOWED_HOSTS and the database URL come from environment variables, and production usually uses PostgreSQL configured via DATABASES or dj-database-url.
+
+@module m17 | 🔌 | 17 · REST APIs | Module 17 — Django REST Framework | Serializers · ViewSets · Routers · Permissions · Pagination · JWT
+@topic 🔌 Build a JSON API
+Django REST Framework (DRF) turns your models into a REST API used by mobile apps and JavaScript frontends — this very website's frontend talks to a DRF API.
+@code bash
+pip install djangorestframework
+@end
+@code python
+# In mysite/settings.py
+INSTALLED_APPS += ["rest_framework"]
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+}
+@end
+@topic 🔄 Serializers: Model ⇄ JSON
+@code python
+# blog/serializers.py
+from rest_framework import serializers
+
+from .models import Post
+
+
+class PostSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Post
+        fields = ["id", "title", "slug", "body", "status", "author", "created"]
+@end
+@topic 🧩 ViewSets, Permissions and Routers
+@code python
+# blog/api.py
+from rest_framework import permissions, viewsets
+
+from .models import Post
+from .serializers import PostSerializer
+
+
+class IsAuthorOrReadOnly(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return request.method in permissions.SAFE_METHODS or obj.author == request.user
+
+
+class PostViewSet(viewsets.ModelViewSet):
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        return Post.objects.published().select_related("author")
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+@end
+@code python
+# mysite/urls.py
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
+
+from blog.api import PostViewSet
+
+router = DefaultRouter()
+router.register("posts", PostViewSet, basename="post")
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("accounts/", include("accounts.urls")),
+    path("api/", include(router.urls)),
+    path("", include("blog.urls")),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+@end
+@table
+Method and URL | Action
+`GET /api/posts/` | List published posts (paginated)
+`POST /api/posts/` | Create a post (logged in)
+`GET /api/posts/<slug>/` | One post
+`PUT` / `PATCH /api/posts/<slug>/` | Update (author only)
+`DELETE /api/posts/<slug>/` | Delete (author only)
+@end
+@info Open `/api/posts/` in the browser to use DRF's **browsable API** — handy for testing.
+@topic 🎟️ Token Authentication with JWT
+@code bash
+pip install djangorestframework-simplejwt
+@end
+@code python
+# In mysite/urls.py
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+urlpatterns += [
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+]
+# Clients send:  Authorization: Bearer <access token>
+@end
+@practice
+1. Create the Post API and test it in the browsable API.
+2. Add a CategorySerializer and a read-only CategoryViewSet.
+3. Allow filtering posts by category with `?category=django` (override get_queryset).
+4. Add JWT login and call the API with a token from Postman or curl.
+@interview DRF builds REST APIs: serializers convert models to and from JSON with validation, ViewSets implement CRUD, routers generate URLs, permission classes control access and pagination/JWT are configured in settings.
+
+@module m18 | 🧪 | 18 · Testing | Module 18 — Testing | TestCase · Client · Testing models, views and APIs · Coverage
+@topic 🧪 Writing Tests
+@code python
+# blog/tests.py
+from django.contrib.auth import get_user_model
+from django.test import TestCase
+from django.urls import reverse
+from rest_framework.test import APITestCase
+
+from .models import Category, Post
+
+User = get_user_model()
+
+
+class BlogTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):                     # runs once for the whole class
+        cls.user = User.objects.create_user(username="asha", password="S3cure-pass-123")
+        cls.category = Category.objects.create(name="Django", slug="django")
+        cls.post = Post.objects.create(
+            title="Hello Django", slug="hello-django", body="My first post",
+            author=cls.user, category=cls.category, status=Post.Status.PUBLISHED,
+        )
+        Post.objects.create(title="Secret draft", slug="secret-draft", body="Not ready", author=cls.user)
+
+    def test_str_and_url(self):
+        self.assertEqual(str(self.post), "Hello Django")
+        self.assertEqual(self.post.get_absolute_url(), "/post/hello-django/")
+
+    def test_published_queryset(self):
+        self.assertEqual(list(Post.objects.published()), [self.post])
+
+    def test_profile_created_by_signal(self):
+        self.assertTrue(hasattr(self.user, "profile"))
+
+    def test_list_shows_only_published(self):
+        response = self.client.get(reverse("blog:post_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Hello Django")
+        self.assertNotContains(response, "Secret draft")
+
+    def test_search(self):
+        response = self.client.get(reverse("blog:post_list"), {"q": "hello"})
+        self.assertContains(response, "Hello Django")
+
+    def test_detail_counts_views(self):
+        self.client.get(self.post.get_absolute_url())
+        self.post.refresh_from_db()
+        self.assertEqual(self.post.views, 1)
+
+    def test_create_requires_login(self):
+        response = self.client.get(reverse("blog:post_create"))
+        self.assertRedirects(response, f"{reverse('login')}?next={reverse('blog:post_create')}")
+
+    def test_logged_in_user_can_create(self):
+        self.client.force_login(self.user)
+        response = self.client.post(reverse("blog:post_create"), {
+            "title": "New post", "slug": "New-Post", "body": "Text", "status": Post.Status.PUBLISHED,
+        })
+        self.assertRedirects(response, reverse("blog:post_list"))
+        self.assertEqual(Post.objects.get(slug="new-post").author, self.user)
+
+    def test_only_author_can_edit(self):
+        other = User.objects.create_user(username="ravi", password="S3cure-pass-456")
+        self.client.force_login(other)
+        response = self.client.get(reverse("blog:post_update", args=[self.post.slug]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_add_comment(self):
+        url = reverse("blog:add_comment", args=[self.post.slug])
+        self.client.post(url, {"name": "Ravi", "body": "Great post!"})
+        self.assertEqual(self.post.comments.count(), 1)
+
+    def test_contact_form_validation(self):
+        response = self.client.post(reverse("blog:contact"), {"name": "A", "email": "bad"})
+        self.assertContains(response, "Please enter your full name.")
+
+
+class PostAPITests(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="asha", password="S3cure-pass-123")
+        Post.objects.create(title="API post", slug="api-post", body="Hi", author=self.user,
+                            status=Post.Status.PUBLISHED)
+
+    def test_list_is_public(self):
+        response = self.client.get("/api/posts/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 1)
+
+    def test_create_needs_login(self):
+        response = self.client.post("/api/posts/", {"title": "X", "slug": "x", "body": "Y"})
+        self.assertIn(response.status_code, (401, 403))
+
+    def test_create_when_logged_in(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post("/api/posts/", {"title": "X", "slug": "x", "body": "Y"})
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["author"], "asha")
+@end
+@topic ▶️ Running Tests
+@code bash
+python manage.py test                 # every app
+python manage.py test blog            # one app
+python manage.py test blog.tests.BlogTests.test_search   # one test
+
+pip install coverage
+coverage run manage.py test
+coverage report -m                    # which lines are not tested
+@end
+@info Django runs tests on a **separate, empty test database** and rolls back after each test, so tests never touch your real data.
+@table
+Assertion | Checks
+`assertEqual(a, b)` | Values are equal
+`assertContains(response, text)` | Status 200 and the text is in the page
+`assertRedirects(response, url)` | A redirect to that URL
+`assertTemplateUsed(response, name)` | Which template was rendered
+`assertNumQueries(n)` | Exactly n database queries ran
+`assertRaises(Error)` | Code raises an exception
+@end
+@practice
+1. Run the test suite and make every test pass.
+2. Add a test that the delete view removes the post for its author.
+3. Test that `select_related` keeps the list view to a fixed number of queries with `assertNumQueries`.
+4. Reach 90% coverage for the blog app.
+@interview Django tests use TestCase with a separate test database, the test client to request pages and assertions like assertContains and assertRedirects; DRF's APITestCase tests APIs, and coverage measures untested code.
+
+@module m19 | 🛡️ | 19 · Security | Module 19 — Security | CSRF · XSS · SQL injection · Clickjacking · Passwords · HTTPS · check --deploy
+@topic 🛡️ Built-in Protections
+@table
+Attack | How Django protects you | Your job
+SQL injection | The ORM always uses parameterised queries | Pass parameters to `raw()` / `cursor.execute()`, never f-strings
+Cross-site scripting (XSS) | Templates escape `{{ variables }}` automatically | Avoid `\|safe` and `mark_safe` on user input
+Cross-site request forgery (CSRF) | `CsrfViewMiddleware` + `{% csrf_token %}` | Add the token to every POST form
+Clickjacking | `XFrameOptionsMiddleware` blocks framing | Keep the middleware enabled
+Weak passwords | Password validators and strong hashing (PBKDF2, Argon2) | Keep validators on
+Host header attacks | `ALLOWED_HOSTS` | List only your real domains
+@end
+@code python
+# ❌ SQL injection risk
+Post.objects.raw(f"SELECT * FROM blog_post WHERE title = '{title}'")
+# ✅ Safe
+Post.objects.raw("SELECT * FROM blog_post WHERE title = %s", [title])
+@end
+@topic 🔒 Production Security Settings
+@code python
+# In the production settings
+DEBUG = False
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = True               # force HTTPS
+SESSION_COOKIE_SECURE = True             # cookies only over HTTPS
+CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 31536000           # tell browsers to always use HTTPS
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.Argon2PasswordHasher",   # pip install argon2-cffi
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+]
+@end
+@code bash
+python manage.py check --deploy          # lists security settings you've missed
+@end
+@warn Never commit `SECRET_KEY`, database passwords or API keys. Rotate any secret that was ever pushed to GitHub.
+@practice
+1. Try submitting a form without `{% csrf_token %}` and read the error.
+2. Save `<script>alert(1)</script>` as a comment and confirm it is shown as text.
+3. Run `check --deploy` and fix every warning.
+4. Switch the password hasher to Argon2.
+@interview Django protects against SQL injection (parameterised ORM), XSS (auto-escaping), CSRF (tokens), clickjacking (X-Frame-Options) and weak passwords; production needs DEBUG=False, HTTPS settings, secret management and check --deploy.
+
+@module m20 | ⚡ | 20 · Performance | Module 20 — Performance & Caching | Query optimisation · Debug toolbar · Indexes · Caching with Redis
+@topic 🔬 Find Slow Queries First
+@code bash
+pip install django-debug-toolbar     # shows every SQL query on each page (development only)
+@end
+- Use `select_related` / `prefetch_related` to remove N+1 queries (Module 9)
+- Fetch only needed columns with `.only("title", "slug")` or `.values(...)`
+- Paginate long lists; never load thousands of rows into one page
+- Add indexes for fields you filter and sort on: `indexes = [models.Index(fields=["status", "-created"])]`
+- Use `.count()` and `.exists()` instead of `len(qs)` or `if qs:`
+- Use `.iterator()` when processing huge QuerySets
+@topic 🧊 Caching
+Caching stores expensive results so the next request is instant.
+@code python
+# In mysite/settings.py — Redis cache (pip install redis)
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+    }
+}
+@end
+@code python
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
+
+
+@cache_page(60 * 15)                   # cache the whole page for 15 minutes
+def about(request):
+    ...
+
+
+def popular_posts():
+    return cache.get_or_set(           # low-level cache API
+        "popular_posts",
+        lambda: list(Post.objects.published().order_by("-views")[:5]),
+        timeout=600,
+    )
+@end
+@code html
+{% load cache %}
+{% cache 600 sidebar %}
+  ... expensive sidebar HTML ...
+{% endcache %}
+@end
+@table
+Level | Tool | Use for
+Whole page | `@cache_page` | Pages that are the same for everyone
+Template fragment | `{% cache %}` | An expensive part of a page
+Data | `cache.get` / `cache.set` / `get_or_set` | Results of heavy queries or API calls
+@end
+@warn Remember to **invalidate** caches when data changes (for example `cache.delete("popular_posts")` after saving a post), or users will see stale content.
+@practice
+1. Install django-debug-toolbar and find a page with an N+1 problem, then fix it.
+2. Cache the list of popular posts for 10 minutes.
+3. Clear that cache whenever a post is saved.
+4. Add a database index for a field you filter on often and compare EXPLAIN output.
+@interview Performance work starts with measuring queries (debug toolbar), then fixing N+1 with select/prefetch_related, using only/values, pagination and indexes; caching (page, fragment or low-level, often with Redis) avoids repeated work but needs invalidation.
+
+@module m21 | 📬 | 21 · Email & Tasks | Module 21 — Email, Background Tasks & Commands | send_mail · SMTP · Management commands · Celery · Async views
+@topic 📧 Sending Email
+@code python
+# In mysite/settings.py
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"   # development: print emails
+# Production (SMTP):
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = os.environ["EMAIL_USER"]
+# EMAIL_HOST_PASSWORD = os.environ["EMAIL_PASSWORD"]
+@end
+@code python
+from django.core.mail import send_mail
+
+send_mail(
+    subject="Welcome to My Blog",
+    message="Thanks for signing up!",
+    from_email="no-reply@myblog.com",
+    recipient_list=["asha@example.com"],
+)
+@end
+@topic 🛠️ Custom Management Commands
+@code python
+# blog/management/commands/cleanup_drafts.py
+from datetime import timedelta
+
+from django.core.management.base import BaseCommand
+from django.utils import timezone
+
+from blog.models import Post
+
+
+class Command(BaseCommand):
+    help = "Delete drafts older than N days"
+
+    def add_arguments(self, parser):
+        parser.add_argument("--days", type=int, default=30)
+
+    def handle(self, *args, **options):
+        cutoff = timezone.now() - timedelta(days=options["days"])
+        deleted, _ = Post.objects.filter(status=Post.Status.DRAFT, created__lt=cutoff).delete()
+        self.stdout.write(self.style.SUCCESS(f"Deleted {deleted} old draft(s)"))
+@end
+@code bash
+python manage.py cleanup_drafts --days 60
+# (the folders management/ and management/commands/ each need an empty __init__.py)
+@end
+@topic ⏳ Background Tasks with Celery
+Slow jobs (emails, reports, image processing) shouldn't make users wait. Celery runs them in a separate worker process, using Redis as the message broker.
+@code python
+# mysite/celery.py
+import os
+
+from celery import Celery
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
+app = Celery("mysite")
+app.config_from_object("django.conf:settings", namespace="CELERY")
+app.autodiscover_tasks()
+@end
+@code python
+# mysite/__init__.py
+from .celery import app as celery_app
+
+__all__ = ["celery_app"]
+@end
+@code python
+# blog/tasks.py
+from celery import shared_task
+from django.core.mail import send_mail
+
+
+@shared_task
+def send_welcome_email(email):
+    send_mail("Welcome!", "Thanks for joining.", "no-reply@myblog.com", [email])
+
+# In a view:  send_welcome_email.delay(user.email)   ← returns immediately
+@end
+@code bash
+pip install celery redis
+# settings.py:  CELERY_BROKER_URL = "redis://localhost:6379/0"
+celery -A mysite worker -l info       # start a worker in another terminal
+@end
+@topic ⚡ Async Views
+@code python
+import httpx
+from django.http import JsonResponse
+
+
+async def weather(request):
+    async with httpx.AsyncClient() as client:
+        response = await client.get("https://api.example.com/weather?city=Chennai")
+    return JsonResponse(response.json())
+# Run under an ASGI server such as uvicorn:  uvicorn mysite.asgi:application
+@end
+@practice
+1. Send a welcome email (console backend) when a user signs up.
+2. Write a management command that prints the number of posts per status.
+3. Move the welcome email into a Celery task.
+4. When would you use an async view instead of a Celery task?
+@interview send_mail sends email through the configured backend, custom management commands automate jobs from the command line, Celery with Redis runs slow work in background workers, and async views help with I/O-heavy requests under ASGI.
+
+@module m22 | 🌍 | 22 · Deployment | Module 22 — Deployment | Checklist · gunicorn · WhiteNoise · PostgreSQL · Render · Nginx · Docker
+@topic ✅ Deployment Checklist
+1. `DEBUG = False`, a secret `SECRET_KEY` from the environment and your domain in `ALLOWED_HOSTS`
+2. PostgreSQL via `DATABASE_URL`
+3. Static files with WhiteNoise (or a CDN) and `collectstatic`
+4. Media uploads in cloud storage (S3 / R2)
+5. HTTPS and the security settings from Module 19; `python manage.py check --deploy` passes
+6. `migrate` runs on every deploy; a superuser exists
+7. Logging and error monitoring (for example Sentry)
+@topic 📦 Prepare the Project
+@code bash
+pip install gunicorn whitenoise dj-database-url "psycopg[binary]"
+pip freeze > requirements.txt
+
+# build.sh — runs on every deploy
+pip install -r requirements.txt
+python manage.py collectstatic --no-input
+python manage.py migrate --no-input
+
+# start command
+gunicorn mysite.wsgi:application --bind 0.0.0.0:$PORT --workers 3
+@end
+@topic ☁️ Deploy on Render (or Railway)
+1. Push the project to GitHub (without `.env`, `db.sqlite3` or `media/`).
+2. Create a PostgreSQL database and copy its connection URL.
+3. Create a **Web Service** from the repository: build command `./build.sh`, start command `gunicorn mysite.wsgi:application`.
+4. Add environment variables: `SECRET_KEY`, `DEBUG=False`, `ALLOWED_HOSTS`, `DATABASE_URL`.
+5. Deploy, then open the shell and run `python manage.py createsuperuser`.
+@topic 🖥️ On Your Own Server: Nginx + gunicorn
+@code bash
+# /etc/nginx/sites-available/myblog
+server {
+    listen 80;
+    server_name myblog.com;
+
+    location /static/ { alias /srv/myblog/staticfiles/; }
+    location /media/  { alias /srv/myblog/media/; }
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;          # gunicorn
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+# Then add HTTPS for free with:  sudo certbot --nginx -d myblog.com
+@end
+@topic 🐳 Docker
+@code bash
+# Dockerfile
+FROM python:3.13-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+RUN python manage.py collectstatic --no-input
+CMD ["gunicorn", "mysite.wsgi:application", "--bind", "0.0.0.0:8000"]
+@end
+@practice
+1. Prepare requirements.txt and build.sh for your blog.
+2. Deploy it to Render or Railway with PostgreSQL.
+3. Make `check --deploy` pass on the production settings.
+4. Build and run the project in Docker locally.
+@interview Deploying Django means DEBUG=False with secrets from the environment, PostgreSQL, collectstatic with WhiteNoise or a CDN, gunicorn behind a proxy like Nginx or a platform like Render, migrations on each deploy, HTTPS and check --deploy.
+
+@module m23 | 🏗️ | 23 · Blog Project | Module 23 — The Complete Blog, End to End | Build order · Final structure · What to add next
+@topic 🏗️ Build Order Recap
+1. Create the project and `blog` app; add the `accounts` app with a custom User **before the first migrate** (Modules 2 and 13).
+2. Write the models, run `makemigrations` and `migrate` (Modules 5 and 8).
+3. Register everything in the admin and add some categories, tags and posts (Modules 6 and 8).
+4. Build the class-based views, URLs and templates (Modules 12 and 13).
+5. Add forms: contact, post create/edit with image upload, comments (Modules 10 and 11).
+6. Add login, logout, sign-up and profile creation with a signal (Modules 13 and 15).
+7. Add the REST API with DRF (Module 17).
+8. Write tests and make them pass (Module 18).
+9. Secure, optimise and deploy (Modules 19, 20 and 22).
+@topic 📁 Final Project Structure
+@code bash
+blog-project/
+├── manage.py
+├── requirements.txt
+├── .env                          # not committed
+├── mysite/
+│   ├── settings.py
+│   └── urls.py                   # admin, accounts, api, blog
+├── accounts/
+│   ├── models.py                 # User, Profile
+│   ├── admin.py  apps.py  forms.py  signals.py  urls.py  views.py
+├── blog/
+│   ├── models.py                 # Category, Tag, Post, Comment
+│   ├── admin.py  forms.py  views.py  urls.py
+│   ├── serializers.py  api.py    # REST API
+│   ├── middleware.py  context_processors.py
+│   ├── management/commands/cleanup_drafts.py
+│   └── tests.py
+├── templates/
+│   ├── base.html
+│   ├── blog/          post_list  post_detail  post_form  post_confirm_delete  contact
+│   └── registration/  login  signup
+├── static/css/style.css
+└── media/                        # uploads (development)
+@end
+@info The code in Modules 8 to 21 forms this complete project: every file shown with a path comment (like `# blog/views.py`) is the final version of that file.
+@topic 🚀 Ideas to Extend the Blog
+- Rich-text editor for posts (django-ckeditor-5 or TinyMCE)
+- Likes and bookmarks with a many-to-many to the user
+- RSS feed with `django.contrib.syndication`
+- Sitemap and SEO tags with `django.contrib.sitemaps`
+- Full-text search with PostgreSQL `SearchVector`
+- Email notifications for new comments with Celery
+- Social login with django-allauth
+@practice
+1. Build the whole blog from these modules without copying — look back only when stuck.
+2. Add likes, a sitemap and an RSS feed.
+3. Deploy it and share the link in your portfolio.
+@interview A complete Django project combines apps with models and migrations, the admin, class-based views and templates, forms, authentication with a custom user, a DRF API, tests, security settings, caching and a production deployment.
+
+@module m24 | 🎤 | 24 · Interview | Module 24 — Interview Questions & Practice | Top questions · Short answers · Where to practise
+@topic 🎤 Top Django Interview Questions
+@table
+Question | Short answer
+What is MVT? | Model (data), View (logic), Template (presentation); Django's version of MVC
+Project vs app? | A project is the whole site and settings; an app is a reusable feature
+What is the ORM? | Python classes and methods that generate SQL for you
+`null=True` vs `blank=True`? | Database may store NULL vs form may be left empty
+What are migrations? | Version-controlled files that change the database schema
+`select_related` vs `prefetch_related`? | JOIN for ForeignKey/OneToOne vs a separate query for many-to-many and reverse relations
+`get()` vs `filter()`? | One object (raises errors if 0 or many) vs a QuerySet of any size
+Why are QuerySets lazy? | They run SQL only when evaluated, so chaining is cheap
+FBV vs CBV? | Functions give full control; classes reuse generic CRUD behaviour and mixins
+What is middleware? | Hooks that process every request and response
+What are signals? | Event hooks such as post_save that call receiver functions
+How does CSRF protection work? | A secret token in each POST form is checked by middleware
+Static vs media files? | Your own CSS/JS vs user uploads
+How do you make a custom user model? | Subclass AbstractUser and set AUTH_USER_MODEL before the first migrate
+What is DRF? | Django REST Framework: serializers, viewsets, routers, permissions for APIs
+How do you deploy Django? | DEBUG off, env secrets, PostgreSQL, collectstatic + WhiteNoise, gunicorn, HTTPS
+@end
+@topic 🏋️ Where to Practise
+- The official **Django tutorial** (docs.djangoproject.com) — the polls app
+- **Django Girls tutorial** — a friendly blog walkthrough
+- Build projects: to-do app, blog, e-commerce store, job portal, REST API with a React or HTML frontend
+- Read the source of real projects on GitHub — including this website's `backend/` folder
+@practice
+1. Answer each interview question out loud in under 30 seconds.
+2. Build a to-do app with login, where users see only their own tasks.
+3. Build an API-only project with DRF and a separate HTML/JavaScript frontend.
+4. Contribute a small fix or documentation improvement to an open-source Django package.
+@interview Django interviews cover MVT, the ORM and QuerySets, migrations, relationships and query optimisation, views and templates, forms and CSRF, authentication, middleware and signals, DRF, testing, security and deployment.

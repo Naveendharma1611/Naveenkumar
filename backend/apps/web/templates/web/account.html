@@ -1,0 +1,12 @@
+{% extends "web/base.html" %}
+{% block title %}Account{% endblock %}
+{% block content %}
+<section class="wrap section narrow">
+  <h1>Account settings</h1>
+  <p class="muted">{{ user.email }} · {{ user.get_role_display }}</p>
+  <div class="grid two">
+    <form method="post" enctype="multipart/form-data" class="card stack"><h2>Profile</h2>{% include "web/_fields.html" %}<button class="btn" name="action" value="profile">Save</button></form>
+    <form method="post" class="card stack"><h2>Change password</h2>{% include "web/_fields.html" with form=pw_form %}<button class="btn" name="action" value="password">Change password</button></form>
+  </div>
+</section>
+{% endblock %}

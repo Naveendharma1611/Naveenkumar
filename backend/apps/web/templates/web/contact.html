@@ -1,0 +1,18 @@
+{% extends "web/base.html" %}
+{% block title %}Contact{% endblock %}
+{% block content %}
+<section class="wrap section narrow">
+  <h1>Contact me</h1>
+  <p class="lead">Have a question, opportunity or project in mind? Send a message.</p>
+  <div class="grid two">
+    <form method="post" class="stack card">{% include "web/_fields.html" %}<button class="btn">Send message</button></form>
+    <div class="card">
+      {% if profile.email %}<p>✉ <a href="mailto:{{ profile.email }}">{{ profile.email }}</a></p>{% endif %}
+      {% if profile.phone %}<p>☎ {{ profile.phone }}</p>{% endif %}
+      {% if profile.location %}<p>📍 {{ profile.location }}</p>{% endif %}
+      {% if profile.linkedin_url %}<p><a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener">LinkedIn</a></p>{% endif %}
+      {% if profile.github_url %}<p><a href="{{ profile.github_url }}" target="_blank" rel="noopener">GitHub</a></p>{% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

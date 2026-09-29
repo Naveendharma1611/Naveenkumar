@@ -1,0 +1,51 @@
+{% extends "web/base.html" %}{% load web_tags %}
+{% block title %}{{ quiz.title }}{% endblock %}
+{% block content %}
+<section class="wrap section narrow">
+  <a href="/practice/" class="muted">← All quizzes</a>
+  <h1>{{ quiz.title }}</h1>
+  <p class="muted">{{ quiz.description }}</p>
+
+  {% if results %}
+  <div class="card score"><strong>{{ percent }}%</strong><span>{{ score }} / {{ max_score }} points</span>
+    {% if not user.is_authenticated %}<small class="muted"><a href="/login/?next={{ request.path }}">Log in</a> to save your attempts.</small>{% endif %}</div>
+  {% for r in results %}
+  <div class="card result {% if r.ok %}ok{% elif r.ok is False %}bad{% endif %}">
+    <div class="prose">{{ r.q.prompt|markdown }}</div>
+    {% if r.q.code %}<pre><code class="language-{{ r.q.code_language }}">{{ r.q.code }}</code></pre>{% endif %}
+    <p>Your answer: <strong>{{ r.answer|default:"—" }}</strong>
+      {% if r.ok %}✔ Correct{% elif r.ok is False %}✘ Wrong{% if r.q.type == "MCQ" %} — correct: <strong>{% for o in r.q.options %}{% if forloop.counter0 == r.q.correct_option %}{{ o }}{% endif %}{% endfor %}</strong>{% endif %}{% else %}(self-review){% endif %}</p>
+    {% if r.q.explanation %}<div class="prose muted">{{ r.q.explanation|markdown }}</div>{% endif %}
+  </div>
+  {% endfor %}
+  <a class="btn" href="{{ request.path }}">Try again</a>
+
+  {% else %}
+  <form method="post" id="quiz-form" class="stack" {% if quiz.time_limit_minutes %}data-minutes="{{ quiz.time_limit_minutes }}"{% endif %}>
+    {% csrf_token %}<input type="hidden" name="timed_out" value="0">
+    {% if quiz.time_limit_minutes %}<div class="timer" id="timer">⏱ {{ quiz.time_limit_minutes }}:00</div>{% endif %}
+    {% for q in questions %}
+    <fieldset class="card">
+      <legend class="badge">Q{{ forloop.counter }} · {{ q.get_type_display }} · {{ q.points }} pt</legend>
+      <div class="prose">{{ q.prompt|markdown }}</div>
+      {% if q.code %}<pre><code class="language-{{ q.code_language }}">{{ q.code }}</code></pre>{% endif %}
+      {% if q.type == "MCQ" %}
+        {% for o in q.options %}<label class="option"><input type="radio" name="q{{ q.id }}" value="{{ forloop.counter0 }}"> {{ o }}</label>{% endfor %}
+      {% else %}
+        <textarea name="q{{ q.id }}" rows="4" class="mono" placeholder="Your answer"></textarea>
+      {% endif %}
+    </fieldset>
+    {% empty %}<p class="muted">This quiz has no questions yet.</p>
+    {% endfor %}
+    {% if questions %}<button class="btn">Submit answers</button>{% endif %}
+  </form>
+  {% endif %}
+
+  {% if leaderboard %}
+  <h2>Leaderboard</h2>
+  <table class="table"><tr><th>#</th><th>Name</th><th>Score</th></tr>
+    {% for a in leaderboard %}<tr><td>{{ forloop.counter }}</td><td>{{ a.user.full_name }}</td><td>{{ a.percent }}%</td></tr>{% endfor %}
+  </table>
+  {% endif %}
+</section>
+{% endblock %}

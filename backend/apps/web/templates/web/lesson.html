@@ -1,0 +1,30 @@
+{% extends "web/base.html" %}{% load web_tags %}
+{% block title %}{{ lesson.title }}{% endblock %}
+{% block description %}{{ lesson.summary }}{% endblock %}
+{% block content %}
+<article class="wrap section narrow">
+  <a href="/study-materials/{{ lesson.category.slug }}/" class="muted">← {{ lesson.category.name }} · {{ lesson.course.title }}</a>
+  <h1>{{ lesson.title }}</h1>
+  {% if lesson.summary %}<p class="lead">{{ lesson.summary }}</p>{% endif %}
+  {% if user.is_authenticated %}
+  <div class="actions">
+    <form method="post">{% csrf_token %}<button name="action" value="complete" class="btn {% if not completed %}btn-ghost{% endif %}">{% if completed %}✔ Completed{% else %}Mark as complete{% endif %}</button></form>
+    <form method="post">{% csrf_token %}<button name="action" value="bookmark" class="btn btn-ghost">{% if bookmarked %}★ Bookmarked{% else %}☆ Bookmark{% endif %}</button></form>
+  </div>
+  {% else %}<p class="muted"><a href="/login/?next={{ request.path }}">Log in</a> to track progress, bookmark and take notes.</p>{% endif %}
+  {% if lesson.video_url %}<p><a class="btn btn-ghost" href="{{ lesson.video_url }}" target="_blank" rel="noopener">▶ Watch video</a></p>{% endif %}
+  <div class="prose">{{ lesson.content|markdown }}</div>
+  {% if materials %}<h2>Materials</h2>{% for m in materials %}{% include "web/_material.html" %}{% endfor %}{% endif %}
+  {% if user.is_authenticated %}
+  <h2>My notes</h2>
+  <form method="post" class="stack">{% csrf_token %}
+    <textarea name="content" rows="6" placeholder="Write your notes for this lesson…">{{ note }}</textarea>
+    <button name="action" value="note" class="btn">Save note</button>
+  </form>
+  {% endif %}
+  <nav class="pager">
+    {% if prev %}<a class="btn btn-ghost" href="../{{ prev.slug }}/">← {{ prev.title }}</a>{% else %}<span></span>{% endif %}
+    {% if next %}<a class="btn" href="../{{ next.slug }}/">{{ next.title }} →</a>{% endif %}
+  </nav>
+</article>
+{% endblock %}

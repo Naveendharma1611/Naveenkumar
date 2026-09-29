@@ -1,0 +1,11 @@
+{% extends "web/base.html" %}
+{% block title %}Study materials{% endblock %}
+{% block content %}
+<section class="wrap section">
+  <h1>Study materials</h1>
+  <p class="lead">Pick a topic and learn step by step, from beginner to advanced.</p>
+  <div class="grid">{% for c in categories %}
+    <a class="card card-link" href="/study-materials/{{ c.slug }}/"><h3>{{ c.name }}</h3><p class="muted">{{ c.description|truncatechars:140 }}</p><small class="muted">{{ c.lesson_count }} lesson{{ c.lesson_count|pluralize }}</small></a>
+  {% empty %}<p class="muted">No study materials yet.</p>{% endfor %}</div>
+</section>
+{% endblock %}

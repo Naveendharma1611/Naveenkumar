@@ -1,0 +1,1338 @@
+@page ☕ Java Complete End-to-End Study Material
+@intro Learn Java from your first program to professional backend development: Core Java, object-oriented design, collections, modern Java, concurrency, databases, Spring Boot, security, microservices, Docker, cloud and projects.
+
+@module m1 | 🧭 | 1 · Introduction | Module 1 — Introduction to Java | JVM · JDK · Bytecode · Editions · Platform independence
+@topic ☕ What is Java?
+Java is a statically typed, class-based language designed to run on many platforms. `javac` compiles source into bytecode; a Java Virtual Machine (JVM) executes that bytecode for its operating system and processor. The JVM can interpret bytecode and compile frequently used paths to native machine code with a JIT compiler.
+@topic 🧰 JDK, JRE and JVM
+The **JDK** is the development kit: compiler, tools and runtime. The **JVM** executes bytecode. A **JRE** is the runtime concept and may be bundled differently by vendors; modern JDK distributions are commonly installed directly. Java SE is the standard platform, Jakarta EE adds enterprise specifications, and Java ME targets constrained devices. Java is used for servers, Android applications, financial systems, tools and large enterprise software.
+@code text
+Java source (.java) → javac → bytecode (.class) → JVM → machine instructions
+@end
+@table
+Language | Typical distinction
+Java | Static types, JVM bytecode, automatic memory management
+C | Native compilation, manual memory management, no JVM
+C++ | Native compilation, multiple paradigms, fine-grained resource control
+Python | Dynamic typing, interpreted/bytecode runtime, concise scripting
+@end
+@info Java is not automatically portable in every situation: native libraries, filesystem assumptions and runtime versions can affect portability. Bytecode plus a compatible JVM provides the portability model.
+@practice
+1. Explain what `javac`, bytecode and the JVM each do.
+2. Name one Java SE application and one Jakarta EE use case.
+@interview Java compiles source into platform-neutral bytecode, which a platform-specific JVM verifies and executes, often with JIT compilation.
+
+@module m2 | 🛠️ | 2 · Setup | Module 2 — Install Java & Set Up a Project | JDK · PATH · JAVA_HOME · IDEs · Commands
+@topic 🛠️ Install a JDK
+Install a maintained JDK distribution. Java 25 is an LTS release; many teams also use supported Java 21 projects, so match the version required by the course or employer. Install VS Code with Java extensions, IntelliJ IDEA or Eclipse. `JAVA_HOME` should point to the JDK directory; add its `bin` folder to `PATH` if the installer does not.
+@code bash
+java --version
+javac --version
+@end
+@topic 🗂️ Run a source file
+The classic compile/run workflow makes the bytecode step visible. The public class name must match its file name. Recent Java can also launch a single source file directly with `java Main.java`, but compiled projects and build tools are the norm for multi-file applications.
+@code bash
+javac Main.java
+java Main
+@end
+@practice
+1. Check both `java` and `javac` versions and confirm they come from the same JDK.
+2. Create a folder for a Java project and identify its source and output directories.
+@interview Install a JDK for both the runtime and development tools; verify `java` and `javac` and use a build tool to manage larger projects.
+
+@module m3 | 👋 | 3 · First Program | Module 3 — Your First Java Program | Class · main · System.out · Compile · Run
+@topic 👋 Read every part of the program
+A class groups code. `public` makes the class accessible; `static` lets the launcher call `main` without constructing an object; `void` means it returns no value. `String[] args` receives command-line arguments. `System.out` is the standard output stream and `println` prints a line.
+@code java
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, Java!");
+        System.out.printf("Arguments: %d%n", args.length);
+    }
+}
+@end
+@info Save this as `Main.java`, then run `javac Main.java` followed by `java Main`. `%n` is a platform-correct line separator for formatted output.
+@practice
+1. Change the program to print your name and city on separate lines.
+2. Pass two words on the command line and print `args[0]` and `args[1]`.
+@interview The Java launcher starts at `public static void main(String[] args)`; the method receives command-line strings and returns no value.
+
+@module m4 | 🎛️ | 4 · Types | Module 4 — Variables & Primitive Data Types | Primitives · References · final · Casting · Scope
+@topic 🎛️ The eight primitive types
+Java primitives are `byte`, `short`, `int`, `long`, `float`, `double`, `char` and `boolean`. Variables of class types hold references to objects. A local variable must be assigned before use; fields receive default values. `char` is a UTF-16 code unit, not necessarily a full Unicode character.
+@code java
+int age = 25;
+double salary = 35000.50;
+char grade = 'A';
+boolean active = true;
+long population = 8_000_000_000L;
+float ratio = 0.75F;
+@end
+@topic 🔒 Declaration, scope, constants and conversion
+Declare with a type, assign with `=`, and use `final` for a value assigned once. Scope is where a name is visible; local variables live within their block, while object fields exist with their object. Widening conversions are often implicit; narrowing conversions need a cast and may lose data. Integer division truncates toward zero.
+@code java
+final double TAX_RATE = 0.08;
+int whole = (int) 3.9;       // 3: narrowing truncates
+int quotient = 7 / 2;        // 3: integer division
+double precise = 7 / 2.0;    // 3.5
+@end
+@practice
+1. Choose types for a person's age, a bank balance, an initial and an active flag.
+2. Explain the difference between a local variable and a field.
+@interview Java has eight primitives; reference variables point to objects, and explicit casts are required for potentially lossy narrowing conversions.
+
+@module m5 | ➗ | 5 · Operators | Module 5 — Java Operators | Arithmetic · Comparison · Boolean · Bitwise · Ternary
+@topic ➗ Work with values and conditions
+Arithmetic operators include `+ - * / %`; comparisons include `> < >= <= == !=`; boolean logic uses `&& || !`. Assignment operators combine updates such as `+=`. `++` and `--` change an integer by one. For objects, `==` compares references; use `equals` for value comparison.
+@topic 🧮 Bits, shifts and conditional expressions
+Bitwise `& | ^ ~` operate on integer bits; `<<`, `>>` and unsigned right shift `>>>` move bits. `&&` and `||` short-circuit, while `&` and `|` can evaluate both boolean sides. The ternary operator chooses one of two expressions.
+@code java
+int a = 10, b = 3;
+int max = a > b ? a : b;
+int remainder = a % b;
+int unsignedShift = -8 >>> 1;
+boolean eligible = a > 0 && b != 0;
+@end
+@warn Do not use `==` to compare the contents of ordinary Strings. Use `equals` or `equalsIgnoreCase`.
+@practice
+1. Write a condition that accepts a score from 0 through 100.
+2. Calculate a maximum with the ternary operator and explain `&&` short-circuiting.
+@interview Java operators follow precedence rules; use parentheses to make intent explicit, `&&` / `||` short-circuit, and `==` on references tests identity.
+
+@module m6 | 📥 | 6 · Input & Output | Module 6 — Console Input & Output | print · printf · Scanner · BufferedReader · Arguments
+@topic 📥 Print and read values
+Use `print` without a newline, `println` with a newline and `printf` for formatted output. `Scanner` is beginner-friendly and tokenizes input. After `nextInt`, a following `nextLine` may consume the remaining newline; call `nextLine` once to clear it before reading a full line.
+@code java
+import java.util.Scanner;
+
+Scanner input = new Scanner(System.in);
+System.out.print("Enter age: ");
+int age = input.nextInt();
+input.nextLine(); // consume the newline left by nextInt
+System.out.print("Enter name: ");
+String name = input.nextLine();
+System.out.printf("%s is %d%n", name, age);
+@end
+@topic ⚡ Buffered input
+For large input, `BufferedReader` with `InputStreamReader` avoids some Scanner parsing overhead; parse numeric strings explicitly. Command-line arguments are available in `args`. Close resources you open, preferably with try-with-resources.
+@practice
+1. Read an integer and then a full line containing spaces.
+2. Print a decimal with two digits after the decimal point.
+@interview Use `System.out` for console output; `Scanner` is convenient for parsed input, while buffered readers suit fast text input.
+
+@module m7 | 🔀 | 7 · Conditions | Module 7 — Conditional Statements & Switch | if · else · switch · Switch expressions · yield
+@topic 🔀 Branch on a condition
+`if`, `else if` and `else` choose a branch based on a boolean expression. Put braces around branch bodies even when they contain one statement; this avoids mistakes as code grows.
+@code java
+int score = 86;
+if (score >= 90) {
+    System.out.println("A");
+} else if (score >= 75) {
+    System.out.println("B");
+} else {
+    System.out.println("Keep practicing");
+}
+@end
+@topic 🎯 Use switch for a set of alternatives
+Traditional `switch` uses `case`, `break` and `default`; forgetting `break` can fall through. Modern switch expressions use arrow labels and return a value. A multi-statement arm uses `yield` to provide that value.
+@code java
+int day = 6;
+String kind = switch (day) {
+    case 6, 7 -> "weekend";
+    case 1, 2, 3, 4, 5 -> "weekday";
+    default -> throw new IllegalArgumentException("Invalid day");
+};
+@end
+@practice
+1. Assign a letter grade with an if/else-if chain.
+2. Use a switch expression to map a month number to a season.
+@interview Use if/else for ranges and compound conditions; switch is useful for discrete alternatives, and switch expressions return a value without accidental fall-through.
+
+@module m8 | 🔁 | 8 · Loops | Module 8 — Loops & Control Flow | for · while · do-while · Enhanced for · break · continue
+@topic 🔁 Repeat work
+Use `for` when initialization, condition and update belong together; `while` when repetition depends on a changing condition; `do-while` when the body must execute at least once. Enhanced `for` traverses array or collection values when an index is unnecessary.
+@code java
+int[] numbers = {10, 20, 30};
+for (int number : numbers) {
+    System.out.println(number);
+}
+for (int i = 1; i <= 3; i++) {
+    System.out.println(i);
+}
+@end
+@topic ⏹️ Control a loop
+`break` exits the nearest loop or switch; `continue` skips to the next iteration; `return` exits the current method. Avoid changing a collection while enhanced-for iterating it unless using the iterator's supported removal operation.
+@practice
+1. Sum the values in an array with an enhanced for loop.
+2. Find the first negative number and stop searching.
+@interview Choose a loop based on when its condition is checked and whether an index is needed; break exits and continue skips an iteration.
+
+@module m9 | 🧩 | 9 · Methods | Module 9 — Methods & Overloading | Parameters · Returns · static · Varargs · Pass-by-value
+@topic 🧩 Define reusable behavior
+A method has a return type, name, parameters and body. An argument is the value passed at a call site. `void` means no result is returned. Java passes every argument by value, including a copy of an object reference. Overloading uses the same method name with different parameter lists; return type alone cannot distinguish overloads.
+@code java
+static int add(int left, int right) {
+    return left + right;
+}
+
+static int sum(int... values) {
+    int total = 0;
+    for (int value : values) total += value;
+    return total;
+}
+@end
+@topic 🔧 Static and instance methods
+A static method belongs to a class and has no `this`; an instance method works with a particular object's state. Keep methods focused, name parameters clearly and return values instead of printing when callers need to reuse the result.
+@practice
+1. Write overloaded `area` methods for a square and rectangle.
+2. Create a varargs method that returns the largest supplied integer.
+@interview Java overloads are selected from method name and parameter types at compile time; Java is always pass-by-value, even when the value is an object reference.
+
+@module m10 | 📚 | 10 · Arrays | Module 10 — Arrays | Declaration · Traversal · Search · Sort · 2D arrays
+@topic 📚 Store a fixed-size sequence
+An array has a fixed length and contains values of one component type. Indices run from 0 to `length - 1`; `length` is a field, not a method. Arrays of objects initially contain `null`; primitive arrays contain zero-like defaults.
+@code java
+import java.util.Arrays;
+
+int[] numbers = {10, 20, 30, 40};
+Arrays.sort(numbers);
+int position = Arrays.binarySearch(numbers, 30); // sort first
+System.out.println(numbers.length + " " + position);
+@end
+@topic 🧮 Multidimensional arrays
+Java multidimensional arrays are arrays of arrays, so rows can have different lengths. Use nested loops for matrix traversal; verify dimensions before element-wise operations.
+@code java
+int[][] matrix = {{1, 2}, {3, 4}};
+for (int[] row : matrix) {
+    for (int value : row) System.out.print(value + " ");
+    System.out.println();
+}
+@end
+@practice
+1. Find the largest number in an array and report its index.
+2. Add two compatible 2D matrices with nested loops.
+@interview Arrays have fixed length, zero-based indexing and one component type; Java's multidimensional arrays are nested arrays, not a special matrix primitive.
+
+@module m11 | 📝 | 11 · Strings | Module 11 — String & Immutability | Pool · equals · substring · split · Search · Transform
+@topic 📝 Strings are immutable
+A `String` cannot be changed after creation; operations return another String. The string pool can reuse equal literals, but application logic must not depend on object identity. `==` compares references; `equals` compares characters.
+@code java
+String language = "Java";
+String sameText = new String("Java");
+System.out.println(language == sameText);      // false: different references
+System.out.println(language.equals(sameText)); // true: same text
+@end
+@topic 🔎 Useful String methods
+Common methods include `length`, `charAt`, `substring`, `equalsIgnoreCase`, `compareTo`, `contains`, `startsWith`, `endsWith`, `indexOf`, `replace`, `split`, `trim`, `toUpperCase` and `toLowerCase`. `length()` counts UTF-16 code units, which may differ from user-perceived characters.
+@code java
+String text = "  Learn Java  ".trim();
+String[] words = text.split(" ");
+System.out.println(text.toUpperCase());
+System.out.println(text.substring(0, 5));
+@end
+@practice
+1. Compare two separately constructed strings by value.
+2. Count occurrences of a word after splitting a sentence.
+@interview String is immutable and may be pooled; compare content with `equals`, not `==`, and remember String methods return new values.
+
+@module m12 | 🪢 | 12 · Mutable Text | Module 12 — StringBuilder & StringBuffer | append · insert · delete · reverse · Thread safety
+@topic 🪢 Build text efficiently
+Repeated `+` in a loop can create many temporary Strings. `StringBuilder` is a mutable character sequence suited to local construction; `StringBuffer` provides synchronized methods for legacy shared-use cases and is usually unnecessary for local work.
+@code java
+StringBuilder message = new StringBuilder("Java");
+message.append(" is").append(" useful");
+message.insert(0, "Learn ");
+message.replace(0, 5, "Study");
+message.delete(5, 6);
+System.out.println(message.reverse());
+@end
+@table
+Type | Mutable? | Thread-safe by default? | Typical use
+String | No | Yes, because immutable | Text values
+StringBuilder | Yes | No | Efficient local text construction
+StringBuffer | Yes | Synchronized methods | Legacy shared mutable text
+@end
+@practice
+1. Build a comma-separated list with StringBuilder.
+2. Reverse a word without changing the original String.
+@interview Use String for values, StringBuilder for efficient mutable construction, and StringBuffer only when its synchronization is specifically needed.
+
+@module m13 | 🏛️ | 13 · OOP Basics | Module 13 — Classes, Objects & Constructors | State · Behavior · this · static
+@topic 🏛️ Model a concept with a class
+A class defines fields (state) and methods (behavior); an object is one instance. A constructor initializes a new object and has the class name. `this` refers to the current object and disambiguates fields from parameters. A static field is shared by the class, not copied per instance.
+@code java
+class Student {
+    String name;
+    int age;
+
+    Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    void display() {
+        System.out.println(name + " (" + age + ")");
+    }
+}
+@end
+@topic 🧪 Create and use an object
+Use `new` to construct an object; local variables hold references to it. Encapsulation (next module) protects its state from invalid changes.
+@code java
+Student learner = new Student("Asha", 20);
+learner.display();
+@end
+@practice
+1. Create a `Book` class with title, author and a display method.
+2. Add a static field that counts how many objects are created.
+@interview A class defines object state and behavior; each object has its own instance fields while static fields belong to the class.
+
+@module m14 | 🔐 | 14 · Encapsulation | Module 14 — Encapsulation & Access Control | Private fields · Validation · Getters · Setters
+@topic 🔐 Protect object invariants
+Encapsulation hides representation and exposes intentional operations. Make fields private and validate changes through methods; not every field needs a setter. A setter should preserve the class's valid-state rules.
+@code java
+class Student {
+    private int age;
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        if (age < 0) throw new IllegalArgumentException("age must be nonnegative");
+        this.age = age;
+    }
+}
+@end
+@practice
+1. Add a private balance field with a deposit method that rejects negative amounts.
+2. Explain why a public field weakens validation.
+@interview Encapsulation hides mutable representation and protects invariants by allowing state changes only through controlled methods.
+
+@module m15 | 🧬 | 15 · Inheritance | Module 15 — Inheritance & super | extends · Single · Multilevel · Hierarchical
+@topic 🧬 Reuse and specialize behavior
+A subclass uses `extends` to inherit accessible members and may add or override behavior. Java supports single inheritance of classes; multiple behavior contracts are expressed with interfaces. Prefer composition when a type is not truly a specialized form of another.
+@code java
+class Animal {
+    void eat() { System.out.println("Eating"); }
+}
+
+class Dog extends Animal {
+    @Override
+    void eat() { System.out.println("Dog eating"); }
+}
+@end
+@topic 🔝 Call the parent implementation
+`super` accesses a superclass constructor or member. A constructor's `super(...)` call must be first; Java inserts a no-argument superclass constructor call if none is written and one is available.
+@practice
+1. Model `Vehicle` and `Car` using inheritance, then explain the is-a relationship.
+2. Give an example better modeled with composition.
+@interview Java class inheritance is single; subclasses use `extends` and `super`, while interfaces provide multiple behavioral contracts.
+
+@module m16 | 🎭 | 16 · Polymorphism | Module 16 — Overloading & Overriding | Compile-time · Runtime · Dynamic dispatch
+@topic 🎭 One name, different behavior
+Overloading selects among same-name methods using their parameter lists at compile time. Overriding replaces an inherited instance method; runtime dispatch chooses the implementation based on the actual object. Static methods are hidden, not overridden.
+@code java
+class Shape {
+    double area() { return 0; }
+}
+class Circle extends Shape {
+    private final double radius;
+    Circle(double radius) { this.radius = radius; }
+    @Override double area() { return Math.PI * radius * radius; }
+}
+Shape shape = new Circle(2);
+System.out.println(shape.area()); // Circle implementation
+@end
+@practice
+1. Create a base `Payment` type and two overriding payment implementations.
+2. Explain overloading versus overriding and when dispatch occurs.
+@interview Overloading is compile-time selection by parameters; overriding enables runtime polymorphism through dynamic dispatch on an object's actual class.
+
+@module m17 | 🫥 | 17 · Abstraction | Module 17 — Abstract Classes & Methods | Abstract contract · Shared implementation
+@topic 🫥 Represent incomplete common behavior
+An abstract class cannot be instantiated directly. It may contain fields, constructors, abstract methods without bodies and concrete methods shared by subclasses. A concrete subclass must implement all inherited abstract methods.
+@code java
+abstract class Animal {
+    abstract void sound();
+    void eat() { System.out.println("Eating"); }
+}
+class Cat extends Animal {
+    @Override void sound() { System.out.println("Meow"); }
+}
+@end
+@practice
+1. Create an abstract `Shape` with an abstract `area` method and a concrete description method.
+2. When is an abstract class more useful than an interface?
+@interview An abstract class defines a shared base with common state or implementation and may require concrete subclasses to implement abstract methods.
+
+@module m18 | 🔌 | 18 · Interfaces | Module 18 — Interfaces & Functional Contracts | implements · Default · Static · Private methods
+@topic 🔌 Program against a contract
+An interface specifies behavior that unrelated classes can implement. A class may implement many interfaces. Interface fields are constants; modern interfaces can also define default and static methods, and private helpers for their own method implementations.
+@code java
+interface Payable {
+    double amountDue();
+    default boolean isFree() { return amountDue() == 0; }
+    static String currency() { return "USD"; }
+}
+class Invoice implements Payable {
+    public double amountDue() { return 49.99; }
+}
+@end
+@topic 🧩 Functional interface
+A functional interface has one abstract method and can be implemented with a lambda. `@FunctionalInterface` asks the compiler to verify the contract.
+@practice
+1. Define a `Printable` interface and implement it in two unrelated classes.
+2. Add a default method and explain its purpose.
+@interview Interfaces express contracts and allow a class to implement multiple types; default and static methods add behavior without requiring every implementer to define it.
+
+@module m19 | 🪪 | 19 · Modifiers | Module 19 — Access Modifiers | private · package-private · protected · public
+@topic 🪪 Control visibility
+`private` is visible inside the declaring top-level class (including nested-class access rules); package-private means no modifier and is visible in the package; `protected` is visible in the package and to subclasses under Java's protected-access rules; `public` is broadly accessible when its enclosing types are accessible. Top-level classes can be public or package-private, not private/protected.
+@table
+Modifier | Same class | Same package | Subclass outside package | Unrelated package
+`private` | Yes | No | No | No
+package-private | Yes | Yes | No | No
+`protected` | Yes | Yes | Yes, through subclass rules | No
+`public` | Yes | Yes | Yes | Yes
+@end
+@practice
+1. Choose visibility for an internal field, a package helper and a public API method.
+2. Why is protected access outside a package more nuanced than public access?
+@interview Use the least visibility that supports the API; protected members are accessible to subclasses subject to Java's cross-package rules.
+
+@module m20 | 📦 | 20 · Packages | Module 20 — Packages & Imports | package · import · Standard library · Namespaces
+@topic 📦 Organize code by package
+A package groups related types and prevents naming collisions. A `package` declaration appears first in a source file; folders conventionally mirror the package name. `import` allows a type to be referenced by its simple name but does not copy code into the class.
+@code java
+package com.example.app;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+class Reminder {
+    LocalDate dueDate;
+    ArrayList<String> labels = new ArrayList<>();
+}
+@end
+@topic 🧰 Know common packages
+`java.lang` is implicitly available; `java.util` provides collections and utilities; `java.io` and `java.nio.file` handle I/O; `java.time` provides modern dates; `java.sql` supports JDBC. Prefer explicit imports over wildcard imports in shared code.
+@practice
+1. Create `com.example.geometry` and put a public `Circle` in it.
+2. Import `LocalDate` and print today's date.
+@interview Packages organize types and control package-level access; imports make names convenient, while fully qualified names remain unambiguous.
+
+@module m21 | 🪞 | 21 · Object | Module 21 — Object, equals & hashCode | toString · equals · hashCode · getClass · clone
+@topic 🪞 The root class and value identity
+Every class ultimately extends `Object`. Override `toString` for useful diagnostics and `equals` for logical value equality. If two objects are equal, their `hashCode` values must match; unequal objects may share a hash. This contract matters in HashMap and HashSet.
+@code java
+@Override
+public boolean equals(Object other) {
+    if (this == other) return true;
+    if (!(other instanceof Student student)) return false;
+    return id == student.id;
+}
+
+@Override
+public int hashCode() {
+    return Integer.hashCode(id);
+}
+@end
+@topic 🧬 Other Object methods
+`getClass` reports runtime class. `clone` has awkward shallow-copy semantics and is not the usual preferred copying API; use a copy constructor or factory with clear semantics. Records can generate value-oriented methods for simple immutable data carriers.
+@practice
+1. Implement `equals` and `hashCode` for an immutable value type.
+2. Explain why equal objects must have equal hash codes.
+@interview Override `equals` and `hashCode` together for value equality; equal objects must produce equal hash codes for hash-based collections to work correctly.
+
+@module m22 | 🏗️ | 22 · Constructors | Module 22 — Constructors & Chaining | Default · No-arg · Parameters · this() · super()
+@topic 🏗️ Initialize valid objects
+A constructor has the class name and no return type. Java supplies a default no-argument constructor only when no constructor is declared. Constructors can be overloaded; `this(...)` calls another constructor in the same class, and `super(...)` calls a superclass constructor. Either constructor call must be the first statement.
+@code java
+class User {
+    private final String name;
+    private final int age;
+
+    User(String name) {
+        this(name, 0);
+    }
+
+    User(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+@end
+@practice
+1. Add a validating constructor to a `BankAccount` class.
+2. Explain when the compiler supplies a default constructor.
+@interview Constructors establish an object's initial valid state; `this()` chains within the class and `super()` selects a superclass constructor.
+
+@module m23 | ⚠️ | 23 · Exceptions | Module 23 — Exception Handling | Throwable · Checked · Runtime · try · catch · finally
+@topic ⚠️ Understand the hierarchy
+`Throwable` has two main branches: `Error` for serious runtime/environment problems and `Exception` for conditions applications may handle. Checked exceptions must be caught or declared; unchecked `RuntimeException` subclasses need not be declared. Avoid catching `Throwable` or swallowing exceptions.
+@code java
+try {
+    int result = 10 / 0;
+} catch (ArithmeticException exception) {
+    System.out.println("Cannot divide by zero");
+} finally {
+    System.out.println("Cleanup belongs here when needed");
+}
+@end
+@topic 🧯 Choose the right mechanism
+`throw` raises an exception; `throws` declares possible checked exceptions. Try-with-resources automatically closes `AutoCloseable` resources. Catch an exception where you can add context, recover, translate it or report it meaningfully.
+@practice
+1. Handle invalid numeric input without hiding unrelated programming errors.
+2. Name one checked and one unchecked exception.
+@interview Checked exceptions must be handled or declared; unchecked exceptions are RuntimeException subclasses, while Error usually represents conditions applications should not recover from.
+
+@module m24 | 🧪 | 24 · Custom Exceptions | Module 24 — Custom Exceptions & Propagation | Domain errors · Checked · Unchecked · Causes
+@topic 🧪 Define meaningful domain failures
+Create a custom exception when callers benefit from a specific failure type. Extend `Exception` for a checked condition the caller is expected to handle, or `RuntimeException` for an unchecked programming/domain failure. Include a useful message and preserve the original cause when translating.
+@code java
+class InvalidAgeException extends Exception {
+    InvalidAgeException(String message) {
+        super(message);
+    }
+}
+
+static void register(int age) throws InvalidAgeException {
+    if (age < 18) throw new InvalidAgeException("Must be an adult");
+}
+@end
+@topic 🔗 Propagation
+An exception propagates up the call stack until a matching handler is found. Declare checked exceptions in a method's `throws` clause or handle them. Do not use exceptions for ordinary branching.
+@practice
+1. Define an `InsufficientFundsException` and decide whether it is checked.
+2. Wrap an I/O exception with a domain-specific message while preserving its cause.
+@interview Custom exceptions name domain failures; exception propagation unwinds callers until a handler can recover, translate or report the problem.
+
+@module m25 | 🧺 | 25 · Collections Intro | Module 25 — Collections Framework Overview | List · Set · Queue · Map · Generics
+@topic 🧺 Pick a collection by behavior
+`Collection` is the root interface for many element collections. `List` keeps a sequence and allows duplicates; `Set` enforces uniqueness; `Queue` models retrieval order. `Map` stores key-value pairs and is part of the framework but does not extend `Collection`.
+@code java
+List<String> names = new ArrayList<>();
+Set<String> uniqueNames = new HashSet<>();
+Queue<String> tasks = new ArrayDeque<>();
+Map<String, Integer> scores = new HashMap<>();
+@end
+@info Prefer interface types in variable declarations and choose an implementation for ordering, lookup, concurrency and performance requirements.
+@practice
+1. Choose a collection for ordered duplicate names, unique tags and ID-to-score lookup.
+2. Explain why Map is not a subtype of Collection.
+@interview Choose List for ordered duplicates, Set for uniqueness, Queue for retrieval policy and Map for key-value lookup.
+
+@module m26 | 📃 | 26 · List | Module 26 — List Implementations | ArrayList · LinkedList · Vector · Stack
+@topic 📃 Use common List operations
+A List is ordered, indexed and permits duplicates. `ArrayList` is the usual default for fast indexed reads and append-at-end. `LinkedList` supports efficient operations at its ends but indexed access is slow. `Vector` and `Stack` are legacy synchronized types; prefer `ArrayList` and `Deque` for new code.
+@code java
+List<String> names = new ArrayList<>();
+names.add("Asha");
+names.add("Ravi");
+names.set(0, "Mina");
+System.out.println(names.get(0));
+System.out.println(names.contains("Ravi") + " " + names.size());
+names.remove("Ravi");
+@end
+@topic 🧹 More operations
+`add`, `remove`, `get`, `set`, `contains`, `size`, `clear` and `isEmpty` cover common workflows. Removing by integer from `List<Integer>` can select an index; use `Integer.valueOf(value)` to remove a matching object value.
+@practice
+1. Store five names, update one, remove one and check if a name exists.
+2. When might a deque be a better stack than `Stack`?
+@interview `ArrayList` is the general-purpose List; choose other implementations when their specific access, insertion or concurrency behavior is needed.
+
+@module m27 | 🔷 | 27 · Set | Module 27 — Set Implementations | HashSet · LinkedHashSet · TreeSet · Equality
+@topic 🔷 Enforce uniqueness
+A Set rejects duplicates as defined by equality. `HashSet` offers efficient average lookup without ordering guarantees; `LinkedHashSet` preserves insertion order; `TreeSet` sorts values and typically needs comparable elements or a Comparator.
+@code java
+Set<String> tags = new LinkedHashSet<>();
+tags.add("java");
+tags.add("backend");
+tags.add("java");
+System.out.println(tags); // duplicate is not added
+@end
+@topic 🧮 Hashing and ordering
+Hash-based sets depend on correct `equals` and `hashCode`. Tree-based sets depend on comparison consistency. Mutating fields used by equality or sorting while an object is stored can break lookup behavior.
+@practice
+1. Remove duplicates from a list while preserving first-seen order.
+2. Store numbers in sorted unique order.
+@interview Use HashSet for uniqueness without order, LinkedHashSet for insertion order and TreeSet for sorted uniqueness; equality and hashing must be consistent.
+
+@module m28 | 🗺️ | 28 · Map | Module 28 — Map Implementations & Operations | HashMap · LinkedHashMap · TreeMap · Hashtable
+@topic 🗺️ Store key-value associations
+A Map has unique keys and maps each key to a value. `HashMap` is the usual general-purpose implementation; `LinkedHashMap` preserves encounter order; `TreeMap` sorts keys. `Hashtable` is legacy; use a concurrent map when thread-safe access is required.
+@code java
+Map<String, Integer> scores = new HashMap<>();
+scores.put("Asha", 95);
+scores.put("Ravi", 88);
+System.out.println(scores.get("Asha"));
+System.out.println(scores.containsKey("Ravi"));
+for (Map.Entry<String, Integer> entry : scores.entrySet()) {
+    System.out.println(entry.getKey() + ": " + entry.getValue());
+}
+@end
+@topic 🔎 Essential methods
+Use `put`, `get`, `remove`, `containsKey`, `containsValue`, `keySet`, `values` and `entrySet`. `get` returning null can mean absent or mapped-to-null; use `containsKey` or `getOrDefault` when the distinction matters.
+@practice
+1. Count word frequencies with a Map.
+2. Explain how a HashMap handles two keys with the same hash code.
+@interview A Map associates unique keys to values; choose its implementation based on ordering and concurrency, and implement key equality and hashing correctly.
+
+@module m29 | 🚦 | 29 · Queue & Deque | Module 29 — Queues, PriorityQueue & Deque | offer · poll · peek · FIFO · Priority
+@topic 🚦 Model pending work
+A Queue typically retrieves in FIFO order. `offer` adds, `poll` retrieves or returns null when empty, and `peek` inspects the head without removing it. `add`, `remove` and `element` may throw when an operation cannot be completed.
+@code java
+Queue<String> jobs = new ArrayDeque<>();
+jobs.offer("email");
+jobs.offer("report");
+System.out.println(jobs.peek());
+System.out.println(jobs.poll());
+@end
+@topic 🏁 Priority and both ends
+`PriorityQueue` retrieves by priority ordering, not insertion order. `Deque` supports both ends and can act as a queue or stack; `ArrayDeque` is a good default and disallows null elements.
+@practice
+1. Process three tasks in FIFO order with a Queue.
+2. Use an ArrayDeque as a stack and explain which end is used.
+@interview Queue operations distinguish exception-throwing and special-value forms; PriorityQueue uses priority order and Deque handles both ends.
+
+@module m30 | 🔁 | 30 · Iteration | Module 30 — Iterator & ListIterator | hasNext · next · remove · Fail-fast
+@topic 🔁 Traverse safely
+`Iterator` exposes `hasNext`, `next` and optional `remove`. `ListIterator` adds backwards traversal, indices and supported add/set operations for lists. Enhanced for is simpler for read-only traversal.
+@code java
+List<String> names = new ArrayList<>(List.of("Asha", "Ravi", "Mina"));
+Iterator<String> iterator = names.iterator();
+while (iterator.hasNext()) {
+    if (iterator.next().startsWith("R")) iterator.remove();
+}
+@end
+@topic ⚠️ Structural modification
+Many standard iterators are fail-fast and may throw `ConcurrentModificationException` after an unsupported structural modification. This is best-effort bug detection, not a thread-safety guarantee. Use iterator removal, collection methods, or concurrent collections as appropriate.
+@practice
+1. Remove matching elements during iteration using the iterator's `remove`.
+2. Explain why fail-fast does not mean thread-safe.
+@interview Iterators provide controlled traversal and removal; fail-fast behavior detects some unsupported structural changes but is not a concurrency guarantee.
+
+@module m31 | 🔢 | 31 · Sorting Objects | Module 31 — Comparable & Comparator | Natural order · Custom order · thenComparing
+@topic 🔢 Define natural ordering
+`Comparable<T>` defines an object's natural ordering through `compareTo`. Return a negative value, zero or positive value to indicate less, equal or greater ordering. Comparison should be consistent and transitive.
+@code java
+record Student(String name, int score) implements Comparable<Student> {
+    public int compareTo(Student other) {
+        return Integer.compare(score, other.score);
+    }
+}
+@end
+@topic 🧭 Supply alternate orderings
+`Comparator<T>` defines an external ordering and can be composed with `comparing` and `thenComparing`. Prefer comparator factories to subtraction-based comparison, which can overflow.
+@code java
+Comparator<Student> byNameThenScore = Comparator
+    .comparing(Student::name)
+    .thenComparingInt(Student::score);
+students.sort(byNameThenScore);
+@end
+@practice
+1. Sort students by descending score, then alphabetically by name.
+2. Explain when Comparable is suitable and when Comparator is more flexible.
+@interview Comparable defines a type's natural ordering; Comparator supplies reusable alternative orderings that can be composed.
+
+@module m32 | 🧬 | 32 · Generics | Module 32 — Generics, Bounds & Wildcards | Type parameters · PECS · Type safety · Erasure
+@topic 🧬 Parameterize reusable code
+Generics express types at compile time, preventing many casts and type errors. Use type parameters on classes, interfaces and methods. Java generics use type erasure at runtime and cannot directly use primitive type arguments; use wrapper classes such as `Integer`.
+@code java
+class Box<T> {
+    private T value;
+    void set(T value) { this.value = value; }
+    T get() { return value; }
+}
+Box<String> box = new Box<>();
+box.set("safe text");
+@end
+@topic 🎚️ Bounds and wildcard variance
+`<T extends Number>` bounds a type parameter. `? extends T` is useful as a producer of T; `? super T` is useful as a consumer. The mnemonic **PECS** means Producer Extends, Consumer Super. A wildcard collection is not generally safe to add arbitrary values to.
+@code java
+static double total(List<? extends Number> values) {
+    double result = 0;
+    for (Number value : values) result += value.doubleValue();
+    return result;
+}
+@end
+@practice
+1. Write a generic method that returns the first element of a list.
+2. Explain PECS and why `List<Integer>` is not a `List<Number>`.
+@interview Generics provide compile-time type safety; use bounded type parameters and the PECS rule to design flexible APIs.
+
+@module m33 | λ | 33 · Lambdas | Module 33 — Lambda Expressions | Syntax · Functional target · Captures
+@topic λ Pass behavior as a value
+A lambda implements a functional interface: `(parameters) -> expression` or `(parameters) -> { statements; }`. The target type supplies the functional interface. Captured local variables must be final or effectively final.
+@code java
+List<String> names = List.of("Asha", "Ravi", "Mina");
+names.forEach(name -> System.out.println(name));
+Comparator<String> byLength = (left, right) ->
+    Integer.compare(left.length(), right.length());
+@end
+@topic 🎯 Keep lambdas readable
+Use a method reference when it clearly names an existing operation. Avoid long multi-branch lambdas; extract a named method when behavior deserves a name.
+@practice
+1. Sort numbers with a lambda comparator.
+2. Filter names beginning with a chosen letter.
+@interview A lambda is an implementation of a functional interface, allowing behavior to be passed concisely where that interface is expected.
+
+@module m34 | 🔌 | 34 · Functional Interfaces | Module 34 — Functional Interfaces | Predicate · Function · Consumer · Supplier · Operators
+@topic 🔌 Standard behavior contracts
+`Predicate<T>` tests and returns boolean; `Function<T,R>` transforms; `Consumer<T>` accepts a value and returns no result; `Supplier<T>` creates or supplies a value. `UnaryOperator<T>` and `BinaryOperator<T>` specialize functions where inputs and output share a type. `@FunctionalInterface` documents and validates a single abstract method.
+@code java
+Predicate<String> nonEmpty = text -> !text.isBlank();
+Function<String, Integer> length = String::length;
+Consumer<String> print = System.out::println;
+Supplier<String> greeting = () -> "Hello";
+UnaryOperator<Integer> twice = value -> value * 2;
+BinaryOperator<Integer> add = Integer::sum;
+@end
+@practice
+1. Compose a Predicate that checks whether a number is positive and even.
+2. Build a Function that converts a name to its length.
+@interview Standard functional interfaces describe predicates, transformations, consumers, suppliers and same-type operators for reuse across lambdas and streams.
+
+@module m35 | 🌊 | 35 · Streams | Module 35 — Stream API | filter · map · flatMap · collect · reduce
+@topic 🌊 Transform data declaratively
+A Stream pipeline has a source, lazy intermediate operations and a terminal operation. `filter` keeps matching values; `map` transforms each; `flatMap` maps and flattens nested streams. Streams are consumed once and do not store data.
+@code java
+List<Integer> numbers = List.of(4, 12, 7, 20);
+List<Integer> result = numbers.stream()
+    .filter(number -> number > 10)
+    .map(number -> number * 2)
+    .toList();
+System.out.println(result);
+@end
+@topic 🧮 Terminal operations
+Common operations include `sorted`, `distinct`, `limit`, `skip`, `forEach`, `collect`, `reduce`, `count`, `min` and `max`. Use `collect` to build results; use `reduce` for combining values. Avoid side effects in parallel pipelines and use parallel streams only after measurement.
+@code java
+int total = numbers.stream().reduce(0, Integer::sum);
+long count = numbers.stream().filter(number -> number > 10).count();
+@end
+@warn Do not modify the stream's source from inside the pipeline. Prefer clear loops when a stream becomes harder to understand than the transformation.
+@practice
+1. Filter even numbers, square them, sort and collect the result.
+2. Flatten a list of lists with `flatMap`.
+@interview Streams lazily compose transformations and run them at a terminal operation; they are single-use pipelines, not collections.
+
+@module m36 | 📦 | 36 · Optional | Module 36 — Optional<T> | of · ofNullable · empty · orElse · orElseThrow
+@topic 📦 Represent a possibly absent result
+`Optional<T>` makes absence explicit, especially as a return type. Use `of` for known non-null, `ofNullable` for possibly null and `empty` for absence. `map` transforms a present value; `orElseGet` lazily computes a fallback.
+@code java
+Optional<String> nickname = Optional.ofNullable(findNickname());
+String display = nickname.map(String::trim)
+    .filter(name -> !name.isEmpty())
+    .orElse("Guest");
+@end
+@topic ⚠️ Avoid Optional traps
+`isPresent` and `ifPresent` exist, but chained transformations often read better. `orElse` evaluates its fallback eagerly; use `orElseGet` for expensive work. Avoid calling `get` without checking. Optional is generally not intended for every field, parameter or collection element.
+@practice
+1. Convert a possibly null email to lowercase and use a default when missing.
+2. Explain `orElse` versus `orElseGet`.
+@interview Optional models an optional return value and supports explicit fallback and transformation without passing null through every call.
+
+@module m37 | 🔗 | 37 · Method References | Module 37 — Method & Constructor References | Static · Bound · Unbound · Constructor
+@topic 🔗 Shorten a simple lambda
+A method reference reuses an existing method where a compatible functional interface is expected: `Class::staticMethod`, `object::instanceMethod` or `Class::instanceMethod`. Use it when it improves clarity over a lambda.
+@code java
+List<String> names = List.of("Asha", "Ravi");
+names.forEach(System.out::println);
+Function<String, Integer> parse = Integer::valueOf;
+@end
+@topic 🏗️ Constructor references
+`Class::new` refers to a constructor and can create values for factories or streams.
+@code java
+Supplier<ArrayList<String>> newList = ArrayList::new;
+List<String> upper = names.stream().map(String::toUpperCase).toList();
+@end
+@practice
+1. Replace `value -> System.out.println(value)` with a method reference.
+2. Create objects with a constructor reference.
+@interview Method references are concise lambda forms that refer to a compatible static method, instance method or constructor.
+
+@module m38 | 🗓️ | 38 · Date & Time | Module 38 — java.time API | LocalDate · Instant · Zones · Duration · Period
+@topic 🗓️ Use immutable date-time types
+`LocalDate`, `LocalTime` and `LocalDateTime` represent local calendar values without a time zone. `ZonedDateTime` includes a zone; `Instant` is a point on the UTC timeline. `Duration` measures elapsed time; `Period` represents calendar years, months and days.
+@code java
+LocalDate today = LocalDate.now();
+LocalDate due = today.plusDays(14);
+Instant started = Instant.now();
+ZonedDateTime meeting = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+Period untilDue = Period.between(today, due);
+@end
+@topic 🧾 Parse and format
+Use `DateTimeFormatter` with explicit patterns for external text. Choose a time zone deliberately for events; a local date-time alone cannot identify an absolute instant.
+@code java
+DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+LocalDate parsed = LocalDate.parse("2026-09-29", format);
+System.out.println(parsed.format(format));
+@end
+@practice
+1. Parse a date, add one month and format the result.
+2. Choose `Duration` or `Period` for measuring two days versus a calendar month.
+@interview The immutable `java.time` API separates local dates, zoned times, timeline instants and elapsed versus calendar amounts.
+
+@module m39 | 📂 | 39 · I/O | Module 39 — Java I/O Streams & Readers | Bytes · Characters · Buffering · try-with-resources
+@topic 📂 Choose byte or character I/O
+`InputStream` and `OutputStream` handle bytes, suitable for binary data. `Reader` and `Writer` handle characters with a charset. Buffered wrappers reduce small underlying reads and writes. Specify UTF-8 when encoding text for interoperability.
+@code java
+try (BufferedReader reader = Files.newBufferedReader(Path.of("input.txt"), StandardCharsets.UTF_8)) {
+    String line;
+    while ((line = reader.readLine()) != null) {
+        System.out.println(line);
+    }
+}
+@end
+@topic 🧹 Resource lifecycle
+Try-with-resources automatically closes `AutoCloseable` resources, including streams and readers. Avoid relying on garbage collection to close files; handle or propagate `IOException`.
+@practice
+1. Read a UTF-8 text file line by line and count lines.
+2. Name a task that requires byte streams rather than character readers.
+@interview Use byte streams for binary data, character readers/writers for text, buffering for efficient access and try-with-resources for reliable closing.
+
+@module m40 | 🗂️ | 40 · NIO | Module 40 — NIO Files & Paths | Path · Files · Read · Write · Copy · Move
+@topic 🗂️ Work with paths and files
+`Path` represents a filesystem path; `Files` provides operations to read, write, copy, move, delete and inspect it. Methods may throw `IOException`; do not assume a relative path points to a particular directory in production.
+@code java
+Path source = Path.of("input.txt");
+Path copy = Path.of("backup", "input.txt");
+Files.createDirectories(copy.getParent());
+Files.copy(source, copy, StandardCopyOption.REPLACE_EXISTING);
+String text = Files.readString(source, StandardCharsets.UTF_8);
+@end
+@topic 🔒 Safe file operations
+Validate user-controlled paths against an intended base directory to prevent path traversal. Use `Files.exists`, `Files.size` and `Files.deleteIfExists` when those checks match the intended behavior; avoid check-then-act races for security decisions.
+@practice
+1. Create a directory, write a UTF-8 file and read it back.
+2. Copy a file only into a validated application data directory.
+@interview NIO represents paths with `Path` and exposes filesystem operations through `Files`, with explicit encodings and checked I/O failures.
+
+@module m41 | 🧳 | 41 · Serialization | Module 41 — Java Serialization | Serializable · Object streams · transient · Security
+@topic 🧳 Convert object state to bytes
+Java serialization uses `Serializable`, `ObjectOutputStream` and `ObjectInputStream`. `transient` excludes a field from default serialization. `serialVersionUID` versions the serialized form, but native Java serialization couples stored data to class structure.
+@topic 🛡️ Avoid deserializing untrusted input
+Deserialization of untrusted native object streams can enable severe attacks. Prefer explicit formats such as JSON or schema-based formats for external data, validate input and avoid exposing object deserialization endpoints. Serialization is not a substitute for a stable data contract.
+@code java
+class SessionData implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private String userId;
+    private transient String temporaryToken;
+}
+@end
+@practice
+1. Explain what `transient` does.
+2. Choose a serialization format for a public API and justify it.
+@interview Java serialization converts object graphs to bytes but is tightly coupled to classes; never deserialize untrusted data without a carefully designed security boundary.
+
+@module m42 | 🧵 | 42 · Threads | Module 42 — Threads & Tasks | Process · Thread · Runnable · Callable · Lifecycle
+@topic 🧵 Separate concurrent work
+A process owns resources; its threads execute within the process and share its memory. Create tasks as `Runnable` when no result is needed or `Callable<T>` when returning a value or throwing a checked exception. Prefer an ExecutorService to manually managing thread lifecycles.
+@code java
+Runnable task = () -> System.out.println("Work on another thread");
+Thread thread = new Thread(task);
+thread.start();
+thread.join(); // wait for completion
+@end
+@topic 🔄 Thread lifecycle and virtual threads
+Threads move through states such as new, runnable, blocked/waiting and terminated. Avoid using deprecated control methods like `stop`. Modern Java also provides virtual threads for high-concurrency blocking workloads; they reduce thread cost but do not make CPU-bound work faster.
+@practice
+1. Create a Callable that returns a value and retrieve it through an executor.
+2. Explain process versus thread and when virtual threads help.
+@interview Threads execute concurrently in a process; represent work as tasks and let an executor manage scheduling and lifecycle.
+
+@module m43 | 🔒 | 43 · Synchronization | Module 43 — Thread Safety & Synchronization | Race · synchronized · volatile · Deadlock
+@topic 🔒 Coordinate shared mutable state
+A race condition occurs when outcomes depend on unsynchronized timing. A critical section protects shared invariants. `synchronized` provides mutual exclusion and visibility for the same monitor. Prefer immutability or message passing where practical.
+@code java
+class Counter {
+    private int value;
+    synchronized void increment() { value++; }
+    synchronized int get() { return value; }
+}
+@end
+@topic ⚡ Visibility and deadlocks
+`volatile` makes reads/writes visible across threads but does not make compound operations such as `count++` atomic. Use atomics or locks for compound updates. Deadlock can arise from inconsistent lock ordering; starvation occurs when a thread cannot get enough access to resources.
+@practice
+1. Explain why `volatile int count; count++` is not a safe counter.
+2. Describe a consistent lock ordering that prevents a two-lock deadlock.
+@interview `synchronized` protects a critical section and establishes visibility; `volatile` guarantees visibility for a variable but not atomicity of compound operations.
+
+@module m44 | 🧰 | 44 · Concurrency API | Module 44 — Executors & Concurrent Utilities | ExecutorService · Future · CompletableFuture · Atomic
+@topic 🧰 Manage tasks with executors
+`ExecutorService` runs tasks and manages a pool. `Future` represents a result available later; `Callable` computes it. Shut down executors deliberately, or use lifecycle patterns supported by the Java version in use.
+@code java
+ExecutorService executor = Executors.newFixedThreadPool(2);
+try {
+    Future<Integer> result = executor.submit(() -> 6 * 7);
+    System.out.println(result.get());
+} finally {
+    executor.shutdown();
+}
+@end
+@topic 🔗 Coordinate concurrent data and stages
+`CompletableFuture` composes asynchronous stages. `ConcurrentHashMap`, `BlockingQueue` and `AtomicInteger` support common concurrent patterns. Asynchronous code still needs clear error handling, cancellation and executor choices.
+@practice
+1. Submit two independent tasks and combine their results.
+2. Choose between a blocking queue and a concurrent map for a producer-consumer workflow.
+@interview The concurrency API separates tasks from threads and offers futures, atomic variables, blocking queues and concurrent collections for coordination.
+
+@module m45 | 🔌 | 45 · JDBC | Module 45 — JDBC Database Connectivity | Connection · PreparedStatement · ResultSet · CRUD
+@topic 🔌 Connect Java to a database
+JDBC provides a standard API: obtain a `Connection`, execute parameterized SQL with `PreparedStatement`, and read rows from `ResultSet`. Use try-with-resources for every JDBC resource. Drivers and connection configuration depend on the database.
+@code java
+String sql = "SELECT id, name FROM students WHERE id = ?";
+try (Connection connection = dataSource.getConnection();
+     PreparedStatement statement = connection.prepareStatement(sql)) {
+    statement.setInt(1, studentId);
+    try (ResultSet result = statement.executeQuery()) {
+        while (result.next()) {
+            System.out.println(result.getInt("id") + " " + result.getString("name"));
+        }
+    }
+}
+@end
+@topic 🛡️ CRUD and safe SQL
+Use `executeQuery` for rows and `executeUpdate` for insert/update/delete counts. `PreparedStatement` binds data separately from SQL syntax, helping prevent injection; never concatenate untrusted input into a query.
+@practice
+1. Insert a student using a PreparedStatement and inspect the update count.
+2. Explain why placeholders are safer than SQL string concatenation.
+@interview JDBC connects Java to relational databases using connections, parameterized statements and result sets; always close resources and bind untrusted values.
+
+@module m46 | 🗃️ | 46 · SQL | Module 46 — SQL Integration | Tables · Keys · Joins · Indexes · Constraints
+@topic 🗃️ Understand the data model
+Java applications persist relational data in tables. Primary keys identify rows; foreign keys encode relationships. Learn `SELECT`, `INSERT`, `UPDATE`, `DELETE`, joins, constraints and indexes. An index may speed reads but costs storage and slows some writes.
+@topic 🔗 Keep SQL and Java responsibilities clear
+Use database constraints to protect integrity even if requests bypass the UI. Use explicit columns rather than `SELECT *` in stable application queries. Choose a database migration tool as schema changes become part of application releases.
+@practice
+1. Design student and course tables with a many-to-many enrollment table.
+2. Write a join that lists each student and enrolled course.
+@interview Java uses SQL through JDBC or an ORM; schema constraints protect data integrity and indexes trade write/storage cost for query performance.
+
+@module m47 | 💳 | 47 · Transactions | Module 47 — JDBC Transactions & ACID | Commit · Rollback · Isolation · Atomic work
+@topic 💳 Group updates atomically
+A transaction groups related operations so either all succeed or the database rolls them back. ACID means atomicity, consistency, isolation and durability. Disable auto-commit, perform the unit of work, commit on success and rollback on failure.
+@code java
+connection.setAutoCommit(false);
+try {
+    debit(connection, fromId, amount);
+    credit(connection, toId, amount);
+    connection.commit();
+} catch (SQLException exception) {
+    connection.rollback();
+    throw exception;
+} finally {
+    connection.setAutoCommit(true);
+}
+@end
+@topic 🧭 Isolation and boundaries
+Isolation levels trade concurrency against anomalies such as dirty reads or non-repeatable reads. Keep transactions short; do not wait on network calls while holding database locks. In Spring, transaction boundaries are commonly managed with `@Transactional`.
+@practice
+1. Explain why a money transfer must debit and credit in one transaction.
+2. Name the four ACID properties.
+@interview Transactions preserve a database unit of work; commit on success, rollback on failure and choose an isolation level appropriate to consistency needs.
+
+@module m48 | 🏗️ | 48 · Build Tools | Module 48 — Maven & Gradle | pom.xml · Dependencies · Lifecycle · JAR · WAR
+@topic 🏗️ Manage builds and dependencies
+Maven declares project coordinates, dependencies and plugins in `pom.xml`; its standard lifecycle includes compile, test and package. Gradle offers a programmable build with Groovy or Kotlin DSLs. Learn Maven first if following this path, then learn Gradle basics.
+@code bash
+mvn clean
+mvn compile
+mvn test
+mvn package
+@end
+@topic 📦 Package applications
+A JAR bundles Java classes and resources; a WAR is traditionally deployed to a servlet container. Modern Spring Boot applications commonly package an executable JAR. Pin supported dependency versions and avoid committing generated build output.
+@practice
+1. Add a dependency and run Maven tests.
+2. Explain the difference between `mvn test` and `mvn package`.
+@interview Build tools resolve dependencies, run tests and package applications through repeatable lifecycle tasks.
+
+@module m49 | ✅ | 49 · Testing | Module 49 — JUnit & Mockito | Assertions · Lifecycle · Parameters · Mocks
+@topic ✅ Test behavior with JUnit
+JUnit Jupiter tests use `@Test` and assertions. Setup and teardown methods manage fixtures; parameterized tests run the same behavior across several inputs. A unit test should be focused, repeatable and independent of external services.
+@code java
+@Test
+void addsTwoNumbers() {
+    assertEquals(5, Calculator.add(2, 3));
+}
+@end
+@topic 🎭 Isolate collaborators with Mockito
+A mock replaces a collaborator so a unit can be tested independently. Stub inputs and verify meaningful interactions; do not mock every object or implementation detail. Use integration tests for contracts with databases, HTTP and framework configuration.
+@practice
+1. Test both valid and invalid inputs for a service method.
+2. Mock a repository and verify the service uses it correctly.
+@interview JUnit verifies behavior with assertions; Mockito isolates collaborators, while integration tests validate real component boundaries.
+
+@module m50 | 🌐 | 50 · Servlets | Module 50 — HTTP & Servlets | Request · Response · Lifecycle · Sessions · Cookies
+@topic 🌐 Understand the servlet model
+A servlet handles HTTP requests and creates responses inside a servlet container. `HttpServlet` commonly dispatches GET and POST methods. Containers manage servlet lifecycle and concurrent requests, so request-specific data must not be stored in mutable shared fields.
+@topic 🍪 Sessions and cookies
+HTTP is stateless. Cookies are browser-held values; sessions associate server-side state with a session identifier, often transported in a cookie. Use secure cookie attributes, protect state-changing requests from CSRF and avoid storing secrets in client-controlled values.
+@practice
+1. Explain the path from an HTTP request through a servlet to a response.
+2. Distinguish a cookie from server-side session data.
+@interview A servlet container routes HTTP requests to servlet code and manages lifecycle; sessions add server-side state over stateless HTTP.
+
+@module m51 | 📄 | 51 · JSP | Module 51 — JSP & Legacy Web MVC | EL · JSTL · Lifecycle · MVC
+@topic 📄 Render server-side views
+Jakarta Server Pages (JSP) are server-rendered templates compiled into servlet behavior. Expression Language and JSTL keep presentation logic out of Java scriptlets. JSP is common in legacy systems; modern applications often use template engines or separate frontends.
+@topic 🧱 Separate responsibilities
+In MVC, a controller handles the request, a model carries data and a view renders it. Avoid putting business logic or database access in a JSP. Escape user-controlled output to prevent cross-site scripting.
+@practice
+1. Trace a request through controller, model and JSP view.
+2. Explain why scriptlets make templates harder to maintain.
+@interview JSP renders server-side views; use EL/JSTL and MVC separation, and recognize it mainly as a technology encountered in older applications.
+
+@module m52 | 🌱 | 52 · Spring Core | Module 52 — IoC & Dependency Injection | Beans · Context · Components · Configuration
+@topic 🌱 Let the container manage dependencies
+Inversion of Control means the framework manages object creation and wiring. A Spring bean is an object in the application context. Dependency Injection supplies its collaborators; constructor injection makes required dependencies explicit and supports immutable fields and simple tests.
+@code java
+@Service
+class OrderService {
+    private final OrderRepository repository;
+
+    OrderService(OrderRepository repository) {
+        this.repository = repository;
+    }
+}
+@end
+@topic 🧰 Configure the application
+`@Component`, `@Service` and `@Repository` register scanned components; `@Configuration` and `@Bean` declare beans explicitly; `@Autowired` can request injection but constructor injection is usually clearer. `ApplicationContext` owns bean lifecycle and configuration.
+@practice
+1. Create a service that receives a repository through its constructor.
+2. Explain the benefits of dependency injection for tests.
+@interview Spring IoC manages bean creation and lifecycle; dependency injection supplies collaborators, preferably through explicit constructors.
+
+@module m53 | 🚀 | 53 · Spring Boot | Module 53 — Spring Boot Fundamentals | Starters · Auto-configuration · Profiles · Properties
+@topic 🚀 Start an application quickly
+Spring Boot builds on Spring with dependency starters, auto-configuration and executable packaging. A main class annotated with `@SpringBootApplication` starts the application context and embedded server. Auto-configuration is conditional, not magic; understand which beans are created.
+@topic ⚙️ Configure environments
+Use `application.properties` or `application.yml` for configuration, profiles for environment-specific settings and external environment variables or secret stores for deployment values. Do not commit passwords, signing keys or production credentials.
+@code java
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+@end
+@practice
+1. Create a Spring Boot project with a web starter and run it.
+2. Add a development profile and explain how configuration is selected.
+@interview Spring Boot simplifies Spring applications with starters, conditional auto-configuration, externalized configuration and executable packaging.
+
+@module m54 | 🧭 | 54 · Spring MVC | Module 54 — Controllers, Services & Repositories | Request mapping · Layers · DTOs
+@topic 🧭 Separate web and business logic
+A controller translates HTTP input and output; a service contains application rules; a repository accesses persistence. Keep controllers thin and pass explicit request/response DTOs rather than exposing database entities as the public contract.
+@code java
+@RestController
+@RequestMapping("/api/greetings")
+class GreetingController {
+    @GetMapping("/{name}")
+    GreetingResponse get(@PathVariable String name) {
+        return new GreetingResponse("Hello, " + name);
+    }
+}
+record GreetingResponse(String message) {}
+@end
+@practice
+1. Design controller, service and repository responsibilities for a library API.
+2. Explain why an entity should not automatically become an API response.
+@interview Spring MVC routes HTTP requests to controllers; service and repository layers keep application rules and persistence separate from transport concerns.
+
+@module m55 | 🔗 | 55 · REST APIs | Module 55 — REST API Design & HTTP | GET · POST · PUT · PATCH · DELETE
+@topic 🔗 Model resources and HTTP semantics
+Design resource-oriented URLs and use HTTP methods consistently: GET reads, POST creates or triggers processing, PUT replaces, PATCH partially updates and DELETE removes. Safe and idempotent semantics matter for retries. Return suitable status codes and JSON representations.
+@table
+Method | Typical intent | Idempotent by definition?
+GET | Read a resource | Yes
+POST | Create or process | Not generally
+PUT | Replace a resource | Yes
+PATCH | Partially update | Depends on operation
+DELETE | Remove a resource | Yes in intended effect
+@end
+@topic 🧾 Inputs and outputs
+Use path variables for resource identity, query parameters for filtering/pagination and request bodies for structured changes. Validate inputs, return useful error responses and avoid exposing internal stack traces.
+@practice
+1. Design endpoints to list, fetch, create and update a book.
+2. Choose status codes for created, missing, invalid and forbidden requests.
+@interview A REST API models resources with HTTP methods and status codes, validated JSON contracts, and clear idempotency and error semantics.
+
+@module m56 | 🗄️ | 56 · JPA | Module 56 — JPA, Hibernate & Spring Data | Entity · Repository · Relationships · JPQL
+@topic 🗄️ Map objects to relational data
+JPA is a persistence specification; Hibernate is a common implementation. An entity maps to a table; a repository abstracts common persistence operations. Relationships such as one-to-many and many-to-one must reflect ownership and lifecycle deliberately.
+@code java
+@Entity
+class Book {
+    @Id @GeneratedValue
+    private Long id;
+    private String title;
+}
+
+interface BookRepository extends JpaRepository<Book, Long> {}
+@end
+@topic ⚠️ Query behavior matters
+JPQL queries entities, not raw table names. Lazy relationships can trigger N+1 queries; transactions define persistence context boundaries. Use DTO projections or deliberate fetch strategies and inspect generated SQL. Avoid indiscriminate eager loading.
+@practice
+1. Model books and authors with a many-to-one relationship.
+2. Explain the N+1 query problem and one way to investigate it.
+@interview JPA maps entities to relational data and Spring Data repositories simplify queries; transaction boundaries and fetch behavior must be designed intentionally.
+
+@module m57 | 🛡️ | 57 · Security | Module 57 — Spring Security Fundamentals | Authentication · Authorization · Passwords · JWT · CSRF
+@topic 🛡️ Verify identity and permissions
+Authentication asks who a user is; authorization asks what they may do. Store passwords with a purpose-built adaptive hash such as bcrypt or Argon2, never plaintext or reversible encryption. Enforce roles and permissions on the server, not only in the UI.
+@topic 🔑 Protect web and token flows
+Spring Security provides filter-chain-based protections. JWTs are signed claims, not encrypted by default; validate signature, issuer, audience and expiration, and handle revocation/rotation deliberately. Configure CORS narrowly. CSRF protection is important when browsers automatically attach credentials such as cookies; CORS is not authorization.
+@practice
+1. Distinguish authentication, authorization, CORS and CSRF.
+2. Name checks needed before accepting a JWT.
+@interview Secure applications verify identities, enforce server-side permissions, hash passwords appropriately and configure browser protections according to the credential transport.
+
+@module m58 | ✅ | 58 · Validation | Module 58 — Spring Validation & Error Handling | Constraints · DTOs · ControllerAdvice
+@topic ✅ Validate at the boundary
+Bean Validation annotations such as `@NotNull`, `@NotBlank`, `@NotEmpty`, `@Size`, `@Email`, `@Min`, `@Max` and `@Pattern` express input constraints. Apply them to request DTOs and trigger validation at the controller boundary. Validation does not replace business rules or database constraints.
+@code java
+record CreateUserRequest(
+    @NotBlank @Size(max = 80) String name,
+    @Email String email,
+    @Min(18) int age
+) {}
+
+@PostMapping
+UserResponse create(@Valid @RequestBody CreateUserRequest request) {
+    return service.create(request);
+}
+@end
+@topic 🧯 Consistent errors
+`@ControllerAdvice` and `@ExceptionHandler` can translate known exceptions into stable API error responses. Return field-level validation details without leaking internal implementation information.
+@practice
+1. Validate a registration request and return readable field errors.
+2. Explain the difference between input validation and authorization.
+@interview Validate request DTOs at the boundary and translate expected failures into consistent responses through centralized exception handling.
+
+@module m59 | 🧩 | 59 · Microservices | Module 59 — Microservices Fundamentals | Monolith · Boundaries · Network · Trade-offs
+@topic 🧩 Decompose only for a reason
+A monolith deploys one application unit; microservices split capabilities into independently deployable services. Services communicate over networks, introducing latency, partial failures, versioning and operational complexity. Choose boundaries around cohesive business capabilities and data ownership.
+@topic 🌐 Distributed-systems basics
+Plan for timeouts, retries with limits, idempotency, observability and eventual consistency. A microservice architecture is not automatically faster to build or easier to operate; start with the simplest architecture that meets the system's needs.
+@practice
+1. Identify a bounded capability in an e-commerce system and its data owner.
+2. Give two costs introduced by a network boundary.
+@interview Microservices enable independent deployment around business capabilities but add distributed failure, data consistency and operational complexity.
+
+@module m60 | ☁️ | 60 · Spring Cloud | Module 60 — Spring Cloud Patterns | Gateway · Discovery · Config · Feign · Resilience
+@topic ☁️ Coordinate distributed Spring services
+Spring Cloud provides integrations for patterns such as API gateways, service discovery, centralized configuration and declarative HTTP clients. Eureka and Config Server are common ecosystem tools; OpenFeign can express HTTP clients. Keep the Spring Cloud release train aligned with the Spring Boot version.
+@topic 🛟 Resilience patterns
+Resilience4j provides circuit breakers, retries, rate limiters and bulkheads. Retries need backoff and should only repeat safe/idempotent work or use an idempotency key. A circuit breaker limits repeated calls to an unhealthy dependency.
+@practice
+1. Sketch a gateway-to-service request and identify where authentication belongs.
+2. Explain why retrying a non-idempotent payment request is risky.
+@interview Spring Cloud integrates gateway, discovery, configuration and resilience patterns; dependency versions must align, and retries need safe semantics.
+
+@module m61 | 📨 | 61 · Messaging | Module 61 — Kafka & RabbitMQ Basics | Producer · Broker · Consumer · Delivery
+@topic 📨 Communicate through messages
+A producer sends messages to a broker; consumers process them asynchronously. Kafka is a partitioned event log suited to durable ordered streams and replay; RabbitMQ is a broker with flexible routing and queueing. Choose based on delivery, ordering, replay and operations needs.
+@topic 🔁 Reliable consumption
+Design consumers to tolerate duplicate delivery through idempotent processing. Handle acknowledgments, retries, dead-letter queues, schema evolution and ordering explicitly. A successful publish does not guarantee a downstream business operation completed.
+@code text
+Producer → broker/topic or queue → consumer group/consumer
+@end
+@practice
+1. Describe a producer-consumer workflow for sending order notifications.
+2. Explain how idempotency helps when a message is delivered more than once.
+@interview A broker decouples producers from consumers; reliable messaging requires explicit delivery, retry, ordering and idempotency choices.
+
+@module m62 | 🐳 | 62 · Docker | Module 62 — Dockerize a Java Application | Image · Container · Volume · Network · Compose
+@topic 🐳 Package a repeatable runtime
+A Docker image is an immutable template; a container is a running instance. A Dockerfile describes the build; volumes persist data outside a container's writable layer, and networks connect services. Multi-stage builds keep compilers out of the final runtime image.
+@code dockerfile
+FROM maven:3-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn -q package -DskipTests
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY --from=build /app/target/app.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
+@end
+@topic 🔒 Run containers responsibly
+Use a supported base image, a non-root runtime user, environment-based configuration and resource limits. Never bake production secrets into an image. Docker Compose can run an application and local database together.
+@practice
+1. Build an executable JAR and run it in a container.
+2. Explain the purpose of a multi-stage build and a persistent volume.
+@interview Docker packages an application and runtime into reproducible images; use multi-stage builds, external configuration, persistent storage and least privilege.
+
+@module m63 | ☁️ | 63 · Cloud Deploy | Module 63 — Cloud & Deployment Basics | Linux · AWS · HTTPS · CI/CD · Secrets
+@topic ☁️ Deploy the service
+Learn Linux process and network basics, then cloud compute such as EC2, managed databases such as RDS, object storage such as S3, and IAM permissions. Configure environment variables, DNS, TLS/HTTPS, health checks and database backups.
+@topic 🔁 Automate safe releases
+CI/CD builds, tests and deploys repeatably. Separate environments, manage schema migrations, keep secrets in a secret manager and define a rollback strategy. Give services only the cloud permissions they need.
+@practice
+1. Sketch a deployment with an API, managed database and object storage.
+2. List what belongs in a secret manager rather than source control.
+@interview Production deployment requires repeatable builds, least-privilege identity, externalized secrets, HTTPS, health monitoring, backups and rollback planning.
+
+@module m64 | 🧠 | 64 · JVM Internals | Module 64 — JVM Architecture & JIT | Class loader · Runtime areas · Execution engine
+@topic 🧠 Load and execute classes
+Class loaders find and load bytecode; the JVM verifies and links classes. Runtime areas include a heap shared by threads, per-thread stacks and program counters, and method metadata (often implemented with Metaspace in HotSpot). The JVM specification and vendor implementation are related but not identical.
+@code text
+Class loading → verification/linking → interpreter + JIT → machine code
+Heap: objects     Thread stack: frames/local state     Metaspace: class metadata (HotSpot)
+@end
+@topic ⚡ JIT and tuning
+The JIT compiler optimizes frequently executed paths using runtime observations. Garbage collection reclaims unreachable heap objects. Tune only after measuring latency, throughput and memory under representative workloads; JVM flags are version- and collector-dependent.
+@practice
+1. Explain heap versus a thread stack.
+2. What does JIT compilation do, and why can startup differ from warmed-up performance?
+@interview The JVM loads and verifies classes, manages runtime memory and executes bytecode through interpretation and JIT compilation.
+
+@module m65 | 🗑️ | 65 · Garbage Collection | Module 65 — Garbage Collection & Memory Leaks | Reachability · Generations · Collectors · OOM
+@topic 🗑️ Reclaim unreachable objects
+Garbage collection reclaims objects no longer reachable from live program roots. Generational collectors exploit the observation that many objects die young. Collectors differ in throughput, pause-time and footprint trade-offs; names and behavior vary by JVM version.
+@topic ⚠️ GC does not prevent every memory problem
+A memory leak can occur when code unintentionally retains references, preventing collection. `OutOfMemoryError` means the runtime could not satisfy an allocation; diagnose heap dumps and allocation patterns rather than calling `System.gc()` as a fix. Avoid finalizers; use deterministic resource closing.
+@practice
+1. Give an example of an object retained accidentally in a static collection.
+2. Distinguish a memory leak from an object awaiting garbage collection.
+@interview Garbage collection reclaims unreachable memory, but retained references can still cause leaks and eventual `OutOfMemoryError`.
+
+@module m66 | 🏭 | 66 · Design Patterns | Module 66 — Practical Design Patterns | Creational · Structural · Behavioral · Trade-offs
+@topic 🏭 Recognize patterns as reusable structures
+Creational patterns manage construction (Factory, Builder, Singleton); structural patterns compose systems (Adapter, Decorator, Facade, Proxy); behavioral patterns coordinate behavior (Observer, Strategy, Template Method, Command). Abstract Factory creates related families; use patterns to solve a real design pressure, not as ceremony.
+@table
+Group | Patterns | Example intent
+Creational | Factory, Abstract Factory, Builder, Singleton | Encapsulate object creation
+Structural | Adapter, Decorator, Facade, Proxy | Compose or control access to objects
+Behavioral | Observer, Strategy, Template Method, Command | Vary or coordinate behavior
+@end
+@topic 🧭 Prefer simple designs
+Dependency injection, interfaces and composition often provide the useful part of a pattern without a large framework. Singleton can complicate tests and shared state; use one only when one-instance semantics are genuinely required.
+@practice
+1. Use Strategy to support two shipping-cost algorithms.
+2. Wrap a service with a Decorator that records timing.
+@interview Design patterns name recurring object-design structures; choose the smallest pattern that clarifies a real change or collaboration point.
+
+@module m67 | 📐 | 67 · SOLID | Module 67 — SOLID & Clean Code | Responsibility · Extension · Substitution · Dependencies
+@topic 📐 Five design principles
+**S**ingle Responsibility: one reason to change. **O**pen/Closed: extend behavior without repeatedly modifying stable code. **L**iskov Substitution: subtypes honor the base contract. **I**nterface Segregation: prefer focused contracts. **D**ependency Inversion: high-level policy depends on abstractions.
+@topic 🧹 Supporting habits
+DRY avoids harmful duplication; KISS favors the simplest adequate design; YAGNI delays speculative features. These are heuristics, not absolute laws. Clear names, small methods and tests help maintainability more than following slogans mechanically.
+@practice
+1. Split a class that both persists an order and sends email.
+2. Give an example of a subtype that violates its parent's contract.
+@interview SOLID helps manage change through cohesive responsibilities, substitutable abstractions and focused interfaces; apply it pragmatically, not mechanically.
+
+@module m68 | 🧮 | 68 · DSA | Module 68 — Data Structures & Algorithms | Big O · Linear · Trees · Graphs · Sorting · DP
+@topic 🧮 Analyze complexity
+Big O describes how time or space grows with input size, not exact runtime. Learn arrays, linked lists, stacks, queues, deques, hash tables, trees, heaps, graphs and tries. Practice stating assumptions, edge cases and complexity before coding.
+@topic 🔍 Algorithms to implement
+Study linear and binary search; bubble, selection, insertion, merge, quick and heap sort; recursion and backtracking; BFS and DFS; greedy algorithms and dynamic programming. Binary search requires a sorted search space; graph traversal needs visited tracking when cycles are possible.
+@code java
+int binarySearch(int[] sorted, int target) {
+    int low = 0, high = sorted.length - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        if (sorted[mid] == target) return mid;
+        if (sorted[mid] < target) low = mid + 1;
+        else high = mid - 1;
+    }
+    return -1;
+}
+@end
+@practice
+1. State time and space complexity for array lookup and hash lookup.
+2. Implement BFS and DFS for a graph with cycles.
+@interview DSA interviews test correctness, complexity and edge cases; select a structure based on operations and justify time and space trade-offs.
+
+@module m69 | 🌿 | 69 · Git | Module 69 — Git & GitHub Workflow | Commit · Branch · Merge · Pull · Review
+@topic 🌿 Track and collaborate on changes
+Git records snapshots in a repository. A branch supports isolated work; commits describe changes; remotes such as GitHub host shared repositories. Review diffs before committing and use small, descriptive commits.
+@code bash
+git init
+git status
+git add src/
+git commit -m "Add student service"
+git branch feature/student-service
+git switch feature/student-service
+git pull
+git push
+@end
+@topic 🔀 Collaborate safely
+Learn clone, fetch, merge, conflict resolution and pull requests. `git pull` may merge or rebase according to configuration; inspect project policy. Avoid committing credentials, generated build artifacts or unrelated local changes.
+@practice
+1. Create a feature branch, commit a small change and open a pull request.
+2. Resolve a merge conflict while preserving both intended changes.
+@interview Git tracks source history through commits and branches; remotes and pull requests enable sharing, review and integration.
+
+@module m70 | 🪵 | 70 · Logging | Module 70 — Logging with SLF4J & Logback | Levels · Context · Configuration
+@topic 🪵 Record useful operational events
+Use a logging facade such as SLF4J with a backend such as Logback. Levels are TRACE, DEBUG, INFO, WARN and ERROR. Include useful context while avoiding passwords, tokens, sensitive personal data and noisy per-request debug output in production.
+@code java
+private static final Logger log = LoggerFactory.getLogger(OrderService.class);
+log.info("Created order {} for customer {}", orderId, customerId);
+log.warn("Payment retry {} for order {}", attempt, orderId);
+@end
+@topic ⚙️ Configure and observe
+Configure levels and appenders per environment; prefer parameterized messages over string concatenation. Structured logs and correlation IDs help follow requests across services.
+@practice
+1. Choose appropriate log levels for startup, validation failure and unexpected database failure.
+2. Add a correlation identifier without logging credentials.
+@interview Use a logging facade, choose levels by operational meaning and include diagnostic context without exposing secrets or personal data.
+
+@module m71 | 📘 | 71 · API Docs | Module 71 — OpenAPI & Swagger | Schemas · Contracts · Examples · Versioning
+@topic 📘 Document the API contract
+OpenAPI describes paths, HTTP methods, parameters, request/response schemas, authentication and errors in a machine-readable format. Swagger UI can render an interactive view. Keep examples, validation constraints and actual behavior aligned.
+@topic 🔄 Documentation as a development tool
+Document pagination, error shapes, idempotency and versioning expectations. Avoid publishing internal endpoints or sensitive operational details. Contract tests can detect drift between a documented interface and implementation.
+@practice
+1. Document one endpoint with success and validation-error responses.
+2. Explain why API schemas help frontend and backend teams work independently.
+@interview OpenAPI makes HTTP contracts explicit and reusable for documentation, client generation and compatibility checks.
+
+@module m72 | 📈 | 72 · Monitoring | Module 72 — Health, Metrics & Monitoring | Actuator · Prometheus · Grafana · Alerts
+@topic 📈 Observe service health
+Spring Boot Actuator exposes health and operational endpoints. Restrict sensitive endpoints to authorized operators; public health responses should reveal minimal detail. Metrics describe measurements over time; traces follow requests across boundaries; logs provide event context.
+@topic 🚨 Turn signals into action
+Prometheus can collect metrics and Grafana can visualize dashboards. Set alerts on user-facing symptoms such as error rate, latency and saturation, then connect alerts to runbooks. Monitor dependencies and validate backup restoration, not only backup creation.
+@practice
+1. Choose latency, error and saturation metrics for an API.
+2. Explain why an internal health endpoint should not expose secrets publicly.
+@interview Monitoring combines protected health checks, metrics, logs and traces with actionable alerts and operational runbooks.
+
+@module m73 | 🏗️ | Projects | Module 73 — Java Projects from Beginner to Professional | Build progressively · Test · Document · Deploy
+@topic 🌱 Beginner projects
+Build a calculator, grade system, number guessing game, ATM simulation and bank account model. Practice console input, conditions, loops, methods, arrays, classes and validation. Add unit tests as soon as behavior becomes reusable.
+@topic 🌿 Intermediate projects
+Build library, employee, student, inventory and contact-management systems. Use collections, exceptions, file persistence, JDBC and SQL. Add search, sorting, input validation, transaction boundaries and a README with setup steps.
+@topic 🚀 Advanced and professional projects
+Build an e-commerce API, online banking API, job portal, hospital or learning-management system, food-delivery API or attendance system. Apply Spring Boot, persistence, validation, authentication, testing, OpenAPI, Docker and cloud deployment in stages.
+@topic 🧪 Portfolio quality checklist
+Include a clear problem statement, architecture diagram, reproducible setup, sample configuration without secrets, database migrations, tests, API examples, error behavior and deployment notes. A smaller finished project with thoughtful trade-offs is stronger than many incomplete clones.
+@practice
+1. Select one beginner and one intermediate project and list their core entities and use cases.
+2. Turn one project into an API with tests, documentation and a deployment plan.
+@interview Projects demonstrate that you can turn Java fundamentals into tested, documented and operable software, not only solve isolated coding exercises.
+
+@module m74 | 🗺️ | Roadmap | Module 74 — Complete Java Learning Roadmap | Foundations · Backend · Professional growth
+@topic 🗺️ Follow prerequisite order
+Build a stable foundation before adopting frameworks: Java basics → OOP → exceptions → collections → generics → lambdas and streams → I/O → concurrency → SQL and JDBC → Maven → testing → Spring Core → Spring Boot and REST → JPA → security → Git → Docker → cloud. Practice DSA and projects alongside the path.
+@table
+Stage | Learn | Outcome
+Core Java | Modules 1–24 | Write and explain reliable object-oriented programs
+Collections and modern Java | Modules 25–38 | Transform, store and process typed data
+I/O, concurrency and data | Modules 39–48 | Build database-backed concurrent applications
+Testing and web | Modules 49–58 | Deliver validated, tested Spring APIs
+Distributed systems and runtime | Modules 59–68 | Understand deployment, JVM behavior and system trade-offs
+Professional practice | Modules 69–74 | Collaborate, observe, document, deploy and demonstrate work
+@end
+@topic 🎯 Prioritize for developer interviews
+For fresher interviews, prioritize Core Java, OOP, Strings, arrays, collections, exceptions, Java 8+ streams, SQL, JDBC basics and DSA. For backend roles, add Spring Boot, REST, JPA, validation, security, testing, Docker and deployment. Learn concepts deeply enough to explain trade-offs; do not try to memorize every API first.
+@info Use one small project as a thread through the curriculum: start with a console version, add collections and tests, persist with JDBC, expose a Spring REST API, secure it and deploy it in Docker.
+@practice
+1. Choose a weekly schedule with coding, review and project time.
+2. Explain one topic aloud, then implement an example without copying.
+3. Finish one project before adding another framework.
+@interview A practical Java roadmap moves from fundamentals and object design to collections, concurrency, databases, Spring APIs, security and deployment, reinforced by tested projects.

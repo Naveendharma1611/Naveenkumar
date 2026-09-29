@@ -1,0 +1,60 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ profile.full_name }}{% endblock %} · {{ profile.full_name|default:"Portfolio" }}</title>
+  <meta name="description" content="{% block description %}{{ profile.headline }}{% endblock %}">
+  <script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+  <link rel="stylesheet" href="{% static 'web/style.css' %}">
+</head>
+<body>
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="/" class="brand">{{ profile.full_name|default:"Portfolio" }}</a>
+    <button class="icon-btn menu-btn" data-toggle="nav" aria-label="Menu">☰</button>
+    <nav id="nav">
+      {% with p=request.path %}
+      <a href="/about/" {% if p == '/about/' %}class="active"{% endif %}>About</a>
+      <a href="/projects/" {% if '/projects/' in p %}class="active"{% endif %}>Projects</a>
+      <a href="/study-materials/" {% if '/study-materials/' in p %}class="active"{% endif %}>Learn</a>
+      <a href="/interview/" {% if '/interview/' in p %}class="active"{% endif %}>Interview</a>
+      <a href="/practice/" {% if '/practice/' in p %}class="active"{% endif %}>Practice</a>
+      <a href="/blog/" {% if '/blog/' in p %}class="active"{% endif %}>Blog</a>
+      <a href="/contact/" {% if p == '/contact/' %}class="active"{% endif %}>Contact</a>
+      {% endwith %}
+      <form action="/search/" class="nav-search"><input name="q" placeholder="Search…" aria-label="Search"></form>
+      {% if user.is_authenticated %}
+        <a href="/student/">Dashboard</a>
+        {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+        <a href="/account/">Account</a>
+        <form method="post" action="/logout/" class="inline">{% csrf_token %}<button class="link">Log out</button></form>
+      {% else %}
+        <a href="/login/" class="btn btn-sm">Log in</a>
+      {% endif %}
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle theme">◐</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  {% if messages %}<div class="wrap">{% for m in messages %}<div class="alert {{ m.tags }}">{{ m }}</div>{% endfor %}</div>{% endif %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <p>© {% now "Y" %} {{ profile.full_name }}. Built with Django, HTML, CSS &amp; JavaScript.</p>
+    <p>
+      {% if profile.github_url %}<a href="{{ profile.github_url }}" target="_blank" rel="noopener">GitHub</a>{% endif %}
+      {% if profile.linkedin_url %}<a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener">LinkedIn</a>{% endif %}
+      <a href="/skills/">Skills</a> <a href="/experience/">Experience</a> <a href="/certifications/">Certifications</a> <a href="/resume/">Resume</a>
+    </p>
+  </div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script src="{% static 'web/main.js' %}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,10 @@
+{% extends "web/base.html" %}
+{% block title %}Interview preparation{% endblock %}
+{% block content %}
+<section class="wrap section">
+  <h1>Interview preparation</h1>
+  <div class="grid">{% for c in categories %}
+    <a class="card card-link" href="/interview/{{ c.slug }}/"><h3>{{ c.name }}</h3><small class="muted">{{ c.q_count }} question{{ c.q_count|pluralize }}</small></a>
+  {% empty %}<p class="muted">No questions yet.</p>{% endfor %}</div>
+</section>
+{% endblock %}

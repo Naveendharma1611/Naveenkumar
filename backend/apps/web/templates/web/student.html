@@ -1,0 +1,26 @@
+{% extends "web/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<section class="wrap section">
+  <h1>Welcome, {{ user.full_name }}</h1>
+  <div class="stats">
+    <div class="stat"><strong>{{ completed }}</strong><span>Lessons completed</span></div>
+    <div class="stat"><strong>{{ bookmarks|length }}</strong><span>Bookmarks</span></div>
+    <div class="stat"><strong>{{ attempts|length }}</strong><span>Quiz attempts</span></div>
+  </div>
+  <div class="grid two">
+    <div class="card"><h2>Progress</h2>
+      {% for p in progress %}<p><a href="/study-materials/{{ p.category.slug }}/">{{ p.category.name }}</a> <small class="muted">{{ p.done }}/{{ p.total }}</small></p><div class="bar"><span style="width:{{ p.percent }}%"></span></div>
+      {% empty %}<p class="muted">Start a <a href="/study-materials/">lesson</a> to see progress.</p>{% endfor %}
+    </div>
+    <div class="card"><h2>Bookmarks</h2>
+      <ul>{% for b in bookmarks %}<li><a href="/study-materials/{{ b.lesson.category.slug }}/{{ b.lesson.slug }}/">{{ b.lesson.title }}</a></li>{% empty %}<li class="muted">No bookmarks yet.</li>{% endfor %}</ul>
+    </div>
+  </div>
+  <h2>Recent quiz attempts</h2>
+  <table class="table"><tr><th>Quiz</th><th>Score</th><th>Date</th></tr>
+    {% for a in attempts %}<tr><td><a href="/practice/{{ a.quiz.slug }}/">{{ a.quiz.title }}</a></td><td>{{ a.percent }}% ({{ a.score }}/{{ a.max_score }})</td><td>{{ a.submitted_at|date:"M d, Y" }}</td></tr>
+    {% empty %}<tr><td colspan="3" class="muted">No attempts yet. <a href="/practice/">Take a quiz</a>.</td></tr>{% endfor %}
+  </table>
+</section>
+{% endblock %}

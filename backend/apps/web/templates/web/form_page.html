@@ -1,0 +1,17 @@
+{% extends "web/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<section class="wrap section auth">
+  <form method="post" class="card stack">
+    <h1>{{ title }}</h1>
+    {% if validlink is False %}<div class="alert error">This reset link is invalid or has expired. <a href="/forgot-password/">Request a new one</a>.</div>
+    {% else %}
+      {% include "web/_fields.html" %}
+      {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+      <button class="btn">{{ button }}</button>
+    {% endif %}
+    {% if forgot %}<a href="/forgot-password/" class="muted">Forgot password?</a>{% endif %}
+    {% if alt %}<p class="muted">{{ alt.0 }} <a href="{{ alt.1 }}">{{ alt.2 }}</a></p>{% endif %}
+  </form>
+</section>
+{% endblock %}

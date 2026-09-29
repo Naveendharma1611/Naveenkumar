@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Complete Masterclass Syllabus &amp; Notes — Beginner to Advanced</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #111827;
+      --card-border: #1f293d;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --accent: #818cf8;
+      --accent-green: #34d399;
+      --accent-amber: #fbbf24;
+      --code-bg: #0b1120;
+      --code-border: #1e293b;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      display: flex;
+      min-height: 100vh;
+    }
+    /* Layout */
+    #sidebar {
+      width: 320px;
+      background: #0d1322;
+      border-right: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 1.75rem 1.25rem;
+      flex-shrink: 0;
+    }
+    #content {
+      flex: 1;
+      padding: 2.5rem 3.5rem;
+      max-width: 1100px;
+      overflow-y: auto;
+    }
+    /* Typography */
+    h1, h2, h3, h4 {
+      color: #f8fafc;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .lead {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+    h2 {
+      font-size: 1.75rem;
+      margin: 2.5rem 0 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    h3 {
+      font-size: 1.3rem;
+      margin: 1.75rem 0 0.75rem;
+      color: #93c5fd;
+    }
+    p {
+      margin-bottom: 1rem;
+      color: #cbd5e1;
+    }
+    /* Navigation */
+    .brand-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .brand-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .nav-group-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin: 1.25rem 0 0.5rem;
+    }
+    .nav-link {
+      display: block;
+      padding: 0.35rem 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .nav-link:hover {
+      color: #fff;
+      background: rgba(56, 189, 248, 0.1);
+      transform: translateX(3px);
+    }
+    /* Cards & Containers */
+    .module-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 9999px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      margin-bottom: 0.75rem;
+    }
+    .badge-amber {
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--accent-amber);
+    }
+    .badge-green {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--accent-green);
+    }
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+      font-size: 0.925rem;
+      background: #0b1120;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 0.85rem 1.1rem;
+      text-align: left;
+      border: 1px solid var(--card-border);
+    }
+    th {
+      background: #1e293b;
+      color: #38bdf8;
+      font-weight: 600;
+    }
+    tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    /* Code Blocks */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 8px;
+      padding: 1.2rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.9rem;
+      color: #f1f5f9;
+      line-height: 1.5;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: rgba(56, 189, 248, 0.1);
+      color: #38bdf8;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.875em;
+    }
+    pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+    }
+    /* Callout Alert */
+    .callout {
+      border-left: 4px solid var(--primary);
+      background: rgba(56, 189, 248, 0.08);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.25rem 0;
+    }
+    .callout-title {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.35rem;
+    }
+    /* Q&A Accordion Style */
+    .qa-card {
+      background: #0e1626;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      padding: 1.25rem;
+      transition: border-color 0.2s;
+    }
+    .qa-card:hover {
+      border-color: #38bdf8;
+    }
+    .qa-question {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #f8fafc;
+      margin-bottom: 0.5rem;
+    }
+    .qa-short {
+      font-weight: 500;
+      color: #38bdf8;
+      margin-bottom: 0.75rem;
+    }
+    .qa-tip {
+      font-size: 0.85rem;
+      color: var(--accent-amber);
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px dashed var(--card-border);
+    }
+    /* Print */
+    @media print {
+      #sidebar { display: none; }
+      #content { max-width: 100%; padding: 0; }
+      body { background: white; color: black; }
+      .module-card, pre { border-color: #ccc; }
+    }
+    @media (max-width: 860px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: static; }
+      #content { padding: 1.5rem; }
+    }
+    </style>
+</head>
+<body>
+  <nav id="sidebar">
+    
+    <div class="brand-title">🐍 Python Complete Guide</div>
+    <div class="brand-subtitle">Zero to Advanced / AI Engineer</div>
+    <div class="nav-group-title">Part 1: Python Core &amp; Fundamentals</div>
+<a class="nav-link" href="#python-intro-setup">Python Introduction &amp; Setup</a>
+<a class="nav-link" href="#python-basics-variables">Python Basics &amp; Variables</a>
+<a class="nav-link" href="#operators-expressions">Operators &amp; Expressions</a>
+<a class="nav-link" href="#input-output-formatting">Input, Output &amp; String Formatting</a>
+<a class="nav-link" href="#strings-in-depth">Strings &amp; In-Depth Operations</a>
+<a class="nav-link" href="#conditional-statements">Conditional Statements &amp; Decision Making</a>
+<a class="nav-link" href="#loops-control-patterns">Loops, Controls &amp; Pattern Programs</a>
+<div class="nav-group-title">Part 2: Python Data Types &amp; Data Structures Masterclass</div>
+<a class="nav-link" href="#intro-data-types-memory">Introduction to Python Data Types &amp; Memory</a>
+<a class="nav-link" href="#numeric-boolean-none">Numeric, Boolean &amp; None Types</a>
+<a class="nav-link" href="#lists-in-depth">Lists in Depth (CRUD, Methods, Unpacking)</a>
+<a class="nav-link" href="#tuples-packing-unpacking">Tuples (Packing, Unpacking &amp; Immutability)</a>
+<a class="nav-link" href="#sets-mathematical-operations">Sets &amp; Mathematical Set Operations</a>
+<a class="nav-link" href="#dictionaries-mastery">Dictionaries (Key-Value Mastery)</a>
+<a class="nav-link" href="#binary-types-range">Binary Types, Range &amp; Memoryview</a>
+<a class="nav-link" href="#mutable-vs-immutable-memory">Mutable vs Immutable &amp; Memory References</a>
+<div class="nav-group-title">Part 3: Functions, OOP &amp; Advanced Python</div>
+<a class="nav-link" href="#functions-scopes-args-kwargs">Functions, Scopes, *args &amp; **kwargs</a>
+<a class="nav-link" href="#recursion-algorithms">Recursion &amp; Recursive Algorithms</a>
+<a class="nav-link" href="#modules-packages-imports">Modules, Packages &amp; Imports</a>
+<a class="nav-link" href="#file-handling-context-managers">File Handling &amp; Context Managers</a>
+<a class="nav-link" href="#exception-handling-robust">Exception Handling (Robust Code)</a>
+<a class="nav-link" href="#oop-four-pillars">Object-Oriented Programming (The 4 Pillars)</a>
+<a class="nav-link" href="#advanced-oop-dunder-methods">Advanced OOP: Dunder Methods &amp; Decorators</a>
+<a class="nav-link" href="#iterators-generators-decorators">Iterators, Generators &amp; Custom Decorators</a>
+<a class="nav-link" href="#regular-expressions-re">Regular Expressions (re module)</a>
+<a class="nav-link" href="#datetime-mastery">Date and Time Mastery</a>
+<div class="nav-group-title">Part 4: Python for Data Science &amp; Interview Prep</div>
+<a class="nav-link" href="#collections-to-numpy-pandas">Transitioning Collections to NumPy &amp; Pandas</a>
+<a class="nav-link" href="#top-25-interview-questions">Top 25 Python Interview Questions &amp; Solutions</a>
+
+    <div class="nav-group-title">Interview Mastery</div>
+    <a class="nav-link" href="#interview-questions">Top 25 Technical Q&amp;A</a>
+    
+  </nav>
+  <main id="content">
+    
+    <header>
+      <h1>🐍 Python Complete Masterclass Syllabus &amp; Notes</h1>
+      <p class="lead">A complete, end-to-end reference from zero → intermediate → advanced → Data Science/AI developer level. Fully populated with explanations, code examples, comparison tables, and interview solutions.</p>
+    </header>
+    
+        <section id="python-core-fundamentals">
+          <h2>1. Python Core &amp; Fundamentals</h2>
+          <p class="lead">Master Python from scratch: syntax, variables, operators, input/output, strings, conditionals, and loops with hands-on practice.</p>
+        
+            <article class="module-card" id="python-intro-setup">
+              <span class="badge">Est. 25 Mins</span>
+              <h3>Python Introduction &amp; Setup</h3>
+              <p><em>Understand Python features, architecture, interpreter vs compiler, environment setup, indentation, and naming conventions.</em></p>
+              <div class="lesson-content">
+                <h3>Module 1 — Python Introduction</h3>
+<p>Python is a high-level, interpreted, dynamically-typed, garbage-collected programming language created by **Guido van Rossum** in 1991. It emphasizes code readability with its notable use of significant indentation.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Key Features of Python</h4>
+<li>**Simple &amp; Readable:** Clean English-like syntax; minimal boilerplate compared to C/C++/Java.</li>
+<li>**Interpreted:** Executes code line-by-line via the CPython virtual machine (PVM).</li>
+<li>**Dynamically Typed:** Variable types are resolved at runtime without explicit type declarations.</li>
+<li>**Cross-Platform:** Runs on Windows, macOS, Linux, and embedded systems.</li>
+<li>**Extensive Standard Library:** &quot;Batteries included&quot; philosophy covering math, networking, JSON, databases, and more.</li>
+<li>**Multi-Paradigm:** Supports Procedural, Object-Oriented, and Functional programming.</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Python vs C / C++ / Java</h4>
+<p>| Feature | Python | C / C++ | Java |</p>
+<p>| :--- | :--- | :--- | :--- |</p>
+<p>| **Typing** | Dynamic | Static | Static |</p>
+<p>| **Execution** | Interpreted (Bytecode -&gt; PVM) | Compiled (Machine binary) | Compiled to Bytecode (JVM) |</p>
+<p>| **Syntax** | Minimal, indentation-based | Braces `{}` &amp; semicolons `;` | Verbose, Class-mandatory |</p>
+<p>| **Memory** | Automatic Garbage Collection | Manual (`malloc`/`free`) | Automatic Garbage Collection |</p>
+<p>| **Speed** | Moderate (optimizable via C-extensions) | Extremely fast | Fast (JIT compiled) |</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. Execution Model &amp; Architecture</h4>
+<p>When you run a script `script.py`:</p>
+<p>1. **Source Code (`.py`)** is parsed into an Abstract Syntax Tree (AST).</p>
+<p>2. The compiler translates the AST into **Bytecode** cached in `__pycache__/*.pyc`.</p>
+<p>3. The **Python Virtual Machine (PVM)** executes the bytecode instructions on the underlying CPU/OS.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>4. Syntax Fundamentals: Indentation, Comments &amp; Identifiers</h4>
+<h5>Indentation</h5>
+<p>Python uses whitespace (standard: 4 spaces) rather than curly braces to define scope:</p>
+<pre><code>
+# Valid indentation
+if True:
+    print(&quot;Indented by 4 spaces&quot;)
+    if 5 &gt; 2:
+        print(&quot;Nested block&quot;)
+</code></pre>
+<h5>Comments</h5>
+<pre><code>
+# Single-line comment
+
+&quot;&quot;&quot;
+Multi-line docstring / block comment.
+Often used for documentation of modules, functions, and classes.
+&quot;&quot;&quot;
+</code></pre>
+<h5>Identifiers &amp; Naming Conventions (PEP 8)</h5>
+<li>**Variables &amp; Functions:** `snake_case` (e.g., `user_name`, `calculate_total()`)</li>
+<li>**Constants:** `UPPER_SNAKE_CASE` (e.g., `MAX_RETRIES`, `PI = 3.14159`)</li>
+<li>**Classes:** `PascalCase` (e.g., `StudentProfile`, `NeuralNetwork`)</li>
+<li>**Private Attributes:** Single leading underscore `_internal_var` or double `__mangled_var`.</li>
+              </div>
+            </article>
+            
+            <article class="module-card" id="python-basics-variables">
+              <span class="badge">Est. 25 Mins</span>
+              <h3>Python Basics &amp; Variables</h3>
+              <p><em>Understand variables, dynamic typing, memory references, id(), type(), and standard type conversions.</em></p>
+              <div class="lesson-content">
+                <h3>Module 2 — Python Basics &amp; Variables</h3>
+<p>In Python, variables are **labels (references)** pointing to objects in memory, not fixed memory buckets.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Variables &amp; Dynamic Typing</h4>
+<p>You don&#x27;t declare types; Python deduces the type from the assigned value:</p>
+<pre><code>
+name = &quot;Naveen&quot;          # str
+age = 25                 # int
+salary = 25000.50        # float
+active = True            # bool
+data = None              # NoneType
+
+# Dynamic reassignment
+x = 100
+print(type(x))           # &lt;class &#x27;int&#x27;&gt;
+x = &quot;Hello&quot;
+print(type(x))           # &lt;class &#x27;str&#x27;&gt;
+</code></pre>
+<h4>2. Multiple Assignment &amp; Constants</h4>
+<pre><code>
+# Multiple assignment in one line
+a, b, c = 10, 20, 30
+
+# Same value to multiple variables
+x = y = z = 0
+
+# Python constants (convention by PEP 8)
+DATABASE_PORT = 5432
+MAX_CONNECTIONS = 100
+</code></pre>
+<h4>3. Inspecting Memory: `id()` and `type()`</h4>
+<p>Every object has an identity (memory address integer returned by `id()`) and a type (`type()`):</p>
+<pre><code>
+a = 256
+b = 256
+print(id(a) == id(b))  # True (small integer caching in CPython [-5 to 256])
+
+x = [1, 2, 3]
+y = [1, 2, 3]
+print(x == y)          # True (same values)
+print(x is y)          # False (distinct objects in memory)
+</code></pre>
+<h4>4. Type Conversion (Type Casting)</h4>
+<pre><code>
+# Explicit casting
+s_num = &quot;123&quot;
+i_num = int(s_num)     # 123
+f_num = float(i_num)   # 123.0
+b_val = bool(1)        # True
+c_val = complex(5, 2)  # (5+2j)
+
+# Type errors to watch out for:
+# int(&quot;abc&quot;) -&gt; ValueError: invalid literal for int()
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="operators-expressions">
+              <span class="badge">Est. 30 Mins</span>
+              <h3>Operators &amp; Expressions</h3>
+              <p><em>Arithmetic, comparison, logical, assignment, bitwise, membership, identity operators, and operator precedence.</em></p>
+              <div class="lesson-content">
+                <h3>Module 3 — Operators &amp; Expressions</h3>
+<p>Python provides an expressive set of operators to manipulate values and variables.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Operator Categories</h4>
+<h5>Arithmetic Operators</h5>
+<pre><code>
+a, b = 15, 4
+
+print(a + b)   # 19 (Addition)
+print(a - b)   # 11 (Subtraction)
+print(a * b)   # 60 (Multiplication)
+print(a / b)   # 3.75 (Float division)
+print(a // b)  # 3 (Floor / Integer division)
+print(a % b)   # 3 (Modulus / Remainder)
+print(a ** b)  # 50625 (Exponentiation 15^4)
+</code></pre>
+<h5>Comparison (Relational) Operators</h5>
+<p>Always evaluate to a boolean (`True` or `False`):</p>
+<pre><code>
+x, y = 10, 20
+print(x == y)  # False
+print(x != y)  # True
+print(x &gt; y)   # False
+print(x &lt; y)   # True
+print(x &gt;= 10) # True
+print(x &lt;= 20) # True
+</code></pre>
+<h5>Logical Operators (`and`, `or`, `not`)</h5>
+<p>Short-circuit evaluation:</p>
+<pre><code>
+age = 22
+has_id = True
+
+# and: True only if both conditions are True
+can_enter = (age &gt;= 18) and has_id
+
+# or: True if at least one condition is True
+discount = (age &lt; 18) or (age &gt; 60)
+
+# not: inverts boolean value
+is_busy = False
+print(not is_busy)  # True
+</code></pre>
+<h5>Membership (`in`, `not in`) &amp; Identity (`is`, `is not`)</h5>
+<pre><code>
+languages = [&quot;Python&quot;, &quot;SQL&quot;, &quot;JavaScript&quot;]
+
+# Membership
+print(&quot;Python&quot; in languages)      # True
+print(&quot;Java&quot; not in languages)    # True
+
+# Identity (compares memory location id())
+x = [1, 2]
+y = [1, 2]
+z = x
+print(x is z)      # True (same reference)
+print(x is y)      # False (distinct objects)
+print(x == y)      # True (identical content)
+</code></pre>
+<h5>Bitwise Operators</h5>
+<pre><code>
+x, y = 5, 3  # 5 = 0b0101, 3 = 0b0011
+print(x &amp; y)   # 1 (0b0001 AND)
+print(x | y)   # 7 (0b0111 OR)
+print(x ^ y)   # 6 (0b0110 XOR)
+print(~x)      # -6 (NOT / Two&#x27;s complement)
+print(x &lt;&lt; 1)  # 10 (Left shift: multiply by 2)
+print(x &gt;&gt; 1)  # 2 (Right shift: integer divide by 2)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Operator Precedence (PEMDAS / BODMAS)</h4>
+<p>1. `()` Parentheses</p>
+<p>2. `**` Exponentiation</p>
+<p>3. `+x`, `-x`, `~x` Unary plus, minus, bitwise NOT</p>
+<p>4. `*`, `/`, `//`, `%` Multiplication, division, floor division, modulo</p>
+<p>5. `+`, `-` Addition, subtraction</p>
+<p>6. `&lt;&lt;`, `&gt;&gt;` Bitwise shifts</p>
+<p>7. `&amp;` Bitwise AND</p>
+<p>8. `^` Bitwise XOR</p>
+<p>9. `|` Bitwise OR</p>
+<p>10. `==`, `!=`, `&lt;`, `&lt;=`, `&gt;`, `&gt;=`, `is`, `is not`, `in`, `not in` Comparisons &amp; Identity</p>
+<p>11. `not` Logical NOT</p>
+<p>12. `and` Logical AND</p>
+<p>13. `or` Logical OR</p>
+              </div>
+            </article>
+            
+            <article class="module-card" id="input-output-formatting">
+              <span class="badge">Est. 20 Mins</span>
+              <h3>Input, Output &amp; String Formatting</h3>
+              <p><em>Master print(), input(), escape characters, sep, end, f-strings, and .format().</em></p>
+              <div class="lesson-content">
+                <h3>Module 4 — Input, Output &amp; String Formatting</h3>
+<p>Handling user interaction and presenting formatted data cleanly.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. `print()` Parameters: `sep` and `end`</h4>
+<pre><code>
+# Default sep=&#x27; &#x27;, end=&#x27;\n&#x27;
+print(&quot;Python&quot;, &quot;Data Science&quot;, &quot;AI&quot;)
+# Output: Python Data Science AI
+
+# Custom separator
+print(&quot;2026&quot;, &quot;09&quot;, &quot;25&quot;, sep=&quot;-&quot;)
+# Output: 2026-09-25
+
+# Custom ending (prevent newline or add punctuation)
+print(&quot;Loading&quot;, end=&quot;...&quot;)
+print(&quot;Done!&quot;)
+# Output: Loading...Done!
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Reading Input with `input()`</h4>
+<p>The `input()` function **always** returns a string (`str`). Cast explicitly when reading numbers:</p>
+<pre><code>
+name = input(&quot;Enter your name: &quot;)
+age = int(input(&quot;Enter your age: &quot;))
+score = float(input(&quot;Enter your test score: &quot;))
+
+print(f&quot;Candidate {name} (Age: {age}) scored {score:.1f}%&quot;)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. String Formatting Approaches</h4>
+<h5>A. Modern f-strings (Python 3.6+ Recommended)</h5>
+<p>Fastest, cleanest, and most readable:</p>
+<pre><code>
+name = &quot;Naveen&quot;
+salary = 75250.758
+
+print(f&quot;Developer: {name}&quot;)
+print(f&quot;Monthly Salary: ${salary:,.2f}&quot;)  # Comma grouped with 2 decimals ($75,250.76)
+print(f&quot;Next Year Age: {25 + 1}&quot;)        # Expressions directly inside { }
+
+# Alignment and padding
+print(f&quot;{name:&gt;15}&quot;)  # Right-aligned width 15
+print(f&quot;{name:&lt;15}&quot;)  # Left-aligned width 15
+print(f&quot;{name:^15}&quot;)  # Centered width 15
+</code></pre>
+<h5>B. The `.format()` Method</h5>
+<pre><code>
+template = &quot;Hello {name}, you have {count} unread notifications.&quot;
+print(template.format(name=&quot;Naveen&quot;, count=3))
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="strings-in-depth">
+              <span class="badge">Est. 35 Mins</span>
+              <h3>Strings &amp; In-Depth Operations</h3>
+              <p><em>String indexing, slicing, immutability, built-in methods, searching, validation, and regular string techniques.</em></p>
+              <div class="lesson-content">
+                <h3>Module 5 — Strings &amp; In-Depth Operations</h3>
+<p>Strings in Python are **immutable sequences of Unicode characters**.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. String Indexing &amp; Slicing</h4>
+<pre><code>
+ Index:   0   1   2   3   4   5
+ Char:    P   Y   T   H   O   N
+-Index:  -6  -5  -4  -3  -2  -1
+</code></pre>
+<pre><code>
+s = &quot;PYTHON&quot;
+
+# Positive &amp; Negative Indexing
+print(s[0])    # &#x27;P&#x27;
+print(s[-1])   # &#x27;N&#x27;
+
+# Slicing: s[start:stop:step]
+print(s[0:4])   # &#x27;PYTH&#x27; (stop is exclusive)
+print(s[:3])    # &#x27;PYT&#x27; (starts from 0)
+print(s[2:])    # &#x27;THON&#x27; (runs to end)
+print(s[::2])   # &#x27;PTO&#x27; (step 2)
+print(s[::-1])  # &#x27;NOHTYP&#x27; (reverse string!)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. String Immutability</h4>
+<p>You cannot alter individual characters in place:</p>
+<pre><code>
+text = &quot;Python&quot;
+# text[0] = &#x27;J&#x27;  -&gt; TypeError: &#x27;str&#x27; object does not support item assignment
+
+# Correct approach: construct a new string
+new_text = &quot;J&quot; + text[1:]  # &#x27;Jython&#x27;
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. Essential String Methods</h4>
+<pre><code>
+msg = &quot;  Machine Learning with Python  &quot;
+
+# Case transformations
+print(msg.upper())       # &quot;  MACHINE LEARNING WITH PYTHON  &quot;
+print(msg.lower())       # &quot;  machine learning with python  &quot;
+print(msg.title())       # &quot;  Machine Learning With Python  &quot;
+print(msg.swapcase())    # &quot;  mACHINE lEARNING WITH pYTHON  &quot;
+
+# Trimming whitespace
+clean = msg.strip()      # &quot;Machine Learning with Python&quot;
+print(msg.lstrip())      # Removes left spaces
+print(msg.rstrip())      # Removes right spaces
+
+# Search &amp; Replace
+print(clean.replace(&quot;Machine&quot;, &quot;Deep&quot;))  # &quot;Deep Learning with Python&quot;
+print(clean.find(&quot;with&quot;))               # 17 (index of match, -1 if not found)
+print(clean.count(&quot;i&quot;))                 # 3
+
+# Splitting and Joining
+tokens = clean.split(&quot; &quot;)               # [&#x27;Machine&#x27;, &#x27;Learning&#x27;, &#x27;with&#x27;, &#x27;Python&#x27;]
+rejoined = &quot;-&quot;.join(tokens)             # &#x27;Machine-Learning-with-Python&#x27;
+
+# Checking Prefix &amp; Suffix
+print(clean.startswith(&quot;Machine&quot;))      # True
+print(clean.endswith(&quot;Python&quot;))         # True
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>4. Validation Methods</h4>
+<pre><code>
+print(&quot;12345&quot;.isdigit())      # True
+print(&quot;Alpha&quot;.isalpha())      # True
+print(&quot;Alpha123&quot;.isalnum())   # True
+print(&quot;   &quot;.isspace())        # True
+print(&quot;python&quot;.islower())     # True
+print(&quot;PYTHON&quot;.isupper())     # True
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="conditional-statements">
+              <span class="badge">Est. 25 Mins</span>
+              <h3>Conditional Statements &amp; Decision Making</h3>
+              <p><em>if, if-else, if-elif-else, nested conditionals, and ternary conditional expressions.</em></p>
+              <div class="lesson-content">
+                <h3>Module 6 — Conditional Statements</h3>
+<p>Conditional statements let your code make decisions based on runtime conditions.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. `if`, `if-else`, and `if-elif-else`</h4>
+<pre><code>
+score = 85
+
+if score &gt;= 90:
+    grade = &quot;A+&quot;
+elif score &gt;= 80:
+    grade = &quot;A&quot;
+elif score &gt;= 70:
+    grade = &quot;B&quot;
+elif score &gt;= 60:
+    grade = &quot;C&quot;
+else:
+    grade = &quot;F&quot;
+
+print(f&quot;Final Grade: {grade}&quot;)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Nested Conditionals</h4>
+<pre><code>
+age = 20
+has_license = True
+
+if age &gt;= 18:
+    if has_license:
+        print(&quot;Eligible to drive.&quot;)
+    else:
+        print(&quot;Must obtain a driving license first.&quot;)
+else:
+    print(&quot;Underage; cannot drive.&quot;)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. Ternary Operator (Conditional Expression)</h4>
+<p>Syntax: `[value_if_true] if [condition] else [value_if_false]`</p>
+<pre><code>
+mark = 72
+status = &quot;Pass&quot; if mark &gt;= 40 else &quot;Fail&quot;
+
+# Nested ternary (use sparingly for readability)
+age = 15
+category = &quot;Child&quot; if age &lt; 13 else (&quot;Teenager&quot; if age &lt; 20 else &quot;Adult&quot;)
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="loops-control-patterns">
+              <span class="badge">Est. 35 Mins</span>
+              <h3>Loops, Controls &amp; Pattern Programs</h3>
+              <p><em>for and while loops, range(), break, continue, pass, loop else, infinite loops, and pattern printing.</em></p>
+              <div class="lesson-content">
+                <h3>Module 7 — Loops &amp; Iterations</h3>
+<p>Loops repeat a block of code until a condition is satisfied or an iterable is exhausted.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. `for` Loop and `range()`</h4>
+<pre><code>
+# range(start, stop, step)
+for i in range(1, 6):
+    print(i, end=&quot; &quot;)
+# Output: 1 2 3 4 5
+
+# Stepping in reverse
+for i in range(10, 0, -2):
+    print(i, end=&quot; &quot;)
+# Output: 10 8 6 4 2
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. `while` Loop</h4>
+<pre><code>
+count = 3
+while count &gt; 0:
+    print(f&quot;Countdown: {count}&quot;)
+    count -= 1
+print(&quot;Blast off!&quot;)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. Loop Control Statements: `break`, `continue`, `pass`</h4>
+<li>`break`: Terminates the innermost loop immediately.</li>
+<li>`continue`: Skips the remainder of the current iteration and jumps to the next.</li>
+<li>`pass`: A placeholder statement that performs no operation.</li>
+<pre><code>
+# Example of break and continue
+for n in range(1, 10):
+    if n % 2 == 0:
+        continue  # skip even numbers
+    if n == 7:
+        break     # stop loop when 7 is reached
+    print(n, end=&quot; &quot;)
+# Output: 1 3 5
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>4. `else` Clause on Loops</h4>
+<p>The `else` block runs **only if the loop finishes naturally** without encountering a `break`:</p>
+<pre><code>
+def is_prime(num):
+    if num &lt;= 1:
+        return False
+    for i in range(2, int(num**0.5) + 1):
+        if num % i == 0:
+            print(f&quot;{num} is divisible by {i}&quot;)
+            break
+    else:
+        print(f&quot;{num} is a Prime Number!&quot;)
+
+is_prime(29)  # 29 is a Prime Number!
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>5. Classic Pattern Programs</h4>
+<h5>Right-Angled Triangle Pattern</h5>
+<pre><code>
+n = 5
+for i in range(1, n + 1):
+    print(&quot;*&quot; * i)
+&quot;&quot;&quot;
+*
+**
+***
+****
+*****
+&quot;&quot;&quot;
+</code></pre>
+<h5>Number Pyramid Pattern</h5>
+<pre><code>
+n = 4
+for i in range(1, n + 1):
+    print(&quot; &quot; * (n - i) + &quot; &quot;.join(str(i) for _ in range(i)))
+&quot;&quot;&quot;
+   1
+  2 2
+ 3 3 3
+4 4 4 4
+&quot;&quot;&quot;
+</code></pre>
+              </div>
+            </article>
+            </section>
+
+        <section id="python-data-types-masterclass">
+          <h2>2. Python Data Types &amp; Data Structures Masterclass</h2>
+          <p class="lead">Comprehensive, deep dive into Python&#x27;s built-in data types: mutability, collections, hashing, comprehensions, and data science foundations.</p>
+        
+            <article class="module-card" id="intro-data-types-memory">
+              <span class="badge">Est. 25 Mins</span>
+              <h3>Introduction to Python Data Types &amp; Memory</h3>
+              <p><em>Dynamic vs static typing, strong typing, id(), type(), isinstance(), and memory classification.</em></p>
+              <div class="lesson-content">
+                <h3>Module 8 — Data Types Architecture &amp; Memory</h3>
+<p>Every value in Python is an object stored in heap memory. Variables are reference pointers pointing to these objects.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Classification of Built-in Data Types</h4>
+<li>**Numeric:** `int`, `float`, `complex`</li>
+<li>**Sequence:** `str`, `list`, `tuple`, `range`, `bytes`, `bytearray`</li>
+<li>**Set Types:** `set`, `frozenset`</li>
+<li>**Mapping:** `dict`</li>
+<li>**Boolean:** `bool`</li>
+<li>**NoneType:** `None`</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Type Checking: `type()` vs `isinstance()`</h4>
+<p>Always prefer `isinstance()` in production code because it respects inheritance:</p>
+<pre><code>
+class Animal: pass
+class Dog(Animal): pass
+
+d = Dog()
+print(type(d) == Animal)        # False (exact match required)
+print(isinstance(d, Animal))    # True (supports polymorphism)
+
+# Checking multiple allowed types
+x = 10.5
+print(isinstance(x, (int, float)))  # True
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. Summary Comparison Table</h4>
+<p>| Data Type | Ordered? | Mutable? | Allows Duplicates? | Syntax Example |</p>
+<p>| :--- | :--- | :--- | :--- | :--- |</p>
+<p>| **`int` / `float`** | N/A | No (Immutable) | N/A | `10`, `3.14` |</p>
+<p>| **`str`** | Yes | No (Immutable) | Yes | `&quot;hello&quot;` |</p>
+<p>| **`list`** | Yes | Yes (Mutable) | Yes | `[1, 2, 2]` |</p>
+<p>| **`tuple`** | Yes | No (Immutable) | Yes | `(1, 2, 2)` |</p>
+<p>| **`set`** | No | Yes (Mutable) | No (Unique) | `{1, 2, 3}` |</p>
+<p>| **`dict`** | Yes (Insertion order) | Yes (Mutable) | Keys: No; Values: Yes | `{&quot;a&quot;: 1}` |</p>
+              </div>
+            </article>
+            
+            <article class="module-card" id="numeric-boolean-none">
+              <span class="badge">Est. 30 Mins</span>
+              <h3>Numeric, Boolean &amp; None Types</h3>
+              <p><em>Deep dive into int, float, complex, boolean truthy/falsy evaluation, and the None singleton.</em></p>
+              <div class="lesson-content">
+                <h3>Module 9 — Numeric, Boolean &amp; None Types</h3>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Numeric Types: `int`, `float`, `complex`</h4>
+<h5>Integers (`int`)</h5>
+<p>In Python 3, integers have **arbitrary precision** (limited only by available system RAM):</p>
+<pre><code>
+huge = 10 ** 100  # A googol! No overflow error.
+
+# Radix conversions
+val = 42
+print(bin(val))  # &#x27;0b101010&#x27;
+print(oct(val))  # &#x27;0o52&#x27;
+print(hex(val))  # &#x27;0x2a&#x27;
+</code></pre>
+<h5>Floats (`float`)</h5>
+<p>Implemented as IEEE 754 64-bit double precision floats:</p>
+<pre><code>
+price = 99.99
+exp = 1.5e-3  # Scientific notation: 0.0015
+print(round(2.675, 2))
+</code></pre>
+<h5>Complex Numbers (`complex`)</h5>
+<pre><code>
+z = 3 + 4j
+print(z.real)       # 3.0
+print(z.imag)       # 4.0
+print(abs(z))       # 5.0 (Magnitude: sqrt(3^2 + 4^2))
+print(z.conjugate())# (3-4j)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Boolean (`bool`) &amp; Truthiness</h4>
+<p>In Python, `bool` is a subclass of `int` (`True == 1`, `False == 0`).</p>
+<h5>Truthy vs Falsy Values</h5>
+<p>Every object evaluates to a boolean in conditional contexts. **Falsy values:**</p>
+<li>Constants: `None`, `False`</li>
+<li>Numeric zeros: `0`, `0.0`, `0j`</li>
+<li>Empty sequences and collections: `&quot;&quot;`, `()`, `[]`, `{}`, `set()`, `range(0)`</li>
+<pre><code>
+def check_data(items):
+    if not items:
+        print(&quot;Collection is empty!&quot;)
+    else:
+        print(f&quot;Found {len(items)} elements.&quot;)
+
+check_data([])  # Falsy
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. The `None` Singleton</h4>
+<p>`None` denotes the absence of a value. Always compare using the identity operator `is None`:</p>
+<pre><code>
+val = None
+
+if val is None:
+    print(&quot;Value not set&quot;)
+
+# Avoid: if val == None (can be overridden by __eq__)
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="lists-in-depth">
+              <span class="badge">Est. 35 Mins</span>
+              <h3>Lists in Depth (CRUD, Methods, Unpacking)</h3>
+              <p><em>List creation, indexing, slicing, methods, list comprehension, unpacking, and multi-dimensional matrices.</em></p>
+              <div class="lesson-content">
+                <h3>Module 10 — List Data Type</h3>
+<p>Lists are **mutable, ordered sequences** that can hold heterogeneous items.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Creating and Modifying Lists</h4>
+<pre><code>
+nums = [10, 20, 30, 40]
+
+# Insertion
+nums.append(50)        # Adds to the end: [10, 20, 30, 40, 50]
+nums.insert(1, 15)     # Insert at index 1: [10, 15, 20, 30, 40, 50]
+nums.extend([60, 70])  # Appends multiple elements
+
+# Deletion
+nums.remove(20)        # Removes first occurrence of value 20
+popped = nums.pop()    # Removes and returns last element (70)
+del nums[0]            # Removes element at index 0
+# nums.clear()         # Empties the list
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. List Slicing &amp; Striding</h4>
+<pre><code>
+items = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+print(items[2:6])    # [2, 3, 4, 5]
+print(items[:4])     # [0, 1, 2, 3]
+print(items[6:])     # [6, 7, 8, 9]
+print(items[::2])    # [0, 2, 4, 6, 8]
+print(items[::-1])   # Reversed list
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. List Sorting: `sort()` vs `sorted()`</h4>
+<li>`list.sort()` sorts the list **in-place** and returns `None`.</li>
+<li>`sorted(iterable)` returns a **new sorted list**, leaving the original untouched.</li>
+<pre><code>
+scores = [88, 42, 95, 71]
+sorted_scores = sorted(scores, reverse=True)
+print(scores)         # [88, 42, 95, 71] (unchanged)
+print(sorted_scores)  # [95, 88, 71, 42]
+
+scores.sort()
+print(scores)         # [42, 71, 88, 95] (modified in-place)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>4. Advanced Unpacking (`*` operator)</h4>
+<pre><code>
+first, *middle, last = [10, 20, 30, 40, 50]
+print(first)   # 10
+print(middle)  # [20, 30, 40]
+print(last)    # 50
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>5. List Comprehension</h4>
+<pre><code>
+# Standard comprehension
+squares = [x**2 for x in range(1, 6)]  # [1, 4, 9, 16, 25]
+
+# With condition
+evens = [x for x in range(10) if x % 2 == 0]
+
+# Nested comprehension (flattening a 2D matrix)
+matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+flat = [num for row in matrix for num in row]
+print(flat)  # [1, 2, 3, 4, 5, 6, 7, 8, 9]
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="tuples-packing-unpacking">
+              <span class="badge">Est. 25 Mins</span>
+              <h3>Tuples (Packing, Unpacking &amp; Immutability)</h3>
+              <p><em>Tuple characteristics, single-element tuples, immutability, packing/unpacking, and use cases.</em></p>
+              <div class="lesson-content">
+                <h3>Module 11 — Tuple Data Type</h3>
+<p>Tuples are **immutable, ordered sequences**. Once created, their elements cannot be changed, added, or removed.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Creating Tuples &amp; The Comma Rule</h4>
+<pre><code>
+# A single-element tuple REQUIRES a trailing comma!
+not_a_tuple = (&quot;Naveen&quot;)  # type: str
+is_a_tuple = (&quot;Naveen&quot;,)  # type: tuple
+
+coords = (12.9716, 77.5946)
+empty = ()
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Why Use Tuples Over Lists?</h4>
+<p>1. **Data Integrity:** Protects constants and fixed records from unintentional mutation.</p>
+<p>2. **Performance:** Slight memory and allocation speed optimization over lists.</p>
+<p>3. **Dictionary Keys:** Because tuples are immutable (provided their elements are also immutable), they are **hashable** and can serve as dictionary keys or set members.</p>
+<pre><code>
+location_cache = {
+    (12.97, 77.59): &quot;Bengaluru&quot;,
+    (11.01, 76.95): &quot;Coimbatore&quot;
+}
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. Tuple Packing and Unpacking</h4>
+<pre><code>
+# Packing
+student = &quot;Naveen&quot;, 25, &quot;AI Engineer&quot;
+
+# Unpacking
+name, age, role = student
+print(f&quot;{name} is {age} years old working as {role}.&quot;)
+
+# Swapping variables using tuple packing/unpacking
+x, y = 10, 20
+x, y = y, x  # Clean variable swap without temporary variable
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="sets-mathematical-operations">
+              <span class="badge">Est. 25 Mins</span>
+              <h3>Sets &amp; Mathematical Set Operations</h3>
+              <p><em>Set characteristics, hashing requirement, deduplication, union, intersection, difference, and symmetric difference.</em></p>
+              <div class="lesson-content">
+                <h3>Module 12 — Set Data Type</h3>
+<p>A `set` is an **unordered, mutable collection of unique, hashable objects**.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Creating Sets</h4>
+<pre><code>
+# Notice: {} creates an empty dict; use set() for empty set!
+empty_set = set()
+
+# Deduplication from list
+raw_tags = [&quot;python&quot;, &quot;ai&quot;, &quot;python&quot;, &quot;ml&quot;, &quot;ai&quot;]
+unique_tags = set(raw_tags)
+print(unique_tags)  # {&#x27;python&#x27;, &#x27;ai&#x27;, &#x27;ml&#x27;}
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Adding &amp; Removing Elements</h4>
+<pre><code>
+s = {10, 20, 30}
+s.add(40)
+s.update([50, 60])
+
+# Discard vs Remove:
+s.remove(20)   # Removes 20; raises KeyError if not found
+s.discard(99)  # Removes 99 if present; does NOT raise error if missing
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. Mathematical Set Operations</h4>
+<pre><code>
+A = {1, 2, 3, 4}
+B = {3, 4, 5, 6}
+
+# Union (all items from both)
+print(A | B)                    # {1, 2, 3, 4, 5, 6}
+print(A.union(B))
+
+# Intersection (common elements)
+print(A &amp; B)                    # {3, 4}
+print(A.intersection(B))
+
+# Difference (items in A but not in B)
+print(A - B)                    # {1, 2}
+print(A.difference(B))
+
+# Symmetric Difference (items in A or B, but not both)
+print(A ^ B)                    # {1, 2, 5, 6}
+print(A.symmetric_difference(B))
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>4. Relationship Tests</h4>
+<pre><code>
+small = {1, 2}
+big = {1, 2, 3, 4}
+
+print(small.issubset(big))      # True
+print(big.issuperset(small))    # True
+print(small.isdisjoint({5, 6})) # True (no common elements)
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="dictionaries-mastery">
+              <span class="badge">Est. 35 Mins</span>
+              <h3>Dictionaries (Key-Value Mastery)</h3>
+              <p><em>Hash map implementation, keys/values/items, safe retrieval with get(), default dicts, and comprehensions.</em></p>
+              <div class="lesson-content">
+                <h3>Module 13 — Dictionary Data Type</h3>
+<p>Dictionaries represent **hash maps / key-value mappings**. In Python 3.7+, dictionaries preserve key insertion order.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Dictionary Creation &amp; Access</h4>
+<pre><code>
+student = {
+    &quot;name&quot;: &quot;Naveen&quot;,
+    &quot;role&quot;: &quot;AI Engineer&quot;,
+    &quot;skills&quot;: [&quot;Python&quot;, &quot;PyTorch&quot;, &quot;Django&quot;],
+    &quot;experience_years&quot;: 3
+}
+
+# Accessing
+print(student[&quot;name&quot;])          # &quot;Naveen&quot;
+# student[&quot;salary&quot;]             # KeyError!
+
+# Safe access with .get()
+salary = student.get(&quot;salary&quot;, 0.0)  # Returns default 0.0 without throwing error
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Modifying &amp; Removing Entries</h4>
+<pre><code>
+student[&quot;location&quot;] = &quot;Coimbatore&quot;     # Add or update
+student.update({&quot;level&quot;: &quot;Senior&quot;, &quot;active&quot;: True})
+
+# Removal
+popped_val = student.pop(&quot;level&quot;)       # Removes &#x27;level&#x27; and returns value
+del student[&quot;active&quot;]                   # Deletes &#x27;active&#x27;
+# student.clear()                       # Empties the dictionary
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. Iterating Over Dictionaries</h4>
+<pre><code>
+# Iterating keys
+for key in student:
+    print(key)
+
+# Iterating values
+for val in student.values():
+    print(val)
+
+# Iterating key-value pairs (preferred)
+for key, val in student.items():
+    print(f&quot;{key}: {val}&quot;)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>4. Dictionary Comprehension</h4>
+<pre><code>
+# Inverting a dictionary
+original = {&quot;a&quot;: 1, &quot;b&quot;: 2, &quot;c&quot;: 3}
+inverted = {val: key for key, val in original.items()}
+print(inverted)  # {1: &#x27;a&#x27;, 2: &#x27;b&#x27;, 3: &#x27;c&#x27;}
+
+# Filtering items
+scores = {&quot;Alice&quot;: 85, &quot;Bob&quot;: 35, &quot;Charlie&quot;: 90, &quot;David&quot;: 55}
+passed_students = {k: v for k, v in scores.items() if v &gt;= 50}
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="binary-types-range">
+              <span class="badge">Est. 25 Mins</span>
+              <h3>Binary Types, Range &amp; Memoryview</h3>
+              <p><em>bytes, bytearray, memoryview buffer protocol, and the range sequence generator.</em></p>
+              <div class="lesson-content">
+                <h3>Module 14 — Binary Types &amp; Range</h3>
+<p>Low-level memory and buffer manipulation types essential for file I/O, networking, and data processing.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. `bytes` vs `bytearray`</h4>
+<li>`bytes`: **Immutable** sequence of raw bytes (integers in range 0-255).</li>
+<li>`bytearray`: **Mutable** sequence of bytes.</li>
+<pre><code>
+# Creating bytes
+b1 = b&quot;Hello Python&quot;
+print(type(b1))        # &lt;class &#x27;bytes&#x27;&gt;
+print(b1[0])           # 72 (ASCII for &#x27;H&#x27;)
+
+# Creating mutable bytearray
+ba = bytearray(b&quot;Hello&quot;)
+ba[0] = ord(&quot;J&quot;)       # Replaces &#x27;H&#x27; with &#x27;J&#x27;
+print(ba.decode())     # &quot;Jello&quot;
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. `memoryview`</h4>
+<p>A `memoryview` allows Python code to access the internal data of an object that supports the buffer protocol without copying memory.</p>
+<pre><code>
+data = bytearray(b&quot;ImageDataBuffer&quot;)
+mv = memoryview(data)
+
+# Slice without copying the underlying buffer!
+sub_view = mv[5:9]
+print(sub_view.tobytes())  # b&#x27;Data&#x27;
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. `range` Object</h4>
+<p>`range` is a memory-efficient sequence type representing arithmetic progressions:</p>
+<pre><code>
+# range takes O(1) memory regardless of size!
+r = range(1, 1000000, 2)
+print(r[10])       # Direct indexing supported: 21
+print(len(r))      # 500000
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="mutable-vs-immutable-memory">
+              <span class="badge">Est. 30 Mins</span>
+              <h3>Mutable vs Immutable &amp; Memory References</h3>
+              <p><em>Understand object identity, aliasing, shallow vs deep copying, and why hashability matters.</em></p>
+              <div class="lesson-content">
+                <h3>Module 15 — Mutability, Copying &amp; Hashing</h3>
+<p>Understanding how Python handles object references in memory is critical to preventing subtle bugs.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Mutability Overview</h4>
+<li>**Immutable:** `int`, `float`, `complex`, `bool`, `str`, `tuple`, `frozenset`, `bytes`. Modifying results in a new object.</li>
+<li>**Mutable:** `list`, `dict`, `set`, `bytearray`. Can be modified in-place without changing memory address (`id()`).</li>
+<pre><code>
+# Aliasing: both variables reference the SAME memory address
+a = [1, 2, 3]
+b = a
+b.append(4)
+print(a)  # [1, 2, 3, 4]! (a is affected because a and b point to same list)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Shallow Copy vs Deep Copy</h4>
+<pre><code>
+import copy
+
+nested = [[1, 2], [3, 4]]
+
+# Shallow copy: outer list copied, inner objects shared
+shallow = copy.copy(nested)
+# Deep copy: recursive duplicate of all nested objects
+deep = copy.deepcopy(nested)
+
+nested[0][0] = 999
+print(shallow[0][0])  # 999 (affected!)
+print(deep[0][0])     # 1 (isolated and unaffected!)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. Hashability &amp; Dictionary Keys</h4>
+<p>An object is **hashable** if it has a hash value (`__hash__()`) that never changes during its lifetime and can be compared to other objects (`__eq__()`).</p>
+<li>Immutable types (`int`, `str`, `tuple` containing immutable items) are hashable.</li>
+<li>Mutable types (`list`, `dict`, `set`) are **unhashable** (`TypeError: unhashable type: &#x27;list&#x27;`).</li>
+<li>Only hashable objects can be stored as dictionary keys or set elements!</li>
+              </div>
+            </article>
+            </section>
+
+        <section id="functions-oop-advanced-python">
+          <h2>3. Functions, OOP &amp; Advanced Python</h2>
+          <p class="lead">Functional programming, recursive techniques, file handling, exception safety, OOP 4 pillars, iterators, generators, decorators, and regex.</p>
+        
+            <article class="module-card" id="functions-scopes-args-kwargs">
+              <span class="badge">Est. 35 Mins</span>
+              <h3>Functions, Scopes, *args &amp; **kwargs</h3>
+              <p><em>Defining functions, default arguments, variable length arguments (*args, **kwargs), closures, and lambda expressions.</em></p>
+              <div class="lesson-content">
+                <h3>Module 16 — Functions &amp; Parameter Handling</h3>
+<p>Functions are first-class citizens in Python: they can be assigned to variables, passed as arguments, and returned from other functions.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Function Syntax &amp; Defaults</h4>
+<pre><code>
+def greet(name: str, greeting: str = &quot;Hello&quot;) -&gt; str:
+    &quot;&quot;&quot;Return a personalized greeting.&quot;&quot;&quot;
+    return f&quot;{greeting}, {name}!&quot;
+
+print(greet(&quot;Naveen&quot;))
+print(greet(&quot;Naveen&quot;, greeting=&quot;Good Morning&quot;))
+</code></pre>
+<div class="callout"><div class="callout-title">Tip</div><p>**Warning: Avoid Mutable Default Arguments!**</p></div>
+<div class="callout"><div class="callout-title">Tip</div><p>```python</p></div>
+<div class="callout"><div class="callout-title">Tip</div><p># BUGGY:</p></div>
+<div class="callout"><div class="callout-title">Tip</div><p>def append_item(val, target=[]):</p></div>
+<div class="callout"><div class="callout-title">Tip</div><p>    target.append(val)</p></div>
+<div class="callout"><div class="callout-title">Tip</div><p>    return target</p></div>
+<p>&gt;</p>
+<div class="callout"><div class="callout-title">Tip</div><p># CORRECT:</p></div>
+<div class="callout"><div class="callout-title">Tip</div><p>def append_item(val, target=None):</p></div>
+<div class="callout"><div class="callout-title">Tip</div><p>    if target is None:</p></div>
+<div class="callout"><div class="callout-title">Tip</div><p>        target = []</p></div>
+<div class="callout"><div class="callout-title">Tip</div><p>    target.append(val)</p></div>
+<div class="callout"><div class="callout-title">Tip</div><p>    return target</p></div>
+<div class="callout"><div class="callout-title">Tip</div><p>```</p></div>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. `*args` and `**kwargs`</h4>
+<li>`*args`: Collects extra positional arguments into a **tuple**.</li>
+<li>`**kwargs`: Collects extra keyword arguments into a **dictionary**.</li>
+<pre><code>
+def make_api_request(endpoint, *flags, **headers):
+    print(f&quot;Calling: {endpoint}&quot;)
+    print(f&quot;Flags (tuple): {flags}&quot;)
+    print(f&quot;Headers (dict): {headers}&quot;)
+
+make_api_request(&quot;/users&quot;, &quot;v2&quot;, &quot;secure&quot;, timeout=30, auth=&quot;Bearer token123&quot;)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. Lambda (Anonymous) Functions</h4>
+<p>Short one-line expressions:</p>
+<pre><code>
+square = lambda x: x * x
+print(square(5))  # 25
+
+# Frequently used in sorting:
+students = [(&quot;Alice&quot;, 88), (&quot;Bob&quot;, 95), (&quot;Charlie&quot;, 72)]
+students.sort(key=lambda item: item[1], reverse=True)
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="recursion-algorithms">
+              <span class="badge">Est. 25 Mins</span>
+              <h3>Recursion &amp; Recursive Algorithms</h3>
+              <p><em>Recursive call stack, base conditions, factorial, fibonacci, and string reversal.</em></p>
+              <div class="lesson-content">
+                <h3>Module 17 — Recursion &amp; Stack Anatomy</h3>
+<p>A recursive function calls itself to solve a smaller sub-instance of the same problem.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. The Two Rules of Recursion</h4>
+<p>1. **Base Case:** The terminating condition that returns a value without further recursion.</p>
+<p>2. **Recursive Step:** Moves the problem state closer to the base case.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Classic Examples</h4>
+<h5>Factorial Calculation: $n! = n 	imes (n-1)!$</h5>
+<pre><code>
+def factorial(n: int) -&gt; int:
+    if n &lt;= 1:
+        return 1  # Base case
+    return n * factorial(n - 1)  # Recursive case
+
+print(factorial(5))  # 120
+</code></pre>
+<h5>Fibonacci with Memoization</h5>
+<pre><code>
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fib(n: int) -&gt; int:
+    if n &lt;= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)
+
+print([fib(i) for i in range(10)])  # [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="modules-packages-imports">
+              <span class="badge">Est. 25 Mins</span>
+              <h3>Modules, Packages &amp; Imports</h3>
+              <p><em>Module creation, __name__ == &#x27;__main__&#x27;, packages with __init__.py, and standard library modules.</em></p>
+              <div class="lesson-content">
+                <h3>Module 18 — Modules &amp; Packages</h3>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Modules &amp; `if __name__ == &#x27;__main__&#x27;:`</h4>
+<p>A module is simply a Python file (`.py`).</p>
+<p>When a script is run directly, its `__name__` is set to `&quot;__main__&quot;`. When imported, `__name__` equals the module&#x27;s file name.</p>
+<pre><code>
+# math_utils.py
+def add(a, b):
+    return a + b
+
+if __name__ == &quot;__main__&quot;:
+    print(&quot;Self-test: add(2, 3) =&quot;, add(2, 3))
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Important Standard Library Modules</h4>
+<li>`os` / `pathlib`: Operating system interactions and file paths.</li>
+<li>`sys`: Interpreter arguments and runtime configuration.</li>
+<li>`json`: Parsing and serializing JSON data.</li>
+<li>`math` / `statistics`: Mathematical constants and statistical functions.</li>
+<li>`random`: Pseudo-random number generation.</li>
+<li>`collections`: `defaultdict`, `Counter`, `namedtuple`, `deque`.</li>
+<pre><code>
+from collections import Counter
+
+words = [&quot;apple&quot;, &quot;banana&quot;, &quot;apple&quot;, &quot;orange&quot;, &quot;apple&quot;]
+counts = Counter(words)
+print(counts[&quot;apple&quot;])  # 3
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="file-handling-context-managers">
+              <span class="badge">Est. 30 Mins</span>
+              <h3>File Handling &amp; Context Managers</h3>
+              <p><em>Reading, writing, appending files, binary files, and the with statement (context managers).</em></p>
+              <div class="lesson-content">
+                <h3>Module 19 — File Handling &amp; Context Managers</h3>
+<p>Always use the `with` statement: it guarantees that files are properly closed even if exceptions occur.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. File Modes</h4>
+<li>`&#x27;r&#x27;`: Read (default). Raises `FileNotFoundError` if missing.</li>
+<li>`&#x27;w&#x27;`: Write (truncates existing content or creates new file).</li>
+<li>`&#x27;a&#x27;`: Append (writes to end of file).</li>
+<li>`&#x27;x&#x27;`: Exclusive creation (fails if file already exists).</li>
+<li>`&#x27;rb&#x27;` / `&#x27;wb&#x27;`: Binary read / write (for images, audio, pickle).</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Reading &amp; Writing Text Files</h4>
+<pre><code>
+# Writing
+with open(&quot;sample.txt&quot;, &quot;w&quot;, encoding=&quot;utf-8&quot;) as f:
+    f.write(&quot;Line 1: Python Data Science\n&quot;)
+    f.writelines([&quot;Line 2: Machine Learning\n&quot;, &quot;Line 3: Artificial Intelligence\n&quot;])
+
+# Reading line-by-line (memory-efficient for large files)
+with open(&quot;sample.txt&quot;, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+    for line in f:
+        print(line.strip())
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="exception-handling-robust">
+              <span class="badge">Est. 25 Mins</span>
+              <h3>Exception Handling (Robust Code)</h3>
+              <p><em>try, except, else, finally blocks, raising exceptions, and building custom exception classes.</em></p>
+              <div class="lesson-content">
+                <h3>Module 20 — Exception Handling</h3>
+<p>Gracefully recover from runtime errors without crashing your application.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Complete `try-except-else-finally` Anatomy</h4>
+<pre><code>
+try:
+    num = int(&quot;42&quot;)
+    result = 100 / num
+except ValueError as e:
+    print(f&quot;Invalid integer: {e}&quot;)
+except ZeroDivisionError:
+    print(&quot;Cannot divide by zero!&quot;)
+except Exception as e:
+    print(f&quot;Unexpected error: {e}&quot;)
+else:
+    # Executes ONLY if NO exception was raised in try
+    print(f&quot;Calculation succeeded: {result}&quot;)
+finally:
+    # ALWAYS executes (cleanup operations, closing DB connections)
+    print(&quot;Execution completed.&quot;)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Custom Exceptions</h4>
+<p>Inherit from `Exception`:</p>
+<pre><code>
+class InsufficientFundsError(Exception):
+    &quot;&quot;&quot;Raised when a withdrawal amount exceeds account balance.&quot;&quot;&quot;
+    def __init__(self, balance, amount):
+        super().__init__(f&quot;Attempted to withdraw ${amount} with balance ${balance}.&quot;)
+        self.balance = balance
+        self.amount = amount
+
+def withdraw(balance, amount):
+    if amount &gt; balance:
+        raise InsufficientFundsError(balance, amount)
+    return balance - amount
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="oop-four-pillars">
+              <span class="badge">Est. 40 Mins</span>
+              <h3>Object-Oriented Programming (The 4 Pillars)</h3>
+              <p><em>Classes, objects, constructors, __init__, self, Encapsulation, Inheritance, Polymorphism, Abstraction, and super().</em></p>
+              <div class="lesson-content">
+                <h3>Module 21 — Object-Oriented Programming (OOP)</h3>
+<p>OOP organizes code around **data (attributes)** and **behaviors (methods)**.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Class &amp; Instance Definition</h4>
+<pre><code>
+class Developer:
+    # Class variable (shared across all instances)
+    community = &quot;Antigravity Devs&quot;
+
+    def __init__(self, name: str, primary_language: str):
+        # Instance variables (unique to each object)
+        self.name = name
+        self.primary_language = primary_language
+
+    def describe(self) -&gt; str:
+        return f&quot;{self.name} builds with {self.primary_language} ({self.community})&quot;
+
+dev1 = Developer(&quot;Naveen&quot;, &quot;Python&quot;)
+print(dev1.describe())
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. The Four Pillars of OOP</h4>
+<h5>A. Encapsulation</h5>
+<p>Protect internal state using private variables and public getters/setters:</p>
+<pre><code>
+class BankAccount:
+    def __init__(self, balance: float):
+        self.__balance = balance  # Private attribute (name mangling)
+
+    @property
+    def balance(self) -&gt; float:
+        return self.__balance
+
+    def deposit(self, amount: float):
+        if amount &gt; 0:
+            self.__balance += amount
+</code></pre>
+<h5>B. Inheritance</h5>
+<p>Code reuse across parent and child classes:</p>
+<pre><code>
+class Employee:
+    def __init__(self, name: str, salary: float):
+        self.name = name
+        self.salary = salary
+
+class DataScientist(Employee):
+    def __init__(self, name: str, salary: float, model_stack: list):
+        super().__init__(name, salary)  # Delegate to parent constructor
+        self.model_stack = model_stack
+</code></pre>
+<h5>C. Polymorphism</h5>
+<p>Different classes implementing the same method interface:</p>
+<pre><code>
+class Square:
+    def area(self): return 16
+
+class Circle:
+    def area(self): return 3.14 * 16
+
+for shape in [Square(), Circle()]:
+    print(shape.area())
+</code></pre>
+<h5>D. Abstraction</h5>
+<p>Hiding complex implementation details using Abstract Base Classes (`abc` module):</p>
+<pre><code>
+from abc import ABC, abstractmethod
+
+class MLModel(ABC):
+    @abstractmethod
+    def fit(self, X, y):
+        pass
+
+    @abstractmethod
+    def predict(self, X):
+        pass
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="advanced-oop-dunder-methods">
+              <span class="badge">Est. 30 Mins</span>
+              <h3>Advanced OOP: Dunder Methods &amp; Decorators</h3>
+              <p><em>Magic methods (__str__, __repr__, __len__, __getitem__), @staticmethod, @classmethod, and @property.</em></p>
+              <div class="lesson-content">
+                <h3>Module 22 — Advanced OOP &amp; Dunder Methods</h3>
+<p>Special &quot;dunder&quot; (double underscore) methods allow user-defined classes to hook into Python&#x27;s core language operators.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Magic Methods</h4>
+<pre><code>
+class Vector2D:
+    def __init__(self, x: float, y: float):
+        self.x = x
+        self.y = y
+
+    # String representation for end-users
+    def __str__(self):
+        return f&quot;Vector({self.x}, {self.y})&quot;
+
+    # Unambiguous string representation for developers / debugging
+    def __repr__(self):
+        return f&quot;Vector2D(x={self.x}, y={self.y})&quot;
+
+    # Operator overloading: + operator
+    def __add__(self, other):
+        return Vector2D(self.x + other.x, self.y + other.y)
+
+    # Equality: == operator
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+v1 = Vector2D(2, 4)
+v2 = Vector2D(3, 1)
+v3 = v1 + v2
+print(v3)  # Vector(5, 5)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Method Types: `@staticmethod` vs `@classmethod`</h4>
+<pre><code>
+class DateUtils:
+    format_pattern = &quot;%Y-%m-%d&quot;
+
+    @classmethod
+    def from_string(cls, date_str):
+        # Receives class &#x27;cls&#x27;, useful for alternative constructors
+        parts = date_str.split(&quot;-&quot;)
+        return cls()
+
+    @staticmethod
+    def is_leap_year(year: int) -&gt; bool:
+        # Independent utility; has no access to &#x27;self&#x27; or &#x27;cls&#x27;
+        return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="iterators-generators-decorators">
+              <span class="badge">Est. 35 Mins</span>
+              <h3>Iterators, Generators &amp; Custom Decorators</h3>
+              <p><em>iter(), next(), generator functions with yield, pipeline streams, closures, and custom function decorators.</em></p>
+              <div class="lesson-content">
+                <h3>Module 23 — Iterators, Generators &amp; Decorators</h3>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Iterators vs Generators</h4>
+<li>**Iterator:** Object implementing `__iter__()` and `__next__()`.</li>
+<li>**Generator:** Elegant syntax using `yield` that pauses state execution and resumes upon `next()`.</li>
+<pre><code>
+# Custom generator streaming infinite numbers
+def count_stream(start=1):
+    while True:
+        yield start
+        start += 1
+
+gen = count_stream()
+print(next(gen))  # 1
+print(next(gen))  # 2
+
+# Generator expression (memory efficient vs list comprehension)
+large_squares = (x * x for x in range(1_000_000))
+print(next(large_squares))  # 0
+print(next(large_squares))  # 1
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Decorators &amp; Closures</h4>
+<p>A decorator wraps a function to modify or extend its behavior without altering its source code.</p>
+<pre><code>
+import time
+from functools import wraps
+
+def time_tracker(func):
+    @wraps(func)  # Preserves function metadata (__name__, __doc__)
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        duration = time.perf_counter() - start
+        print(f&quot;Function &#x27;{func.__name__}&#x27; executed in {duration:.6f}s&quot;)
+        return result
+    return wrapper
+
+@time_tracker
+def heavy_calculation(n):
+    return sum(i * i for i in range(n))
+
+heavy_calculation(100_000)
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="regular-expressions-re">
+              <span class="badge">Est. 30 Mins</span>
+              <h3>Regular Expressions (re module)</h3>
+              <p><em>Pattern matching, character classes, quantifiers, search, match, findall, sub, and email/phone validation.</em></p>
+              <div class="lesson-content">
+                <h3>Module 24 — Regular Expressions (`re`)</h3>
+<p>Regular expressions match and manipulate textual patterns.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Core Regex Functions</h4>
+<li>`re.search(pattern, text)`: Finds first match anywhere in string.</li>
+<li>`re.match(pattern, text)`: Matches only at the start of string.</li>
+<li>`re.findall(pattern, text)`: Returns all non-overlapping matches as list.</li>
+<li>`re.sub(pattern, replacement, text)`: Replaces matches.</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Practical Pattern Validations</h4>
+<pre><code>
+import re
+
+# Email validation
+email_pattern = r&quot;^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$&quot;
+email = &quot;developer@antigravity.ai&quot;
+print(bool(re.match(email_pattern, email)))  # True
+
+# Phone number extraction
+text = &quot;Contact us at 9876543210 or office at +91-9123456789.&quot;
+phones = re.findall(r&quot;\+?\d{1,3}?[-.\s]?\d{10}&quot;, text)
+print(&quot;Extracted phones:&quot;, phones)
+
+# Sanitizing text
+raw = &quot;Hello   world!  Multiple   spaces.&quot;
+clean = re.sub(r&quot;\s+&quot;, &quot; &quot;, raw)
+print(clean)  # &quot;Hello world! Multiple spaces.&quot;
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="datetime-mastery">
+              <span class="badge">Est. 25 Mins</span>
+              <h3>Date and Time Mastery</h3>
+              <p><em>Working with datetime, date, time, timedelta, parsing strptime, and formatting strftime.</em></p>
+              <div class="lesson-content">
+                <h3>Module 25 — Date and Time Handling</h3>
+<p>The `datetime` module provides classes for manipulating dates and times.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Creating &amp; Inspecting Dates</h4>
+<pre><code>
+from datetime import datetime, date, timedelta
+
+now = datetime.now()
+print(f&quot;Current Timestamp: {now}&quot;)
+print(f&quot;Year: {now.year}, Month: {now.month}, Day: {now.day}&quot;)
+
+# Time differences with timedelta
+yesterday = now - timedelta(days=1)
+next_week = now + timedelta(weeks=1)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Formatting (`strftime`) &amp; Parsing (`strptime`)</h4>
+<li>`strftime` (String Format Time): Object -&gt; String.</li>
+<li>`strptime` (String Parse Time): String -&gt; Object.</li>
+<pre><code>
+# Format to readable string
+formatted = now.strftime(&quot;%A, %d %B %Y - %I:%M %p&quot;)
+print(formatted)  # e.g., &#x27;Friday, 25 September 2026 - 02:30 PM&#x27;
+
+# Parse string into datetime object
+log_time_str = &quot;2026-09-25 14:30:00&quot;
+dt_obj = datetime.strptime(log_time_str, &quot;%Y-%m-%d %H:%M:%S&quot;)
+print(dt_obj.year)  # 2026
+</code></pre>
+              </div>
+            </article>
+            </section>
+
+        <section id="python-data-science-interview-prep">
+          <h2>4. Python for Data Science &amp; Interview Prep</h2>
+          <p class="lead">Transition from Python built-in collections to NumPy &amp; Pandas, plus detailed answers to the top 25 technical interview questions.</p>
+        
+            <article class="module-card" id="collections-to-numpy-pandas">
+              <span class="badge">Est. 30 Mins</span>
+              <h3>Transitioning Collections to NumPy &amp; Pandas</h3>
+              <p><em>Bridging Python lists, dicts, and tuples to NumPy ndarrays, Pandas Series, and DataFrames.</em></p>
+              <div class="lesson-content">
+                <h3>Module 26 — Python to Data Science Bridge</h3>
+<p>Python collections (`list`, `dict`) are heterogeneous and flexible, but slow for large-scale mathematical computations. Libraries like NumPy and Pandas provide vectorized, contiguous C-memory structures.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. Python List -&gt; NumPy `ndarray`</h4>
+<li>Python lists store pointers to objects scattered across memory.</li>
+<li>NumPy arrays store **homogenous data contiguously**, enabling CPU cache line utilization and SIMD vectorization.</li>
+<pre><code>
+import numpy as np
+
+# Creating an array from Python list
+py_list = [10, 20, 30, 40]
+np_arr = np.array(py_list)
+
+# Vectorized arithmetic (without for-loops!)
+print(np_arr * 2)  # array([20, 40, 60, 80])
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Python Dict -&gt; Pandas DataFrame</h4>
+<pre><code>
+import pandas as pd
+
+# Creating a DataFrame from a dictionary of lists
+data = {
+    &quot;Name&quot;: [&quot;Naveen&quot;, &quot;Aravind&quot;, &quot;Priya&quot;],
+    &quot;Role&quot;: [&quot;AI Engineer&quot;, &quot;Data Scientist&quot;, &quot;ML Engineer&quot;],
+    &quot;Score&quot;: [92, 88, 95]
+}
+
+df = pd.DataFrame(data)
+print(df)
+
+# Vectorized filtering
+high_scorers = df[df[&quot;Score&quot;] &gt;= 90]
+print(high_scorers)
+</code></pre>
+              </div>
+            </article>
+            
+            <article class="module-card" id="top-25-interview-questions">
+              <span class="badge">Est. 45 Mins</span>
+              <h3>Top 25 Python Interview Questions &amp; Solutions</h3>
+              <p><em>Complete, rigorous answers and code illustrations for the 25 essential Python interview questions.</em></p>
+              <div class="lesson-content">
+                <h3>Module 27 — Top 25 Python Interview Questions &amp; Solutions</h3>
+<p>Master these 25 essential questions asked in technical interviews.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>1. What are Python&#x27;s built-in data types?</h4>
+<p>Python includes:</p>
+<li>**Numeric:** `int`, `float`, `complex`</li>
+<li>**Sequence:** `str`, `list`, `tuple`, `range`, `bytes`, `bytearray`</li>
+<li>**Mapping:** `dict`</li>
+<li>**Set:** `set`, `frozenset`</li>
+<li>**Boolean:** `bool`</li>
+<li>**NoneType:** `None`</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>2. Difference between List and Tuple?</h4>
+<li>**List:** Mutable (`list.append()`), slower allocation, uses more memory. Syntax: `[1, 2]`.</li>
+<li>**Tuple:** Immutable (cannot be changed after creation), faster, memory efficient, hashable (can be used as dictionary keys). Syntax: `(1, 2)`.</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>3. List vs Set?</h4>
+<li>**List:** Ordered sequence, allows duplicate values, supports integer indexing and slicing `list[0]`.</li>
+<li>**Set:** Unordered collection of unique items, does not allow duplicates, does not support indexing, optimized for $O(1)$ membership checks (`x in my_set`).</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>4. Set vs Dictionary?</h4>
+<li>**Set:** Stores distinct single keys (`{1, 2, 3}`).</li>
+<li>**Dictionary:** Stores key-value mappings (`{&quot;key&quot;: &quot;value&quot;}`). Keys must be unique and hashable.</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>5. Mutable vs Immutable?</h4>
+<li>**Mutable:** Object can be modified in-place without altering its memory identity `id()`. Examples: `list`, `dict`, `set`, `bytearray`.</li>
+<li>**Immutable:** Object state cannot be changed once created. Any modification creates a new object in memory. Examples: `int`, `float`, `str`, `tuple`, `frozenset`, `bytes`.</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>6. Why are strings immutable?</h4>
+<p>1. **Security:** Strings are used as network URLs, file paths, and database credentials; immutability prevents tampering.</p>
+<p>2. **Hashability:** Strings can safely serve as dictionary keys because their hash code never changes.</p>
+<p>3. **Memory Optimization:** Python interns strings (String Interning) so identical string literals share the exact same memory location.</p>
+<p>4. **Thread Safety:** Multiple threads can access string data simultaneously without race conditions.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>7. Why can&#x27;t a list be a dictionary key?</h4>
+<p>Dictionary keys must be **hashable** (their hash value must remain invariant throughout their lifetime). Since lists are mutable, their contents can change, which would corrupt the hash table bucket location.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>8. Why can a tuple be a dictionary key?</h4>
+<p>A tuple is immutable, meaning its hash value is fixed—**provided all elements within the tuple are also immutable**. A tuple containing a mutable item like `([1, 2], 3)` is unhashable.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>9. Difference between `==` and `is`?</h4>
+<li>`==`: Equality operator. Compares **values / contents** of two objects (via `__eq__()`).</li>
+<li>`is`: Identity operator. Checks whether both variables point to the **exact same object in memory** (`id(a) == id(b)`).</li>
+<pre><code>
+a = [1, 2, 3]
+b = [1, 2, 3]
+print(a == b)  # True (same values)
+print(a is b)  # False (different objects)
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>10. Difference between `remove()` and `pop()`?</h4>
+<li>`list.remove(value)`: Removes the **first occurrence of the specified value**. Returns `None`. Raises `ValueError` if value is missing.</li>
+<li>`list.pop([index])`: Removes and **returns** the element at the specified index (default: last element `-1`). Raises `IndexError` on empty list.</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>11. Difference between `append()` and `extend()`?</h4>
+<li>`list.append(x)`: Adds `x` as a **single element** to the end of the list.</li>
+<li>`list.extend(iterable)`: Iterates over the iterable and appends each element individually.</li>
+<pre><code>
+a = [1, 2]
+a.append([3, 4])  # [1, 2, [3, 4]]
+
+b = [1, 2]
+b.extend([3, 4])  # [1, 2, 3, 4]
+</code></pre>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>12. Difference between `discard()` and `remove()` in sets?</h4>
+<li>`set.remove(val)`: Deletes `val` if found; raises `KeyError` if `val` is not in the set.</li>
+<li>`set.discard(val)`: Deletes `val` if found; quietly does nothing without raising any error if `val` is absent.</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>13. Difference between `sort()` and `sorted()`?</h4>
+<li>`list.sort()`: In-place method that sorts the list directly and returns `None`. Only works on lists.</li>
+<li>`sorted(iterable)`: Built-in function that takes any iterable and returns a **new sorted list**, preserving the original iterable.</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>14. Difference between Shallow Copy and Deep Copy?</h4>
+<li>**Shallow Copy (`copy.copy()`):** Creates a new container object, but populates it with references to the child objects contained in the original. Modifications to nested mutable objects reflect in both.</li>
+<li>**Deep Copy (`copy.deepcopy()`):** Recursively creates copies of all nested objects. Completely isolates the copy from the original.</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>15. What is List Comprehension?</h4>
+<p>A concise, syntactic construct for creating a new list from an existing iterable based on an expression and optional condition:</p>
+<p>`[expression for item in iterable if condition]`</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>16. What is Dictionary Comprehension?</h4>
+<p>A compact way to build dictionaries from iterables:</p>
+<p>`{key_expr: val_expr for item in iterable if condition}`</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>17. What is Tuple Packing?</h4>
+<p>Assigning multiple values separated by commas to a single variable without explicit parentheses:</p>
+<p>`data = 10, &quot;Python&quot;, True`</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>18. What is Tuple Unpacking?</h4>
+<p>Extracting the values from a tuple directly into individual variables:</p>
+<p>`a, b, c = data`</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>19. What is `*` Unpacking?</h4>
+<p>Using the asterisk `*` operator to capture multiple positional elements into a list:</p>
+<p>`first, *rest = [1, 2, 3, 4, 5]`  # first = 1, rest = [2, 3, 4, 5]</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>20. What are hashable objects?</h4>
+<p>An object is hashable if:</p>
+<p>1. It implements a `__hash__()` method returning an integer constant over its lifetime.</p>
+<p>2. It implements `__eq__()` for equality comparison.</p>
+<p>All immutable built-in types in Python are hashable.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>21. Why are dictionary keys unique?</h4>
+<p>Dictionaries are built upon hash tables. Each key is hashed to an array index. If duplicate keys were permitted, retrieving a key would result in ambiguity. Writing to an existing key simply overwrites its current value.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>22. Why doesn&#x27;t a set allow duplicates?</h4>
+<p>Like dictionaries, sets use hash tables under the hood. When adding an element, Python hashes the object. If an entry with an identical hash and equality already exists, the addition is skipped.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>23. What is `None`?</h4>
+<p>`None` is a special constant in Python that represents the absence of a value or a null value. It is the sole instance of the `NoneType` class. Functions that do not explicitly return a value implicitly return `None`.</p>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>24. What is Type Conversion?</h4>
+<p>The process of converting a value from one data type to another:</p>
+<li>**Implicit Conversion:** Performed automatically by Python (e.g., adding `int` and `float` produces a `float`).</li>
+<li>**Explicit Conversion (Type Casting):** Performed manually using constructor functions like `int()`, `float()`, `str()`, `list()`.</li>
+<hr style='border: 0; border-top: 1px solid var(--card-border); margin: 1.5rem 0;'>
+<h4>25. Difference between `type()` and `isinstance()`?</h4>
+<li>`type(obj)` returns the exact class type of the object. It does not account for class inheritance.</li>
+<li>`isinstance(obj, class_or_tuple)` returns `True` if the object is an instance of the class **or any subclass derived from it**. It supports checking against multiple types via tuples.</li>
+              </div>
+            </article>
+            </section>
+
+    <section id="interview-questions">
+      <h2>Top 25 Python Technical Interview Questions &amp; Deep-Dive Answers</h2>
+      <p class="lead">Frequently asked questions in Python, Data Science, and Machine Learning technical interviews with direct answers, code demonstrations, and interviewer tips.</p>
+    
+        <div class="qa-card" id="q-1">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">1. What are Python&#x27;s built-in data types?</div>
+            <span class="badge badge-green">EASY</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Python includes Numeric (int, float, complex), Sequence (str, list, tuple, range, bytes, bytearray), Mapping (dict), Set (set, frozenset), Boolean (bool), and NoneType.</div>
+          <p>Python&#x27;s data types are categorized by their underlying memory structure and behaviors: Numeric types represent scalar numbers; sequences represent ordered collections; mappings store key-value associations; and sets represent unordered collections of unique elements.</p>
+          <pre><code>types = [10, 3.14, 2+3j, True, &#x27;Python&#x27;, [1], (1,), {1}, {&#x27;k&#x27;: &#x27;v&#x27;}, None]
+for t in types:
+    print(f&#x27;{str(t):&lt;10} -&gt; {type(t).__name__}&#x27;)</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Mention the distinction between mutable (list, dict, set) and immutable (int, str, tuple) types when answering.</div>
+        </div>
+        
+        <div class="qa-card" id="q-2">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">2. What is the difference between list and tuple in Python?</div>
+            <span class="badge badge-green">EASY</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Lists are mutable and defined with square brackets []; tuples are immutable and defined with parentheses ().</div>
+          <p>Lists are dynamic arrays that support adding, removing, and changing elements in-place. Tuples are fixed-size immutable arrays. Because of immutability, tuples are faster, use less memory, and can be used as dictionary keys.</p>
+          <pre><code>import sys
+l = [1, 2, 3, 4, 5]
+t = (1, 2, 3, 4, 5)
+print(&#x27;List size:&#x27;, sys.getsizeof(l))
+print(&#x27;Tuple size:&#x27;, sys.getsizeof(t))</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Highlight that tuples provide write-protection for constants and explain why they can be hashed.</div>
+        </div>
+        
+        <div class="qa-card" id="q-3">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">3. What is the difference between List and Set?</div>
+            <span class="badge badge-green">EASY</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Lists are ordered and allow duplicates; sets are unordered collections of unique, hashable items.</div>
+          <p>Lists preserve element insertion order and allow indexing list[0]. Sets use hash tables to guarantee element uniqueness and provide O(1) average lookup time compared to O(N) linear search in lists.</p>
+          <pre><code>nums = [1, 2, 2, 3, 4, 4]
+unique_nums = set(nums)
+print(unique_nums)  # {1, 2, 3, 4}
+print(3 in unique_nums)  # O(1) membership check</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Always mention the computational complexity difference for membership testing: O(1) for set vs O(N) for list.</div>
+        </div>
+        
+        <div class="qa-card" id="q-4">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">4. What is the difference between Set and Dictionary?</div>
+            <span class="badge badge-green">EASY</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Sets store only unique keys; dictionaries store key-value pairs.</div>
+          <p>Both data structures rely on hash tables for rapid lookups. However, a set represents a mathematical collection of single unique elements, while a dictionary maps unique keys to corresponding value objects.</p>
+          <pre><code>s = {1, 2, 3}
+d = {1: &#x27;one&#x27;, 2: &#x27;two&#x27;, 3: &#x27;three&#x27;}
+print(type(s), type(d))</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Point out that empty {} in Python creates a dictionary; an empty set must be instantiated using set().</div>
+        </div>
+        
+        <div class="qa-card" id="q-5">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">5. What is the difference between Mutable and Immutable objects in Python?</div>
+            <span class="badge badge">MEDIUM</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Mutable objects can change their state in-place without changing memory address; immutable objects cannot.</div>
+          <p>When you modify a mutable object (like appending to a list), the id() stays the same. When you modify an immutable object (like modifying a string or int), Python allocates a new object in memory with a new id().</p>
+          <pre><code># Mutable:
+l = [1, 2]
+print(id(l))
+l.append(3)
+print(id(l))  # Identical id
+
+# Immutable:
+s = &#x27;abc&#x27;
+print(id(s))
+s += &#x27;d&#x27;
+print(id(s))  # Different id</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Demonstrate this using the id() function in your answer to prove mastery of Python memory.</div>
+        </div>
+        
+        <div class="qa-card" id="q-6">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">6. Why are strings immutable in Python?</div>
+            <span class="badge badge">MEDIUM</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> For security, hashability as dictionary keys, thread safety, and string interning memory optimization.</div>
+          <p>Strings are extensively used in file paths, network sockets, and database queries. If strings were mutable, another thread could mutate a verified path. Immutability also allows strings to cache their hash and share memory via string interning.</p>
+          <pre><code>s1 = &#x27;antigravity&#x27;
+s2 = &#x27;antigravity&#x27;
+print(s1 is s2)  # True: Same cached memory reference</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Mention &#x27;String Interning&#x27; and &#x27;Thread Safety&#x27; for extra points in senior developer rounds.</div>
+        </div>
+        
+        <div class="qa-card" id="q-7">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">7. Why can&#x27;t a list be a dictionary key in Python?</div>
+            <span class="badge badge">MEDIUM</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Lists are mutable, meaning their contents can change, making them unhashable.</div>
+          <p>Python dictionaries are hash tables. A key must have an invariant hash code throughout its lifecycle to ensure it can always be retrieved from its bucket. Because lists are mutable, their contents and hash would change, breaking the lookup contract.</p>
+          <pre><code>try:
+    d = {[1, 2]: &#x27;value&#x27;}
+except TypeError as e:
+    print(&#x27;Caught error:&#x27;, e)</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Explain that objects used as dictionary keys must implement both __hash__() and __eq__().</div>
+        </div>
+        
+        <div class="qa-card" id="q-8">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">8. Why can a tuple be used as a dictionary key?</div>
+            <span class="badge badge">MEDIUM</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Tuples are immutable sequences, so their hash values remain constant.</div>
+          <p>Because tuples cannot be modified once instantiated, their hash value is deterministic and stable, allowing the hash table to reliably index them. Note: A tuple is only hashable if all elements inside it are also hashable.</p>
+          <pre><code>valid = (1, &#x27;two&#x27;, 3.0)
+print(&#x27;Hash:&#x27;, hash(valid))
+d = {valid: &#x27;success&#x27;}
+print(d[valid])</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Highlight the catch: a tuple containing a list is NOT hashable.</div>
+        </div>
+        
+        <div class="qa-card" id="q-9">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">9. What is the difference between == and is in Python?</div>
+            <span class="badge badge-green">EASY</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> &#x27;==&#x27; compares equality of values; &#x27;is&#x27; compares identity (memory addresses).</div>
+          <p>The == operator invokes the object&#x27;s __eq__() method to test whether two objects hold equivalent contents. The &#x27;is&#x27; operator checks whether both operands point to the exact same object in memory (id(a) == id(b)).</p>
+          <pre><code>a = [10, 20]
+b = [10, 20]
+c = a
+print(&#x27;a == b:&#x27;, a == b)  # True
+print(&#x27;a is b:&#x27;, a is b)  # False
+print(&#x27;a is c:&#x27;, a is c)  # True</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Mention that you should always use &#x27;is&#x27; when checking for None (e.g. &#x27;if x is None&#x27;).</div>
+        </div>
+        
+        <div class="qa-card" id="q-10">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">10. What is the difference between remove() and pop() on a list?</div>
+            <span class="badge badge-green">EASY</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> remove() deletes the first matching value; pop() removes and returns an element at a given index.</div>
+          <p>remove(x) searches for the first occurrence of value x and removes it without returning anything. pop([index]) removes and returns the element at the specified index (defaults to index -1, the last item).</p>
+          <pre><code>nums = [10, 20, 30, 40]
+nums.remove(20)  # Value removal
+print(nums)      # [10, 30, 40]
+last = nums.pop()# Index removal with return
+print(&#x27;Popped:&#x27;, last, &#x27;Remaining:&#x27;, nums)</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Note that pop() on an empty list or remove() on a missing item raises an exception (IndexError vs ValueError).</div>
+        </div>
+        
+        <div class="qa-card" id="q-11">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">11. What is the difference between append() and extend() on a list?</div>
+            <span class="badge badge-green">EASY</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> append() adds its argument as a single element; extend() iterates over its argument and adds each item.</div>
+          <p>If you pass a list [3, 4] to append(), you create a nested list. If you pass it to extend(), the elements are unpacked and appended individually.</p>
+          <pre><code>l1 = [1, 2]
+l1.append([3, 4])
+print(&#x27;append:&#x27;, l1)
+
+l2 = [1, 2]
+l2.extend([3, 4])
+print(&#x27;extend:&#x27;, l2)</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Mention that extend() works with any iterable (strings, tuples, sets, generators), not just lists.</div>
+        </div>
+        
+        <div class="qa-card" id="q-12">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">12. What is the difference between discard() and remove() on a set?</div>
+            <span class="badge badge-green">EASY</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> remove() raises a KeyError if the element does not exist; discard() silently does nothing.</div>
+          <p>Both methods remove an element from a set. However, discard() provides safe deletion without requiring a pre-check (x in my_set) or try-except block.</p>
+          <pre><code>s = {&#x27;a&#x27;, &#x27;b&#x27;}
+s.discard(&#x27;z&#x27;)  # No error
+print(&#x27;Discarded safely:&#x27;, s)
+try:
+    s.remove(&#x27;z&#x27;)
+except KeyError:
+    print(&#x27;remove() raised KeyError as expected&#x27;)</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Use discard() when you don&#x27;t care if the element was originally present or not.</div>
+        </div>
+        
+        <div class="qa-card" id="q-13">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">13. What is the difference between sort() and sorted()?</div>
+            <span class="badge badge-green">EASY</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> list.sort() modifies the list in-place and returns None; sorted() returns a new sorted list from any iterable.</div>
+          <p>sort() is a method belonging strictly to the list class. sorted() is a built-in function that accepts any iterable (list, tuple, string, dictionary keys) and always returns a new list containing the sorted elements.</p>
+          <pre><code>original = [5, 2, 9, 1]
+new_list = sorted(original)
+print(&#x27;Original:&#x27;, original)
+print(&#x27;New list:&#x27;, new_list)
+original.sort()
+print(&#x27;After sort():&#x27;, original)</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Both methods use Timsort (an adaptive merge/insertion hybrid) with O(N log N) worst-case time complexity.</div>
+        </div>
+        
+        <div class="qa-card" id="q-14">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">14. What is the difference between Shallow Copy and Deep Copy?</div>
+            <span class="badge badge-amber">HARD</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Shallow copy creates a new container but references child objects; deep copy recursively clones all nested objects.</div>
+          <p>In a shallow copy (copy.copy() or list.copy()), the outer object is newly created, but nested objects point to the same references. In a deep copy (copy.deepcopy()), Python recursively creates copies of all child and nested objects.</p>
+          <pre><code>import copy
+orig = [[10, 20], [30, 40]]
+shallow = copy.copy(orig)
+deep = copy.deepcopy(orig)
+orig[0][0] = 999
+print(&#x27;Shallow reflects change:&#x27;, shallow[0][0])
+print(&#x27;Deep remains untouched:&#x27;, deep[0][0])</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Draw or describe memory pointers to show the interviewer you understand compound object references.</div>
+        </div>
+        
+        <div class="qa-card" id="q-15">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">15. What is List Comprehension and why is it preferred?</div>
+            <span class="badge badge">MEDIUM</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> A concise syntax for creating lists from iterables, faster than for-loops because it executes at C-speed in bytecode.</div>
+          <p>List comprehension provides a readable, declarative syntax: [expr for item in iterable if condition]. It optimizes performance because the loop and list append operations run inside C-level bytecode (LIST_APPEND) without python method call overhead.</p>
+          <pre><code>squares = [x**2 for x in range(1, 6)]
+print(&#x27;Squares:&#x27;, squares)
+names = [&#x27;naveen&#x27;, &#x27;kumar&#x27;]
+titled = [n.capitalize() for n in names]
+print(&#x27;Titled:&#x27;, titled)</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Warn against overusing deeply nested comprehensions that sacrifice code readability.</div>
+        </div>
+        
+        <div class="qa-card" id="q-16">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">16. What is Dictionary Comprehension?</div>
+            <span class="badge badge">MEDIUM</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> A declarative syntax to transform or filter data into a dictionary: {k: v for item in iterable}.</div>
+          <p>Dictionary comprehension creates dictionaries dynamically from lists, tuples, or other dictionaries with optional conditional filtering.</p>
+          <pre><code>prices_usd = {&#x27;laptop&#x27;: 1000, &#x27;mouse&#x27;: 25, &#x27;monitor&#x27;: 300}
+usd_to_inr = 83.5
+prices_inr = {item: price * usd_to_inr for item, price in prices_usd.items()}
+print(prices_inr)</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Show how dictionary comprehension is great for reversing/inverting dictionaries: {v: k for k, v in d.items()}.</div>
+        </div>
+        
+        <div class="qa-card" id="q-17">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">17. What is Tuple Packing in Python?</div>
+            <span class="badge badge-green">EASY</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Packing multiple values into a single tuple object without needing parentheses.</div>
+          <p>In Python, any comma-separated sequence of values without surrounding brackets automatically packs into a tuple.</p>
+          <pre><code>packed = &#x27;Naveen&#x27;, 25, &#x27;AI/ML&#x27;
+print(packed, type(packed))</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Mention that functions returning multiple values are actually returning a packed tuple.</div>
+        </div>
+        
+        <div class="qa-card" id="q-18">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">18. What is Tuple Unpacking in Python?</div>
+            <span class="badge badge-green">EASY</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Assigning individual elements of a tuple directly to multiple variables in a single statement.</div>
+          <p>Unpacking extracts elements from a sequence into separate variables. The number of variables on the left must exactly match the number of elements unless extended unpacking is used.</p>
+          <pre><code>coords = (12.97, 77.59)
+lat, lon = coords
+print(f&#x27;Lat: {lat}, Lon: {lon}&#x27;)</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Demonstrate variable swapping: a, b = b, a uses tuple packing and unpacking.</div>
+        </div>
+        
+        <div class="qa-card" id="q-19">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">19. What is * (Asterisk / Star) Unpacking in Python?</div>
+            <span class="badge badge">MEDIUM</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Extended unpacking that captures surplus elements into a list: first, *rest = items.</div>
+          <p>Introduced in PEP 3132, the star operator allows unpacking sequences of arbitrary length, collecting zero or more remaining elements into a list.</p>
+          <pre><code>scores = [98, 85, 92, 74, 89]
+highest, *other_scores = sorted(scores, reverse=True)
+print(&#x27;Highest:&#x27;, highest)
+print(&#x27;Others:&#x27;, other_scores)</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Mention that * can also be used in function arguments (*args) and to merge dictionaries (**kwargs or {**d1, **d2}).</div>
+        </div>
+        
+        <div class="qa-card" id="q-20">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">20. What are Hashable objects in Python?</div>
+            <span class="badge badge-amber">HARD</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Objects whose hash value never changes during their lifetime and can be compared for equality.</div>
+          <p>An object is hashable if it has an integer hash value returned by __hash__() and can be compared via __eq__(). Hashability is required for objects to be stored in sets or used as dictionary keys. By default, immutable types are hashable.</p>
+          <pre><code>print(hash(42))
+print(hash(&#x27;Python&#x27;))
+print(hash((1, 2, 3)))
+try:
+    hash([1, 2])
+except TypeError as e:
+    print(&#x27;Lists cannot be hashed:&#x27;, e)</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Explain that user-defined classes are hashable by default (using id() for hash and identity for equality) unless __eq__ is overridden.</div>
+        </div>
+        
+        <div class="qa-card" id="q-21">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">21. Why are Dictionary keys unique?</div>
+            <span class="badge badge">MEDIUM</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Dictionaries use hash tables where each key maps to a distinct bucket index; duplicates would cause ambiguity.</div>
+          <p>When a key is added, Python computes its hash to find the bucket index. If the same key is added again, Python finds the existing key and overwrites its value rather than creating a duplicate entry.</p>
+          <pre><code>profile = {&#x27;name&#x27;: &#x27;Naveen&#x27;, &#x27;name&#x27;: &#x27;Naveen Kumar&#x27;}
+print(profile)  # Only the latest value is preserved</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Note that values can be duplicated, but keys must remain strictly unique.</div>
+        </div>
+        
+        <div class="qa-card" id="q-22">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">22. Why doesn&#x27;t a Set allow duplicate elements?</div>
+            <span class="badge badge">MEDIUM</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Sets represent mathematical sets and use a hash table backend that skips identical hash/equality items.</div>
+          <p>Sets are implemented similarly to dictionaries with dummy values. When you insert an item, Python hashes it and checks for an existing entry. If an item matches both hash() and == equality, insertion is ignored.</p>
+          <pre><code>raw = [1, 1, 2, 3, 5, 8, 5]
+clean_set = set(raw)
+print(&#x27;Deduplicated set:&#x27;, clean_set)</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> A classic interview problem is deduplicating a list in O(N) time using set(my_list).</div>
+        </div>
+        
+        <div class="qa-card" id="q-23">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">23. What is None in Python?</div>
+            <span class="badge badge-green">EASY</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> A singleton constant representing the absence of a value or null state.</div>
+          <p>None is the sole instance of the NoneType class. It evaluates to False in a boolean context. Functions without an explicit return statement return None by default. Always compare using &#x27;is None&#x27;.</p>
+          <pre><code>x = None
+print(&#x27;Type:&#x27;, type(x))
+print(&#x27;Is None?&#x27;, x is None)
+print(&#x27;Boolean value:&#x27;, bool(x))</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Remind interviewers never to check &#x27;if x == None&#x27; because == can be overloaded by classes, while &#x27;is None&#x27; checks memory identity.</div>
+        </div>
+        
+        <div class="qa-card" id="q-24">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">24. What is Type Conversion in Python? (Implicit vs Explicit)</div>
+            <span class="badge badge-green">EASY</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> Converting data from one type to another; implicit is automatic by Python, explicit is cast by the programmer.</div>
+          <p>Implicit conversion avoids data loss by automatically promoting smaller types (e.g. int + float -&gt; float). Explicit conversion (type casting) uses built-in constructor functions like int(), float(), str(), list() to force a conversion.</p>
+          <pre><code># Implicit
+x = 10
+y = 2.5
+z = x + y
+print(z, type(z))  # 12.5 &lt;class &#x27;float&#x27;&gt;
+
+# Explicit
+s = &#x27;456&#x27;
+i = int(s)
+print(i, type(i))  # 456 &lt;class &#x27;int&#x27;&gt;</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> Mention potential runtime errors with explicit conversion, such as ValueError when casting non-numeric strings to int.</div>
+        </div>
+        
+        <div class="qa-card" id="q-25">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="qa-question">25. What is the difference between type() and isinstance()?</div>
+            <span class="badge badge">MEDIUM</span>
+          </div>
+          <div class="qa-short"><strong>Quick Answer:</strong> type() checks for exact class match; isinstance() checks class and supports inheritance.</div>
+          <p>type(obj) returns the exact type and does not consider inheritance hierarchies. isinstance(obj, ClassInfo) checks whether the object is an instance of the class or any derived subclass, making it the standard for polymorphic type checking.</p>
+          <pre><code>class Base: pass
+class Derived(Base): pass
+
+obj = Derived()
+print(&#x27;type() == Base:&#x27;, type(obj) == Base)         # False
+print(&#x27;isinstance(Base):&#x27;, isinstance(obj, Base))   # True
+print(&#x27;isinstance tuple:&#x27;, isinstance(10, (int, str))) # True</code></pre>
+          <div class="qa-tip">💡 <strong>Interview Pro-Tip:</strong> PEP 8 explicitly recommends isinstance() over type() comparisons for clean object-oriented Python.</div>
+        </div>
+        </section>
+
+  </main>
+</body>
+</html>

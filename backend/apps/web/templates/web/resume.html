@@ -1,0 +1,22 @@
+{% extends "web/base.html" %}
+{% block title %}Resume{% endblock %}
+{% block content %}
+<section class="wrap section narrow resume">
+  <div class="actions no-print">
+    <button class="btn" data-print>Print / Save as PDF</button>
+    {% if profile.resume_pdf %}<a class="btn btn-ghost" href="{{ profile.resume_pdf.url }}" download>Download PDF</a>{% endif %}
+  </div>
+  <h1>{{ profile.full_name }}</h1>
+  <p class="lead">{{ profile.headline }}</p>
+  <p class="muted">{{ profile.email }}{% if profile.phone %} · {{ profile.phone }}{% endif %}{% if profile.location %} · {{ profile.location }}{% endif %}</p>
+  {% if profile.career_objective %}<h2>Objective</h2><p>{{ profile.career_objective }}</p>{% endif %}
+  <h2>Experience</h2>{% include "web/_jobs.html" %}
+  {% if education %}<h2>Education</h2>{% include "web/_education.html" %}{% endif %}
+  {% if skills %}<h2>Skills</h2>
+    {% regroup skills by get_category_display as groups %}
+    {% for g in groups %}<p><strong>{{ g.grouper }}:</strong> {{ g.list|join:", " }}</p>{% endfor %}
+  {% endif %}
+  {% if certificates %}<h2>Certifications</h2><ul>{% for c in certificates %}<li>{{ c.name }} — {{ c.provider }} ({{ c.issue_date|date:"Y" }})</li>{% endfor %}</ul>{% endif %}
+  {% if achievements %}<h2>Achievements</h2><ul>{% for a in achievements %}<li>{{ a.title }}</li>{% endfor %}</ul>{% endif %}
+</section>
+{% endblock %}

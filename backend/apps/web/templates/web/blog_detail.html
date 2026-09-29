@@ -1,0 +1,13 @@
+{% extends "web/base.html" %}{% load web_tags %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block description %}{{ post.excerpt }}{% endblock %}
+{% block content %}
+<article class="wrap section narrow">
+  <a href="/blog/" class="muted">← All posts</a>
+  <h1>{{ post.title }}</h1>
+  <p class="muted">{{ post.published_at|date:"M d, Y" }} · {{ post.reading_minutes }} min read{% if post.author %} · {{ post.author.full_name }}{% endif %}{% if post.category %} · {{ post.category.name }}{% endif %}</p>
+  {% if post.featured_image %}<img src="{{ post.featured_image.url }}" alt="" class="cover-lg">{% endif %}
+  <div class="prose">{{ post.content|markdown }}</div>
+  <div class="chips">{% for t in post.tags.all %}<a class="chip" href="/blog/?tag={{ t.slug }}">#{{ t.name }}</a>{% endfor %}</div>
+</article>
+{% endblock %}

@@ -1,0 +1,876 @@
+@page 🔢 NumPy Complete Study Material
+@intro Learn NumPy from first principles through arrays, data science, machine learning and interviews. Each module explains the idea, shows practical NumPy code and highlights mistakes worth avoiding.
+
+@module m1 | 🧭 | 1 · Introduction | Module 1 — NumPy Introduction | ndarray · Vectorization · Installation · Applications
+@topic 🔢 What is NumPy?
+NumPy (Numerical Python) is Python's core library for numerical data. Its central object, `ndarray`, stores same-typed values in a compact multidimensional block and provides fast operations over whole arrays. It is used in science, imaging, engineering, statistics and machine learning.
+@topic ⚡ Why not only Python lists?
+A Python list holds references to separate Python objects. NumPy stores fixed-width values together, usually saving memory and moving element-by-element work into compiled code. Lists are still convenient for mixed types and frequently changing collections; NumPy is strongest for large numerical workloads.
+@code python
+import numpy as np
+
+print(np.__version__)
+measurements = np.array([18.2, 19.1, 17.8])
+print(measurements.mean())
+@end
+@info Install with `python -m pip install numpy` (or `%pip install numpy` in a notebook); import by convention with `import numpy as np`. Later examples assume this import has run.
+@practice
+1. Print your NumPy version and create an array of three measurements.
+2. Explain one reason an ndarray is useful compared with a Python list.
+@interview NumPy provides typed multidimensional arrays and vectorized numerical operations; compact storage and compiled loops make array-heavy work efficient.
+
+@module m2 | 🧱 | 2 · Arrays | Module 2 — Arrays & Properties | 1D · 2D · 3D · ndim · shape · size · dtype
+@topic 🧱 Create 1D, 2D and 3D arrays
+`np.array()` converts sequences into arrays. Nested lists create more dimensions; regular matrices need equal-length rows. The shape tells what each axis represents, such as `(rows, columns)` for a 2D table.
+@code python
+one_d = np.array([10, 20, 30])
+two_d = np.array([[1, 2, 3], [4, 5, 6]])
+three_d = np.arange(24).reshape(2, 3, 4)
+print(two_d)
+@end
+@topic 📐 Read array properties
+`ndim` counts axes; `shape` gives their lengths; `size` is the total number of elements; `dtype` is the element type. `itemsize` is bytes per item, and `nbytes` is element storage (`size * itemsize`), not Python object overhead.
+@code python
+a = np.array([[1, 2, 3], [4, 5, 6]], dtype=np.int32)
+print(a.ndim, a.shape, a.size)
+print(a.dtype, a.itemsize, a.nbytes)
+@end
+@info For this `a`, shape is `(2, 3)`: 2 rows and 3 columns. A 3D shape such as `(2, 3, 4)` describes 2 blocks, each with 3 rows and 4 columns.
+@warn Ragged nested lists do not form a regular numeric matrix. Fix inconsistent row lengths instead of relying on object arrays.
+@practice
+1. Create a 2 by 3 array and report its dimensions, shape and element count.
+2. Compare storage for the same values using `int32` and `int64`.
+@interview An ndarray's `ndim`, `shape`, `size`, `dtype`, `itemsize` and `nbytes` describe its dimensions, layout, element count, value type and element storage.
+
+@module m3 | 🏭 | 3 · Creation | Module 3 — Array Creation Functions | zeros · ones · full · arange · linspace · eye · diag
+@topic 🏭 Initialize values and shapes
+Use `zeros`, `ones` or `full` to initialize arrays. `empty` allocates without initializing: every element must be overwritten before reading it. All accept a shape, which may be an integer or a tuple.
+@code python
+np.zeros((2, 3))
+np.ones(4, dtype=int)
+np.full((2, 2), 7)
+np.empty(5)  # contents are arbitrary until overwritten
+@end
+@topic 🔢 Make ranges and special matrices
+`arange(start, stop, step)` excludes `stop`; floating steps may have surprising counts due to rounding. `linspace(start, stop, num)` includes endpoints by default and controls sample count. `logspace` spaces exponents logarithmically. `eye`, `identity` and `diag` create or extract diagonals.
+@code python
+print(np.arange(1, 10, 2))
+print(np.linspace(0, 1, 5))
+print(np.logspace(0, 3, 4))
+print(np.eye(3))
+print(np.identity(3))
+print(np.diag([2, 4, 6]))
+@end
+@practice
+1. Create a 3 by 4 zero array and a 2 by 2 array filled with 9.
+2. Generate exactly 11 samples from 0 through 1; explain why `linspace` fits.
+@interview Use `arange` for step-based sequences, `linspace` for a fixed sample count, and `eye` or `diag` for diagonal structures.
+
+@module m4 | 🎛️ | 4 · Data Types | Module 4 — Array Data Types | Integer · Float · Boolean · Complex · dtype · astype
+@topic 🎛️ One dtype per ordinary array
+An ndarray normally stores one dtype for all values. NumPy promotes mixed numeric inputs to a common type; choose explicitly when precision or memory matters. Useful types include `np.int32`, `np.int64`, `np.float32`, `np.float64`, `np.bool_` and complex types such as `np.complex128`.
+@code python
+whole = np.array([1, 2, 3], dtype=np.int32)
+decimal = np.array([1, 2, 3], dtype=np.float64)
+flags = np.array([True, False], dtype=np.bool_)
+complex_values = np.array([1 + 2j, 3 + 4j], dtype=np.complex128)
+@end
+@topic 🔄 Convert with astype
+`astype()` returns a converted array; it does not change the original unless you assign the result. Float-to-integer conversion truncates fractional values rather than rounding.
+@code python
+values = np.array([1.9, 2.2, -3.8])
+print(values.astype(int))  # [ 1  2 -3]
+@end
+@warn Fixed-width integers can overflow. Floats are approximations; use `np.isclose` for tolerant comparisons. Converting dtypes may lose precision or information.
+@practice
+1. Inspect the dtype inferred from an integer and float mixed array.
+2. Convert `[1.9, 2.2]` to integers and explain the result.
+@interview An ndarray has a uniform dtype; explicit dtypes control representation, while `astype` converts and may lose precision or fractional information.
+
+@module m5 | 🎯 | 5 · Indexing | Module 5 — Indexing Arrays | Zero-based · Negative indices · Multidimensional selection
+@topic 🎯 Select positions
+Indices start at zero. Negative positions count from the end, so `-1` is the final element. For 2D arrays use `[row, column]`; higher-dimensional arrays use one index per axis.
+@code python
+a = np.array([10, 20, 30, 40])
+print(a[0], a[-1])
+matrix = np.array([[1, 2, 3], [4, 5, 6]])
+print(matrix[0, 1])  # row 0, column 1 -> 2
+cube = np.arange(24).reshape(2, 3, 4)
+print(cube[1, 2, 3])
+@end
+@info For an image shaped `(height, width, channels)`, `image[row, column]` selects a pixel and `image[row, column, channel]` selects one color component.
+@practice
+1. Select the value in row 2, column 1 of a 3 by 4 matrix (zero-based indices).
+2. For an `(height, width, channels)` image, explain `image[5, 8, 2]`.
+@interview NumPy indices start at zero; multidimensional indexing lists one position per axis, as in `matrix[row, column]`.
+
+@module m6 | ✂️ | 6 · Slicing | Module 6 — Slicing & Views | Start · Stop · Step · Reverse · Multidimensional slices
+@topic ✂️ Start, stop and step
+A slice `a[start:stop:step]` includes `start` and excludes `stop`. Parts may be omitted; negative steps walk backward. Basic slices are usually views that share the source's data.
+@code python
+a = np.array([10, 20, 30, 40, 50])
+print(a[1:4], a[:3], a[::2], a[::-1])
+@end
+@topic 🧊 Slice across axes
+Separate axis slices with commas. `:` keeps an entire axis. A 2D slice can select a rectangular region without a loop.
+@code python
+matrix = np.arange(1, 13).reshape(3, 4)
+print(matrix[0:2, 1:3])
+print(matrix[:, 0])  # first column
+cube = np.arange(24).reshape(2, 3, 4)
+print(cube[0, 1:, :2])  # block, then rows, then columns
+@end
+@warn Mutating a basic slice can mutate the original because the slice commonly shares memory. Use `.copy()` if changes must be independent.
+@practice
+1. Select every third element and reverse a matrix's columns.
+2. Mutate one element in a slice and check whether the original changes.
+@interview Basic slicing selects ranges across axes and usually returns a view; use `.copy()` when mutations must be independent.
+
+@module m7 | 🔀 | 7 · Reshaping | Module 7 — Reshaping Arrays | reshape · resize · flatten · ravel · transpose
+@topic 🔀 Change shape without changing values
+`reshape()` preserves the element count; one dimension may be `-1` for NumPy to infer. The requested dimensions must still fit the number of values. `ndarray.resize()` changes an array in place and has stricter ownership rules; `np.resize()` returns a new array and repeats values if it grows.
+@code python
+a = np.arange(1, 7)
+print(a.reshape(2, 3))
+print(a.reshape(-1, 1).shape)
+@end
+@topic 🧺 Flatten and transpose
+`flatten()` always returns a copy. `ravel()` returns a view when possible and otherwise a copy. `.T` and `transpose()` reorder axes; for a matrix, they swap rows and columns.
+@code python
+matrix = np.arange(6).reshape(2, 3)
+flat_copy = matrix.flatten()
+flat_efficient = matrix.ravel()
+print(matrix.T.shape)  # (3, 2)
+@end
+@practice
+1. Reshape 12 values into 3 rows and 4 columns.
+2. Explain a behavioral difference between `flatten()` and `ravel()`.
+@interview `reshape` changes dimensions without changing element count, `flatten` always copies, `ravel` may share memory, and transpose reorders axes.
+
+@module m8 | 🧩 | 8 · Manipulation | Module 8 — Adding, Removing & Joining | append · insert · delete · concatenate · stack
+@topic ➕ Add or remove elements
+`append`, `insert` and `delete` return new arrays; ndarrays do not grow in place. Repeated appends in a loop repeatedly copy data. Build a list then convert once, or preallocate when size is known.
+@code python
+a = np.array([1, 2, 3])
+print(np.append(a, 4))
+print(np.insert(a, 1, 99))
+print(np.delete(a, 0))
+@end
+@topic 🔗 Join along an axis or add an axis
+`concatenate` joins along an existing axis. `stack` adds a new axis and requires matching shapes. `vstack` and `hstack` provide common row/column-oriented joins; inspect shapes, especially for 1D inputs.
+@code python
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+print(np.concatenate((a, b)).shape)  # (6,)
+print(np.stack((a, b)).shape)       # (2, 3)
+print(np.vstack((a, b)).shape)
+print(np.hstack((a, b)).shape)       # (6,) for 1D inputs
+@end
+@practice
+1. Join two vectors end to end, then stack them as rows and as columns.
+2. Explain why repeated `np.append` is inefficient in a loop.
+@interview `concatenate` joins along an existing axis; `stack` creates a new axis, and append/insert/delete return newly allocated arrays.
+
+@module m9 | 🪓 | 9 · Splitting | Module 9 — Splitting Arrays | split · array_split · hsplit · vsplit
+@topic 🪓 Equal and uneven splits
+`split(a, n)` requires equal sections. `array_split` allows uneven sections, distributing extra values into earlier pieces.
+@code python
+a = np.arange(10)
+parts = np.array_split(a, 3)
+print([part.shape for part in parts])  # (4,), (3,), (3,)
+@end
+@topic ↕️ Split rows or columns
+`hsplit` splits columns and `vsplit` splits rows of a 2D matrix. The split count must fit the selected axis; use `array_split` with `axis` when uneven groups are needed.
+@code python
+matrix = np.arange(12).reshape(3, 4)
+columns = np.hsplit(matrix, 2)
+rows = np.vsplit(matrix, 3)
+@end
+@practice
+1. Divide 12 values into three equal groups and 10 values into four uneven groups.
+2. Split a 4 by 6 matrix into three equal-width column groups.
+@interview `split` requires equal sections; `array_split` permits uneven sections, while `hsplit` and `vsplit` express column- and row-wise splitting.
+
+@module m10 | ➕ | 10 · Mathematics | Module 10 — Mathematical Operations | Arithmetic · Functions · Element-wise operations
+@topic ➕ Arithmetic is element-wise
+With compatible shapes, `+`, `-`, `*`, `/`, `%` and `**` operate on corresponding elements. `*` is not matrix multiplication; use `@` or `matmul` for that. Division produces floating-point results for integer inputs.
+@code python
+a = np.array([2, 4, 6])
+b = np.array([1, 2, 3])
+print(a + b, a * b, a / b, a ** 2)
+@end
+@topic 🧮 Mathematical functions
+Functions such as `add`, `subtract`, `multiply`, `divide`, `power`, `sqrt`, `square` and `abs` apply to arrays. Many are ufuncs and support broadcasting.
+@table
+Function | Element-wise operation
+`np.add(a, b)` | `a + b`
+`np.subtract(a, b)` | `a - b`
+`np.multiply(a, b)` | `a * b`
+`np.divide(a, b)` | `a / b`
+`np.power(a, 2)` | `a ** 2`
+@end
+@code python
+values = np.array([-4.0, 9.0, 16.0])
+print(np.abs(values), np.sqrt(np.abs(values)))
+print(np.add(values, 1))
+@end
+@practice
+1. Add two arrays, square their sum and take its square root.
+2. Explain why `a * b` is not matrix multiplication.
+@interview NumPy arithmetic and mathematical functions are element-wise and vectorized; use `@` or `matmul` for matrix multiplication.
+
+@module m11 | ⚙️ | 11 · Ufuncs | Module 11 — Universal Functions & Vectorization | Unary · Binary · Compiled loops · Element-wise
+@topic ⚙️ What is a ufunc?
+A **universal function** applies an operation element by element over arrays, often using compiled loops and broadcasting. Unary ufuncs take one input array; binary ufuncs take two.
+@code python
+x = np.array([0.0, 1.0, 2.0])
+print(np.sqrt(x), np.exp(x), np.sin(x), np.cos(x))
+@end
+@topic 🚀 Replace scalar loops with array expressions
+Vectorized code states one operation for the whole array and avoids Python-level iteration per value. It is generally faster on large numerical inputs, though tiny arrays and large temporary allocations should be measured rather than guessed.
+@code python
+values = np.arange(5)
+loop_result = [value * value for value in values]
+array_result = values ** 2
+@end
+@practice
+1. Replace a loop that adds 5 to each value with one array expression.
+2. Explain what a ufunc computes for each element.
+@interview A ufunc is a vectorized element-wise operation that applies unary or binary computations without a Python loop per element.
+
+@module m12 | ⚖️ | 12 · Comparisons | Module 12 — Comparison Operations | Relational operators · Comparison functions · Boolean results
+@topic ⚖️ Compare element by element
+Comparisons `>`, `<`, `==`, `!=`, `>=` and `<=` produce Boolean arrays, not a single answer. The resulting array has the broadcasted shape of its inputs.
+@code python
+a = np.array([5, 10, 15])
+print(a >= 10)  # [False  True  True]
+print(np.greater(a, 10), np.equal(a, 10))
+@end
+@topic 🔎 Ask one question about many results
+Use `.any()` or `.all()` to reduce a Boolean array to a single truth value. The named functions include `equal`, `not_equal`, `greater`, `less`, `greater_equal` and `less_equal`.
+@table
+Function | Equivalent operator
+`np.equal(a, b)` | `a == b`
+`np.not_equal(a, b)` | `a != b`
+`np.greater(a, b)` | `a > b`
+`np.less(a, b)` | `a < b`
+`np.greater_equal(a, b)` | `a >= b`
+`np.less_equal(a, b)` | `a <= b`
+@end
+@code python
+a = np.array([5, 10, 15])
+print((a > 10).any(), (a >= 0).all())
+@end
+@practice
+1. Find values below zero, then check if any were found.
+2. What dtype does `a > 10` produce?
+@interview Array comparisons return Boolean masks; use `any` or `all` when one truth value is required.
+
+@module m13 | 🎭 | 13 · Boolean Indexing | Module 13 — Boolean Masks & Filtering | Filtering · Selection · Assignment
+@topic 🎭 Filter using a mask
+A Boolean mask has `True` at positions to keep. Indexing with a same-shaped mask selects those values into a new result array.
+@code python
+scores = np.array([42, 68, 91, 77])
+print(scores[scores >= 60])
+@end
+@topic 🧹 Combine conditions and update values
+Use `&` for AND, `|` for OR and `~` for NOT; put parentheses around each comparison. Boolean masks can also be assigned through to replace selected values.
+@code python
+values = np.array([-3, 0, 8, 20, 60])
+middle = values[(values > 0) & (values < 50)]
+values[values < 0] = 0
+print(middle, values)
+@end
+@warn Python `and` and `or` do not work on whole arrays because their truth value is ambiguous. Use parenthesized `&` or `|`, or `np.logical_and` and `np.logical_or`.
+@practice
+1. Select even values, then values between 10 and 50.
+2. Replace negative values with zero.
+@interview Boolean indexing filters or updates data from a mask; combine NumPy conditions with parenthesized `&`, `|` and `~` expressions.
+
+@module m14 | 📍 | 14 · where | Module 14 — Conditional Selection with where | Indices · Choose values · Replacement
+@topic 📍 Find positions
+`np.where(condition)` returns index arrays for true positions, one per dimension. `np.nonzero` is closely related; Boolean indexing is often simpler when you want the matching values.
+@code python
+a = np.array([10, 20, 30, 40])
+print(np.where(a > 20))  # (array([2, 3]),)
+@end
+@topic 🔀 Choose between alternatives
+`np.where(condition, x, y)` selects from `x` where true and `y` otherwise. The condition and choices may broadcast to a common shape.
+@code python
+scores = np.array([45, 72, 88])
+labels = np.where(scores >= 60, "Pass", "Retry")
+print(labels)
+@end
+@practice
+1. Find indices over 20; replace negative values with zero using `where`.
+2. Label temperatures as warm or cool using a threshold.
+@interview `where` either returns indices satisfying a condition or selects between two broadcast-compatible values.
+
+@module m15 | 📊 | 15 · Statistics | Module 15 — Statistical Functions | Mean · Median · Spread · Quantiles · Mode concept
+@topic 📊 Summarize numeric data
+`mean`, `median`, `std`, `var`, `min`, `max`, `sum` and `prod` summarize an array. By default they reduce the whole array. Standard deviation and variance use the population definition by default (`ddof=0`).
+@code python
+scores = np.array([10, 20, 30, 40, 50])
+print(np.mean(scores), np.median(scores))
+print(np.std(scores), np.var(scores))
+print(np.min(scores), np.max(scores), np.sum(scores), np.prod(scores))
+@end
+@topic 📈 Quantiles, weights and mode
+`percentile` uses a 0-100 scale; `quantile` uses 0-1. `average` accepts weights. NumPy has **no `np.mode` function**: use `unique(..., return_counts=True)` for a simple mode or `scipy.stats.mode` when SciPy is installed. Decide how to handle ties.
+@code python
+values = np.array([1, 2, 2, 3, 3, 3])
+unique, counts = np.unique(values, return_counts=True)
+print(np.percentile(values, 25), np.quantile(values, 0.25))
+print(np.average(values, weights=[1, 1, 1, 1, 2]))
+print(unique[np.argmax(counts)])  # mode: 3
+@end
+@practice
+1. Calculate mean, median, range, standard deviation and 25th percentile.
+2. Find the most frequent value without calling a nonexistent `np.mode`.
+@interview NumPy provides mean, median, spread and quantile reductions; it does not provide `np.mode`.
+
+@module m16 | 📏 | 16 · Axis | Module 16 — Axis: Rows & Columns | axis=0 · axis=1 · keepdims
+@topic 📏 The reduced axis disappears
+For a 2D `(rows, columns)` array, `axis=0` reduces down rows and leaves one result per column. `axis=1` reduces across columns and leaves one result per row. Think of the named axis as the one that disappears.
+@code python
+a = np.array([[1, 2, 3], [4, 5, 6]])
+print(np.sum(a, axis=0))  # [5 7 9], per column
+print(np.sum(a, axis=1))  # [ 6 15], per row
+print(np.mean(a, axis=0), np.mean(a, axis=1))
+@end
+@topic 🎯 Keep dimensions for broadcasting
+`keepdims=True` leaves reduced axes with length 1. This is useful when subtracting each column's mean from the original matrix.
+@code python
+column_means = np.mean(a, axis=0, keepdims=True)
+centered = a - column_means
+print(centered)
+@end
+@practice
+1. For a table of student scores, calculate each student's row average.
+2. Calculate each subject's column average and explain the output shape.
+@interview For a 2D matrix, `axis=0` gives per-column results and `axis=1` gives per-row results because the selected axis is reduced.
+
+@module m17 | ↕️ | 17 · Sorting | Module 17 — Sorting Arrays | sort · argsort · lexsort · Axis
+@topic ↕️ Sort values
+`np.sort` returns sorted values; `a.sort()` modifies in place. For 2D arrays, `axis=0` sorts each column and `axis=1` sorts each row; `axis=None` sorts flattened values.
+@code python
+a = np.array([30, 10, 40, 20])
+print(np.sort(a))
+matrix = np.array([[3, 1], [4, 2]])
+print(np.sort(matrix, axis=0))
+@end
+@topic 🧭 Sort related values by index
+`argsort` returns indices that would sort the array, useful for ordering labels with scores. `lexsort((secondary, primary))` sorts by the last key first, so primary is the final key.
+@code python
+names = np.array(["Bo", "Ada", "Cy"])
+scores = np.array([80, 95, 80])
+order = np.argsort(scores)
+print(names[order])
+groups = np.array([1, 1, 0])
+print(names[np.lexsort((names, groups))])  # group first, name breaks ties
+@end
+@practice
+1. Sort a matrix by rows and by columns.
+2. Use `argsort` to display names from lowest to highest score.
+@interview `sort` returns ordered values, `argsort` returns ordering indices, and `lexsort` performs an indirect multi-key sort.
+
+@module m18 | 🔍 | 18 · Searching | Module 18 — Searching Arrays | where · searchsorted · argmax · argmin · nonzero
+@topic 🔍 Locate values and insertion points
+`where` finds positions matching a condition. `searchsorted` uses binary search to find where values belong in already-sorted data; it does not sort the input. By default it inserts before equal values.
+@code python
+values = np.array([10, 20, 30, 40])
+print(np.searchsorted(values, 25))  # 2
+print(np.where(values >= 30))
+@end
+@topic 🏆 Find extremes and nonzero positions
+`argmax` and `argmin` return the first extreme's index. For multidimensional arrays they flatten by default; pass `axis` for per-row or per-column indices. `nonzero` returns one index array per dimension.
+@code python
+a = np.array([10, 50, 20, 40])
+print(np.argmax(a), np.argmin(a))
+print(np.nonzero(a > 20))
+@end
+@practice
+1. Find the largest value's index and the insertion point for 35 in sorted data.
+2. Find the column of each row's maximum in a matrix.
+@interview `where` and `nonzero` locate matches, `searchsorted` finds insertion positions in sorted data, and `argmax` / `argmin` return extreme indices.
+
+@module m19 | ♻️ | 19 · Unique | Module 19 — Unique Values & Counts | unique · Counts · Indices · Axis
+@topic ♻️ Find unique values
+`np.unique` returns sorted unique values. Optional results include occurrence counts, first indices and inverse indices that reconstruct the input from the unique array.
+@code python
+a = np.array([1, 2, 2, 3, 3, 3])
+values, counts = np.unique(a, return_counts=True)
+print(values, counts)
+@end
+@topic 🧮 Find unique rows
+With `axis=0`, `unique` treats rows as records and finds unique rows. If original order matters, keep first indices and reorder deliberately.
+@code python
+rows = np.array([[1, 2], [1, 2], [3, 4]])
+print(np.unique(rows, axis=0))
+@end
+@practice
+1. Find unique values and counts in `[4, 4, 2, 7, 2]`.
+2. Find unique rows in a matrix with a repeated row.
+@interview `np.unique` finds sorted values and can also return counts, first indices and inverse mappings; `axis` applies uniqueness to rows or columns.
+
+@module m20 | 🎲 | 20 · Random | Module 20 — Random Number Generation | default_rng · Sampling · Shuffle · Seeds
+@topic 🎲 Use a Generator in new code
+Prefer `np.random.default_rng(seed)` and methods on the returned Generator. A fixed seed makes a sequence reproducible for debugging; it is not a cryptographic security mechanism.
+@code python
+rng = np.random.default_rng(42)
+print(rng.random(3))
+print(rng.integers(1, 100, size=5))  # 100 excluded
+print(rng.uniform(0, 1, size=3))
+@end
+@topic 🎯 Sample, shuffle and permute
+`choice` samples from values, `shuffle` reorders an array in place, and `permutation` returns a shuffled copy. Older `np.random.seed`, `rand`, `randn` and `randint` APIs remain in legacy code; use Generator APIs for new work.
+@code python
+rng = np.random.default_rng(7)
+print(rng.choice(["red", "green", "blue"], size=4))
+values = np.arange(5)
+print(rng.permutation(values))
+rng.shuffle(values)  # shuffle this array in place
+@end
+@practice
+1. Generate ten reproducible integers from 1 through 99.
+2. Sample three dataset rows without replacement.
+@interview For new code use `np.random.default_rng(seed)`; its Generator methods provide reproducible sampling, not cryptographic randomness.
+
+@module m21 | 🎰 | 21 · Distributions | Module 21 — Probability Distributions | Normal · Uniform · Binomial · Poisson
+@topic 🎰 Model random processes
+A normal distribution is described by mean and standard deviation; uniform values are equally likely in an interval; binomial models successes in fixed trials; Poisson models counts over an interval. Parameters should reflect the process being modeled.
+@code python
+rng = np.random.default_rng(123)
+normal = rng.normal(loc=0, scale=1, size=1000)
+uniform = rng.uniform(low=0, high=1, size=1000)
+successes = rng.binomial(n=10, p=0.3, size=1000)
+arrivals = rng.poisson(lam=4, size=1000)
+print(normal.mean(), normal.std(), successes.mean())
+@end
+@info Binomial `n` is a trial count and `p` is between 0 and 1. Poisson `lam` is the nonnegative expected event count. Sample summaries fluctuate around theoretical values.
+@practice
+1. Generate 500 standard-normal values and check their mean and standard deviation.
+2. Simulate 20 coin flips with a binomial distribution; name a situation modeled by Poisson.
+@interview NumPy's Generator samples from normal, uniform, binomial and Poisson distributions; the parameters encode assumptions about the random process.
+
+@module m22 | 📐 | 22 · Linear Algebra | Module 22 — Linear Algebra | Vectors · Matrices · Products · Solve · Eigenvalues
+@topic 📐 Vectors and matrix products
+Vectors are 1D arrays and matrices are 2D arrays. `@` and `np.matmul` perform matrix products when dimensions align. `*` remains element-wise. `dot` and `matmul` agree on 2D arrays, but differ for higher-dimensional inputs.
+@code python
+A = np.array([[1, 2], [3, 4]])
+B = np.array([[5, 6], [7, 8]])
+print(A + B, A - B)  # element-wise matrix addition and subtraction
+print(A @ B)
+print(np.dot(A, B))
+@end
+@topic 🔎 Solve systems and inspect matrices
+`det` computes a determinant, `inv` an inverse, and `eig` eigenvalues and eigenvectors. To solve `A @ x = b`, prefer `np.linalg.solve(A, b)` rather than explicitly calculating `inv(A) @ b`. Singular or ill-conditioned matrices need special handling.
+@code python
+A = np.array([[3.0, 1.0], [1.0, 2.0]])
+b = np.array([9.0, 8.0])
+x = np.linalg.solve(A, b)
+eigenvalues, eigenvectors = np.linalg.eig(A)
+print(x, np.linalg.det(A))
+@end
+@practice
+1. Multiply two compatible matrices and solve `A @ x = b`.
+2. Explain why `solve` is preferred to forming an inverse.
+@interview NumPy linear algebra covers products, determinants, inverses and eigenvalues; use `solve(A, b)` for linear systems instead of forming an inverse.
+
+@module m23 | 🪄 | 23 · Broadcasting | Module 23 — Broadcasting Rules | Scalars · Aligned dimensions · Shape reasoning
+@topic 🪄 Apply one value across many values
+Broadcasting virtually expands compatible shapes so operations can work without manually copying repeated values. A scalar broadcasts everywhere.
+@code python
+a = np.array([1, 2, 3])
+print(a + 10)
+matrix = np.arange(6).reshape(2, 3)
+row = np.array([1, 2, 3])
+print(matrix + row)
+@end
+@topic 📏 Compare dimensions from right to left
+Align shapes at the right. Each dimension must match or one must be 1; missing leading dimensions act like 1. The output takes the larger size at each aligned dimension. Otherwise NumPy raises a shape error.
+@table
+Shape A | Shape B | Compatible? | Output
+`(2, 3)` | `(3,)` | Yes, align `(1, 3)` | `(2, 3)`
+`(2, 3)` | `(2, 1)` | Yes, second dimension is 1 | `(2, 3)`
+`(2, 3)` | `(2,)` | No, 3 and 2 differ | Error
+`(4, 1, 3)` | `(1, 5, 3)` | Yes | `(4, 5, 3)`
+@end
+@practice
+1. Predict the output shape of `(4, 1, 3) + (1, 5, 3)`.
+2. Explain why `(2, 3) + (2,)` fails.
+@interview Broadcasting aligns shapes from the right; each dimension must match or be 1, and missing leading dimensions are treated as 1.
+
+@module m24 | 👁️ | 24 · Copy & View | Module 24 — Copy versus View | Shared memory · Independent data · Mutation
+@topic 👁️ Views share underlying data
+A view is a new array object that refers to the same memory. Basic slices and `view()` often share data, so mutation through either array can change the other. Use `np.shares_memory` to check.
+@code python
+a = np.array([10, 20, 30])
+b = a.view()
+b[0] = 99
+print(a, np.shares_memory(a, b))
+@end
+@topic 🧬 Copies are independent
+`copy()` allocates independent element storage. Fancy indexing also returns a copy, unlike most basic slices. Object-dtype copies are shallow with respect to nested Python objects.
+@code python
+a = np.array([10, 20, 30])
+b = a.copy()
+b[0] = 99
+print(a)  # original remains unchanged
+@end
+@practice
+1. Create a view and a copy, mutate both and observe the original.
+2. Check whether two arrays share memory.
+@interview A view shares an array's data buffer while a copy owns independent element storage; basic slices often view and `copy()` guarantees separate array data.
+
+@module m25 | 🧠 | 25 · Memory | Module 25 — Memory Use & Layout | nbytes · itemsize · Views · Efficiency
+@topic 🧠 Estimate storage
+`nbytes` equals `size * itemsize`, reporting element data only. It excludes the ndarray object and unrelated Python objects. A view has its own small header but commonly shares the source buffer; the view's `nbytes` reports its logical element size.
+@code python
+a = np.zeros((1000, 1000), dtype=np.float32)
+print(a.itemsize, a.nbytes)  # 4 bytes each; 4,000,000 bytes total
+@end
+@topic 📦 Reduce memory pressure
+Fixed-width numeric arrays are usually more compact than Python lists of Python number objects. Actual totals depend on platform and dtype. Choose a suitable dtype, avoid unnecessary copies, and process data in chunks when it cannot fit in memory.
+@practice
+1. Calculate storage for two million float32 values.
+2. Name two ways to reduce memory use for a large dataset.
+@interview `nbytes` measures an array's element data but excludes Python object overhead and does not identify shared buffers.
+
+@module m26 | 🕳️ | 26 · Missing Values | Module 26 — NaN, Infinity & Missing Data | isnan · isfinite · nanmean · Policies
+@topic 🕳️ Detect exceptional values
+`np.nan` marks missing or invalid floating-point data. NaN is not equal to itself, so use `np.isnan`, not `== np.nan`. Integer arrays cannot directly represent NaN; convert to float or consider a masked array. `isinf` detects infinity and `isfinite` rejects both NaN and infinities.
+@code python
+a = np.array([10.0, 20.0, np.nan, np.inf])
+print(np.isnan(a), np.isinf(a), np.isfinite(a))
+@end
+@topic 🧮 Reduce while ignoring NaN
+`nanmean`, `nanmedian`, `nansum`, `nanmin` and `nanmax` skip NaNs in calculations. They do not decide why data is missing or whether dropping it is statistically valid; define a cleaning policy first. All-NaN slices may warn and return NaN.
+@code python
+a = np.array([10.0, 20.0, np.nan, 40.0])
+print(np.nanmean(a), np.nansum(a))
+@end
+@practice
+1. Find NaN and infinite values; compare ordinary mean and `nanmean`.
+2. Decide how to represent a missing value in an integer dataset.
+@interview Use `isnan`, `isfinite` and `isinf` to detect exceptional values; `nanmean` and related reductions skip NaNs but require a missing-data policy.
+
+@module m27 | 🎛️ | 27 · Advanced Indexing | Module 27 — Masks & Fancy Indexing | Integer arrays · Multiple conditions · Assignment
+@topic 🎛️ Select arbitrary positions
+Fancy indexing uses integer index arrays to select values in a chosen order, including duplicates; the result is a copy. With an index array per dimension, NumPy selects coordinate pairs rather than a Cartesian product.
+@code python
+a = np.array([10, 20, 30, 40])
+print(a[[3, 0, 3]])
+matrix = np.arange(12).reshape(3, 4)
+print(matrix[[0, 2], [1, 3]])  # coordinates (0,1) and (2,3)
+@end
+@topic 🔎 Combine masks safely
+Use `&`, `|` and `~` for element-wise Boolean logic and put parentheses around every comparison. The mask must be shape-compatible with the selected region.
+@code python
+a = np.array([5, 15, 25, 55])
+print(a[(a > 10) & (a < 50)])
+@end
+@practice
+1. Reorder an array using indices `[2, 0, 2]`.
+2. Select values below zero or above 100.
+@interview Fancy indexing selects arbitrary positions and returns a copy; Boolean masks filter conditions, and multiple conditions use parenthesized element-wise logic.
+
+@module m28 | 🔤 | 28 · Strings | Module 28 — NumPy String Operations | np.char · Case · Replace · Prefixes
+@topic 🔤 Arrays of text
+NumPy supports fixed-width Unicode and byte-string dtypes. `np.char` provides common vectorized string operations and remains widely used in examples; newer NumPy versions also expose string ufuncs under `np.strings`. For complex text processing, Python strings or pandas may be clearer.
+@code python
+names = np.array(["ada lovelace", "grace hopper"])
+print(np.char.title(names))
+print(np.char.upper(names))
+@end
+@topic ✏️ Replace and test strings
+String operations apply element-wise. `replace`, `startswith`, `endswith`, `lower`, `capitalize`, `title` and `upper` cover common transformations. Fixed-width string arrays use the dtype's width, so account for varying text lengths.
+@code python
+labels = np.array(["data science", "data engineering"])
+print(np.char.replace(labels, "data", "AI"))
+print(np.char.startswith(labels, "data"))
+print(np.char.endswith(labels, "science"))
+print(np.char.lower(labels), np.char.capitalize(labels))
+@end
+@practice
+1. Lowercase and title-case an array; replace a common prefix.
+2. When is Python string processing preferable?
+@interview NumPy string operations apply transformations element-wise, but complex text workflows are often clearer with Python or pandas string methods.
+
+@module m29 | 📅 | 29 · Date & Time | Module 29 — datetime64 & timedelta64 | Date arrays · Units · Differences
+@topic 📅 Create date arrays
+`datetime64` stores timestamps at a chosen unit such as days, seconds or nanoseconds. Choose a unit with appropriate precision. ISO-formatted date strings are a portable way to construct date arrays.
+@code python
+dates = np.array(["2026-01-01", "2026-01-10"], dtype="datetime64[D]")
+print(dates)
+@end
+@topic ⏱️ Calculate durations
+Subtracting dates gives a `timedelta64`; durations can be added to dates. NumPy datetime values do not model time zones or every calendar rule. Use Python datetime or pandas for timezone-aware work.
+@code python
+print(dates[1] - dates[0])  # 9 days
+print(dates + np.timedelta64(7, "D"))
+@end
+@practice
+1. Create three day-precision dates and calculate the duration between two.
+2. Explain when timezone-aware timestamps are needed.
+@interview NumPy represents dates as `datetime64` and differences as `timedelta64`; choose units carefully and use richer tools for timezone-aware calendar work.
+
+@module m30 | 💾 | 30 · Files | Module 30 — Loading & Saving Arrays | loadtxt · genfromtxt · savetxt · npy · npz
+@topic 📄 Read and write text
+`loadtxt` reads well-formed numeric text; `genfromtxt` can handle missing entries with options such as `missing_values` and `filling_values`. `savetxt` writes 1D or 2D arrays to text. CSV is portable but often larger and slower than binary storage.
+@code python
+data = np.loadtxt("measurements.csv", delimiter=",", skiprows=1)
+data_with_missing = np.genfromtxt("measurements.csv", delimiter=",", skip_header=1,
+								  missing_values="NA", filling_values=np.nan)
+np.savetxt("cleaned.csv", data, delimiter=",", fmt="%.3f")
+@end
+@topic 📦 Use NumPy binary formats
+`save` and `load` use `.npy` to preserve one array's dtype and shape. `savez` stores named arrays in `.npz`. Loading object arrays may invoke pickle; only set `allow_pickle=True` for files you trust.
+@code python
+np.save("features.npy", data)
+features = np.load("features.npy", allow_pickle=False)
+np.savez("dataset.npz", X=data, y=np.arange(data.shape[0]))
+archive = np.load("dataset.npz", allow_pickle=False)
+X = archive["X"]
+@end
+@practice
+1. Load numeric CSV with a header and save/reload an array as `.npy`.
+2. Why avoid `allow_pickle=True` for untrusted files?
+@interview Use `loadtxt` for clean numeric text, `genfromtxt` for missing values, `savetxt` for text output, and `.npy` / `.npz` for NumPy-native storage.
+
+@module m31 | ⏱️ | 31 · Performance | Module 31 — Vectorization & Performance | Loops · timeit · Memory · Measurement
+@topic ⏱️ Vectorize meaningful work
+Python loops add interpreter overhead per element. NumPy expressions often reduce that overhead and use optimized kernels. Large temporary arrays still cost time and memory, so one giant expression is not automatically best.
+@code python
+values = np.arange(1_000_000, dtype=np.float64)
+result = values * values + 2 * values + 1
+@end
+@topic 📏 Benchmark fairly
+Use `timeit` on representative data; compare equivalent work, include setup consistently, repeat measurements and verify results match. For memory-bound tasks, reducing copies can matter more than arithmetic tricks.
+@code python
+import timeit
+values = np.arange(100_000, dtype=np.float64)
+elapsed = timeit.timeit("values * 2 + 1", globals=globals(), number=100)
+print(elapsed)
+@end
+@practice
+1. Compare a Python loop with a vectorized operation on the same values.
+2. Name a case where a large intermediate array could hurt performance.
+@interview Vectorization moves element-wise work out of Python loops, but benchmark representative workloads and account for memory allocation.
+
+@module m32 | 🧹 | 32 · Data Science | Module 32 — NumPy for Data Science | Cleaning · Normalization · Standardization · Features
+@topic 🧹 Clean and transform data
+NumPy supports filtering invalid values, clipping ranges and transforming features. Distinguish genuine measurements from missing or invalid values before replacing them.
+@topic 📏 Normalize and standardize
+Min-max normalization maps values using `(x - min) / (max - min)`. Standardization subtracts the mean and divides by standard deviation. Handle zero range or zero standard deviation explicitly. For model evaluation, fit transform parameters on training data only to avoid data leakage.
+@code python
+x = np.array([10.0, 20.0, 30.0])
+span = x.max() - x.min()
+normalized = (x - x.min()) / span if span else np.zeros_like(x)
+std = x.std()
+standardized = (x - x.mean()) / std if std else np.zeros_like(x)
+@end
+@practice
+1. Normalize values into 0 to 1 and standardize a feature.
+2. Why must test data not determine training normalization parameters?
+@interview NumPy supports numeric cleaning and feature transformations; fit preprocessing statistics on training data only and handle constant or invalid features explicitly.
+
+@module m33 | 🤖 | 33 · Machine Learning | Module 33 — NumPy for Machine Learning | X · y · Weights · Prediction · Loss · Gradient
+@topic 🤖 Represent a dataset and predict
+In supervised learning, `X` is commonly shaped `(samples, features)` and `y` is a target vector shaped `(samples,)`. A weight vector has one coefficient per feature; the dot product combines features with weights.
+@code python
+X = np.array([[1.0, 2.0], [2.0, 1.0], [3.0, 4.0]])
+y = np.array([5.0, 4.0, 11.0])
+weights = np.array([2.0, 1.0])
+bias = 0.0
+predictions = X @ weights + bias
+@end
+@topic 📉 Loss and a gradient update
+Mean squared error averages squared prediction errors. For linear predictions `X @ weights + bias`, gradients can be expressed using matrix operations. This illustrates shapes, not a substitute for validation, feature scaling and numerical checks in production.
+@code python
+errors = predictions - y
+mse = np.mean(errors ** 2)
+n = X.shape[0]
+gradient_w = (2 / n) * (X.T @ errors)
+gradient_b = 2 * errors.mean()
+learning_rate = 0.01
+weights = weights - learning_rate * gradient_w
+bias = bias - learning_rate * gradient_b
+@end
+@practice
+1. Print and explain the shapes of `X`, `y` and `weights`.
+2. Calculate predictions, mean squared error and one gradient update.
+@interview NumPy represents ML data as feature matrices and targets, then combines matrix products, element-wise losses and reductions for model calculations.
+
+@module m34 | 🐼 | 34 · Pandas | Module 34 — NumPy & Pandas | Arrays versus tables · to_numpy · Interoperability
+@topic 🐼 Choose the right tool
+NumPy is strongest for homogeneous numerical arrays and linear algebra. Pandas adds labeled rows and columns, mixed column types, missing-data tools, joins and table workflows. Data science commonly uses both.
+@table
+Need | NumPy | pandas
+Dense numerical array | `ndarray` | `Series` or `DataFrame`
+Labeled heterogeneous columns | Less convenient | Natural fit
+Matrix math and broadcasting | Core strength | Often delegates to NumPy
+Joins and group summaries | Manual | Core strength
+@end
+@topic 🔁 Convert between them
+`DataFrame.to_numpy()` returns values as an ndarray; mixed columns may require a common dtype such as object. Keep labels separately if needed to interpret model features.
+@code python
+import numpy as np
+import pandas as pd
+
+df = pd.DataFrame({"height": [160, 175], "weight": [55, 72]})
+X = df.to_numpy(dtype=np.float64)
+reconstructed = pd.DataFrame(X, columns=df.columns)
+@end
+@practice
+1. Convert two numeric DataFrame columns to a NumPy array.
+2. Name one task suited to pandas and one to NumPy.
+@interview Pandas provides labeled tabular analysis; NumPy provides typed arrays and numerical operations. Convert with `to_numpy()` when labels are no longer needed.
+
+@module m35 | 📈 | 35 · Matplotlib | Module 35 — NumPy & Matplotlib | linspace · Vectorized functions · Plotting
+@topic 📈 Generate values to plot
+Use `linspace` for evenly spaced x-coordinates and apply a vectorized function to compute y. Matplotlib plots paired arrays whose shapes must be compatible.
+@code python
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.linspace(0, 2 * np.pi, 200)
+y = np.sin(x)
+plt.plot(x, y)
+plt.xlabel("x")
+plt.ylabel("sin(x)")
+plt.show()
+@end
+@practice
+1. Plot `cos(x)` for 100 points between 0 and 10.
+2. Generate normal random samples and plot a histogram.
+@interview NumPy efficiently creates coordinate and value arrays; Matplotlib renders them as plots.
+
+@module m36 | 🧬 | 36 · Advanced | Module 36 — Advanced NumPy Concepts | Structured arrays · Strides · Memory order · Shape tools · einsum
+@topic 🧬 Structured and masked arrays
+Structured dtypes give records named fields, but are less flexible than a DataFrame for many table workflows. Masked arrays pair data with a mask that marks invalid entries while retaining underlying values.
+@code python
+records = np.array([(1, 72.5), (2, 81.0)], dtype=[("id", "i4"), ("score", "f8")])
+print(records["score"])
+masked = np.ma.array([1.0, 2.0, 3.0], mask=[False, True, False])
+@end
+@topic 🧭 Strides and memory order
+Strides describe how many bytes to move along each axis. C order stores the last index contiguously; Fortran order stores the first. Transposes and slices can be non-contiguous views. Be cautious with `as_strided`, which can expose memory outside valid bounds if misused.
+@code python
+a = np.arange(12).reshape(3, 4)
+print(a.strides, a.flags["C_CONTIGUOUS"])
+print(a.T.flags["C_CONTIGUOUS"])
+@end
+@topic 🧰 Shape helpers and einsum
+`asarray` avoids copying when possible; `asanyarray` preserves subclasses. `expand_dims` adds an axis, `squeeze` removes length-one axes, `swapaxes` swaps two axes, `moveaxis` repositions one axis, `rollaxis` moves an axis to a position and `broadcast_to` returns a read-only broadcasted view. `einsum` expresses sums and axis relationships with labels.
+@code python
+A = np.array([[1, 2], [3, 4]])
+B = np.array([[5, 6], [7, 8]])
+print(np.expand_dims(A[0], 0).shape)
+print(np.broadcast_to(np.array([1, 2]), (3, 2)).shape)
+print(np.swapaxes(A, 0, 1).shape, np.moveaxis(A, 0, 1).shape)
+print(np.einsum("ij,jk->ik", A, B))  # matrix product
+@end
+@practice
+1. Compare strides for an array and its transpose; add a batch dimension with `expand_dims`.
+2. Verify `einsum` matrix multiplication equals `A @ B`.
+@interview Advanced NumPy exposes layout, structured data, masked values and axis transformations; `einsum` specifies tensor contractions when shapes are understood.
+
+@module m37 | 🎤 | 37 · Interview | Module 37 — NumPy Interview Topics | Core concepts · Shape reasoning · Trade-offs
+@topic 🎤 Core concepts
+Be ready to explain ndarray, `ndim`, `shape`, `size`, `dtype`, vectorization, broadcasting and axis with small examples. Interviews test a correct mental model, not just function recall.
+@table
+Question | Short answer
+What is an ndarray? | A typed, multidimensional array with shape and axes.
+What is vectorization? | Applying array operations without a Python loop per element.
+What is broadcasting? | Compatible shapes are virtually expanded for an operation.
+What is axis 0 on a matrix? | Reduce down rows to get one result per column.
+@end
+@topic 🔍 Differences worth explaining
+`reshape` changes dimensions without changing values; resize may change element count. `flatten` always copies; `ravel` may share. `array` constructs an ndarray; `asarray` avoids a copy when possible. `concatenate` joins an existing axis; `stack` adds one. `dot` and `matmul` differ for higher dimensions.
+@topic 🧠 Practice explaining
+1. What is NumPy, and why use it instead of Python lists?
+2. What are an ndarray, `ndim`, `shape`, `size` and `dtype`?
+3. What is vectorization, and why can it improve performance?
+4. What is broadcasting? Explain the trailing-dimension rules.
+5. What does `axis=0` mean for a 2D array?
+6. How do `reshape()` and `resize()` differ?
+7. How do `flatten()` and `ravel()` differ?
+8. How do `copy()` and `view()` differ?
+9. How do `np.array()` and `np.asarray()` differ?
+10. How do `concatenate()` and `stack()` differ?
+11. What is Boolean indexing? What is fancy indexing?
+12. What does `np.where()` return in each form?
+13. What is `np.nan`, and how do you handle missing values?
+14. How does NumPy perform matrix multiplication?
+15. How do `np.dot()` and `np.matmul()` differ?
+16. How does NumPy improve performance?
+17. How is NumPy used in machine learning?
+18. How do `searchsorted()` and `argsort()` differ?
+19. What does `keepdims=True` change?
+20. Why use `default_rng()` rather than global random state?
+21. How do dtype and itemsize affect memory?
+22. What does a view share with its base array?
+23. How do you find unique values and their counts?
+24. How do you handle NaN in a reduction?
+25. When would you use pandas instead of NumPy?
+@practice
+1. Explain broadcasting for `(2, 3)` and `(3,)`.
+2. Explain views and copies using a mutation example.
+3. Why prefer `solve(A, b)` over `inv(A) @ b`?
+@interview Strong NumPy answers connect the API to shapes, dtypes, memory sharing and the numerical problem being solved.
+
+@module m38 | 🏋️ | 38 · Practice | Module 38 — NumPy Practice & Projects | Beginner · Intermediate · Advanced · Integrated work
+@topic 🌱 Beginner challenges
+1. Create an array and inspect dimensions, shape, dtype, minimum and maximum.
+2. Reverse and sort an array; extract even numbers and values greater than 50.
+3. Calculate mean, median, sum and unique-value counts.
+4. Replace negative values with zero using a mask.
+@topic 🌿 Intermediate challenges
+1. Reshape a sequence, concatenate arrays and split the result.
+2. Calculate row sums and column means.
+3. Normalize an array, standardize a feature and handle NaNs.
+4. Generate seeded random data and find unique values.
+@topic 🚀 Advanced challenges
+1. Solve a linear system and verify the answer with `A @ x`.
+2. Use broadcasting to normalize feature columns without a Python loop.
+3. Calculate linear regression predictions and loss.
+4. Implement one gradient-descent update with matrix operations.
+@topic 🧪 Mini-project: clean sensor data
+Rows are observations and columns are sensors. Identify non-finite values, compute each sensor's valid mean, fill missing entries by a documented rule, standardize columns and report the row with the largest average reading. Preserve the original by working on a copy.
+@code python
+data = np.array([[2.0, 4.0], [np.nan, 8.0], [6.0, 12.0]])
+clean = data.copy()
+means = np.nanmean(clean, axis=0, keepdims=True)
+missing = np.isnan(clean)
+clean[missing] = np.broadcast_to(means, clean.shape)[missing]
+spread = clean.std(axis=0, keepdims=True)
+standardized = (clean - clean.mean(axis=0, keepdims=True)) / np.where(spread == 0, 1, spread)
+best_row = np.argmax(clean.mean(axis=1))
+@end
+@practice
+1. Complete the sensor-data project and explain each output shape.
+2. Generate a feature matrix and target, then calculate linear predictions and loss.
+3. Compare a Python loop and NumPy vectorization on a meaningful task.
+@interview Learn NumPy by combining arrays, masks, axis reductions, broadcasting and matrix products in data-cleaning and ML projects.
+
+@module m39 | 🗺️ | Learning Path | Module 39 — Complete NumPy Learning Path | Foundations · Core skills · Data science · Projects
+@topic 🗺️ Follow the dependency order
+Start with array shape and dtype, then indexing and slicing. Practice reshaping and axis reductions before broadcasting; those shape skills make masks, statistics and matrix operations much easier to reason about.
+@table
+Stage | Focus | Modules
+Foundations | Introduction, arrays, creation, dtypes | 1–4
+Array fluency | Indexing, slicing, reshape, manipulation, splitting | 5–9
+Numerical work | Math, ufuncs, masks, statistics, axis, search | 10–19
+Data and models | Randomness, distributions, linear algebra, broadcasting | 20–23
+Reliable workflows | Views, memory, missing data, files, performance | 24–31
+Applied practice | Data science, ML, pandas, plots, advanced, interviews, projects | 32–39
+@end
+@topic 🎯 Prioritize for Data Science and AI
+Focus especially on **array shapes, indexing, slicing, reshape, axis, broadcasting, Boolean masks, statistics, random sampling, linear algebra and vectorization**. Learn less common APIs when a project needs them; understanding shapes and data movement pays off everywhere.
+@info Predict the output shape before running each example. When a result surprises you, inspect `shape`, `ndim` and `dtype` before changing the code.
+@practice
+1. Pick five core topics and teach each with one short example.
+2. Build a weekly plan alternating explanations, coding and review.
+3. Revisit an earlier exercise using a 2D array and explicit axis.
+@interview NumPy mastery comes from reasoning about shapes, dtypes, axes and memory while applying vectorized operations to real numerical problems.

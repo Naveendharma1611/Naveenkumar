@@ -1,0 +1,22 @@
+{% extends "web/base.html" %}{% load web_tags %}
+{% block title %}{{ category.name }} interview questions{% endblock %}
+{% block content %}
+<section class="wrap section narrow">
+  <a href="/interview/" class="muted">← All topics</a>
+  <h1>{{ category.name }} interview questions</h1>
+  <div class="chips">
+    <a class="chip {% if not request.GET.difficulty %}on{% endif %}" href="?">All</a>
+    {% for value, label in difficulties %}<a class="chip {% if request.GET.difficulty == value %}on{% endif %}" href="?difficulty={{ value }}">{{ label }}</a>{% endfor %}
+  </div>
+  {% for q in questions %}
+  <details class="card qa" id="q{{ q.id }}">
+    <summary><span class="badge">{{ q.get_difficulty_display }}</span> {{ forloop.counter }}. {{ q.question }}</summary>
+    <p><strong>Answer:</strong> {{ q.short_answer|linebreaksbr }}</p>
+    {% if q.detailed_answer %}<div class="prose">{{ q.detailed_answer|markdown }}</div>{% endif %}
+    {% if q.code %}<pre><code class="language-{{ q.code_language }}">{{ q.code }}</code></pre>{% endif %}
+    {% if q.example %}<div class="prose">{{ q.example|markdown }}</div>{% endif %}
+    {% if q.interview_tip %}<div class="alert info">💡 {{ q.interview_tip }}</div>{% endif %}
+  </details>
+  {% empty %}<p class="muted">No questions found.</p>{% endfor %}
+</section>
+{% endblock %}

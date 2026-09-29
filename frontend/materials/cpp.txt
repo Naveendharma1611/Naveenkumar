@@ -1,0 +1,1281 @@
+@page ⚙️ C++ Complete Study Material
+@intro C++ end to end — basics, OOP, templates, the STL, memory, smart pointers, modern C++ and multithreading, with short explanations, examples, practice questions and projects.
+
+@module m1 | 🧭 | 1 · Intro | Module 1 — Introduction to C++ | History · Features · C vs C++ · Standards · First program · Compiling
+@topic 📜 What is C++?
+C++ is a fast, compiled, **multi-paradigm** language: procedural like C, plus **object-oriented** and **generic** programming. It powers game engines, browsers, databases, trading systems and embedded devices.
+@table
+Aspect | Detail
+Created by | Bjarne Stroustrup, Bell Labs
+Timeline | "C with Classes" in 1979, renamed C++ in 1983, first release 1985
+Standards | C++98, C++03, C++11, C++14, C++17, C++20, C++23
+Compilers | GCC (g++), Clang, Microsoft Visual C++
+File extensions | `.cpp` (source), `.h` / `.hpp` (headers)
+@end
+@topic ⚖️ C vs C++
+@table
+C | C++
+Procedural | Procedural + OOP + generic
+`struct` holds data only | Classes with data **and** functions, access control
+`malloc` / `free` | `new` / `delete`, smart pointers
+`printf` / `scanf` | `std::cout` / `std::cin` (type-safe)
+No function overloading | Overloading, templates, exceptions
+Tiny standard library | Huge STL: containers and algorithms
+@end
+@topic 👋 First Program
+@code cpp
+#include <iostream>          // input/output streams
+
+int main() {
+    std::cout << "Hello, C++!" << '\n';   // << sends data to the output
+    return 0;
+}
+@end
+@code bash
+g++ -std=c++20 -Wall hello.cpp -o hello   # compile with warnings on
+./hello                                    # run (hello.exe on Windows)
+@end
+@info `std::` is the standard namespace. Beginners often write `using namespace std;`, but in real projects and headers keep the `std::` prefix to avoid name clashes.
+@practice
+1. Install g++ (MinGW/MSYS2 on Windows) or use an online compiler, and run Hello World.
+2. Print your name, college and city on separate lines.
+3. List three differences between C and C++.
+4. Why is `-Wall` a good habit when compiling?
+@interview C++ is a compiled, multi-paradigm extension of C that adds classes, templates, exceptions and the STL while keeping C-level performance.
+
+@module m2 | 📦 | 2 · Basics | Module 2 — Variables, Types & Input/Output | Data types · auto · const · constexpr · cin/cout · getline · Casting
+@topic 📦 Data Types
+@table
+Type | Size (typical) | Example
+`bool` | 1 byte | `bool ok = true;`
+`char` | 1 byte | `char grade = 'A';`
+`int` | 4 bytes | `int age = 21;`
+`long long` | 8 bytes | `long long big = 9'000'000'000;`
+`float` | 4 bytes | `float pi = 3.14f;`
+`double` | 8 bytes | `double price = 99.99;`
+`std::string` | varies | `std::string name = "Naveen";`
+@end
+@code cpp
+auto count = 10;          // compiler deduces int
+auto rate = 7.5;          // double
+const int MAX = 100;      // cannot change
+constexpr int SIZE = 5 * 4;   // computed at compile time
+int x{5};                 // brace initialization (prevents narrowing)
+// int y{3.7};            // error: narrowing double to int
+@end
+@topic ⌨️ Input and Output
+@code cpp
+#include <iostream>
+#include <string>
+
+int main() {
+    int age;
+    std::string name;
+
+    std::cout << "Enter your age: ";
+    std::cin >> age;                      // reads one value
+    std::cin.ignore();                    // drop the leftover newline
+
+    std::cout << "Enter your full name: ";
+    std::getline(std::cin, name);         // reads a whole line with spaces
+
+    std::cout << "Hi " << name << ", you are " << age << '\n';
+    return 0;
+}
+@end
+@tip Prefer `'\n'` to `std::endl`. `endl` also flushes the output buffer every time, which is slower.
+@topic 🔄 Type Conversion
+@code cpp
+double avg = 7.9;
+int whole = static_cast<int>(avg);     // 7: explicit, safe-looking cast
+int total = 7, count = 2;
+double result = static_cast<double>(total) / count;   // 3.5, not 3
+int n = std::stoi("42");               // string to int
+std::string s = std::to_string(3.5);   // number to string
+@end
+@practice
+1. Read two numbers and print their sum, difference, product and exact quotient.
+2. Read a full name with spaces and print it in uppercase.
+3. What is the difference between `const` and `constexpr`?
+4. Why does `int y{3.7};` fail but `int y = 3.7;` compile?
+@interview C++ has built-in types like int, double, char and bool plus std::string; auto deduces types, const and constexpr make constants, and cin/cout/getline handle input and output.
+
+@module m3 | 🔀 | 3 · Control Flow | Module 3 — Operators & Control Flow | Operators · if/else · switch · Loops · Range-based for
+@topic ➕ Operators
+The operators are the same as C: arithmetic `+ - * / %`, comparison `== != < > <= >=`, logical `&& || !`, assignment `+= -=`, increment `++ --`, bitwise `& | ^ ~ << >>` and the ternary `?:`. C++ adds `::` (scope), `new`/`delete`, and lets you overload most operators for your own classes (Module 11).
+@topic 🔀 Decisions
+@code cpp
+int marks = 82;
+if (marks >= 90)      std::cout << "A\n";
+else if (marks >= 75) std::cout << "B\n";   // prints B
+else                  std::cout << "C\n";
+
+char op = '+';
+switch (op) {
+    case '+': std::cout << "add\n"; break;
+    case '-': std::cout << "subtract\n"; break;
+    default:  std::cout << "unknown\n";
+}
+
+std::string result = (marks >= 40) ? "Pass" : "Fail";
+@end
+@topic 🔁 Loops
+@code cpp
+for (int i = 1; i <= 5; ++i) std::cout << i << ' ';   // 1 2 3 4 5
+
+int n = 5;
+while (n > 0) { std::cout << n-- << ' '; }           // 5 4 3 2 1
+
+int choice;
+do {
+    std::cout << "1. Play 2. Quit: ";
+    std::cin >> choice;
+} while (choice != 2);
+
+int nums[] = {10, 20, 30};
+for (int x : nums) std::cout << x << ' ';            // range-based for (C++11)
+@end
+@tip In range-based loops over big objects use `const auto&` to avoid copies: `for (const auto& s : names)`.
+@practice
+1. Print the multiplication table of any number.
+2. Check whether a number is prime.
+3. Build a menu-driven calculator with switch and a do-while loop.
+4. Print a number pyramid with nested loops.
+5. Sum the elements of an array with a range-based for loop.
+@interview C++ uses C's operators and control flow — if, switch, for, while, do-while — and adds the range-based for loop for iterating over containers.
+
+@module m4 | 🧩 | 4 · Functions | Module 4 — Functions | Prototypes · Default arguments · Overloading · Pass by reference · inline · Recursion
+@topic 🧩 Defining Functions
+@code cpp
+int add(int a, int b);                 // declaration (prototype)
+
+int main() {
+    std::cout << add(2, 3) << '\n';    // 5
+}
+
+int add(int a, int b) { return a + b; }   // definition
+@end
+@topic 🎚️ Default Arguments and Overloading
+@code cpp
+void greet(const std::string& name, const std::string& msg = "Welcome") {
+    std::cout << msg << ", " << name << "!\n";
+}
+greet("Asha");                   // Welcome, Asha!
+greet("Ravi", "Good morning");   // Good morning, Ravi!
+
+int    area(int side)            { return side * side; }      // overloads: same name,
+int    area(int l, int w)        { return l * w; }            // different parameters
+double area(double r)            { return 3.14159 * r * r; }
+@end
+@warn Default arguments must come last, and overloads cannot differ **only** by return type.
+@topic 📨 Pass by Value, Reference and const Reference
+@code cpp
+void byValue(int x)             { x = 100; }     // changes a copy
+void byRef(int& x)              { x = 100; }     // changes the caller's variable
+void print(const std::string& s) { std::cout << s; }   // no copy, read-only
+
+int a = 5;
+byValue(a);  // a is still 5
+byRef(a);    // a is now 100
+@end
+@table
+Pass by | Copies? | Can modify caller? | Use for
+Value | Yes | No | Small types: int, double, char
+Reference `T&` | No | Yes | Output parameters, swapping
+const reference `const T&` | No | No | Large read-only objects: strings, vectors
+@end
+@topic 🔁 inline and Recursion
+@code cpp
+inline int square(int x) { return x * x; }   // hint: expand at the call site
+
+long long factorial(int n) {
+    return n <= 1 ? 1 : n * factorial(n - 1);
+}
+@end
+@practice
+1. Overload `max` for two ints, three ints and two doubles.
+2. Write `void swap(int& a, int& b)` and test it.
+3. Write a function with a default discount percentage that calculates a final price.
+4. Compute Fibonacci numbers recursively and then iteratively; compare speed for n = 40.
+5. Why pass a `std::vector` as `const std::vector<int>&`?
+@interview C++ functions support default arguments, overloading by parameter list, and passing by value, reference or const reference; const references avoid copies of large objects.
+
+@module m5 | 📊 | 5 · Arrays & Strings | Module 5 — Arrays, std::array, std::string & std::vector | C arrays · std::array · String operations · Vector basics
+@topic 📊 Arrays
+@code cpp
+int marks[5] = {80, 92, 67, 74, 88};    // C-style array: fixed size, no bounds check
+int matrix[2][3] = {{1, 2, 3}, {4, 5, 6}};
+
+#include <array>
+std::array<int, 3> a = {1, 2, 3};       // fixed size, knows its size, safer
+std::cout << a.size() << ' ' << a.at(1);   // at() checks bounds
+@end
+@topic 🔤 std::string
+@code cpp
+#include <string>
+std::string s = "Hello";
+s += " World";                           // concatenate
+std::cout << s.length() << '\n';         // 11
+std::cout << s.substr(0, 5) << '\n';     // Hello
+std::cout << s.find("World") << '\n';    // 6
+s.replace(0, 5, "Hi");                   // "Hi World"
+if (s == "Hi World") std::cout << "equal\n";   // compare with ==
+for (char c : s) std::cout << static_cast<char>(std::toupper(c));
+@end
+@table
+Member | Purpose
+`size()` / `length()` | Number of characters
+`substr(pos, len)` | Part of the string
+`find(text)` | Position, or `std::string::npos` if not found
+`insert`, `erase`, `replace` | Edit the string
+`c_str()` | Get a C-style `const char*`
+`std::stoi`, `std::to_string` | Convert to and from numbers
+@end
+@topic 📈 std::vector: a Growable Array
+@code cpp
+#include <vector>
+std::vector<int> v = {3, 1, 4};
+v.push_back(1);                  // add at the end: {3, 1, 4, 1}
+v.pop_back();                    // remove the last
+std::cout << v[0] << ' ' << v.size() << '\n';   // 3 3
+for (int x : v) std::cout << x << ' ';
+std::vector<std::vector<int>> grid(3, std::vector<int>(4, 0));   // 3×4 matrix of 0s
+@end
+@tip Use `std::vector` by default instead of raw arrays — it manages its own memory and grows as needed.
+@practice
+1. Read n numbers into a vector and print the largest, smallest and average.
+2. Count the vowels in a `std::string`.
+3. Check whether a string is a palindrome.
+4. Reverse the words of a sentence.
+5. Build a 3×3 matrix with vectors and print its transpose.
+@interview Prefer std::array for fixed-size and std::vector for dynamic arrays, and std::string over char arrays; they know their size, manage memory and offer bounds-checked at().
+
+@module m6 | 📍 | 6 · Pointers & References | Module 6 — Pointers & References | Address · Dereference · nullptr · Pointer arithmetic · References · const
+@topic 📍 Pointers
+@code cpp
+int x = 10;
+int* p = &x;             // p stores the address of x
+std::cout << *p;         // 10: dereference
+*p = 20;                 // x is now 20
+
+int* q = nullptr;        // points to nothing (C++11: use nullptr, not NULL)
+if (q) std::cout << *q;  // always check before dereferencing
+
+int arr[] = {1, 2, 3};
+int* it = arr;
+std::cout << *(it + 2);  // 3: pointer arithmetic
+@end
+@topic 🔗 References
+A reference is an **alias** — another name for an existing variable.
+@code cpp
+int a = 5;
+int& r = a;      // r IS a
+r = 50;          // a is now 50
+@end
+@table
+Pointer | Reference
+Can be null (`nullptr`) | Must refer to something
+Can be re-pointed to another object | Bound once, forever
+Needs `*` to access the value | Used like the variable itself
+Can do arithmetic | No arithmetic
+@end
+@topic 🔒 const with Pointers
+@code cpp
+int v = 1, w = 2;
+const int* p1 = &v;      // pointer to const: *p1 = 5 is an error
+int* const p2 = &v;      // const pointer: p2 = &w is an error
+const int* const p3 = &v;   // both
+@end
+@info Read declarations right to left: `int* const p` is "p is a const pointer to int".
+@practice
+1. Swap two numbers using pointers, then using references.
+2. Traverse an array with a pointer instead of indexes.
+3. Write a function that returns the minimum and maximum through reference parameters.
+4. Explain the difference between `const int*` and `int* const`.
+@interview A pointer stores an address, can be null and reassigned, while a reference is a non-null alias bound once; prefer references for parameters and nullptr for empty pointers.
+
+@module m7 | 🧠 | 7 · Dynamic Memory | Module 7 — Dynamic Memory | new · delete · new[] · delete[] · Memory leaks · Stack vs heap
+@topic 🧠 new and delete
+@code cpp
+int* p = new int(42);          // one int on the heap
+std::cout << *p << '\n';
+delete p;                      // free it
+p = nullptr;
+
+int n = 5;
+int* arr = new int[n]{};       // array of 5 ints set to 0
+arr[0] = 10;
+delete[] arr;                  // arrays need delete[]
+@end
+@table
+Stack | Heap
+Local variables, created automatically | Created with `new`
+Freed automatically at the end of the scope | You must `delete` (or use smart pointers)
+Fast, limited size | Larger, slower to allocate
+@end
+@warn Every `new` needs exactly one matching `delete` (and `new[]` needs `delete[]`). Forgetting causes **memory leaks**; deleting twice or using freed memory is undefined behaviour.
+@tip In modern C++ you rarely write `new`/`delete` yourself. Use `std::vector`, `std::string` and smart pointers (Module 20).
+@practice
+1. Allocate an array of size n entered by the user, fill it and print the average.
+2. Find the leak: `int* p = new int[10]; p = new int[20]; delete[] p;`
+3. Allocate a 2D array dynamically and free it correctly.
+4. Rewrite the first exercise with `std::vector` and compare.
+@interview new allocates on the heap and delete frees it (new[] with delete[]); manual memory management causes leaks and dangling pointers, so modern C++ prefers containers and smart pointers.
+
+@module m8 | 🏗️ | 8 · Classes | Module 8 — Classes & Objects | Class · Object · Access specifiers · Member functions · this · Encapsulation
+@topic 🏗️ A Class and its Objects
+A **class** is a blueprint; an **object** is a thing built from it. The class bundles data (members) and behaviour (member functions).
+@code cpp
+#include <iostream>
+#include <string>
+
+class BankAccount {
+private:                          // hidden from outside: encapsulation
+    std::string owner;
+    double balance = 0;
+
+public:                           // the public interface
+    void setOwner(const std::string& name) { owner = name; }
+
+    void deposit(double amount) {
+        if (amount > 0) balance += amount;
+    }
+
+    bool withdraw(double amount) {
+        if (amount > balance) return false;
+        balance -= amount;
+        return true;
+    }
+
+    double getBalance() const { return balance; }   // const: doesn't modify the object
+};
+
+int main() {
+    BankAccount acc;              // create an object
+    acc.setOwner("Naveen");
+    acc.deposit(5000);
+    acc.withdraw(1200);
+    std::cout << acc.getBalance() << '\n';   // 3800
+}
+@end
+@topic 🔐 Access Specifiers
+@table
+Specifier | Accessible from
+`public` | Anywhere
+`private` | Only inside the class (default for `class`)
+`protected` | The class and its derived classes
+@end
+@info `struct` and `class` are the same except the default access: `struct` members are public by default, `class` members are private.
+@topic 👉 The this Pointer
+@code cpp
+class Point {
+    int x, y;
+public:
+    void set(int x, int y) {
+        this->x = x;     // this points to the current object
+        this->y = y;
+    }
+};
+@end
+@practice
+1. Create a `Student` class with name, roll number and marks, and a function that prints the grade.
+2. Add validation so marks can only be set between 0 and 100.
+3. Create a `Rectangle` class with area and perimeter functions.
+4. Why should data members usually be private?
+@interview A class groups data and functions; objects are instances of it; access specifiers enforce encapsulation, and `this` points to the current object.
+
+@module m9 | 🛠️ | 9 · Constructors | Module 9 — Constructors & Destructors | Default · Parameterised · Initializer list · Copy constructor · Destructor · Rule of 3/5/0
+@topic 🛠️ Constructors
+A constructor runs automatically when an object is created. It has the class's name and no return type.
+@code cpp
+class Student {
+    std::string name;
+    int age;
+public:
+    Student() : name("Unknown"), age(0) {}                  // default constructor
+    Student(std::string n, int a) : name(std::move(n)), age(a) {}   // parameterised
+    Student(const Student& other) : name(other.name), age(other.age) {   // copy constructor
+        std::cout << "Copied\n";
+    }
+    ~Student() { std::cout << "Bye " << name << '\n'; }     // destructor
+    void show() const { std::cout << name << ' ' << age << '\n'; }
+};
+
+Student a;                 // default
+Student b("Asha", 20);     // parameterised
+Student c = b;             // copy constructor
+@end
+@table
+Kind | When it runs
+Default | `Student s;`
+Parameterised | `Student s("Asha", 20);`
+Copy | `Student t = s;` or passing by value
+Destructor | When the object goes out of scope or is deleted
+@end
+@tip Initialise members in the **member initializer list** (`: name(n), age(a)`). It's faster and required for const and reference members. Members are initialised in the order they are declared in the class.
+@topic 🚫 explicit and Delegating Constructors
+@code cpp
+class Meter {
+    double value;
+public:
+    explicit Meter(double v) : value(v) {}   // blocks: Meter m = 5.0;
+    Meter() : Meter(0.0) {}                  // delegates to the other constructor
+};
+@end
+@topic 📏 Rule of Three / Five / Zero
+@table
+Rule | Meaning
+Rule of Three | If you write a destructor, copy constructor or copy assignment, you probably need all three
+Rule of Five | C++11 adds the move constructor and move assignment
+Rule of Zero | Best: use `std::string`, `std::vector`, smart pointers so you need none of them
+@end
+@practice
+1. Add default, parameterised and copy constructors to a `Book` class and print when each runs.
+2. Show the order of constructor and destructor calls for three objects.
+3. Create a class that owns a `new[]` array and implement the Rule of Three.
+4. Rewrite it with `std::vector` so the Rule of Zero applies.
+@interview Constructors initialise objects (default, parameterised, copy, move) and destructors clean up; use initializer lists, mark single-argument constructors explicit, and follow the Rule of Zero where possible.
+
+@module m10 | 🧷 | 10 · static & friend | Module 10 — static, const Members & friend | Static data · Static functions · const functions · mutable · friend
+@topic 🧷 Static Members
+A static member belongs to the **class**, not to each object — every object shares it.
+@code cpp
+class Counter {
+    static int count;             // shared by all objects
+public:
+    Counter()  { ++count; }
+    ~Counter() { --count; }
+    static int total() { return count; }   // no this pointer
+};
+int Counter::count = 0;           // define it once, outside the class
+
+Counter a, b, c;
+std::cout << Counter::total();    // 3
+@end
+@topic 🔒 const Member Functions and mutable
+@code cpp
+class Cache {
+    int value = 42;
+    mutable int reads = 0;        // may change even in const functions
+public:
+    int get() const {             // promises not to modify the object
+        ++reads;
+        return value;
+    }
+};
+@end
+@info Mark every function that doesn't change the object as `const` — only const functions can be called on const objects and const references.
+@topic 🤝 friend
+@code cpp
+class Box {
+    double width = 0;
+    friend void printWidth(const Box& b);   // can access private members
+};
+void printWidth(const Box& b) { std::cout << b.width << '\n'; }
+@end
+@warn Use `friend` sparingly — it breaks encapsulation. It's commonly used for operator overloads like `<<` (Module 11).
+@practice
+1. Count how many objects of a class currently exist using a static member.
+2. Give each object an automatic unique ID using a static counter.
+3. Mark the getters of a class `const` and call them on a const object.
+4. Write a friend function that compares two private values of different objects.
+@interview static members are shared by all objects of a class, const member functions promise not to modify the object, mutable allows exceptions, and friend grants a function access to private members.
+
+@module m11 | ➕ | 11 · Operators | Module 11 — Operator Overloading | Arithmetic · Comparison · Stream << · Subscript [] · Increment · Guidelines
+@topic ➕ Overloading Operators for Your Class
+@code cpp
+#include <iostream>
+
+class Complex {
+    double re, im;
+public:
+    Complex(double r = 0, double i = 0) : re(r), im(i) {}
+
+    Complex operator+(const Complex& o) const { return {re + o.re, im + o.im}; }
+    bool operator==(const Complex& o) const { return re == o.re && im == o.im; }
+    Complex& operator+=(const Complex& o) { re += o.re; im += o.im; return *this; }
+
+    friend std::ostream& operator<<(std::ostream& os, const Complex& c) {
+        return os << c.re << " + " << c.im << "i";
+    }
+};
+
+int main() {
+    Complex a(1, 2), b(3, 4);
+    Complex c = a + b;
+    std::cout << c << '\n';          // 4 + 6i
+    std::cout << (a == b) << '\n';   // 0
+}
+@end
+@topic 🔢 Subscript and Increment
+@code cpp
+class IntList {
+    int data[10] = {};
+public:
+    int& operator[](int i) { return data[i]; }   // list[3] = 7;
+};
+
+class Counter {
+    int n = 0;
+public:
+    Counter& operator++()   { ++n; return *this; }                 // prefix ++c
+    Counter  operator++(int) { Counter old = *this; ++n; return old; }   // postfix c++
+};
+@end
+@table
+Guideline | Why
+Keep the natural meaning | `+` should add, not subtract
+Return references from `+=`, `=`, `[]`, prefix `++` | Allows chaining and avoids copies
+Make `<<` and `>>` non-members (often friends) | The left operand is the stream
+Can't overload `::`, `.`, `.*`, `?:`, `sizeof` | Language rule
+@end
+@practice
+1. Create a `Fraction` class with `+`, `-`, `*`, `==` and `<<`.
+2. Overload `[]` for a safe array class that checks bounds.
+3. Overload prefix and postfix `++` for a `Time` class (minutes and seconds).
+4. Why does `operator<<` return `std::ostream&`?
+@interview Operator overloading lets user-defined types use natural syntax like a + b or cout << x; keep the usual meaning, return references where chaining is expected, and make stream operators non-member friends.
+
+@module m12 | 🧬 | 12 · Inheritance | Module 12 — Inheritance | Base & derived · Access modes · Types · Constructor order · Diamond problem
+@topic 🧬 Base and Derived Classes
+Inheritance lets a class **reuse and extend** another class ("is-a" relationship).
+@code cpp
+class Person {
+protected:
+    std::string name;
+public:
+    Person(std::string n) : name(std::move(n)) {}
+    void introduce() const { std::cout << "I am " << name << '\n'; }
+};
+
+class Student : public Person {         // Student is a Person
+    int roll;
+public:
+    Student(std::string n, int r) : Person(std::move(n)), roll(r) {}   // call base constructor
+    void show() const { introduce(); std::cout << "Roll: " << roll << '\n'; }
+};
+@end
+@topic 🔐 Inheritance Access Modes
+@table
+Base member | public inheritance | protected inheritance | private inheritance
+public | public | protected | private
+protected | protected | protected | private
+private | not accessible | not accessible | not accessible
+@end
+@topic 🌳 Types of Inheritance
+@table
+Type | Shape
+Single | A → B
+Multilevel | A → B → C
+Multiple | A + B → C
+Hierarchical | A → B, A → C
+Hybrid | A mix of the above
+@end
+@info Constructors run from **base to derived**; destructors run in the reverse order.
+@topic 💎 The Diamond Problem
+@code cpp
+class Device { public: int id = 0; };
+class Printer : virtual public Device {};    // virtual inheritance
+class Scanner : virtual public Device {};
+class Copier  : public Printer, public Scanner {};
+
+Copier c;
+c.id = 7;    // OK: only ONE Device inside Copier thanks to virtual inheritance
+@end
+@practice
+1. Create `Vehicle` → `Car` → `ElectricCar` (multilevel) and print constructor order.
+2. Create `Employee` with `Manager` and `Engineer` derived classes (hierarchical).
+3. Show the diamond problem and fix it with virtual inheritance.
+4. When would you choose composition ("has-a") over inheritance ("is-a")?
+@interview Inheritance lets a derived class reuse a base class; the access mode (usually public) controls member visibility, constructors run base-first, and virtual inheritance solves the diamond problem.
+
+@module m13 | 🎭 | 13 · Polymorphism | Module 13 — Polymorphism & Abstract Classes | Compile-time vs run-time · virtual · override · Virtual destructor · Pure virtual · Interfaces
+@topic 🎭 Run-time Polymorphism with virtual
+@code cpp
+#include <iostream>
+#include <memory>
+#include <vector>
+
+class Shape {
+public:
+    virtual double area() const = 0;              // pure virtual: Shape is abstract
+    virtual void print() const { std::cout << "Area: " << area() << '\n'; }
+    virtual ~Shape() = default;                   // virtual destructor
+};
+
+class Circle : public Shape {
+    double r;
+public:
+    explicit Circle(double r) : r(r) {}
+    double area() const override { return 3.14159 * r * r; }
+};
+
+class Rect : public Shape {
+    double w, h;
+public:
+    Rect(double w, double h) : w(w), h(h) {}
+    double area() const override { return w * h; }
+};
+
+int main() {
+    std::vector<std::unique_ptr<Shape>> shapes;
+    shapes.push_back(std::make_unique<Circle>(1.0));
+    shapes.push_back(std::make_unique<Rect>(2.0, 3.0));
+    for (const auto& s : shapes) s->print();      // calls the right area() for each
+}
+@end
+@topic ⚖️ Compile-time vs Run-time
+@table
+Compile-time (static) | Run-time (dynamic)
+Function overloading, operator overloading, templates | Virtual functions called through a base pointer or reference
+Decided by the compiler | Decided while the program runs (via the vtable)
+No extra cost | Small cost of an indirect call
+@end
+@topic 🧱 Key Rules
+- `virtual` in the base enables overriding; `override` in the derived class makes the compiler check it.
+- `final` stops further overriding or inheritance.
+- A class with a pure virtual function (`= 0`) is **abstract** — you can't create objects of it.
+- A class with only pure virtual functions acts as an **interface**.
+@warn If you delete a derived object through a base pointer, the base class **must have a virtual destructor**, otherwise the derived destructor never runs.
+@practice
+1. Build an `Animal` hierarchy where `speak()` prints a different sound for each animal.
+2. Create an abstract `Payment` class with `CardPayment` and `UpiPayment` implementations.
+3. Show what goes wrong without a virtual destructor.
+4. Mark a class `final` and try to inherit from it.
+5. What is a vtable?
+@interview Polymorphism lets one interface have many implementations: overloading and templates at compile time, and virtual functions through base pointers at run time; abstract classes have pure virtual functions and polymorphic bases need virtual destructors.
+
+@module m14 | 🧰 | 14 · Templates | Module 14 — Templates | Function templates · Class templates · Specialisation · Concepts
+@topic 🧰 Function Templates
+Templates let you write code **once for any type**; the compiler generates a version for each type you use.
+@code cpp
+template <typename T>
+T maxOf(T a, T b) {
+    return (a > b) ? a : b;
+}
+
+std::cout << maxOf(3, 7) << '\n';          // int version: 7
+std::cout << maxOf(2.5, 1.5) << '\n';      // double version: 2.5
+std::cout << maxOf<std::string>("apple", "mango") << '\n';   // mango
+@end
+@topic 📦 Class Templates
+@code cpp
+template <typename T>
+class Stack {
+    std::vector<T> items;
+public:
+    void push(const T& x) { items.push_back(x); }
+    void pop()            { items.pop_back(); }
+    const T& top() const  { return items.back(); }
+    bool empty() const    { return items.empty(); }
+};
+
+Stack<int> s1;
+Stack<std::string> s2;
+s1.push(10);
+s2.push("hello");
+@end
+@topic 🎯 Specialisation and Concepts (C++20)
+@code cpp
+template <typename T>
+void describe(T)          { std::cout << "generic\n"; }
+template <>
+void describe(bool)       { std::cout << "a bool\n"; }     // full specialisation
+
+#include <concepts>
+template <std::integral T>             // only integer types allowed
+T half(T x) { return x / 2; }
+// half(3.5);   // compile error with a clear message
+@end
+@info Template code usually lives entirely in header files, because the compiler needs the full definition wherever the template is used.
+@practice
+1. Write a template `swapValues` and a template `printArray`.
+2. Build a generic `Pair<K, V>` class.
+3. Turn the `Stack` into a `Queue<T>` template.
+4. Restrict a template to floating-point types using a C++20 concept.
+@interview Templates provide generic programming: function and class templates are instantiated for each type used, specialisation customises specific types, and C++20 concepts constrain template parameters.
+
+@module m15 | 📚 | 15 · STL Containers | Module 15 — STL Containers | vector · list · deque · set · map · unordered_map · stack · queue · priority_queue · pair
+@topic 📚 Sequence Containers
+@code cpp
+#include <vector>
+#include <list>
+#include <deque>
+
+std::vector<int> v = {1, 2, 3};   v.push_back(4);
+std::list<int>   l = {1, 2, 3};   l.push_front(0);   // doubly linked list
+std::deque<int>  d = {1, 2, 3};   d.push_front(0); d.push_back(4);
+@end
+@topic 🗂️ Associative Containers
+@code cpp
+#include <map>
+#include <set>
+#include <unordered_map>
+
+std::map<std::string, int> marks;           // sorted by key
+marks["Asha"] = 91;
+marks["Ravi"] = 78;
+for (const auto& [name, score] : marks)     // structured binding (C++17)
+    std::cout << name << ": " << score << '\n';
+
+std::set<int> unique = {5, 1, 5, 3};        // {1, 3, 5}: sorted, no duplicates
+std::unordered_map<std::string, int> stock{{"pen", 20}};   // hash table: fast, unordered
+if (stock.count("pen")) std::cout << stock["pen"] << '\n';
+@end
+@topic 🥞 Container Adapters and pair
+@code cpp
+#include <stack>
+#include <queue>
+
+std::stack<int> st;  st.push(1); st.push(2);  std::cout << st.top();   // 2 (LIFO)
+std::queue<int> q;   q.push(1);  q.push(2);   std::cout << q.front();  // 1 (FIFO)
+std::priority_queue<int> pq;  pq.push(3); pq.push(9); pq.push(1);
+std::cout << pq.top();   // 9: largest first
+
+std::pair<std::string, int> p = {"Naveen", 21};
+std::cout << p.first << ' ' << p.second;
+@end
+@topic ⏱️ Choosing a Container
+@table
+Container | Access | Insert / erase | Use when
+`vector` | O(1) by index | O(1) at end, O(n) in middle | Default choice
+`deque` | O(1) by index | O(1) at both ends | Queue with random access
+`list` | O(n) | O(1) at a known position | Many middle insertions
+`set` / `map` | O(log n) | O(log n) | Sorted unique keys
+`unordered_set` / `unordered_map` | O(1) average | O(1) average | Fast lookup, order not needed
+`stack` / `queue` | Top / front only | O(1) | LIFO / FIFO
+`priority_queue` | Top O(1) | O(log n) | Always need the largest (or smallest)
+@end
+@practice
+1. Count word frequencies in a sentence with `std::map`.
+2. Remove duplicates from a list of numbers using `std::set`.
+3. Check balanced brackets `({[]})` with `std::stack`.
+4. Simulate a ticket counter queue with `std::queue`.
+5. Find the 3 largest numbers using `std::priority_queue`.
+@interview The STL provides sequence containers (vector, deque, list), associative containers (set, map and their unordered hash versions) and adapters (stack, queue, priority_queue); choose by access pattern and complexity.
+
+@module m16 | 🔍 | 16 · STL Algorithms | Module 16 — Iterators & Algorithms | Iterators · sort · find · count · accumulate · binary_search · erase-remove
+@topic 🧭 Iterators
+Iterators are like pointers into a container. `begin()` points to the first element and `end()` points **one past** the last.
+@code cpp
+std::vector<int> v = {4, 2, 5};
+for (auto it = v.begin(); it != v.end(); ++it)
+    std::cout << *it << ' ';
+@end
+@topic 🔍 Common Algorithms
+@code cpp
+#include <algorithm>
+#include <numeric>
+#include <vector>
+
+std::vector<int> v = {5, 2, 8, 2, 9, 1};
+
+std::sort(v.begin(), v.end());                          // 1 2 2 5 8 9
+std::sort(v.begin(), v.end(), std::greater<int>());     // 9 8 5 2 2 1
+auto it = std::find(v.begin(), v.end(), 8);             // iterator to 8, or end()
+int twos = std::count(v.begin(), v.end(), 2);           // 2
+int sum = std::accumulate(v.begin(), v.end(), 0);       // 27
+int big = *std::max_element(v.begin(), v.end());        // 9
+std::reverse(v.begin(), v.end());
+
+std::sort(v.begin(), v.end());
+bool has5 = std::binary_search(v.begin(), v.end(), 5);  // needs sorted data
+@end
+@table
+Algorithm | Header | Purpose
+`sort`, `stable_sort` | `<algorithm>` | Sort a range
+`find`, `find_if` | `<algorithm>` | Search
+`count`, `count_if` | `<algorithm>` | Count matches
+`min_element`, `max_element` | `<algorithm>` | Smallest / largest
+`reverse`, `unique`, `remove_if` | `<algorithm>` | Rearrange
+`binary_search`, `lower_bound` | `<algorithm>` | Search sorted ranges
+`accumulate` | `<numeric>` | Sum / fold
+@end
+@topic 🧹 Removing Elements
+@code cpp
+std::vector<int> v = {1, 2, 3, 2, 4};
+v.erase(std::remove(v.begin(), v.end(), 2), v.end());   // erase-remove idiom: {1, 3, 4}
+std::erase(v, 3);                                        // C++20 shortcut: {1, 4}
+@end
+@practice
+1. Sort a vector of student names alphabetically, then by length.
+2. Find the second largest number using STL algorithms.
+3. Count how many numbers are greater than 50 with `count_if`.
+4. Remove all negative numbers from a vector.
+5. Why must the data be sorted before `binary_search`?
+@interview STL algorithms such as sort, find, count, accumulate and binary_search work on iterator ranges [begin, end); combine them with lambdas, and use the erase-remove idiom or C++20 std::erase to delete elements.
+
+@module m17 | λ | 17 · Lambdas | Module 17 — Lambdas & std::function | Syntax · Captures · mutable · With algorithms · std::function
+@topic λ Lambda Syntax
+A lambda is an **inline, unnamed function** — perfect for short logic passed to algorithms.
+@code cpp
+auto add = [](int a, int b) { return a + b; };   // [capture](params) { body }
+std::cout << add(2, 3) << '\n';                   // 5
+
+auto square = [](int x) -> int { return x * x; }; // explicit return type
+@end
+@topic 🎯 Captures
+@code cpp
+int limit = 50, hits = 0;
+
+auto above  = [limit](int x) { return x > limit; };     // copy limit
+auto counter = [&hits](int) { ++hits; };                 // reference to hits
+auto all    = [=](int x) { return x + limit; };          // copy everything used
+auto every  = [&](int x) { hits += x; };                 // reference to everything used
+auto step   = [n = 0]() mutable { return ++n; };         // own state; mutable allows changes
+@end
+@table
+Capture | Meaning
+`[]` | Nothing
+`[x]` / `[&x]` | x by copy / by reference
+`[=]` / `[&]` | Everything used, by copy / by reference
+`[this]` | The current object's members
+`[n = 0]` | New variable owned by the lambda
+@end
+@topic 🔧 Lambdas with Algorithms
+@code cpp
+struct Student { std::string name; int marks; };
+std::vector<Student> list = {{"Asha", 91}, {"Ravi", 78}, {"Meena", 85}};
+
+std::sort(list.begin(), list.end(),
+          [](const Student& a, const Student& b) { return a.marks > b.marks; });
+
+int passed = std::count_if(list.begin(), list.end(),
+                           [](const Student& s) { return s.marks >= 80; });
+
+#include <functional>
+std::function<int(int, int)> op = [](int a, int b) { return a * b; };   // store any callable
+@end
+@practice
+1. Sort a vector of products by price, then by name, using lambdas.
+2. Use `count_if` with a lambda to count even numbers.
+3. Build a calculator that stores operations in a `std::map<char, std::function<double(double, double)>>`.
+4. Write a lambda that captures a counter by reference and counts calls.
+@interview A lambda is an inline anonymous function written [captures](params) { body }; captures copy or reference outside variables, and lambdas are commonly passed to STL algorithms or stored in std::function.
+
+@module m18 | 🚨 | 18 · Exceptions | Module 18 — Exception Handling | try · throw · catch · Standard exceptions · Custom exceptions · noexcept
+@topic 🚨 try, throw, catch
+@code cpp
+#include <iostream>
+#include <stdexcept>
+
+double divide(double a, double b) {
+    if (b == 0) throw std::invalid_argument("Division by zero");
+    return a / b;
+}
+
+int main() {
+    try {
+        std::cout << divide(10, 2) << '\n';   // 5
+        std::cout << divide(1, 0) << '\n';    // throws
+    } catch (const std::invalid_argument& e) {
+        std::cout << "Error: " << e.what() << '\n';
+    } catch (...) {                            // catch anything else
+        std::cout << "Unknown error\n";
+    }
+}
+@end
+@topic 🌳 Standard Exceptions
+@table
+Exception | Thrown when
+`std::invalid_argument` | A bad argument value
+`std::out_of_range` | Index out of range, e.g. `vector::at`
+`std::runtime_error` | Errors detected at run time
+`std::bad_alloc` | `new` cannot allocate memory
+`std::logic_error` | Bugs in program logic
+@end
+@topic 🧾 Custom Exceptions
+@code cpp
+class InsufficientFunds : public std::runtime_error {
+public:
+    explicit InsufficientFunds(double need)
+        : std::runtime_error("Insufficient funds, need " + std::to_string(need)) {}
+};
+
+void withdraw(double balance, double amount) {
+    if (amount > balance) throw InsufficientFunds(amount - balance);
+}
+@end
+@tip Throw by value, catch by **const reference**. Mark functions that never throw as `noexcept` (especially move constructors).
+@practice
+1. Read two numbers and handle division by zero with an exception.
+2. Access a vector with `at()` and catch `std::out_of_range`.
+3. Create an `InvalidAgeException` for ages outside 0–120.
+4. Explain why destructors should never throw.
+@interview Exceptions separate error handling from normal code: throw an object, catch it by const reference in a try/catch block, derive custom exceptions from std::exception types, and mark non-throwing functions noexcept.
+
+@module m19 | 📁 | 19 · Files | Module 19 — File Handling | ofstream · ifstream · fstream · Modes · Reading lines · Binary files
+@topic ✍️ Writing and Reading Text Files
+@code cpp
+#include <fstream>
+#include <iostream>
+#include <string>
+
+int main() {
+    std::ofstream out("students.txt");            // write (creates or overwrites)
+    out << "Asha 91\n" << "Ravi 78\n";
+    out.close();
+
+    std::ofstream log("students.txt", std::ios::app);   // append
+    log << "Meena 85\n";
+    log.close();
+
+    std::ifstream in("students.txt");             // read
+    if (!in) { std::cerr << "Cannot open file\n"; return 1; }
+    std::string name;
+    int marks;
+    while (in >> name >> marks)                   // word by word
+        std::cout << name << " scored " << marks << '\n';
+}
+@end
+@code cpp
+std::ifstream file("notes.txt");
+std::string line;
+while (std::getline(file, line))                  // line by line
+    std::cout << line << '\n';
+@end
+@topic 🗝️ Open Modes
+@table
+Mode | Meaning
+`std::ios::in` | Read (default for ifstream)
+`std::ios::out` | Write (default for ofstream, truncates)
+`std::ios::app` | Append to the end
+`std::ios::trunc` | Erase existing content
+`std::ios::binary` | Binary mode
+@end
+@topic 💾 Binary Files
+@code cpp
+struct Record { int id; double score; };
+
+Record r{1, 95.5}, loaded{};
+std::ofstream bout("data.bin", std::ios::binary);
+bout.write(reinterpret_cast<const char*>(&r), sizeof(r));
+bout.close();
+
+std::ifstream bin("data.bin", std::ios::binary);
+bin.read(reinterpret_cast<char*>(&loaded), sizeof(loaded));
+@end
+@info File streams close automatically when they go out of scope (RAII), so `close()` is optional.
+@practice
+1. Count the lines, words and characters in a text file.
+2. Save a list of contacts to a file and load them back into a vector.
+3. Append a timestamped log entry every time a program runs.
+4. **Mini project:** Student record system with add, list, search and delete stored in a file.
+@interview File I/O uses ofstream (write), ifstream (read) and fstream (both) with modes such as app and binary; streams read with >> or getline and close automatically when destroyed.
+
+@module m20 | 🧠 | 20 · Smart Pointers | Module 20 — Smart Pointers & RAII | RAII · unique_ptr · shared_ptr · weak_ptr · make_unique
+@topic 🧠 RAII
+**Resource Acquisition Is Initialization:** an object acquires a resource in its constructor and releases it in its destructor. Because destructors always run when objects go out of scope, resources are never leaked — even when exceptions happen. `std::vector`, `std::string`, file streams and smart pointers all use RAII.
+@topic 🔑 unique_ptr: Single Owner
+@code cpp
+#include <memory>
+
+auto p = std::make_unique<Student>("Asha", 20);   // owns the Student
+p->show();
+// auto q = p;                  // error: can't copy a unique owner
+auto q = std::move(p);         // transfer ownership; p is now empty
+// memory is freed automatically when q goes out of scope
+@end
+@topic 🤝 shared_ptr and weak_ptr
+@code cpp
+auto a = std::make_shared<int>(42);
+auto b = a;                               // both own it
+std::cout << a.use_count() << '\n';       // 2
+// freed when the last shared_ptr is destroyed
+
+std::weak_ptr<int> w = a;                 // observes without owning
+if (auto s = w.lock()) std::cout << *s;   // use only if still alive
+@end
+@table
+Smart pointer | Ownership | Use for
+`std::unique_ptr` | Exactly one owner, movable | The default choice
+`std::shared_ptr` | Shared, reference counted | Several owners of one object
+`std::weak_ptr` | None: observes a shared_ptr | Breaking reference cycles, caches
+@end
+@warn Two `shared_ptr`s pointing at each other never get freed (a cycle). Make one of them a `weak_ptr`.
+@practice
+1. Rewrite code that uses `new`/`delete` with `std::unique_ptr`.
+2. Store polymorphic shapes in a `std::vector<std::unique_ptr<Shape>>`.
+3. Print `use_count()` as shared_ptr copies are created and destroyed.
+4. Create a parent–child cycle with shared_ptr, then fix it with weak_ptr.
+@interview RAII ties resource lifetime to object lifetime; unique_ptr gives single ownership, shared_ptr shared reference-counted ownership, and weak_ptr a non-owning observer used to break cycles — create them with make_unique and make_shared.
+
+@module m21 | 🚀 | 21 · Modern C++ | Module 21 — Move Semantics & Modern C++ | lvalues & rvalues · std::move · auto · Structured bindings · optional · string_view · enum class
+@topic 🚚 Move Semantics
+Moving **transfers** resources (like a vector's buffer) instead of copying them, which makes large objects cheap to return and pass around.
+@code cpp
+std::vector<int> big(1'000'000, 7);
+std::vector<int> a = big;              // copy: duplicates a million ints
+std::vector<int> b = std::move(big);   // move: steals the buffer; big is now empty but valid
+
+class Buffer {
+    std::unique_ptr<int[]> data;
+    size_t size = 0;
+public:
+    Buffer() = default;
+    explicit Buffer(size_t n) : data(std::make_unique<int[]>(n)), size(n) {}
+    Buffer(Buffer&& other) noexcept                  // move constructor
+        : data(std::move(other.data)), size(other.size) { other.size = 0; }
+    Buffer& operator=(Buffer&& other) noexcept {     // move assignment
+        data = std::move(other.data);
+        size = other.size;
+        other.size = 0;
+        return *this;
+    }
+};
+@end
+@info An **lvalue** has a name and an address (`x`); an **rvalue** is a temporary (`x + 1`, a function's return value). `std::move` just casts to an rvalue so the move constructor can be used.
+@topic ✨ Everyday Modern C++
+@code cpp
+#include <optional>
+#include <string_view>
+#include <map>
+
+auto total = 0.0;                                   // type deduction
+for (const auto& [key, value] : std::map<std::string, int>{{"a", 1}})   // structured bindings
+    std::cout << key << value;
+
+std::optional<int> findIndex(const std::vector<int>& v, int x) {        // maybe a value
+    for (size_t i = 0; i < v.size(); ++i) if (v[i] == x) return static_cast<int>(i);
+    return std::nullopt;
+}
+
+void greet(std::string_view name) { std::cout << "Hi " << name; }   // cheap read-only string view
+
+enum class Color { Red, Green, Blue };              // scoped, no implicit int conversion
+Color c = Color::Green;
+
+constexpr int cube(int x) { return x * x * x; }    // evaluated at compile time when possible
+static_assert(cube(3) == 27);
+@end
+@table
+Feature | Standard | Replaces
+`auto`, range-for, `nullptr`, lambdas, smart pointers, move | C++11 | Verbose types, raw loops, NULL, raw new/delete
+`make_unique`, generic lambdas | C++14 | `new` for unique_ptr
+Structured bindings, `optional`, `variant`, `string_view`, `if constexpr` | C++17 | pairs of .first/.second, sentinel values
+Concepts, ranges, `std::format`, `<=>` spaceship operator, modules | C++20 | Unreadable template errors, printf
+`std::print`, `std::expected` | C++23 | cout chains, error codes
+@end
+@practice
+1. Add a move constructor to a class and print when copies vs moves happen.
+2. Return a `std::optional` from a search function and handle the empty case.
+3. Replace an unscoped enum with `enum class`.
+4. Loop over a map with structured bindings.
+5. Why should move constructors be marked `noexcept`?
+@interview Move semantics transfer resources from temporaries instead of copying them; modern C++ adds auto, range-for, smart pointers, structured bindings, optional, string_view, enum class, constexpr and concepts for safer, faster code.
+
+@module m22 | 🧵 | 22 · Multithreading | Module 22 — Multithreading & Concurrency | std::thread · join · mutex · lock_guard · async · future · Data races
+@topic 🧵 Starting Threads
+@code cpp
+#include <iostream>
+#include <thread>
+
+void task(int id) {
+    std::cout << "Task " << id << " running\n";
+}
+
+int main() {
+    std::thread t1(task, 1);
+    std::thread t2(task, 2);
+    t1.join();                 // wait for t1 to finish
+    t2.join();
+}
+@end
+@code bash
+g++ -std=c++20 -pthread threads.cpp -o threads   # -pthread on Linux
+@end
+@topic 🔒 Protecting Shared Data
+@code cpp
+#include <mutex>
+#include <thread>
+#include <vector>
+
+int counter = 0;
+std::mutex m;
+
+void add() {
+    for (int i = 0; i < 100000; ++i) {
+        std::lock_guard<std::mutex> lock(m);   // locks now, unlocks automatically
+        ++counter;
+    }
+}
+
+int main() {
+    std::vector<std::thread> threads;
+    for (int i = 0; i < 4; ++i) threads.emplace_back(add);
+    for (auto& t : threads) t.join();
+    std::cout << counter << '\n';               // always 400000
+}
+@end
+@warn Without the mutex, `++counter` from several threads is a **data race** — undefined behaviour and a wrong total.
+@topic 🔮 async and future
+@code cpp
+#include <future>
+
+int slowSquare(int x) { return x * x; }
+
+auto result = std::async(std::launch::async, slowSquare, 12);   // runs in the background
+// ... do other work ...
+std::cout << result.get() << '\n';                                 // 144: waits if needed
+@end
+@table
+Tool | Purpose
+`std::thread` | Run a function in parallel
+`join()` / `detach()` | Wait for / let go of a thread
+`std::mutex` + `std::lock_guard` | Protect shared data
+`std::atomic<int>` | Lock-free counters and flags
+`std::async` / `std::future` | Run a task and collect its result later
+`std::condition_variable` | Make threads wait for a signal
+@end
+@practice
+1. Sum a large vector in 4 threads, each summing one quarter.
+2. Show a data race on a shared counter, then fix it with a mutex and again with `std::atomic`.
+3. Download (simulate) three files in parallel with `std::async`.
+4. What is a deadlock and how can you avoid it?
+@interview std::thread runs work in parallel and must be joined; shared data needs a mutex (via lock_guard) or atomics to avoid data races, and std::async/std::future return results from background tasks.
+
+@module m23 | 🏗️ | 23 · Build | Module 23 — Namespaces, Headers & Building Projects | Namespaces · Header/source split · Include guards · Multiple files · CMake
+@topic 🏷️ Namespaces
+@code cpp
+namespace school {
+    int count = 0;
+    void enrol() { ++count; }
+}
+
+namespace school::exams {        // nested namespace (C++17)
+    void schedule() {}
+}
+
+int main() {
+    school::enrol();
+    school::exams::schedule();
+    using school::count;          // bring one name in
+}
+@end
+@topic 📄 Splitting Code into Files
+@code cpp
+// student.h — the declaration
+#pragma once                      // include guard
+#include <string>
+
+class Student {
+    std::string name;
+public:
+    explicit Student(std::string n);
+    void show() const;
+};
+@end
+@code cpp
+// student.cpp — the definitions
+#include "student.h"
+#include <iostream>
+
+Student::Student(std::string n) : name(std::move(n)) {}
+void Student::show() const { std::cout << name << '\n'; }
+@end
+@code cpp
+// main.cpp
+#include "student.h"
+int main() { Student s("Naveen"); s.show(); }
+@end
+@code bash
+g++ -std=c++20 -Wall main.cpp student.cpp -o app
+@end
+@topic 🔧 CMake Basics
+@code bash
+# CMakeLists.txt
+cmake_minimum_required(VERSION 3.20)
+project(StudentApp CXX)
+set(CMAKE_CXX_STANDARD 20)
+add_executable(app main.cpp student.cpp)
+
+# Build commands
+cmake -S . -B build
+cmake --build build
+@end
+@tip Never put `using namespace std;` in a header file — every file that includes it inherits the name clashes.
+@practice
+1. Split a `BankAccount` class into `.h` and `.cpp` files and compile them together.
+2. Put your utility functions inside a namespace.
+3. Write a CMakeLists.txt for a three-file project and build it.
+4. What problem do include guards (`#pragma once`) solve?
+@interview Namespaces prevent name clashes; classes are declared in headers (with include guards) and defined in .cpp files that are compiled and linked together, usually with a build system such as CMake.
+
+@module m24 | 🏆 | 24 · Projects | Module 24 — Projects & Interview Preparation | Project ideas · Starter project · Top interview questions
+@topic 🏆 Projects to Build
+@table
+Project | You practise
+Bank management system | Classes, encapsulation, vectors, files, exceptions
+Library management system | Inheritance, polymorphism, maps, search
+Student result system | Structs/classes, sorting with lambdas, file storage
+Inventory with unordered_map | STL containers, algorithms, menus
+Tic-tac-toe / Snake (console) | 2D arrays, game loop, input handling
+Matrix class | Operator overloading, templates
+Multithreaded file downloader (simulated) | threads, async, mutex
+@end
+@topic 🚀 Starter: Student Manager
+@code cpp
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
+
+struct Student {
+    int id;
+    std::string name;
+    double marks;
+};
+
+class StudentManager {
+    std::vector<Student> students;
+public:
+    void add(const Student& s) { students.push_back(s); }
+
+    void list() const {
+        for (const auto& s : students)
+            std::cout << s.id << '\t' << s.name << '\t' << s.marks << '\n';
+    }
+
+    const Student* topper() const {
+        if (students.empty()) return nullptr;
+        return &*std::max_element(students.begin(), students.end(),
+            [](const Student& a, const Student& b) { return a.marks < b.marks; });
+    }
+
+    void save(const std::string& path) const {
+        std::ofstream out(path);
+        for (const auto& s : students) out << s.id << ' ' << s.name << ' ' << s.marks << '\n';
+    }
+};
+
+int main() {
+    StudentManager m;
+    m.add({1, "Asha", 91.5});
+    m.add({2, "Ravi", 78});
+    m.add({3, "Meena", 85});
+    m.list();
+    if (const Student* t = m.topper()) std::cout << "Topper: " << t->name << '\n';
+    m.save("students.txt");
+}
+@end
+@topic 🎤 Top Interview Questions
+@table
+Question | Short answer
+Difference between struct and class? | Only default access: struct is public, class is private
+What is a virtual function? | A function resolved at run time through a base pointer or reference
+Why a virtual destructor? | So deleting a derived object through a base pointer runs the derived destructor
+Pointer vs reference? | Pointers can be null and re-pointed; references cannot
+What is RAII? | Resources are released in destructors, so they are freed automatically
+unique_ptr vs shared_ptr? | Single owner vs reference-counted shared ownership
+What is the Rule of Five? | Destructor, copy/move constructors and copy/move assignment go together
+vector vs list? | vector: contiguous, fast index access; list: fast middle insert, no index
+What does std::move do? | Casts to an rvalue so resources can be moved instead of copied
+What is a template? | Code written once and generated for each type used
+@end
+@practice
+1. Extend the Student Manager with search by name, delete by id and loading from the file.
+2. Build the bank management system with custom exceptions for invalid operations.
+3. Build the library system with a `Book` base class and `EBook`/`PrintedBook` derived classes.
+4. Practise 20 array/string problems on LeetCode or HackerRank using the STL.
+@interview An end-to-end C++ project combines classes and inheritance, STL containers and algorithms, smart pointers, exceptions and file I/O, organised into headers and source files and built with a tool like CMake.

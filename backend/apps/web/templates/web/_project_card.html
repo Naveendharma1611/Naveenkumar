@@ -1,0 +1,7 @@
+<a class="card card-link" href="/projects/{{ p.slug }}/">
+  {% if p.cover_image %}<img src="{{ p.cover_image.url }}" alt="" class="cover" loading="lazy">{% endif %}
+  <span class="badge">{{ p.get_category_display }}</span>
+  <h3>{{ p.title }}</h3>
+  <p class="muted">{{ p.summary }}</p>
+  <div class="chips">{% for t in p.technologies.all %}<span class="chip">{{ t.name }}</span>{% endfor %}</div>
+</a>

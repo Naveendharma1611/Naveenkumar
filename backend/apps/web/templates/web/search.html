@@ -1,0 +1,13 @@
+{% extends "web/base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<section class="wrap section narrow">
+  <h1>Search</h1>
+  <form class="filters"><input name="q" value="{{ q }}" placeholder="Search projects, lessons, blog, interview questions" autofocus><button class="btn">Search</button></form>
+  {% for label, items in results %}
+    <h2>{{ label }}</h2>
+    {% for title, text, url in items %}<a class="card card-link" href="{{ url }}"><strong>{{ title }}</strong>{% if text %}<p class="muted">{{ text|truncatechars:160 }}</p>{% endif %}</a>{% endfor %}
+  {% empty %}{% if q %}<p class="muted">No results for “{{ q }}”.</p>{% else %}<p class="muted">Type at least 2 characters.</p>{% endif %}
+  {% endfor %}
+</section>
+{% endblock %}

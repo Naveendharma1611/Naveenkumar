@@ -1,0 +1,2105 @@
+@page 🗃️ SQL Zero to Hero
+@intro SQL from zero to hero, in order — databases, tables, queries, joins, subqueries, window functions, transactions, design and performance. Every query runs on one practice database and shows its real result.
+
+@module m1 | 🧭 | 1 · Intro | Module 1 — Databases & SQL | What is a database · DBMS · Tables, rows & keys · SQL vs NoSQL · Command types · Setup
+@topic 🗄️ What is a Database?
+A **database** is an organised collection of data that can be searched, updated and managed easily. A **DBMS** (Database Management System) is the software that stores the data and answers your requests — MySQL, PostgreSQL, SQL Server, Oracle and SQLite are all DBMSs.
+A **relational** database (RDBMS) stores data in **tables** that are linked to each other through keys.
+@table
+Term | Meaning | Example
+Table | Data about one kind of thing, in rows and columns | `employees`
+Row (record) | One item in the table | One employee
+Column (field) | One property that every row has | `salary`
+Primary key | A column that uniquely identifies each row | `emp_id`
+Foreign key | A column that points to a row in another table | `employees.dept_id` → `departments.dept_id`
+@end
+@topic 🔤 What is SQL?
+SQL (**Structured Query Language**, said "S-Q-L" or "sequel") is the standard language for relational databases. It is **declarative**: you describe *what* data you want and the database works out *how* to get it.
+SQL was created at IBM in the 1970s and standardised by ANSI/ISO in 1986. Every major database speaks SQL, with small differences called **dialects**.
+@topic ⚖️ SQL vs NoSQL
+@table
+SQL (relational) | NoSQL
+Tables with a fixed schema | Documents, key-value pairs, graphs, wide columns
+Relationships through keys and JOINs | Related data is often embedded or duplicated
+Strong consistency (ACID transactions) | Often flexible and easy to scale out
+MySQL, PostgreSQL, SQL Server, Oracle, SQLite | MongoDB, Redis, Cassandra, Neo4j
+Banking, orders, HR, most web applications | Caching, huge-scale feeds, flexible documents
+@end
+@topic 🗂️ Types of SQL Commands
+@table
+Category | Purpose | Commands
+DDL — Data Definition Language | Create and change the structure | `CREATE`, `ALTER`, `DROP`, `TRUNCATE`
+DML — Data Manipulation Language | Change the data | `INSERT`, `UPDATE`, `DELETE`
+DQL — Data Query Language | Read the data | `SELECT`
+DCL — Data Control Language | Permissions | `GRANT`, `REVOKE`
+TCL — Transaction Control Language | Save or undo groups of changes | `COMMIT`, `ROLLBACK`, `SAVEPOINT`
+@end
+@topic 🛠️ Set Up Your Practice Environment
+- **Easiest:** an online playground such as DB Fiddle (db-fiddle.com) or SQLite Online — nothing to install
+- **MySQL:** MySQL Community Server with MySQL Workbench
+- **PostgreSQL:** PostgreSQL with pgAdmin or DBeaver
+- **SQLite:** a single-file database, built into Python (`import sqlite3`); use DB Browser for SQLite to explore it
+@info The examples use standard SQL that runs on **PostgreSQL and MySQL 8** (and nearly all of it on SQLite). Where databases differ, a table shows each dialect.
+@code sql
+-- Your first query. It works on every database.
+SELECT 'Hello, SQL!' AS greeting;
+@end
+@result
+greeting
+Hello, SQL!
+@end
+@practice
+1. Install MySQL or PostgreSQL (or open an online playground) and run the first query.
+2. Name the table, rows, columns and primary key of a table that stores students.
+3. Classify these commands as DDL, DML, DQL, DCL or TCL: `SELECT`, `CREATE`, `GRANT`, `DELETE`, `COMMIT`.
+4. Give one application that suits SQL and one that suits NoSQL.
+@interview SQL is the standard declarative language for relational databases, which store data in related tables; its commands are grouped into DDL, DML, DQL, DCL and TCL.
+
+@module m2 | 🔢 | 2 · Data Types | Module 2 — Data Types | Numbers · Text · Dates · Boolean · Auto-increment IDs
+@topic 🔢 Numeric Types
+@table
+Type | Stores | Example
+`INT` / `INTEGER` | Whole numbers (about ±2.1 billion) | `age INT`
+`SMALLINT` / `BIGINT` | Smaller / much larger whole numbers | `views BIGINT`
+`DECIMAL(p, s)` / `NUMERIC(p, s)` | Exact decimals: p digits in total, s after the point | `price DECIMAL(10, 2)` holds up to 99999999.99
+`FLOAT` / `REAL` / `DOUBLE PRECISION` | Approximate decimals | `temperature FLOAT`
+@end
+@warn Use `DECIMAL` for money, never `FLOAT`. Floating-point numbers can't store values such as 0.1 exactly, so totals drift.
+@topic 🔤 Text Types
+@table
+Type | Stores | Example
+`CHAR(n)` | Exactly n characters (padded with spaces) | `country_code CHAR(2)`
+`VARCHAR(n)` | Up to n characters | `name VARCHAR(100)`
+`TEXT` | Long text | `description TEXT`
+@end
+@topic 📅 Date and Time Types
+@table
+Type | Stores | Example value
+`DATE` | A calendar date | `'2024-03-15'`
+`TIME` | A time of day | `'14:30:00'`
+`TIMESTAMP` / `DATETIME` | Date and time | `'2024-03-15 14:30:00'`
+@end
+@info Write dates as `'YYYY-MM-DD'`. Every database understands this ISO format, and it sorts correctly.
+@topic ✅ Other Useful Types
+@table
+Type | Stores
+`BOOLEAN` | `TRUE` / `FALSE` (MySQL stores it as 0 / 1)
+`JSON` / `JSONB` | JSON documents (MySQL, PostgreSQL)
+`BLOB` / `BYTEA` | Binary data (files are usually better stored outside the database)
+`ENUM` | One value from a fixed list (MySQL)
+@end
+@topic 🔀 Auto-numbered IDs in Each Database
+@table
+Database | Auto-increment primary key
+MySQL | `id INT AUTO_INCREMENT PRIMARY KEY`
+PostgreSQL | `id SERIAL PRIMARY KEY` or `id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY`
+SQL Server | `id INT IDENTITY(1,1) PRIMARY KEY`
+SQLite | `id INTEGER PRIMARY KEY AUTOINCREMENT`
+Oracle | `id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY`
+@end
+@tip Choose the smallest type that safely fits the data: `VARCHAR(100)` for names, `DECIMAL(10, 2)` for prices and `DATE` for birthdays — never store dates as text.
+@practice
+1. Choose data types for a student table: roll number, name, date of birth, percentage and an active flag.
+2. Why is `DECIMAL(10, 2)` better than `FLOAT` for prices?
+3. What is the largest value `DECIMAL(5, 2)` can hold?
+4. What is the difference between `CHAR(10)` and `VARCHAR(10)`?
+@interview Common types are INT/BIGINT, DECIMAL for exact numbers, VARCHAR/TEXT for strings, DATE/TIMESTAMP for time and BOOLEAN; DECIMAL is used for money and proper date types for dates.
+
+@module m3 | 🏗️ | 3 · Create Tables | Module 3 — Creating & Changing Tables (DDL) | CREATE DATABASE · CREATE TABLE · ALTER TABLE · DROP · TRUNCATE
+@topic 🏗️ Create a Database
+@code sql
+CREATE DATABASE college;     -- MySQL, PostgreSQL, SQL Server
+USE college;                 -- MySQL and SQL Server: switch to it
+-- PostgreSQL (psql): \c college
+-- SQLite: the database is simply a file, e.g.  sqlite3 college.db
+@end
+@topic 📋 Create a Table
+@code sql
+CREATE TABLE students (
+    student_id  INT PRIMARY KEY,
+    name        VARCHAR(100) NOT NULL,
+    email       VARCHAR(150) UNIQUE,
+    birth_date  DATE,
+    city        VARCHAR(50) DEFAULT 'Chennai',
+    percentage  DECIMAL(5, 2)
+);
+@end
+Each line defines one column: its **name**, its **data type**, and optional **constraints** such as `NOT NULL` or `DEFAULT` (explained in Module 4).
+@topic 🔧 Change a Table with ALTER
+@code sql
+ALTER TABLE students ADD phone VARCHAR(15);             -- add a column
+ALTER TABLE students DROP COLUMN phone;                 -- remove a column
+ALTER TABLE students RENAME COLUMN city TO home_city;   -- rename a column
+ALTER TABLE students RENAME TO learners;                -- rename the table
+
+-- Change a column's type:
+--   MySQL:       ALTER TABLE learners MODIFY name VARCHAR(150);
+--   PostgreSQL:  ALTER TABLE learners ALTER COLUMN name TYPE VARCHAR(150);
+@end
+@topic 🗑️ DELETE vs TRUNCATE vs DROP
+@code sql
+DELETE FROM learners WHERE home_city = 'Madurai';   -- removes chosen rows
+TRUNCATE TABLE learners;                            -- removes ALL rows, keeps the table
+DROP TABLE learners;                                -- removes the table itself
+DROP TABLE IF EXISTS learners;                      -- no error if it doesn't exist
+@end
+@table
+Command | Removes | WHERE allowed? | Table kept? | Notes
+`DELETE` | Chosen rows | Yes | Yes | Row by row; can be rolled back
+`TRUNCATE` | Every row | No | Yes | Very fast; resets auto-increment
+`DROP` | The whole table | No | No | Structure and data are gone
+@end
+@warn `DROP` and `TRUNCATE` usually cannot be undone (MySQL commits them immediately). Double-check before running them on real data.
+@practice
+1. Create a `courses` table with course_id, title, duration_weeks and fee.
+2. Add a `level` column to it, then rename `fee` to `price`.
+3. Explain the difference between DELETE, TRUNCATE and DROP.
+4. Write a statement that drops a table only if it exists.
+@interview DDL defines structure: CREATE builds databases and tables, ALTER changes columns, DROP removes objects, and TRUNCATE quickly empties a table while keeping its structure.
+
+@module m4 | 🔐 | 4 · Constraints | Module 4 — Constraints & Keys | PRIMARY KEY · FOREIGN KEY · UNIQUE · NOT NULL · CHECK · DEFAULT · Composite keys
+@topic 🔐 Why Constraints?
+Constraints are **rules the database enforces** so bad data can never get in: no duplicate IDs, no missing names, no orders for customers who don't exist.
+@table
+Constraint | Rule
+`NOT NULL` | The column must have a value
+`UNIQUE` | No two rows may have the same value
+`PRIMARY KEY` | NOT NULL + UNIQUE; identifies each row (one per table)
+`FOREIGN KEY` | The value must exist in the referenced table
+`CHECK` | The value must satisfy a condition
+`DEFAULT` | The value used when none is given
+@end
+@topic 🔗 Primary and Foreign Keys
+@code sql
+CREATE TABLE authors (
+    author_id  INT PRIMARY KEY,
+    name       VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE books (
+    book_id    INT PRIMARY KEY,
+    title      VARCHAR(200) NOT NULL,
+    price      DECIMAL(8, 2) CHECK (price >= 0),
+    status     VARCHAR(20) DEFAULT 'available',
+    author_id  INT,
+    FOREIGN KEY (author_id) REFERENCES authors(author_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+@end
+`books.author_id` now points at `authors.author_id`. Inserting a book with `author_id = 99` fails when author 99 doesn't exist — the database protects the relationship.
+@table
+ON DELETE option | When the parent row is deleted…
+`NO ACTION` / `RESTRICT` (default) | The delete is refused while child rows exist
+`CASCADE` | The child rows are deleted too
+`SET NULL` | The child's foreign key becomes NULL
+`SET DEFAULT` | The child's foreign key gets its default value
+@end
+@topic 🧱 Composite Keys and Named Constraints
+@code sql
+CREATE TABLE enrollments (
+    student_id  INT,
+    course_id   INT,
+    enrolled_on DATE,
+    PRIMARY KEY (student_id, course_id),     -- the PAIR must be unique
+    CONSTRAINT fk_enroll_student FOREIGN KEY (student_id) REFERENCES students(student_id),
+    CONSTRAINT fk_enroll_course  FOREIGN KEY (course_id)  REFERENCES courses(course_id)
+);
+
+ALTER TABLE books ADD CONSTRAINT uq_book_title UNIQUE (title);   -- add one later
+@end
+@info A **natural key** comes from real data (email, PAN number). A **surrogate key** is an artificial ID. Most tables use a surrogate primary key plus UNIQUE constraints on the natural keys.
+@tip SQLite checks foreign keys only after `PRAGMA foreign_keys = ON;`.
+@practice
+1. Create `authors` and `books`, then try to insert a book whose author doesn't exist. What happens?
+2. Add a CHECK so a book's price can't be negative, and a DEFAULT status.
+3. Create an enrollments table with a composite primary key.
+4. What is the difference between PRIMARY KEY and UNIQUE?
+5. When would you use ON DELETE CASCADE, and when SET NULL?
+@interview Constraints enforce data integrity: PRIMARY KEY uniquely identifies rows, FOREIGN KEY keeps references between tables valid, and UNIQUE, NOT NULL, CHECK and DEFAULT protect individual columns.
+
+@module m5 | ✏️ | 5 · Insert/Update | Module 5 — INSERT, UPDATE, DELETE & the Practice Database | INSERT · Multi-row insert · UPDATE · DELETE · INSERT…SELECT · Practice data
+@topic ➕ INSERT
+@code sql
+INSERT INTO authors (author_id, name) VALUES (1, 'R. K. Narayan');
+
+INSERT INTO authors (author_id, name) VALUES      -- several rows at once
+    (2, 'Kalki'),
+    (3, 'Chetan Bhagat');
+
+INSERT INTO books (book_id, title, price, author_id)
+VALUES (10, 'Malgudi Days', 250.00, 1);          -- status gets its DEFAULT
+@end
+@tip Always list the column names. The statement keeps working even if someone later adds or reorders columns.
+@topic ✏️ UPDATE
+@code sql
+UPDATE books
+SET price = 275.00, status = 'bestseller'
+WHERE book_id = 10;
+
+UPDATE books SET price = price * 1.10;   -- no WHERE: 10% increase for EVERY book
+@end
+@warn An UPDATE or DELETE **without WHERE changes every row**. Run the same WHERE with a SELECT first to see which rows will be affected.
+@topic 🗑️ DELETE and INSERT … SELECT
+@code sql
+DELETE FROM books WHERE status = 'discontinued';
+
+-- Copy the result of a query into another table
+CREATE TABLE books_archive (book_id INT, title VARCHAR(200), price DECIMAL(8, 2));
+INSERT INTO books_archive (book_id, title, price)
+SELECT book_id, title, price FROM books WHERE price > 500;
+@end
+@topic 🧪 The Practice Database (run this before Module 6)
+Every example from Module 6 onwards uses this small company-and-shop database. Run the whole script in MySQL, PostgreSQL or SQLite. Run it again whenever you want to reset the data.
+@code sql
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS employees;
+DROP TABLE IF EXISTS departments;
+
+CREATE TABLE departments (
+    dept_id    INT PRIMARY KEY,
+    dept_name  VARCHAR(50) NOT NULL,
+    location   VARCHAR(50)
+);
+
+CREATE TABLE employees (
+    emp_id      INT PRIMARY KEY,
+    name        VARCHAR(50) NOT NULL,
+    email       VARCHAR(100) UNIQUE,
+    dept_id     INT,
+    salary      DECIMAL(10, 2),
+    hire_date   DATE,
+    manager_id  INT,
+    FOREIGN KEY (dept_id) REFERENCES departments(dept_id),
+    FOREIGN KEY (manager_id) REFERENCES employees(emp_id)
+);
+
+CREATE TABLE customers (
+    customer_id  INT PRIMARY KEY,
+    name         VARCHAR(50) NOT NULL,
+    city         VARCHAR(50),
+    signup_date  DATE
+);
+
+CREATE TABLE products (
+    product_id  INT PRIMARY KEY,
+    name        VARCHAR(50) NOT NULL,
+    category    VARCHAR(30),
+    price       DECIMAL(10, 2)
+);
+
+CREATE TABLE orders (
+    order_id     INT PRIMARY KEY,
+    customer_id  INT,
+    order_date   DATE,
+    status       VARCHAR(20),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+
+CREATE TABLE order_items (
+    order_id    INT,
+    product_id  INT,
+    quantity    INT,
+    PRIMARY KEY (order_id, product_id),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+INSERT INTO departments VALUES
+    (1, 'Engineering', 'Chennai'),
+    (2, 'Sales',       'Bengaluru'),
+    (3, 'HR',          'Chennai'),
+    (4, 'Marketing',   'Mumbai');
+
+INSERT INTO employees VALUES
+    (1, 'Arun',    'arun@company.com',    1,    95000, '2019-04-01', NULL),
+    (2, 'Priya',   'priya@company.com',   1,    72000, '2020-07-15', 1),
+    (3, 'Karthik', 'karthik@company.com', 1,    68000, '2021-01-10', 1),
+    (4, 'Divya',   'divya@company.com',   2,    60000, '2020-03-20', NULL),
+    (5, 'Rahul',   'rahul@company.com',   2,    45000, '2022-06-01', 4),
+    (6, 'Sneha',   'sneha@company.com',   3,    50000, '2021-09-12', NULL),
+    (7, 'Vijay',   'vijay@company.com',   2,    62000, '2023-02-01', 4),
+    (8, 'Meena',   'meena@company.com',   NULL, 40000, '2024-01-15', NULL);
+
+INSERT INTO customers VALUES
+    (1, 'Anitha', 'Chennai',    '2023-01-05'),
+    (2, 'Bala',   'Madurai',    '2023-02-11'),
+    (3, 'Charu',  'Coimbatore', '2023-03-20'),
+    (4, 'Deepak', 'Chennai',    '2023-05-02'),
+    (5, 'Esther', 'Bengaluru',  '2023-06-18');
+
+INSERT INTO products VALUES
+    (1, 'Laptop',   'Electronics', 55000),
+    (2, 'Mouse',    'Electronics', 800),
+    (3, 'Desk',     'Furniture',   7000),
+    (4, 'Chair',    'Furniture',   4500),
+    (5, 'Notebook', 'Stationery',  60);
+
+INSERT INTO orders VALUES
+    (101, 1, '2024-01-10', 'Delivered'),
+    (102, 2, '2024-01-15', 'Delivered'),
+    (103, 1, '2024-02-02', 'Shipped'),
+    (104, 3, '2024-02-20', 'Cancelled'),
+    (105, 4, '2024-03-05', 'Delivered'),
+    (106, 2, '2024-03-18', 'Pending');
+
+INSERT INTO order_items VALUES
+    (101, 1, 1), (101, 2, 2),
+    (102, 3, 1), (102, 4, 2),
+    (103, 5, 10),
+    (104, 2, 1),
+    (105, 1, 1), (105, 4, 1),
+    (106, 5, 5);
+@end
+@table
+Table | Rows | Links to
+departments | 4 | —
+employees | 8 | `dept_id` → departments, `manager_id` → employees (its own table)
+customers | 5 | —
+products | 5 | —
+orders | 6 | `customer_id` → customers
+order_items | 9 | `order_id` → orders, `product_id` → products
+@end
+@info Notice the special cases — they make later examples interesting: **Meena** has no department, **Marketing** has no employees, **Esther** has never ordered, and order **104** was cancelled.
+@code sql
+SELECT * FROM employees;
+@end
+@result
+emp_id | name | email | dept_id | salary | hire_date | manager_id
+1 | Arun | arun@company.com | 1 | 95000 | 2019-04-01 | NULL
+2 | Priya | priya@company.com | 1 | 72000 | 2020-07-15 | 1
+3 | Karthik | karthik@company.com | 1 | 68000 | 2021-01-10 | 1
+4 | Divya | divya@company.com | 2 | 60000 | 2020-03-20 | NULL
+5 | Rahul | rahul@company.com | 2 | 45000 | 2022-06-01 | 4
+6 | Sneha | sneha@company.com | 3 | 50000 | 2021-09-12 | NULL
+7 | Vijay | vijay@company.com | 2 | 62000 | 2023-02-01 | 4
+8 | Meena | meena@company.com | NULL | 40000 | 2024-01-15 | NULL
+@end
+@info MySQL and PostgreSQL display DECIMAL values with their decimals (95000.00); SQLite shows 95000. The values are the same.
+@practice
+1. Run the practice database script and check that each table has the number of rows listed above.
+2. Insert a new product "Pen" (id 6, Stationery, price 20).
+3. Increase the price of every Furniture product by 5%, checking the rows with SELECT first.
+4. Delete the product you added.
+5. Why is running UPDATE without WHERE dangerous?
+@interview DML changes data: INSERT adds rows (one or many, or from a SELECT), UPDATE changes columns of rows matched by WHERE, and DELETE removes matching rows — always check the WHERE clause first.
+
+@module m6 | 🔍 | 6 · SELECT | Module 6 — SELECT Basics | Columns · * · Aliases · Calculated columns · DISTINCT · LIMIT
+@topic 🔍 Reading Data with SELECT
+`SELECT` lists the columns you want; `FROM` names the table.
+@code sql
+SELECT name, salary FROM employees;
+@end
+@result
+name | salary
+Arun | 95000
+Priya | 72000
+Karthik | 68000
+Divya | 60000
+Rahul | 45000
+Sneha | 50000
+Vijay | 62000
+Meena | 40000
+@end
+@tip `SELECT *` returns every column. It is handy for exploring, but in real applications list only the columns you need — it's faster and doesn't break when columns change.
+@topic 🏷️ Aliases and Calculated Columns
+`AS` gives a column a new name in the result. You can also calculate new columns from existing ones.
+@code sql
+SELECT name AS employee,
+       salary,
+       salary * 12   AS annual_salary,
+       salary * 0.10 AS bonus
+FROM employees;
+@end
+@result
+employee | salary | annual_salary | bonus
+Arun | 95000 | 1140000 | 9500.00
+Priya | 72000 | 864000 | 7200.00
+Karthik | 68000 | 816000 | 6800.00
+Divya | 60000 | 720000 | 6000.00
+Rahul | 45000 | 540000 | 4500.00
+Sneha | 50000 | 600000 | 5000.00
+Vijay | 62000 | 744000 | 6200.00
+Meena | 40000 | 480000 | 4000.00
+@end
+@topic 🧹 Removing Duplicates with DISTINCT
+@code sql
+SELECT DISTINCT location FROM departments;
+@end
+@result
+location
+Chennai
+Bengaluru
+Mumbai
+@end
+@code sql
+SELECT DISTINCT dept_id FROM employees;
+@end
+@result
+dept_id
+1
+2
+3
+NULL
+@end
+@info NULL counts as one distinct value, so Meena's missing department appears once as NULL.
+@topic ✂️ Limiting the Number of Rows
+@table
+Database | First 3 rows
+MySQL, PostgreSQL, SQLite | `SELECT … LIMIT 3`
+SQL Server | `SELECT TOP 3 …`
+Oracle, standard SQL | `SELECT … FETCH FIRST 3 ROWS ONLY`
+@end
+@warn Without `ORDER BY` the database may return rows in **any order**, so "the first 3" is not guaranteed. Module 8 shows how to sort first.
+@practice
+1. Show every product's name and price.
+2. Show each product with its price including 18% GST, named `price_with_gst`.
+3. List the distinct product categories.
+4. List the distinct cities of customers.
+5. Why should production code avoid `SELECT *`?
+@interview SELECT chooses columns (or * for all) FROM a table; AS renames result columns, expressions create calculated columns, DISTINCT removes duplicate rows, and LIMIT/TOP/FETCH restrict how many rows come back.
+
+@module m7 | 🎯 | 7 · WHERE | Module 7 — Filtering with WHERE | Comparison · AND/OR/NOT · BETWEEN · IN · LIKE · IS NULL
+@topic 🎯 WHERE and Comparison Operators
+`WHERE` keeps only the rows for which the condition is true.
+@code sql
+SELECT name, salary FROM employees WHERE salary > 60000;
+@end
+@result
+name | salary
+Arun | 95000
+Priya | 72000
+Karthik | 68000
+Vijay | 62000
+@end
+@table
+Operator | Meaning | Example
+`=` | Equal | `dept_id = 2`
+`<>` or `!=` | Not equal | `status <> 'Cancelled'`
+`>` `<` `>=` `<=` | Greater / less than | `salary >= 50000`
+@end
+Text and dates go in **single quotes**:
+@code sql
+SELECT name, hire_date FROM employees WHERE hire_date >= '2021-01-01';
+@end
+@result
+name | hire_date
+Karthik | 2021-01-10
+Rahul | 2022-06-01
+Sneha | 2021-09-12
+Vijay | 2023-02-01
+Meena | 2024-01-15
+@end
+@topic 🔗 Combining Conditions: AND, OR, NOT
+@code sql
+SELECT name, dept_id, salary FROM employees
+WHERE dept_id = 1 AND salary > 70000;
+@end
+@result
+name | dept_id | salary
+Arun | 1 | 95000
+Priya | 1 | 72000
+@end
+@code sql
+SELECT name, dept_id, salary FROM employees
+WHERE dept_id = 3 OR salary < 46000;
+@end
+@result
+name | dept_id | salary
+Rahul | 2 | 45000
+Sneha | 3 | 50000
+Meena | NULL | 40000
+@end
+@warn `AND` is evaluated before `OR`. Use parentheses to say exactly what you mean.
+@code sql
+SELECT name, dept_id, salary FROM employees
+WHERE (dept_id = 1 OR dept_id = 2) AND salary > 60000;
+@end
+@result
+name | dept_id | salary
+Arun | 1 | 95000
+Priya | 1 | 72000
+Karthik | 1 | 68000
+Vijay | 2 | 62000
+@end
+@topic 📏 Ranges and Lists: BETWEEN and IN
+`BETWEEN a AND b` includes both ends. `IN (…)` is a short way to write several `=` conditions joined by OR.
+@code sql
+SELECT name, salary FROM employees WHERE salary BETWEEN 50000 AND 70000;
+@end
+@result
+name | salary
+Karthik | 68000
+Divya | 60000
+Sneha | 50000
+Vijay | 62000
+@end
+@code sql
+SELECT name, dept_id FROM employees WHERE dept_id IN (1, 3);
+@end
+@result
+name | dept_id
+Arun | 1
+Priya | 1
+Karthik | 1
+Sneha | 3
+@end
+@topic 🔤 Pattern Matching with LIKE
+@table
+Pattern | Matches
+`'P%'` | Starts with P (`%` = any number of characters)
+`'%a'` | Ends with a
+`'%an%'` | Contains "an"
+`'_a%'` | Second letter is a (`_` = exactly one character)
+`'____'` | Exactly four characters
+@end
+@code sql
+SELECT name FROM employees WHERE name LIKE '%a';
+@end
+@result
+name
+Priya
+Divya
+Sneha
+Meena
+@end
+@code sql
+SELECT name FROM employees WHERE name LIKE '_a%';
+@end
+@result
+name
+Karthik
+Rahul
+@end
+@info LIKE ignores letter case in MySQL and SQLite, but is case-sensitive in PostgreSQL — use `ILIKE` there for case-insensitive matching.
+@topic ❓ Working with NULL
+NULL means **unknown or missing** — it is not zero and not empty text. Any comparison with NULL (even `NULL = NULL`) is unknown, never true, so rows with NULL are not matched by `=` or `<>`.
+@code sql
+SELECT name FROM employees WHERE dept_id IS NULL;
+@end
+@result
+name
+Meena
+@end
+@code sql
+SELECT name FROM employees WHERE manager_id IS NOT NULL;
+@end
+@result
+name
+Priya
+Karthik
+Rahul
+Vijay
+@end
+@warn `WHERE dept_id = NULL` returns **no rows**. Always use `IS NULL` or `IS NOT NULL`.
+@practice
+1. Find products that cost more than 5000.
+2. Find employees hired in 2021 (use BETWEEN with dates).
+3. Find customers from Chennai or Madurai using IN.
+4. Find employees whose email contains "ar".
+5. Find orders that are not Delivered.
+6. Find employees who have no manager.
+@interview WHERE filters rows using comparisons, AND/OR/NOT (AND binds tighter, so use parentheses), BETWEEN for inclusive ranges, IN for lists, LIKE with % and _ for patterns, and IS NULL for missing values.
+
+@module m8 | 🔃 | 8 · ORDER BY | Module 8 — Sorting & Pagination | ORDER BY · ASC/DESC · Multiple columns · NULL order · LIMIT/OFFSET · Top-N
+@topic 🔃 Sorting with ORDER BY
+`ORDER BY` sorts the result. `ASC` (ascending) is the default; `DESC` sorts from high to low.
+@code sql
+SELECT name, salary FROM employees ORDER BY salary DESC;
+@end
+@result
+name | salary
+Arun | 95000
+Priya | 72000
+Karthik | 68000
+Vijay | 62000
+Divya | 60000
+Sneha | 50000
+Rahul | 45000
+Meena | 40000
+@end
+@topic 🔢 Sorting by Several Columns
+Rows are sorted by the first column; ties are broken by the next one.
+@code sql
+SELECT name, dept_id, salary FROM employees
+WHERE dept_id IS NOT NULL
+ORDER BY dept_id ASC, salary DESC;
+@end
+@result
+name | dept_id | salary
+Arun | 1 | 95000
+Priya | 1 | 72000
+Karthik | 1 | 68000
+Vijay | 2 | 62000
+Divya | 2 | 60000
+Rahul | 2 | 45000
+Sneha | 3 | 50000
+@end
+@table
+Database | Where NULLs go in ascending order
+MySQL, SQLite, SQL Server | First
+PostgreSQL, Oracle | Last
+Control it yourself | `ORDER BY dept_id NULLS FIRST` / `NULLS LAST` (PostgreSQL, Oracle, SQLite)
+@end
+@topic 🏆 Top-N and Pagination
+@code sql
+SELECT name, salary FROM employees
+ORDER BY salary DESC
+LIMIT 3;
+@end
+@result
+name | salary
+Arun | 95000
+Priya | 72000
+Karthik | 68000
+@end
+@code sql
+-- Page 2 with 3 rows per page: skip 3, take 3
+SELECT name, salary FROM employees
+ORDER BY salary DESC
+LIMIT 3 OFFSET 3;
+@end
+@result
+name | salary
+Vijay | 62000
+Divya | 60000
+Sneha | 50000
+@end
+@info For page n with s rows per page: `LIMIT s OFFSET (n - 1) * s`. SQL Server and standard SQL write `OFFSET 3 ROWS FETCH NEXT 3 ROWS ONLY`.
+@tip You can sort by a column alias or an expression: `ORDER BY annual_salary DESC`, `ORDER BY LENGTH(name)`.
+@practice
+1. List products from the most to the least expensive.
+2. List customers alphabetically by city, then by name.
+3. Show the 2 most recently hired employees.
+4. Show the third page of employees sorted by name, 2 per page.
+5. Why can "the first 5 rows" be different each time without ORDER BY?
+@interview ORDER BY sorts results (ASC by default, DESC for descending) on one or more columns; combined with LIMIT/OFFSET it gives top-N queries and pagination, and without it row order is not guaranteed.
+
+@module m9 | 🧮 | 9 · Functions | Module 9 — Built-in Functions | String · Numeric · Date · NULL handling · CAST
+@topic 🔤 String Functions
+@table
+Function | Example | Result
+`UPPER(s)` / `LOWER(s)` | `UPPER('sql')` | SQL
+`LENGTH(s)` | `LENGTH('Priya')` | 5 (SQL Server: `LEN`)
+`CONCAT(a, b, …)` | `CONCAT('Hi ', 'Arun')` | Hi Arun (also `'Hi ' \|\| 'Arun'` in PostgreSQL, SQLite, Oracle)
+`SUBSTRING(s, start, len)` | `SUBSTRING('Database', 1, 4)` | Data (SQLite: `SUBSTR`)
+`TRIM(s)` | `TRIM('  hi  ')` | hi
+`REPLACE(s, from, to)` | `REPLACE('2024-01-10', '-', '/')` | 2024/01/10
+@end
+@code sql
+SELECT name, UPPER(name) AS upper_name, LENGTH(name) AS letters
+FROM employees
+WHERE dept_id = 1;
+@end
+@result
+name | upper_name | letters
+Arun | ARUN | 4
+Priya | PRIYA | 5
+Karthik | KARTHIK | 7
+@end
+@topic 🔢 Numeric Functions
+@table
+Function | Example | Result
+`ROUND(x, d)` | `ROUND(78333.333, 2)` | 78333.33
+`CEIL(x)` / `FLOOR(x)` | `CEIL(4.2)`, `FLOOR(4.8)` | 5, 4
+`ABS(x)` | `ABS(-7)` | 7
+`MOD(a, b)` or `a % b` | `MOD(17, 5)` | 2
+`POWER(x, y)` | `POWER(2, 10)` | 1024
+@end
+@code sql
+SELECT name, salary, ROUND(salary / 12.0, 2) AS monthly
+FROM employees
+WHERE dept_id = 1;
+@end
+@result
+name | salary | monthly
+Arun | 95000 | 7916.67
+Priya | 72000 | 6000.00
+Karthik | 68000 | 5666.67
+@end
+@warn Dividing two integers gives an integer in many databases: `7 / 2` is 3. Write `7 / 2.0` (or CAST one side) to get 3.5.
+@topic 📅 Date Functions (they differ the most)
+@table
+Task | MySQL | PostgreSQL | SQL Server | SQLite
+Today | `CURRENT_DATE` | `CURRENT_DATE` | `CAST(GETDATE() AS DATE)` | `DATE('now')`
+Year of a date | `YEAR(d)` or `EXTRACT(YEAR FROM d)` | `EXTRACT(YEAR FROM d)` | `YEAR(d)` | `STRFTIME('%Y', d)`
+Add 30 days | `DATE_ADD(d, INTERVAL 30 DAY)` | `d + INTERVAL '30 days'` | `DATEADD(day, 30, d)` | `DATE(d, '+30 days')`
+Days between | `DATEDIFF(d2, d1)` | `d2 - d1` | `DATEDIFF(day, d1, d2)` | `JULIANDAY(d2) - JULIANDAY(d1)`
+Format | `DATE_FORMAT(d, '%d-%m-%Y')` | `TO_CHAR(d, 'DD-MM-YYYY')` | `FORMAT(d, 'dd-MM-yyyy')` | `STRFTIME('%d-%m-%Y', d)`
+@end
+@code sql
+-- MySQL and PostgreSQL
+SELECT name, hire_date, EXTRACT(YEAR FROM hire_date) AS hire_year
+FROM employees
+ORDER BY hire_date;
+@end
+@result
+name | hire_date | hire_year
+Arun | 2019-04-01 | 2019
+Divya | 2020-03-20 | 2020
+Priya | 2020-07-15 | 2020
+Karthik | 2021-01-10 | 2021
+Sneha | 2021-09-12 | 2021
+Rahul | 2022-06-01 | 2022
+Vijay | 2023-02-01 | 2023
+Meena | 2024-01-15 | 2024
+@end
+@topic ❓ NULL Handling and CAST
+`COALESCE(a, b, …)` returns the first value that isn't NULL. `NULLIF(a, b)` returns NULL when a equals b — useful to avoid dividing by zero: `total / NULLIF(count, 0)`.
+@code sql
+SELECT name, COALESCE(dept_id, 0) AS dept_id
+FROM employees
+WHERE emp_id IN (7, 8);
+@end
+@result
+name | dept_id
+Vijay | 2
+Meena | 0
+@end
+@info `CAST(value AS type)` converts types, for example `CAST('2024-01-10' AS DATE)`. MySQL uses `SIGNED` and `CHAR` as target types where others use `INT` and `VARCHAR`.
+@practice
+1. Show every customer's name in uppercase with its length.
+2. Show each product's price rounded up to the nearest 100 (hint: `CEIL(price / 100.0) * 100`).
+3. Show how many days ago each order was placed (use your database's date function).
+4. Show each employee's manager_id, with 0 when there is none.
+5. Build an email-style username from each customer's name in lowercase.
+@interview SQL has string functions (UPPER, LENGTH, CONCAT, SUBSTRING, TRIM, REPLACE), numeric functions (ROUND, CEIL, FLOOR, MOD), database-specific date functions, COALESCE/NULLIF for NULLs and CAST for type conversion.
+
+@module m10 | 📊 | 10 · GROUP BY | Module 10 — Aggregates, GROUP BY & HAVING | COUNT · SUM · AVG · MIN · MAX · GROUP BY · HAVING · Query order
+@topic 📊 Aggregate Functions
+Aggregate functions turn many rows into **one summary value**.
+@code sql
+SELECT COUNT(*)              AS employees,
+       SUM(salary)           AS total_salary,
+       ROUND(AVG(salary), 2) AS avg_salary,
+       MIN(salary)           AS lowest,
+       MAX(salary)           AS highest
+FROM employees;
+@end
+@result
+employees | total_salary | avg_salary | lowest | highest
+8 | 492000 | 61500.00 | 40000 | 95000
+@end
+@code sql
+SELECT COUNT(*)                AS all_rows,
+       COUNT(dept_id)          AS with_dept,
+       COUNT(DISTINCT dept_id) AS distinct_depts
+FROM employees;
+@end
+@result
+all_rows | with_dept | distinct_depts
+8 | 7 | 3
+@end
+@info `COUNT(*)` counts rows. `COUNT(column)` counts only non-NULL values. All aggregates except `COUNT(*)` ignore NULLs.
+@topic 🗂️ GROUP BY: One Summary per Group
+`GROUP BY` splits the rows into groups that share a value, then calculates the aggregates **for each group**.
+@code sql
+SELECT dept_id,
+       COUNT(*)              AS headcount,
+       ROUND(AVG(salary), 2) AS avg_salary,
+       MAX(salary)           AS top_salary
+FROM employees
+WHERE dept_id IS NOT NULL
+GROUP BY dept_id
+ORDER BY dept_id;
+@end
+@result
+dept_id | headcount | avg_salary | top_salary
+1 | 3 | 78333.33 | 95000
+2 | 3 | 55666.67 | 62000
+3 | 1 | 50000.00 | 50000
+@end
+@warn Every column in SELECT must either be inside an aggregate function or be listed in GROUP BY. `SELECT dept_id, name, COUNT(*) … GROUP BY dept_id` is an error — which name should it show?
+@code sql
+SELECT status, COUNT(*) AS orders
+FROM orders
+GROUP BY status
+ORDER BY orders DESC, status;
+@end
+@result
+status | orders
+Delivered | 3
+Cancelled | 1
+Pending | 1
+Shipped | 1
+@end
+@topic 🔎 HAVING: Filtering Groups
+`WHERE` filters rows **before** grouping; `HAVING` filters groups **after** grouping, so it can use aggregates.
+@code sql
+SELECT dept_id, COUNT(*) AS headcount
+FROM employees
+GROUP BY dept_id
+HAVING COUNT(*) > 1
+ORDER BY dept_id;
+@end
+@result
+dept_id | headcount
+1 | 3
+2 | 3
+@end
+@code sql
+SELECT dept_id, ROUND(AVG(salary), 2) AS avg_salary
+FROM employees
+WHERE hire_date >= '2020-01-01'      -- 1. keep employees hired from 2020
+GROUP BY dept_id                     -- 2. group them by department
+HAVING AVG(salary) > 55000           -- 3. keep departments averaging over 55000
+ORDER BY dept_id;
+@end
+@result
+dept_id | avg_salary
+1 | 70000.00
+2 | 55666.67
+@end
+@table
+WHERE | HAVING
+Filters individual rows | Filters groups
+Runs before GROUP BY | Runs after GROUP BY
+Cannot use aggregates | Usually uses aggregates
+@end
+@topic 🧭 The Logical Order of a Query
+You write `SELECT` first, but the database evaluates the clauses in this order:
+@table
+Step | Clause | What happens
+1 | `FROM` / `JOIN` | Choose and combine tables
+2 | `WHERE` | Filter rows
+3 | `GROUP BY` | Form groups
+4 | `HAVING` | Filter groups
+5 | `SELECT` | Compute columns and aliases
+6 | `DISTINCT` | Remove duplicate rows
+7 | `ORDER BY` | Sort
+8 | `LIMIT` / `OFFSET` | Cut the result
+@end
+@info This explains why a SELECT alias can't be used in WHERE (WHERE runs first) but can be used in ORDER BY.
+@practice
+1. Count the products in each category.
+2. Find the average, cheapest and most expensive product price.
+3. Count customers per city and show only cities with more than one customer.
+4. Find the total quantity sold per product_id in order_items.
+5. Find departments whose total salary is above 150000.
+@interview Aggregates (COUNT, SUM, AVG, MIN, MAX) summarise rows; GROUP BY produces one summary per group, WHERE filters rows before grouping and HAVING filters groups after — following the order FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY, LIMIT.
+
+@module m11 | 🔀 | 11 · CASE | Module 11 — CASE Expressions | Searched CASE · Simple CASE · Categories · Conditional aggregation · Custom sort
+@topic 🔀 CASE: IF-ELSE Inside a Query
+`CASE` checks conditions in order and returns the value of the first one that is true, or the `ELSE` value.
+@code sql
+SELECT name, salary,
+       CASE
+           WHEN salary >= 70000 THEN 'High'
+           WHEN salary >= 50000 THEN 'Medium'
+           ELSE 'Low'
+       END AS band
+FROM employees
+ORDER BY salary DESC;
+@end
+@result
+name | salary | band
+Arun | 95000 | High
+Priya | 72000 | High
+Karthik | 68000 | Medium
+Vijay | 62000 | Medium
+Divya | 60000 | Medium
+Sneha | 50000 | Medium
+Rahul | 45000 | Low
+Meena | 40000 | Low
+@end
+@topic 🎚️ Simple CASE
+When you compare one column with several values, the simple form is shorter.
+@code sql
+SELECT order_id, status,
+       CASE status
+           WHEN 'Delivered' THEN 'Done'
+           WHEN 'Cancelled' THEN 'Closed'
+           ELSE 'Open'
+       END AS stage
+FROM orders
+ORDER BY order_id;
+@end
+@result
+order_id | status | stage
+101 | Delivered | Done
+102 | Delivered | Done
+103 | Shipped | Open
+104 | Cancelled | Closed
+105 | Delivered | Done
+106 | Pending | Open
+@end
+@topic 📊 Conditional Aggregation (Pivoting)
+Putting CASE inside SUM or COUNT turns rows into columns.
+@code sql
+SELECT COUNT(*) AS total,
+       SUM(CASE WHEN status = 'Delivered' THEN 1 ELSE 0 END)            AS delivered,
+       SUM(CASE WHEN status = 'Cancelled' THEN 1 ELSE 0 END)            AS cancelled,
+       SUM(CASE WHEN status IN ('Shipped', 'Pending') THEN 1 ELSE 0 END) AS in_progress
+FROM orders;
+@end
+@result
+total | delivered | cancelled | in_progress
+6 | 3 | 1 | 2
+@end
+@topic ↕️ Custom Sort Order
+@code sql
+SELECT order_id, status
+FROM orders
+ORDER BY CASE status WHEN 'Pending' THEN 1 WHEN 'Shipped' THEN 2 ELSE 3 END,
+         order_id;
+@end
+@result
+order_id | status
+106 | Pending
+103 | Shipped
+101 | Delivered
+102 | Delivered
+104 | Cancelled
+105 | Delivered
+@end
+@practice
+1. Label products as "Budget" (under 1000), "Mid" (1000–10000) or "Premium".
+2. Count how many employees fall into each salary band from the first example.
+3. Show each employee with "Veteran" if hired before 2021, otherwise "New".
+4. Count delivered and not-delivered orders per customer in one query.
+@interview CASE adds conditional logic to SQL — searched CASE tests conditions in order, simple CASE compares one value — and it is used for labels, conditional aggregation (pivots) and custom sort orders.
+
+@module m12 | 🔗 | 12 · Joins | Module 12 — Joins | INNER · LEFT · RIGHT · FULL · CROSS · SELF · Joining many tables
+@topic 🔗 Why Joins?
+Well-designed databases split data into several tables. A **JOIN** combines rows from two tables using a related column — usually a foreign key matching a primary key.
+@table
+Join | Returns
+`INNER JOIN` | Only rows that match in both tables
+`LEFT JOIN` | Every row from the left table, plus matches (NULL when none)
+`RIGHT JOIN` | Every row from the right table, plus matches
+`FULL OUTER JOIN` | Every row from both tables
+`CROSS JOIN` | Every combination of rows
+Self join | A table joined to itself
+@end
+@topic 🟩 INNER JOIN
+@code sql
+SELECT e.name, d.dept_name
+FROM employees e
+INNER JOIN departments d ON e.dept_id = d.dept_id
+ORDER BY e.emp_id;
+@end
+@result
+name | dept_name
+Arun | Engineering
+Priya | Engineering
+Karthik | Engineering
+Divya | Sales
+Rahul | Sales
+Sneha | HR
+Vijay | Sales
+@end
+Meena (no department) and Marketing (no employees) are missing, because INNER JOIN keeps only matches. `e` and `d` are **table aliases** that keep the query short.
+@topic ⬅️ LEFT JOIN
+@code sql
+SELECT e.name, d.dept_name
+FROM employees e
+LEFT JOIN departments d ON e.dept_id = d.dept_id
+ORDER BY e.emp_id;
+@end
+@result
+name | dept_name
+Arun | Engineering
+Priya | Engineering
+Karthik | Engineering
+Divya | Sales
+Rahul | Sales
+Sneha | HR
+Vijay | Sales
+Meena | NULL
+@end
+A classic use: **find rows with no match** by keeping only the NULLs.
+@code sql
+SELECT c.name
+FROM customers c
+LEFT JOIN orders o ON o.customer_id = c.customer_id
+WHERE o.order_id IS NULL;
+@end
+@result
+name
+Esther
+@end
+@topic ➡️ RIGHT JOIN and FULL OUTER JOIN
+@code sql
+SELECT e.name, d.dept_name
+FROM employees e
+RIGHT JOIN departments d ON e.dept_id = d.dept_id
+ORDER BY d.dept_id, e.name;
+@end
+@result
+name | dept_name
+Arun | Engineering
+Karthik | Engineering
+Priya | Engineering
+Divya | Sales
+Rahul | Sales
+Vijay | Sales
+Sneha | HR
+NULL | Marketing
+@end
+@code sql
+SELECT e.name, d.dept_name
+FROM employees e
+FULL OUTER JOIN departments d ON e.dept_id = d.dept_id
+ORDER BY COALESCE(e.emp_id, 99);
+@end
+@result
+name | dept_name
+Arun | Engineering
+Priya | Engineering
+Karthik | Engineering
+Divya | Sales
+Rahul | Sales
+Sneha | HR
+Vijay | Sales
+Meena | NULL
+NULL | Marketing
+@end
+@info MySQL has no FULL OUTER JOIN. Combine a LEFT JOIN and a RIGHT JOIN with UNION instead: `SELECT … LEFT JOIN … UNION SELECT … RIGHT JOIN …`.
+@topic ✖️ CROSS JOIN
+Every customer paired with every product: 5 × 5 = 25 rows. Useful for generating combinations such as sizes × colours.
+@code sql
+SELECT COUNT(*) AS combinations
+FROM customers
+CROSS JOIN products;
+@end
+@result
+combinations
+25
+@end
+@topic 🪞 SELF JOIN
+Join a table to itself using two aliases — here, employees and their managers from the same table.
+@code sql
+SELECT e.name AS employee, m.name AS manager
+FROM employees e
+LEFT JOIN employees m ON e.manager_id = m.emp_id
+ORDER BY e.emp_id;
+@end
+@result
+employee | manager
+Arun | NULL
+Priya | Arun
+Karthik | Arun
+Divya | NULL
+Rahul | Divya
+Sneha | NULL
+Vijay | Divya
+Meena | NULL
+@end
+@topic 🧩 Joining Three or More Tables
+Chain joins one after another. Here: each order's customer and total value.
+@code sql
+SELECT o.order_id,
+       c.name AS customer,
+       SUM(oi.quantity * p.price) AS order_total
+FROM orders o
+JOIN customers c    ON c.customer_id = o.customer_id
+JOIN order_items oi ON oi.order_id = o.order_id
+JOIN products p     ON p.product_id = oi.product_id
+GROUP BY o.order_id, c.name
+ORDER BY o.order_id;
+@end
+@result
+order_id | customer | order_total
+101 | Anitha | 56600
+102 | Bala | 16000
+103 | Anitha | 600
+104 | Charu | 800
+105 | Deepak | 59500
+106 | Bala | 300
+@end
+@tip `JOIN` on its own means INNER JOIN. Put join conditions in `ON` and filters in `WHERE`.
+@practice
+1. List every order with the customer's name and city.
+2. List every department with its number of employees, including Marketing with 0 (LEFT JOIN + COUNT of a column).
+3. Find products that have never been ordered.
+4. Show each order line: order_id, product name, quantity and line total.
+5. List employees who work in the same department as Priya (self join or subquery).
+@interview Joins combine tables on related columns: INNER keeps matches, LEFT/RIGHT keep all rows of one side, FULL keeps both, CROSS makes every combination and a self join relates rows of the same table; LEFT JOIN with IS NULL finds unmatched rows.
+
+@module m13 | ➰ | 13 · Set Operations | Module 13 — Set Operations | UNION · UNION ALL · INTERSECT · EXCEPT
+@topic ➰ Stacking Results Vertically
+Set operations combine the **rows** of two queries. Both queries must return the same number of columns with compatible types; the column names come from the first query.
+@code sql
+SELECT city FROM customers
+UNION
+SELECT location FROM departments
+ORDER BY city;
+@end
+@result
+city
+Bengaluru
+Chennai
+Coimbatore
+Madurai
+Mumbai
+@end
+`UNION` removes duplicates. `UNION ALL` keeps them — and is faster because it doesn't have to check:
+@code sql
+SELECT COUNT(*) AS total_rows
+FROM (
+    SELECT city FROM customers
+    UNION ALL
+    SELECT location FROM departments
+) AS all_places;
+@end
+@result
+total_rows
+9
+@end
+@topic ⚖️ INTERSECT and EXCEPT
+@code sql
+-- Cities that have both customers and a department
+SELECT city FROM customers
+INTERSECT
+SELECT location FROM departments
+ORDER BY city;
+@end
+@result
+city
+Bengaluru
+Chennai
+@end
+@code sql
+-- Customer cities with no department
+SELECT city FROM customers
+EXCEPT
+SELECT location FROM departments
+ORDER BY city;
+@end
+@result
+city
+Coimbatore
+Madurai
+@end
+@info MySQL supports INTERSECT and EXCEPT from version 8.0.31. Oracle calls EXCEPT `MINUS`.
+@table
+Operation | Keeps
+`UNION` | Rows from either query, without duplicates
+`UNION ALL` | All rows from both queries, with duplicates
+`INTERSECT` | Rows present in both queries
+`EXCEPT` / `MINUS` | Rows in the first query but not in the second
+JOIN (for comparison) | Combines tables side by side, adding **columns**
+@end
+@practice
+1. List all names of customers and employees in one column, labelled `person`.
+2. Find cities that have customers but no departments, then departments but no customers.
+3. Why is UNION ALL faster than UNION?
+4. Emulate a FULL OUTER JOIN in MySQL using LEFT JOIN, RIGHT JOIN and UNION.
+@interview UNION combines rows without duplicates, UNION ALL keeps duplicates, INTERSECT keeps common rows and EXCEPT/MINUS keeps rows only in the first query; set operations stack rows while joins add columns.
+
+@module m14 | 🪆 | 14 · Subqueries | Module 14 — Subqueries | Scalar · IN · EXISTS · NOT IN & NULL · Correlated · Derived tables
+@topic 🪆 A Query Inside a Query
+A **subquery** is a SELECT nested inside another statement. A **scalar** subquery returns a single value.
+@code sql
+SELECT name, salary
+FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees)   -- 61500
+ORDER BY salary DESC;
+@end
+@result
+name | salary
+Arun | 95000
+Priya | 72000
+Karthik | 68000
+Vijay | 62000
+@end
+@topic 📋 Subqueries with IN
+@code sql
+-- Employees in departments located in Chennai
+SELECT name
+FROM employees
+WHERE dept_id IN (SELECT dept_id FROM departments WHERE location = 'Chennai')
+ORDER BY name;
+@end
+@result
+name
+Arun
+Karthik
+Priya
+Sneha
+@end
+@topic ✅ EXISTS and NOT EXISTS
+`EXISTS` is true when the subquery returns at least one row.
+@code sql
+SELECT name
+FROM customers c
+WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id)
+ORDER BY name;
+@end
+@result
+name
+Anitha
+Bala
+Charu
+Deepak
+@end
+@topic ⚠️ The NOT IN and NULL Trap
+Which departments have no employees? This looks right but returns **nothing**:
+@code sql
+SELECT dept_name
+FROM departments
+WHERE dept_id NOT IN (SELECT dept_id FROM employees);
+@end
+@result
+dept_name
+@end
+Meena's `dept_id` is NULL, so every `NOT IN` check becomes "unknown". Use NOT EXISTS (or filter out NULLs) instead:
+@code sql
+SELECT dept_name
+FROM departments d
+WHERE NOT EXISTS (SELECT 1 FROM employees e WHERE e.dept_id = d.dept_id);
+@end
+@result
+dept_name
+Marketing
+@end
+@topic 🔁 Correlated Subqueries
+A correlated subquery refers to the outer row, so it runs **once per outer row**. Here: employees who earn more than their own department's average.
+@code sql
+SELECT e.name, e.dept_id, e.salary
+FROM employees e
+WHERE e.salary > (
+    SELECT AVG(e2.salary)
+    FROM employees e2
+    WHERE e2.dept_id = e.dept_id
+)
+ORDER BY e.emp_id;
+@end
+@result
+name | dept_id | salary
+Arun | 1 | 95000
+Divya | 2 | 60000
+Vijay | 2 | 62000
+@end
+@topic 🧱 Subqueries in FROM (Derived Tables)
+@code sql
+SELECT dept_id, avg_salary
+FROM (
+    SELECT dept_id, ROUND(AVG(salary), 2) AS avg_salary
+    FROM employees
+    WHERE dept_id IS NOT NULL
+    GROUP BY dept_id
+) AS dept_avg
+WHERE avg_salary > 52000
+ORDER BY dept_id;
+@end
+@result
+dept_id | avg_salary
+1 | 78333.33
+2 | 55666.67
+@end
+@topic 🎯 ANY and ALL
+`salary > ALL (subquery)` means "greater than every value", which is the same as greater than the maximum.
+@code sql
+-- Same as: WHERE salary > ALL (SELECT salary FROM employees WHERE dept_id = 2)
+SELECT name, salary
+FROM employees
+WHERE salary > (SELECT MAX(salary) FROM employees WHERE dept_id = 2)
+ORDER BY salary DESC;
+@end
+@result
+name | salary
+Arun | 95000
+Priya | 72000
+Karthik | 68000
+@end
+@info `> ANY (…)` means "greater than at least one value" — the same as greater than the minimum. SQLite doesn't support ANY/ALL, but MySQL and PostgreSQL do.
+@practice
+1. Find products priced above the average product price.
+2. Find customers who have placed a Delivered order (use IN, then rewrite with EXISTS).
+3. Find the most recently hired employee using a subquery.
+4. Find customers whose total spending is above the average order total.
+5. Explain why NOT IN can return no rows.
+@interview Subqueries nest queries: scalar subqueries return one value, IN/EXISTS test membership (NOT EXISTS is NULL-safe unlike NOT IN), correlated subqueries run per outer row, and derived tables act as temporary tables in FROM.
+
+@module m15 | 🧬 | 15 · CTEs | Module 15 — Common Table Expressions & Recursion | WITH · Multiple CTEs · Recursive CTEs · Hierarchies
+@topic 🧬 WITH: Named Temporary Results
+A **CTE** (Common Table Expression) gives a subquery a name at the top of the query. It reads top to bottom like steps, which makes complex queries much clearer.
+@code sql
+WITH dept_totals AS (
+    SELECT dept_id, SUM(salary) AS total
+    FROM employees
+    WHERE dept_id IS NOT NULL
+    GROUP BY dept_id
+)
+SELECT d.dept_name, t.total
+FROM dept_totals t
+JOIN departments d ON d.dept_id = t.dept_id
+ORDER BY t.total DESC;
+@end
+@result
+dept_name | total
+Engineering | 235000
+Sales | 167000
+HR | 50000
+@end
+@topic 🪜 Several CTEs, Step by Step
+Each CTE can use the ones before it. Step 1: the value of each non-cancelled order. Step 2: revenue per customer.
+@code sql
+WITH order_totals AS (
+    SELECT o.order_id, o.customer_id, SUM(oi.quantity * p.price) AS total
+    FROM orders o
+    JOIN order_items oi ON oi.order_id = o.order_id
+    JOIN products p     ON p.product_id = oi.product_id
+    WHERE o.status <> 'Cancelled'
+    GROUP BY o.order_id, o.customer_id
+),
+customer_revenue AS (
+    SELECT customer_id, COUNT(*) AS orders, SUM(total) AS revenue
+    FROM order_totals
+    GROUP BY customer_id
+)
+SELECT c.name, r.orders, r.revenue
+FROM customer_revenue r
+JOIN customers c ON c.customer_id = r.customer_id
+ORDER BY r.revenue DESC;
+@end
+@result
+name | orders | revenue
+Deepak | 1 | 59500
+Anitha | 2 | 57200
+Bala | 2 | 16300
+@end
+@topic 🔁 Recursive CTEs
+A recursive CTE has an **anchor** (the starting rows) and a **recursive part** that keeps adding rows until nothing new is produced.
+@code sql
+WITH RECURSIVE numbers AS (
+    SELECT 1 AS n                       -- anchor
+    UNION ALL
+    SELECT n + 1 FROM numbers WHERE n < 5   -- recursive part
+)
+SELECT n FROM numbers;
+@end
+@result
+n
+1
+2
+3
+4
+5
+@end
+Recursive CTEs shine for **hierarchies** such as organisation charts, category trees and folders:
+@code sql
+WITH RECURSIVE org AS (
+    SELECT emp_id, name, manager_id, 1 AS level
+    FROM employees
+    WHERE manager_id IS NULL                    -- top-level people
+    UNION ALL
+    SELECT e.emp_id, e.name, e.manager_id, org.level + 1
+    FROM employees e
+    JOIN org ON e.manager_id = org.emp_id       -- their reports, and so on
+)
+SELECT name, level FROM org ORDER BY level, name;
+@end
+@result
+name | level
+Arun | 1
+Divya | 1
+Meena | 1
+Sneha | 1
+Karthik | 2
+Priya | 2
+Rahul | 2
+Vijay | 2
+@end
+@info SQL Server writes `WITH` without the word `RECURSIVE`. Always include a stopping condition, or the query runs until it hits a limit.
+@practice
+1. Rewrite the derived-table example from Module 14 as a CTE.
+2. Use two CTEs to find the best-selling product category by revenue.
+3. Generate the dates of the first 7 days of 2024 with a recursive CTE.
+4. For a given employee, list their chain of managers up to the top.
+@interview A CTE (WITH) names a subquery so complex queries read as steps; several CTEs can build on each other, and recursive CTEs with an anchor and a recursive part walk hierarchies and generate series.
+
+@module m16 | 🪟 | 16 · Window Functions | Module 16 — Window Functions | OVER · PARTITION BY · ROW_NUMBER · RANK · DENSE_RANK · Running totals · LAG/LEAD · NTILE
+@topic 🪟 Aggregates Without Losing Rows
+GROUP BY collapses rows into one per group. A **window function** calculates across a set of related rows but **keeps every row**. The `OVER (…)` clause defines the window: `PARTITION BY` splits it into groups and `ORDER BY` orders rows inside it.
+@code sql
+SELECT name, dept_id, salary,
+       ROUND(AVG(salary) OVER (PARTITION BY dept_id), 2) AS dept_avg
+FROM employees
+WHERE dept_id IS NOT NULL
+ORDER BY dept_id, salary DESC;
+@end
+@result
+name | dept_id | salary | dept_avg
+Arun | 1 | 95000 | 78333.33
+Priya | 1 | 72000 | 78333.33
+Karthik | 1 | 68000 | 78333.33
+Vijay | 2 | 62000 | 55666.67
+Divya | 2 | 60000 | 55666.67
+Rahul | 2 | 45000 | 55666.67
+Sneha | 3 | 50000 | 50000.00
+@end
+@topic 🏅 Ranking: ROW_NUMBER vs RANK vs DENSE_RANK
+They differ only when there are **ties**. For marks of 95, 90, 90 and 85:
+@table
+Marks | ROW_NUMBER() | RANK() | DENSE_RANK()
+95 | 1 | 1 | 1
+90 | 2 | 2 | 2
+90 | 3 | 2 | 2
+85 | 4 | 4 | 3
+@end
+@code sql
+SELECT name, salary,
+       RANK() OVER (ORDER BY salary DESC) AS salary_rank
+FROM employees
+ORDER BY salary_rank;
+@end
+@result
+name | salary | salary_rank
+Arun | 95000 | 1
+Priya | 72000 | 2
+Karthik | 68000 | 3
+Vijay | 62000 | 4
+Divya | 60000 | 5
+Sneha | 50000 | 6
+Rahul | 45000 | 7
+Meena | 40000 | 8
+@end
+@topic 🥇 Top-N per Group
+Number the rows inside each department, then keep number 1 — the highest-paid person in each department.
+@code sql
+WITH ranked AS (
+    SELECT name, dept_id, salary,
+           ROW_NUMBER() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rn
+    FROM employees
+    WHERE dept_id IS NOT NULL
+)
+SELECT dept_id, name, salary
+FROM ranked
+WHERE rn = 1
+ORDER BY dept_id;
+@end
+@result
+dept_id | name | salary
+1 | Arun | 95000
+2 | Vijay | 62000
+3 | Sneha | 50000
+@end
+@topic 📈 Running Totals
+With `ORDER BY` inside `OVER`, `SUM` adds up the rows so far.
+@code sql
+WITH order_totals AS (
+    SELECT o.order_id, o.order_date, SUM(oi.quantity * p.price) AS total
+    FROM orders o
+    JOIN order_items oi ON oi.order_id = o.order_id
+    JOIN products p     ON p.product_id = oi.product_id
+    WHERE o.status <> 'Cancelled'
+    GROUP BY o.order_id, o.order_date
+)
+SELECT order_id, order_date, total,
+       SUM(total) OVER (ORDER BY order_date) AS running_total
+FROM order_totals
+ORDER BY order_date;
+@end
+@result
+order_id | order_date | total | running_total
+101 | 2024-01-10 | 56600 | 56600
+102 | 2024-01-15 | 16000 | 72600
+103 | 2024-02-02 | 600 | 73200
+105 | 2024-03-05 | 59500 | 132700
+106 | 2024-03-18 | 300 | 133000
+@end
+@topic ⏮️ LAG and LEAD: Previous and Next Rows
+@code sql
+SELECT order_id, order_date,
+       LAG(order_date)  OVER (ORDER BY order_date) AS previous_order,
+       LEAD(order_date) OVER (ORDER BY order_date) AS next_order
+FROM orders
+ORDER BY order_date;
+@end
+@result
+order_id | order_date | previous_order | next_order
+101 | 2024-01-10 | NULL | 2024-01-15
+102 | 2024-01-15 | 2024-01-10 | 2024-02-02
+103 | 2024-02-02 | 2024-01-15 | 2024-02-20
+104 | 2024-02-20 | 2024-02-02 | 2024-03-05
+105 | 2024-03-05 | 2024-02-20 | 2024-03-18
+106 | 2024-03-18 | 2024-03-05 | NULL
+@end
+@topic 🧮 NTILE: Splitting into Buckets
+@code sql
+SELECT name, salary,
+       NTILE(2) OVER (ORDER BY salary DESC) AS half
+FROM employees
+ORDER BY salary DESC;
+@end
+@result
+name | salary | half
+Arun | 95000 | 1
+Priya | 72000 | 1
+Karthik | 68000 | 1
+Vijay | 62000 | 1
+Divya | 60000 | 2
+Sneha | 50000 | 2
+Rahul | 45000 | 2
+Meena | 40000 | 2
+@end
+@table
+Function | Returns
+`ROW_NUMBER()` | 1, 2, 3… with no ties
+`RANK()` | Rank with gaps after ties
+`DENSE_RANK()` | Rank without gaps
+`NTILE(n)` | Bucket number from 1 to n
+`LAG(col, n)` / `LEAD(col, n)` | The value n rows before / after
+`FIRST_VALUE(col)` / `LAST_VALUE(col)` | First / last value in the window
+`SUM` `AVG` `COUNT` `MIN` `MAX` with `OVER` | Group totals or running totals, keeping every row
+@end
+@info Window functions work in MySQL 8+, PostgreSQL, SQL Server, Oracle and SQLite 3.25+.
+@practice
+1. Show each product with its price and the average price of its category.
+2. Rank customers by total spending with DENSE_RANK.
+3. Find the 2 highest-paid employees in each department.
+4. Show each employee's salary and the difference from the next higher salary (LAG).
+5. Calculate a running count of orders by date.
+@interview Window functions calculate across related rows with OVER (PARTITION BY … ORDER BY …) without collapsing them; they give rankings (ROW_NUMBER, RANK, DENSE_RANK), running totals, LAG/LEAD comparisons and top-N per group.
+
+@module m17 | 👁️ | 17 · Views | Module 17 — Views | CREATE VIEW · Querying views · Updatable views · Materialized views
+@topic 👁️ What is a View?
+A **view** is a saved query that behaves like a virtual table. It stores no data itself — each time you query it, the database runs the underlying query.
+@code sql
+CREATE VIEW employee_directory AS
+SELECT e.emp_id, e.name, e.email, d.dept_name
+FROM employees e
+LEFT JOIN departments d ON d.dept_id = e.dept_id;
+
+SELECT name, dept_name
+FROM employee_directory
+WHERE dept_name = 'Sales'
+ORDER BY name;
+@end
+@result
+name | dept_name
+Divya | Sales
+Rahul | Sales
+Vijay | Sales
+@end
+@code sql
+CREATE OR REPLACE VIEW employee_directory AS ...;   -- change it (MySQL, PostgreSQL)
+DROP VIEW employee_directory;                         -- remove it
+@end
+@topic ✅ Why Use Views?
+@table
+Benefit | Example
+Simplicity | Hide a complicated join behind a simple name
+Security | Give users access to a view without salary columns, not the whole table
+Consistency | Everyone calculates "active customers" the same way
+Stable interface | Change the tables underneath without breaking reports
+@end
+@info Simple views on one table (no GROUP BY, DISTINCT or aggregates) are usually **updatable**: INSERT, UPDATE and DELETE on the view change the real table.
+@topic 💾 Materialized Views (PostgreSQL, Oracle)
+A materialized view **stores** the result, so reading it is fast — but it must be refreshed to see new data.
+@code sql
+CREATE MATERIALIZED VIEW monthly_sales AS
+SELECT DATE_TRUNC('month', order_date) AS month, COUNT(*) AS orders
+FROM orders
+GROUP BY 1;
+
+REFRESH MATERIALIZED VIEW monthly_sales;
+@end
+@practice
+1. Create a view `order_summary` with order_id, customer name, status and order total.
+2. Query the view for Delivered orders only.
+3. Create a view that hides employee salaries and emails.
+4. When would a materialized view be better than a normal view?
+@interview A view is a stored query used like a virtual table for simplicity, security and consistency; normal views run on every use, while materialized views store results and must be refreshed.
+
+@module m18 | ⚡ | 18 · Indexes | Module 18 — Indexes & Query Performance | What an index is · CREATE INDEX · Composite indexes · EXPLAIN · Writing fast queries
+@topic ⚡ What is an Index?
+An **index** is like the index at the back of a book: instead of reading every page (a **full table scan**), the database jumps straight to the matching rows. Most indexes are **B-trees**, kept sorted so lookups take about log(n) steps.
+@table
+Indexes make faster | Indexes make slower / cost
+`WHERE`, `JOIN`, `ORDER BY`, `GROUP BY` on indexed columns | `INSERT`, `UPDATE`, `DELETE` (the index must be updated too)
+Finding a few rows among millions | Extra disk space
+@end
+@topic 🛠️ Creating Indexes
+@code sql
+CREATE INDEX idx_employees_dept ON employees (dept_id);
+CREATE UNIQUE INDEX idx_employees_email ON employees (email);
+CREATE INDEX idx_orders_customer_date ON orders (customer_id, order_date);   -- composite
+
+DROP INDEX idx_employees_dept;                 -- PostgreSQL, SQLite
+-- MySQL: DROP INDEX idx_employees_dept ON employees;
+@end
+@info Primary keys and UNIQUE constraints get an index automatically. **Foreign keys usually need one added by you** (MySQL adds it for you).
+@topic 🧭 The Leftmost-Prefix Rule
+The composite index on `(customer_id, order_date)` is sorted by customer first, then date.
+@table
+Query filter | Can use the index?
+`WHERE customer_id = 1` | Yes
+`WHERE customer_id = 1 AND order_date >= '2024-02-01'` | Yes, fully
+`WHERE order_date >= '2024-02-01'` | No — the first column is missing
+@end
+@topic 🔬 Reading the Query Plan
+@code sql
+EXPLAIN SELECT * FROM orders WHERE customer_id = 1;          -- MySQL, PostgreSQL
+EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 1;  -- PostgreSQL: also runs it
+EXPLAIN QUERY PLAN SELECT * FROM orders WHERE customer_id = 1;   -- SQLite
+@end
+Look for **"index scan / using index"** (good) versus **"seq scan / full table scan"** (slow on big tables).
+@topic 🚀 Writing Index-Friendly Queries
+@table
+Slow (can't use an index) | Fast
+`WHERE YEAR(hire_date) = 2021` | `WHERE hire_date >= '2021-01-01' AND hire_date < '2022-01-01'`
+`WHERE salary * 12 > 600000` | `WHERE salary > 50000`
+`WHERE name LIKE '%run'` | `WHERE name LIKE 'Ar%'`
+`SELECT *` on wide tables | Select only the needed columns
+A query per row in a loop (N+1 problem) | One query with a JOIN or `IN (…)`
+@end
+@tip Index the columns you filter, join and sort on most often. Don't index tiny tables or columns with only a few distinct values (like a yes/no flag).
+@practice
+1. Create an index on `orders.customer_id` and compare EXPLAIN before and after.
+2. Which queries can use an index on `(dept_id, salary)`: filter by dept_id? by salary? by both?
+3. Rewrite `WHERE EXTRACT(YEAR FROM order_date) = 2024` so it can use an index.
+4. Why can too many indexes slow a database down?
+@interview An index (usually a B-tree) speeds up searches, joins and sorting at the cost of slower writes and extra storage; composite indexes follow the leftmost-prefix rule, EXPLAIN shows whether they're used, and functions on indexed columns prevent their use.
+
+@module m19 | 🔒 | 19 · Transactions | Module 19 — Transactions & ACID | BEGIN · COMMIT · ROLLBACK · SAVEPOINT · ACID · Isolation levels
+@topic 🔒 All or Nothing
+A **transaction** groups several statements so they either **all succeed or all fail**. The classic example is a bank transfer: the money must leave one account and arrive in the other — never just one of the two.
+@code sql
+CREATE TABLE accounts (
+    id       INT PRIMARY KEY,
+    holder   VARCHAR(50),
+    balance  DECIMAL(10, 2) CHECK (balance >= 0)
+);
+INSERT INTO accounts VALUES (1, 'Arun', 5000), (2, 'Priya', 3000);
+
+BEGIN;                                                        -- MySQL: START TRANSACTION;
+UPDATE accounts SET balance = balance - 1000 WHERE id = 1;
+UPDATE accounts SET balance = balance + 1000 WHERE id = 2;
+COMMIT;                                                       -- save both changes together
+
+SELECT id, holder, balance FROM accounts ORDER BY id;
+@end
+@result
+id | holder | balance
+1 | Arun | 4000
+2 | Priya | 4000
+@end
+@topic ↩️ ROLLBACK and SAVEPOINT
+@code sql
+BEGIN;
+UPDATE accounts SET balance = balance - 500 WHERE id = 1;
+SAVEPOINT after_debit;
+UPDATE accounts SET balance = balance + 500 WHERE id = 99;   -- oops: wrong account
+ROLLBACK TO SAVEPOINT after_debit;                          -- undo only the last step
+UPDATE accounts SET balance = balance + 500 WHERE id = 2;
+COMMIT;
+
+-- ROLLBACK;  would undo everything since BEGIN
+@end
+@info Most databases run each statement in its own transaction (**autocommit**) unless you start one with BEGIN.
+@topic 🧪 ACID Properties
+@table
+Property | Meaning | Bank example
+Atomicity | All statements succeed, or none do | No money disappears halfway through a transfer
+Consistency | Data moves from one valid state to another | The CHECK stops a balance going negative
+Isolation | Transactions running at the same time don't interfere | Two transfers don't overwrite each other
+Durability | Committed data survives crashes | The transfer is still there after a power cut
+@end
+@topic 🚦 Isolation Levels
+@table
+Level | Dirty read | Non-repeatable read | Phantom read
+READ UNCOMMITTED | Possible | Possible | Possible
+READ COMMITTED (default: PostgreSQL, SQL Server, Oracle) | Prevented | Possible | Possible
+REPEATABLE READ (default: MySQL InnoDB) | Prevented | Prevented | Possible (MySQL mostly prevents it)
+SERIALIZABLE | Prevented | Prevented | Prevented
+@end
+- **Dirty read:** reading another transaction's changes before they are committed.
+- **Non-repeatable read:** reading the same row twice and getting different values.
+- **Phantom read:** running the same query twice and getting new rows.
+@warn Keep transactions short. Long transactions hold locks, block other users and can cause **deadlocks** (two transactions waiting for each other).
+@practice
+1. Write a transaction that moves 2000 from Priya to Arun and verify both balances.
+2. Try a transfer that makes a balance negative. What happens to the transaction?
+3. Use a SAVEPOINT to undo only the second of three updates.
+4. Explain each ACID property with an online-shopping example.
+@interview A transaction is an all-or-nothing unit ended by COMMIT or ROLLBACK (with SAVEPOINTs for partial undo); ACID stands for atomicity, consistency, isolation and durability, and isolation levels trade consistency for concurrency.
+
+@module m20 | 📐 | 20 · Design | Module 20 — Normalization & Database Design | Anomalies · 1NF · 2NF · 3NF · BCNF · Relationships · ER diagrams
+@topic 📐 Why Normalise?
+Storing everything in one big table repeats data and causes **anomalies**:
+@table
+student | phone | course | teacher | teacher_email
+Asha | 98xxx | SQL | Kumar | kumar@college.edu
+Asha | 98xxx | Python | Lakshmi | lakshmi@college.edu
+Ravi | 97xxx | SQL | Kumar | kumar@college.edu
+@end
+- **Update anomaly:** Kumar's email is stored twice — change one and forget the other.
+- **Insert anomaly:** you can't add a new course until a student joins it.
+- **Delete anomaly:** delete Ravi's row and you might lose the only record of a course.
+@topic 🪜 Normal Forms
+@table
+Normal form | Rule | Fix
+1NF | Each cell holds one atomic value; no repeating groups | Split "SQL, Python" into separate rows
+2NF | 1NF + every non-key column depends on the **whole** key | With key (student, course), move `phone` to a students table
+3NF | 2NF + no non-key column depends on another non-key column | Move `teacher_email` to a teachers table
+BCNF | Every column that determines another is a candidate key | A stricter 3NF for rare edge cases
+@end
+Normalised design for the example: `students(student_id, name, phone)`, `teachers(teacher_id, name, email)`, `courses(course_id, title, teacher_id)` and `enrollments(student_id, course_id)`.
+@topic 🔗 Relationships
+@table
+Relationship | Example | How to build it
+One-to-one | user ↔ profile | Foreign key with a UNIQUE constraint
+One-to-many | department → employees | Foreign key on the "many" side (`employees.dept_id`)
+Many-to-many | students ↔ courses | A junction table (`enrollments`) with two foreign keys
+@end
+@topic 🗺️ ER Diagram of the Practice Database
+@code bash
+departments 1 ──────< employees >────── 1 employees (manager)
+                        (dept_id)            (manager_id)
+
+customers 1 ──────< orders 1 ──────< order_items >────── 1 products
+                  (customer_id)        (order_id)          (product_id)
+
+1 ──< = one-to-many       order_items = junction table for orders ↔ products
+@end
+@tip Normalise to 3NF by default. **Denormalise** deliberately (store a computed total, duplicate a name) only when reads are too slow and you can keep the copies in sync.
+@practice
+1. Normalise a table `orders(order_id, customer_name, customer_phone, product1, product2, product3)` into 3NF.
+2. Design tables for a library: books, authors (a book can have several authors), members and loans.
+3. Identify the relationship types in a college: students, courses, teachers, departments.
+4. Draw an ER diagram for a food-delivery app.
+@interview Normalisation removes redundancy and anomalies: 1NF has atomic values, 2NF removes partial dependencies on a composite key, 3NF removes transitive dependencies; one-to-many uses a foreign key and many-to-many a junction table.
+
+@module m21 | 🧰 | 21 · Procedures | Module 21 — Stored Procedures, Functions & Triggers | Procedures · Functions · Triggers · Pros and cons
+@topic 🧰 Stored Procedures
+A stored procedure is a **named block of SQL saved in the database** that you run with CALL. It can take parameters and contain logic.
+@code sql
+-- MySQL
+DELIMITER //
+CREATE PROCEDURE give_raise(IN p_dept INT, IN p_percent DECIMAL(5, 2))
+BEGIN
+    UPDATE employees
+    SET salary = salary * (1 + p_percent / 100)
+    WHERE dept_id = p_dept;
+END //
+DELIMITER ;
+
+CALL give_raise(2, 10);   -- 10% raise for Sales
+@end
+@info `DELIMITER //` tells the MySQL client that `;` inside the procedure doesn't end the whole statement.
+@topic 🧮 Functions
+A function **returns a value** and can be used inside a query.
+@code sql
+-- PostgreSQL
+CREATE OR REPLACE FUNCTION dept_headcount(p_dept INT)
+RETURNS INT
+LANGUAGE sql
+AS $$
+    SELECT COUNT(*)::INT FROM employees WHERE dept_id = p_dept;
+$$;
+
+SELECT dept_name, dept_headcount(dept_id) AS headcount FROM departments;
+@end
+@topic ⚡ Triggers
+A trigger runs **automatically** when rows are inserted, updated or deleted — perfect for audit logs.
+@code sql
+CREATE TABLE salary_audit (
+    emp_id      INT,
+    old_salary  DECIMAL(10, 2),
+    new_salary  DECIMAL(10, 2),
+    changed_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- MySQL
+DELIMITER //
+CREATE TRIGGER trg_salary_audit
+AFTER UPDATE ON employees
+FOR EACH ROW
+BEGIN
+    IF NEW.salary <> OLD.salary THEN
+        INSERT INTO salary_audit (emp_id, old_salary, new_salary)
+        VALUES (OLD.emp_id, OLD.salary, NEW.salary);
+    END IF;
+END //
+DELIMITER ;
+@end
+@code sql
+-- PostgreSQL: a trigger function + the trigger
+CREATE OR REPLACE FUNCTION log_salary_change() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+    IF NEW.salary <> OLD.salary THEN
+        INSERT INTO salary_audit (emp_id, old_salary, new_salary)
+        VALUES (OLD.emp_id, OLD.salary, NEW.salary);
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER trg_salary_audit
+AFTER UPDATE ON employees
+FOR EACH ROW EXECUTE FUNCTION log_salary_change();
+@end
+@table
+Object | Runs when | Returns | Typical use
+Stored procedure | You `CALL` it | Nothing, or OUT parameters | Multi-step business operations
+Function | Used inside a query | A value or a table | Reusable calculations
+Trigger | Automatically on INSERT / UPDATE / DELETE | — | Audit logs, keeping totals in sync
+@end
+@warn Business logic hidden in triggers is hard to find and debug. Keep triggers small and document them.
+@practice
+1. Write a procedure that inserts a new order and its items.
+2. Write a function that returns a customer's total spending.
+3. Create a trigger that logs every deleted customer into a `deleted_customers` table.
+4. What are the pros and cons of putting logic in the database instead of the application?
+@interview Stored procedures are saved SQL routines run with CALL, functions return values usable in queries, and triggers run automatically on data changes; they centralise logic but can be harder to test and version.
+
+@module m22 | 🛡️ | 22 · Security | Module 22 — Users, Permissions & SQL Injection | CREATE USER · GRANT · REVOKE · Roles · SQL injection · Backups
+@topic 👤 Users and Permissions (DCL)
+@code sql
+-- MySQL
+CREATE USER 'report_user'@'localhost' IDENTIFIED BY 'Str0ng!Passw0rd';
+GRANT SELECT ON company.* TO 'report_user'@'localhost';           -- read-only
+GRANT SELECT, INSERT, UPDATE ON company.orders TO 'report_user'@'localhost';
+REVOKE INSERT, UPDATE ON company.orders FROM 'report_user'@'localhost';
+
+-- PostgreSQL
+CREATE USER report_user WITH PASSWORD 'Str0ng!Passw0rd';
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO report_user;
+@end
+@topic 👥 Roles
+A role is a named bundle of permissions. Grant permissions to the role, then give the role to people.
+@code sql
+CREATE ROLE analyst;
+GRANT SELECT ON employees, departments TO analyst;
+GRANT analyst TO report_user;
+@end
+@tip Follow the **principle of least privilege**: every user and application gets only the permissions it actually needs. Web apps should never connect as the database admin.
+@topic 💉 SQL Injection
+SQL injection happens when user input is glued into SQL text. An attacker can type SQL instead of data.
+@code python
+name = input("Name: ")        # the attacker types:   ' OR '1'='1
+
+# ❌ Vulnerable: the input becomes part of the SQL
+cur.execute(f"SELECT * FROM users WHERE name = '{name}'")
+# runs: SELECT * FROM users WHERE name = '' OR '1'='1'   → returns EVERY user
+
+# ✅ Safe: parameters are sent separately and never run as SQL
+cur.execute("SELECT * FROM users WHERE name = %s", (name,))   # MySQL / PostgreSQL drivers
+cur.execute("SELECT * FROM users WHERE name = ?", (name,))    # sqlite3
+@end
+@warn Always use **parameterised queries** (or an ORM). Never build SQL by joining strings with user input.
+@topic 💾 Other Essentials
+- Store password **hashes** (bcrypt, Argon2), never plain passwords
+- Use encrypted connections (TLS) and keep the database off the public internet
+- Take regular backups and test restoring them: `mysqldump company > backup.sql`, `pg_dump company > backup.sql`
+@practice
+1. Create a read-only user for reporting and test that it can't DELETE.
+2. Create an `analyst` role and grant it to two users.
+3. Show a login query that is vulnerable to injection, then fix it with parameters.
+4. Back up the practice database and restore it into a new database.
+@interview GRANT and REVOKE control permissions for users and roles following least privilege; SQL injection is prevented with parameterised queries, and databases also need hashed passwords, encrypted connections and tested backups.
+
+@module m23 | 🐍 | 23 · SQL + Python | Module 23 — Using SQL from Python & Django | sqlite3 · Parameters · pandas · Django ORM equivalents
+@topic 🐍 Python's Built-in sqlite3
+@code python
+import sqlite3
+
+conn = sqlite3.connect("company.db")          # creates the file if needed
+cur = conn.cursor()
+
+cur.execute("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY, text TEXT NOT NULL)")
+cur.execute("INSERT INTO notes (text) VALUES (?)", ("Learn SQL",))
+conn.commit()                                 # save the changes
+
+for row in cur.execute("SELECT id, text FROM notes ORDER BY id"):
+    print(row)                                # (1, 'Learn SQL')
+
+conn.close()
+@end
+@table
+Database | Python driver | Placeholder
+SQLite | `sqlite3` (built in) | `?`
+MySQL | `mysql-connector-python` or `PyMySQL` | `%s`
+PostgreSQL | `psycopg` | `%s`
+@end
+@topic 🐼 Analysing Query Results with pandas
+@code python
+import pandas as pd
+import sqlite3
+
+conn = sqlite3.connect("company.db")
+df = pd.read_sql("SELECT dept_id, AVG(salary) AS avg_salary FROM employees GROUP BY dept_id", conn)
+print(df.head())
+@end
+@topic 🌿 SQL vs the Django ORM (used in this project)
+@table
+SQL | Django ORM
+`SELECT * FROM employees` | `Employee.objects.all()`
+`WHERE salary > 60000` | `.filter(salary__gt=60000)`
+`WHERE name LIKE 'A%'` | `.filter(name__startswith="A")`
+`ORDER BY salary DESC LIMIT 3` | `.order_by("-salary")[:3]`
+`COUNT(*) … GROUP BY dept_id` | `.values("dept").annotate(n=Count("id"))`
+`JOIN departments` | `.select_related("dept")`
+`WHERE dept_id IS NULL` | `.filter(dept__isnull=True)`
+@end
+@tip See the SQL the ORM generates with `print(queryset.query)`. Knowing SQL makes you much better at the ORM.
+@practice
+1. Load the practice database into SQLite from Python and print every employee.
+2. Write a Python function that inserts a customer using parameters.
+3. Load the order totals query into a pandas DataFrame and plot it.
+4. Translate three queries from this material into Django ORM code.
+@interview Applications run SQL through drivers such as sqlite3, psycopg or mysql-connector using parameterised queries, or through an ORM like Django's that generates SQL; pandas.read_sql loads results for analysis.
+
+@module m24 | 🏆 | 24 · Interview | Module 24 — Interview Problems & Practice | Classic query problems with solutions · Theory questions · Where to practise
+@topic 🥈 Second Highest Salary
+@code sql
+SELECT MAX(salary) AS second_highest
+FROM employees
+WHERE salary < (SELECT MAX(salary) FROM employees);
+@end
+@result
+second_highest
+72000
+@end
+@topic 🥉 Nth Highest Salary (N = 3)
+@code sql
+WITH ranked AS (
+    SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk
+    FROM employees
+)
+SELECT DISTINCT salary AS third_highest
+FROM ranked
+WHERE rnk = 3;
+@end
+@result
+third_highest
+68000
+@end
+@topic 💰 Employees Earning More Than Their Manager
+@code sql
+SELECT e.name AS employee, e.salary, m.name AS manager, m.salary AS manager_salary
+FROM employees e
+JOIN employees m ON e.manager_id = m.emp_id
+WHERE e.salary > m.salary;
+@end
+@result
+employee | salary | manager | manager_salary
+Vijay | 62000 | Divya | 60000
+@end
+@topic 🏢 Highest-Paid Employee in Each Department
+@code sql
+SELECT d.dept_name, e.name, e.salary
+FROM employees e
+JOIN departments d ON d.dept_id = e.dept_id
+WHERE e.salary = (SELECT MAX(salary) FROM employees WHERE dept_id = e.dept_id)
+ORDER BY d.dept_name;
+@end
+@result
+dept_name | name | salary
+Engineering | Arun | 95000
+HR | Sneha | 50000
+Sales | Vijay | 62000
+@end
+@topic 🔁 Find Duplicates
+@code sql
+SELECT city, COUNT(*) AS customers
+FROM customers
+GROUP BY city
+HAVING COUNT(*) > 1;
+@end
+@result
+city | customers
+Chennai | 2
+@end
+To **delete** duplicate rows but keep the one with the lowest id:
+@code sql
+DELETE FROM customers
+WHERE customer_id NOT IN (
+    SELECT keep_id FROM (
+        SELECT MIN(customer_id) AS keep_id FROM customers GROUP BY name, city
+    ) AS keepers
+);
+@end
+@topic 🕳️ Departments with No Employees
+@code sql
+SELECT d.dept_name
+FROM departments d
+LEFT JOIN employees e ON e.dept_id = d.dept_id
+WHERE e.emp_id IS NULL;
+@end
+@result
+dept_name
+Marketing
+@end
+@topic 📦 Best-Selling Product by Units
+@code sql
+SELECT p.name, SUM(oi.quantity) AS units
+FROM order_items oi
+JOIN products p ON p.product_id = oi.product_id
+JOIN orders o   ON o.order_id = oi.order_id
+WHERE o.status <> 'Cancelled'
+GROUP BY p.name
+ORDER BY units DESC
+LIMIT 1;
+@end
+@result
+name | units
+Notebook | 15
+@end
+@topic 📊 Revenue by Category
+@code sql
+SELECT p.category, SUM(oi.quantity * p.price) AS revenue
+FROM order_items oi
+JOIN products p ON p.product_id = oi.product_id
+JOIN orders o   ON o.order_id = oi.order_id
+WHERE o.status <> 'Cancelled'
+GROUP BY p.category
+ORDER BY revenue DESC;
+@end
+@result
+category | revenue
+Electronics | 111600
+Furniture | 20500
+Stationery | 900
+@end
+@topic 🧺 Customers Who Bought from Both Electronics and Furniture
+@code sql
+SELECT c.name
+FROM customers c
+JOIN orders o       ON o.customer_id = c.customer_id
+JOIN order_items oi ON oi.order_id = o.order_id
+JOIN products p     ON p.product_id = oi.product_id
+WHERE p.category IN ('Electronics', 'Furniture')
+  AND o.status <> 'Cancelled'
+GROUP BY c.name
+HAVING COUNT(DISTINCT p.category) = 2;
+@end
+@result
+name
+Deepak
+@end
+@topic 🎤 Theory Questions
+@table
+Question | Short answer
+WHERE vs HAVING? | WHERE filters rows before grouping; HAVING filters groups after
+DELETE vs TRUNCATE vs DROP? | Remove some rows / all rows / the whole table
+PRIMARY KEY vs UNIQUE? | Both unique; a primary key is also NOT NULL and there is only one per table
+INNER vs LEFT JOIN? | INNER keeps matches only; LEFT keeps every left row
+UNION vs UNION ALL? | UNION removes duplicates; UNION ALL keeps them and is faster
+ROW_NUMBER vs RANK vs DENSE_RANK? | No ties / ties with gaps / ties without gaps
+Clustered vs non-clustered index? | Clustered stores the table rows in index order (one per table); non-clustered is a separate structure pointing to rows
+What is normalization? | Organising tables to remove redundancy and anomalies (1NF, 2NF, 3NF)
+What is ACID? | Atomicity, Consistency, Isolation, Durability of transactions
+View vs table? | A view is a saved query with no data of its own
+Correlated subquery? | A subquery that uses the outer row, so it runs once per row
+CHAR vs VARCHAR? | Fixed length (padded) vs variable length
+@end
+@topic 🏋️ Where to Practise
+- **LeetCode** — Database problems (start with the "SQL 50" list)
+- **HackerRank** — SQL track, from basic to advanced
+- **StrataScratch** and **DataLemur** — real interview questions from companies
+- **SQLZoo** and **SQLBolt** — interactive beginner lessons
+@practice
+1. Solve each problem above without looking, then compare with the solution.
+2. Find the customer with the highest total spending.
+3. Find each employee's salary as a percentage of their department's total.
+4. Find the month with the highest revenue.
+5. Solve 20 problems from LeetCode's SQL 50 list.
+@interview Common SQL interview problems — Nth highest value, duplicates, employees vs managers, top-N per group, unmatched rows and category revenue — are solved with subqueries, self joins, GROUP BY/HAVING, LEFT JOIN … IS NULL and window functions.

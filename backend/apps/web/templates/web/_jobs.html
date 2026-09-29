@@ -1,0 +1,7 @@
+{% load web_tags %}<ul class="timeline">{% for j in jobs %}
+  <li><strong>{{ j.role }}</strong> — {{ j.organization }} <span class="badge">{{ j.get_type_display }}</span>
+    {% if j.start_date or j.end_date or j.location %}<br><small class="muted">{% if j.start_date %}{{ j.start_date|date:"M Y" }} – {{ j.end_date|date:"M Y"|default:"Present" }}{% elif j.end_date %}{{ j.end_date|date:"M Y" }}{% endif %}{% if j.location %}{% if j.start_date or j.end_date %} · {% endif %}{{ j.location }}{% endif %}</small>{% endif %}
+    <div class="prose">{{ j.description|markdown }}</div>
+    <div class="chips">{% for t in j.technologies|split %}<span class="chip">{{ t }}</span>{% endfor %}</div></li>
+{% empty %}<li class="muted">No experience added yet.</li>
+{% endfor %}</ul>
