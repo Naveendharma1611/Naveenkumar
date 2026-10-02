@@ -104,6 +104,10 @@ export const NOTES = {
     href: "dbms-material.html", title: "🗄️ DBMS Complete Study Material",
     text: "Database systems from data models and normalization through transactions, concurrency, recovery, indexing, query processing, distributed systems, and governance.",
   },
+  aptitude: {
+    href: "aptitude-material.html", title: "🧠 Aptitude: Quantitative, Logical & Verbal Reasoning",
+    text: "Build quantitative, logical, and verbal reasoning through worked methods, timed practice, MCQs, and numeric-answer questions.",
+  },
   django: {
     href: "django-material.html", title: "🌿 Django Zero to Hero",
     text: "Build a complete blog in 24 modules: URLs, views, templates, ORM, admin, forms, auth, REST APIs, testing, security, caching and deployment.",
