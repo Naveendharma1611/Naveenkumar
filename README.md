@@ -160,6 +160,13 @@ Never commit `.env` files.
 - [API reference](docs/API.md)
 - [Database schema](docs/DATABASE.md)
 
+## Other modules in this repo
+
+- **`practice-portal/`** — NK Practice Portal: a separate HackerRank-style app (React + Tailwind +
+  Supabase + in-browser Pyodide) for students to practice Python from beginner to intermediate,
+  with auto-graded questions, hints/solutions, a leaderboard and a faculty admin page. Independent
+  of the Django backend above — see [`practice-portal/README.md`](practice-portal/README.md) for setup.
+
 ## Future improvements
 
 - In-app admin editors (the Django admin covers CRUD today)
