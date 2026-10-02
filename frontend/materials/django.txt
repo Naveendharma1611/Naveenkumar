@@ -2109,3 +2109,38 @@ How do you deploy Django? | DEBUG off, env secrets, PostgreSQL, collectstatic + 
 3. Build an API-only project with DRF and a separate HTML/JavaScript frontend.
 4. Contribute a small fix or documentation improvement to an open-source Django package.
 @interview Django interviews cover MVT, the ORM and QuerySets, migrations, relationships and query optimisation, views and templates, forms and CSRF, authentication, middleware and signals, DRF, testing, security and deployment.
+
+@module m25 | 📋 | Quick Reference | Django Cheat Sheet | Project setup · ORM · Requests · Security · Tests
+@topic Project Setup and Request Flow
+@table
+Need | Command or component
+Create project | `django-admin startproject config .`
+Create app | `python manage.py startapp catalog`
+Route request | URLconf → view → response
+Render HTML | `render(request, "catalog/list.html", context)`
+Redirect by route name | `redirect("catalog:detail", pk=item.pk)`
+Read setting | `settings.DEBUG` (use environment-specific settings)
+@end
+@topic Models and QuerySets
+@table
+Need | Pattern
+Apply migrations | `python manage.py makemigrations` then `python manage.py migrate`
+Filter records | `Product.objects.filter(is_active=True)`
+Get one object | `get_object_or_404(Product, pk=pk)`
+Join single-valued relation | `select_related("category")`
+Prefetch collections | `prefetch_related("tags")`
+Atomic writes | `with transaction.atomic(): ...`
+Limit returned fields | `values("id", "name")` or `only("id", "name")`
+@end
+@topic Forms, Security, and Delivery
+@table
+Need | Pattern
+Validate input | Use a Django Form or ModelForm and check `form.is_valid()`
+Require login | `@login_required` or `LoginRequiredMixin`
+Check authorization | Enforce object-level access in the server-side view/service
+Protect POST forms | Include `{% csrf_token %}` in internal forms
+Static assets | `static/` sources and `collectstatic` for deployment
+User uploads | Store as media; validate type, size, and access separately
+Test a request | `django.test.Client` or `TestCase` with assertions
+@end
+@warn Keep `DEBUG` off in production, keep secrets out of source control, validate permissions server-side, and use `get_user_model()` when code needs the configured user model.

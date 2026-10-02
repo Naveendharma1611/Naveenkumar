@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>🌿 Django Zero to Hero</h1>
         <p>Django from zero to hero, in order — build one complete blog step by step: URLs, views, templates, models and the ORM, admin, forms, authentication, REST APIs, testing, security, performance and deployment.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">24</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">84</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">100</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">104</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">25</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">87</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">100</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">104</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -47,6 +47,7 @@
       <a href="#m22">22 · Deployment</a>
       <a href="#m23">23 · Blog Project</a>
       <a href="#m24">24 · Interview</a>
+      <a href="#m25">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -2296,6 +2297,57 @@ CMD ["gunicorn", "mysite.wsgi:application", "--bind", "0.0.0.0:8000"]</code></pr
 <ol><li>Answer each interview question out loud in under 30 seconds.</li><li>Build a to-do app with login, where users see only their own tasks.</li><li>Build an API-only project with DRF and a separate HTML/JavaScript frontend.</li><li>Contribute a small fix or documentation improvement to an open-source Django package.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>Django interviews cover MVT, the ORM and QuerySets, migrations, relationships and query optimisation, views and templates, forms and CSRF, authentication, middleware and signals, DRF, testing, security and deployment.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m25">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Django Cheat Sheet</h2>
+            <p>Project setup · ORM · Requests · Security · Tests</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Project Setup and Request Flow</h3>
+<table>
+<tr><th>Need</th><th>Command or component</th></tr>
+<tr><td>Create project</td><td><code>django-admin startproject config .</code></td></tr>
+<tr><td>Create app</td><td><code>python manage.py startapp catalog</code></td></tr>
+<tr><td>Route request</td><td>URLconf → view → response</td></tr>
+<tr><td>Render HTML</td><td><code>render(request, "catalog/list.html", context)</code></td></tr>
+<tr><td>Redirect by route name</td><td><code>redirect("catalog:detail", pk=item.pk)</code></td></tr>
+<tr><td>Read setting</td><td><code>settings.DEBUG</code> (use environment-specific settings)</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Models and QuerySets</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Apply migrations</td><td><code>python manage.py makemigrations</code> then <code>python manage.py migrate</code></td></tr>
+<tr><td>Filter records</td><td><code>Product.objects.filter(is_active=True)</code></td></tr>
+<tr><td>Get one object</td><td><code>get_object_or_404(Product, pk=pk)</code></td></tr>
+<tr><td>Join single-valued relation</td><td><code>select_related("category")</code></td></tr>
+<tr><td>Prefetch collections</td><td><code>prefetch_related("tags")</code></td></tr>
+<tr><td>Atomic writes</td><td><code>with transaction.atomic(): ...</code></td></tr>
+<tr><td>Limit returned fields</td><td><code>values("id", "name")</code> or <code>only("id", "name")</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Forms, Security, and Delivery</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Validate input</td><td>Use a Django Form or ModelForm and check <code>form.is_valid()</code></td></tr>
+<tr><td>Require login</td><td><code>@login_required</code> or <code>LoginRequiredMixin</code></td></tr>
+<tr><td>Check authorization</td><td>Enforce object-level access in the server-side view/service</td></tr>
+<tr><td>Protect POST forms</td><td>Include <code>{% csrf_token %}</code> in internal forms</td></tr>
+<tr><td>Static assets</td><td><code>static/</code> sources and <code>collectstatic</code> for deployment</td></tr>
+<tr><td>User uploads</td><td>Store as media; validate type, size, and access separately</td></tr>
+<tr><td>Test a request</td><td><code>django.test.Client</code> or <code>TestCase</code> with assertions</td></tr>
+</table>
+<div class="warn-box">Keep <code>DEBUG</code> off in production, keep secrets out of source control, validate permissions server-side, and use <code>get_user_model()</code> when code needs the configured user model.</div>
+</div>
         </div>
       </div>
     </div>
