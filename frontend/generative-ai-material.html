@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>🪄 Generative AI Applied Study Material</h1>
         <p>Building with generative AI in practice: prompting, APIs, RAG, embeddings, fine-tuning trade-offs, evaluation, image/audio generation, cost, and responsible deployment.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">18</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">63</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">8</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">34</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">19</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">66</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">8</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">34</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -41,6 +41,7 @@
       <a href="#m16">16 · Responsible Use</a>
       <a href="#m17">17 · Interview Prep</a>
       <a href="#m18">18 · Roadmap</a>
+      <a href="#m19">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -774,6 +775,54 @@ for chunk in stream:
 <ol><li>Using the stage table, write a 4-week study plan that ends with a working RAG-based project over a dataset of your choice.</li><li>Pick one module from stages 1-7 you're weakest in and explain, concretely, what project you'd build to close that gap.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>The fastest path into applied generative AI work is API fundamentals and prompting first, then RAG and evaluation — which is what most real jobs in this space actually require day to day — with function calling next and fine-tuning treated as a rarely-needed specialty rather than an early priority.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m19">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Generative AI Cheat Sheet</h2>
+            <p>Prompts · RAG · Evaluation · Tools · Production</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Design a Reliable Model Call</h3>
+<table>
+<tr><th>Need</th><th>Practice</th></tr>
+<tr><td>Task</td><td>State the goal, audience, constraints, and expected output clearly</td></tr>
+<tr><td>Context</td><td>Supply only relevant, authorized information within the context budget</td></tr>
+<tr><td>Output</td><td>Request a schema or constrained format and validate it after generation</td></tr>
+<tr><td>Uncertainty</td><td>Permit abstention or escalation when evidence is missing</td></tr>
+<tr><td>Prompt change</td><td>Compare versions on a fixed, representative evaluation set</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>RAG Pipeline</h3>
+<table>
+<tr><th>Step</th><th>Check</th></tr>
+<tr><td>Ingest</td><td>Parse formats, preserve metadata and access-control attributes</td></tr>
+<tr><td>Chunk</td><td>Choose boundaries and size based on document structure and retrieval needs</td></tr>
+<tr><td>Embed</td><td>Use compatible embedding models for indexed passages and queries</td></tr>
+<tr><td>Retrieve</td><td>Measure relevance and coverage; consider hybrid search for exact terms</td></tr>
+<tr><td>Generate</td><td>Ground claims in retrieved evidence and cite source identifiers</td></tr>
+<tr><td>Evaluate</td><td>Track retrieval quality separately from answer quality</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Tool Use and Operations</h3>
+<table>
+<tr><th>Need</th><th>Control</th></tr>
+<tr><td>Tool schema</td><td>Define narrow inputs, types, and explicit side effects</td></tr>
+<tr><td>Authorization</td><td>Enforce user and resource permissions in the tool backend</td></tr>
+<tr><td>Confirmation</td><td>Require approval for consequential or irreversible actions</td></tr>
+<tr><td>Failure</td><td>Bound retries, handle timeouts, validate results, and provide a fallback</td></tr>
+<tr><td>Monitoring</td><td>Measure quality, latency, token use, cost, refusals, and failures</td></tr>
+<tr><td>Safety</td><td>Treat user and retrieved text as untrusted; defend against instruction injection</td></tr>
+</table>
+<div class="warn-box">A fluent answer is not proof of grounding. Test retrieval and generation independently, enforce permissions outside the prompt, and evaluate the full system before release.</div>
+</div>
         </div>
       </div>
     </div>

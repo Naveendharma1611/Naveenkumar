@@ -436,3 +436,35 @@ If you're targeting applied generative AI or AI product engineering work specifi
 1. Using the stage table, write a 4-week study plan that ends with a working RAG-based project over a dataset of your choice.
 2. Pick one module from stages 1-7 you're weakest in and explain, concretely, what project you'd build to close that gap.
 @interview The fastest path into applied generative AI work is API fundamentals and prompting first, then RAG and evaluation — which is what most real jobs in this space actually require day to day — with function calling next and fine-tuning treated as a rarely-needed specialty rather than an early priority.
+
+@module m19 | 📋 | Quick Reference | Generative AI Cheat Sheet | Prompts · RAG · Evaluation · Tools · Production
+@topic Design a Reliable Model Call
+@table
+Need | Practice
+Task | State the goal, audience, constraints, and expected output clearly
+Context | Supply only relevant, authorized information within the context budget
+Output | Request a schema or constrained format and validate it after generation
+Uncertainty | Permit abstention or escalation when evidence is missing
+Prompt change | Compare versions on a fixed, representative evaluation set
+@end
+@topic RAG Pipeline
+@table
+Step | Check
+Ingest | Parse formats, preserve metadata and access-control attributes
+Chunk | Choose boundaries and size based on document structure and retrieval needs
+Embed | Use compatible embedding models for indexed passages and queries
+Retrieve | Measure relevance and coverage; consider hybrid search for exact terms
+Generate | Ground claims in retrieved evidence and cite source identifiers
+Evaluate | Track retrieval quality separately from answer quality
+@end
+@topic Tool Use and Operations
+@table
+Need | Control
+Tool schema | Define narrow inputs, types, and explicit side effects
+Authorization | Enforce user and resource permissions in the tool backend
+Confirmation | Require approval for consequential or irreversible actions
+Failure | Bound retries, handle timeouts, validate results, and provide a fallback
+Monitoring | Measure quality, latency, token use, cost, refusals, and failures
+Safety | Treat user and retrieved text as untrusted; defend against instruction injection
+@end
+@warn A fluent answer is not proof of grounding. Test retrieval and generation independently, enforce permissions outside the prompt, and evaluate the full system before release.
