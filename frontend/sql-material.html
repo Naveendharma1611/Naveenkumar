@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>🗃️ SQL Zero to Hero</h1>
         <p>SQL from zero to hero, in order — databases, tables, queries, joins, subqueries, window functions, transactions, design and performance. Every query runs on one practice database and shows its real result.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">24</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">107</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">102</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">108</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">25</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">110</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">102</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">108</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -47,6 +47,7 @@
       <a href="#m22">22 · Security</a>
       <a href="#m23">23 · SQL + Python</a>
       <a href="#m24">24 · Interview</a>
+      <a href="#m25">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -2434,6 +2435,58 @@ HAVING COUNT(DISTINCT p.category) = 2;</code></pre>
 <ol><li>Solve each problem above without looking, then compare with the solution.</li><li>Find the customer with the highest total spending.</li><li>Find each employee's salary as a percentage of their department's total.</li><li>Find the month with the highest revenue.</li><li>Solve 20 problems from LeetCode's SQL 50 list.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>Common SQL interview problems — Nth highest value, duplicates, employees vs managers, top-N per group, unmatched rows and category revenue — are solved with subqueries, self joins, GROUP BY/HAVING, LEFT JOIN … IS NULL and window functions.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m25">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>SQL Cheat Sheet</h2>
+            <p>Query order · Joins · Aggregates · CTEs · Windows</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Query Structure and Filtering</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Select columns</td><td><code>SELECT customer_id, total FROM orders</code></td></tr>
+<tr><td>Filter rows</td><td><code>WHERE status = 'paid'</code></td></tr>
+<tr><td>Sort results</td><td><code>ORDER BY created_at DESC</code></td></tr>
+<tr><td>Limit rows</td><td><code>LIMIT 10</code> (syntax varies by database)</td></tr>
+<tr><td>Handle missing values</td><td><code>WHERE manager_id IS NULL</code>; use <code>IS NOT NULL</code> for present values</td></tr>
+<tr><td>Conditional result</td><td><code>CASE WHEN total &gt;= 100 THEN 'large' ELSE 'small' END</code></td></tr>
+<tr><td>Fallback for NULL</td><td><code>COALESCE(nickname, name)</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Joins and Grouping</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Keep matching rows</td><td><code>INNER JOIN table_b b ON b.id = a.b_id</code></td></tr>
+<tr><td>Keep every left row</td><td><code>LEFT JOIN table_b b ON b.id = a.b_id</code></td></tr>
+<tr><td>Unmatched left rows</td><td><code>LEFT JOIN ... WHERE b.id IS NULL</code></td></tr>
+<tr><td>Group rows</td><td><code>GROUP BY department_id</code></td></tr>
+<tr><td>Filter aggregate groups</td><td><code>HAVING COUNT(*) &gt; 1</code></td></tr>
+<tr><td>Remove duplicate output rows</td><td><code>SELECT DISTINCT column_name</code></td></tr>
+<tr><td>Combine result sets</td><td><code>UNION</code> removes duplicates; <code>UNION ALL</code> keeps them</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Subqueries, Windows, and Data Changes</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Name a query step</td><td><code>WITH totals AS (SELECT customer_id, SUM(amount) AS total FROM orders GROUP BY customer_id) SELECT * FROM totals</code></td></tr>
+<tr><td>Rank within groups</td><td><code>ROW_NUMBER() OVER (PARTITION BY department_id ORDER BY salary DESC)</code></td></tr>
+<tr><td>Running total</td><td><code>SUM(amount) OVER (PARTITION BY account_id ORDER BY created_at)</code></td></tr>
+<tr><td>Insert rows</td><td><code>INSERT INTO table_name (column_a) VALUES (?)</code> (placeholder varies by driver)</td></tr>
+<tr><td>Update rows</td><td><code>UPDATE table_name SET status = ? WHERE id = ?</code></td></tr>
+<tr><td>Delete rows</td><td><code>DELETE FROM table_name WHERE id = ?</code></td></tr>
+<tr><td>Transaction</td><td><code>BEGIN</code>; perform changes; <code>COMMIT</code> or <code>ROLLBACK</code> (syntax varies)</td></tr>
+</table>
+<div class="warn-box">Use parameterized queries for values instead of concatenating user input into SQL. Check the database dialect for limit, placeholder, date, and transaction syntax.</div>
+</div>
         </div>
       </div>
     </div>

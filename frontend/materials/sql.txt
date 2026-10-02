@@ -2103,3 +2103,39 @@ CHAR vs VARCHAR? | Fixed length (padded) vs variable length
 4. Find the month with the highest revenue.
 5. Solve 20 problems from LeetCode's SQL 50 list.
 @interview Common SQL interview problems — Nth highest value, duplicates, employees vs managers, top-N per group, unmatched rows and category revenue — are solved with subqueries, self joins, GROUP BY/HAVING, LEFT JOIN … IS NULL and window functions.
+
+@module m25 | 📋 | Quick Reference | SQL Cheat Sheet | Query order · Joins · Aggregates · CTEs · Windows
+@topic Query Structure and Filtering
+@table
+Need | Pattern
+Select columns | `SELECT customer_id, total FROM orders`
+Filter rows | `WHERE status = 'paid'`
+Sort results | `ORDER BY created_at DESC`
+Limit rows | `LIMIT 10` (syntax varies by database)
+Handle missing values | `WHERE manager_id IS NULL`; use `IS NOT NULL` for present values
+Conditional result | `CASE WHEN total >= 100 THEN 'large' ELSE 'small' END`
+Fallback for NULL | `COALESCE(nickname, name)`
+@end
+@topic Joins and Grouping
+@table
+Need | Pattern
+Keep matching rows | `INNER JOIN table_b b ON b.id = a.b_id`
+Keep every left row | `LEFT JOIN table_b b ON b.id = a.b_id`
+Unmatched left rows | `LEFT JOIN ... WHERE b.id IS NULL`
+Group rows | `GROUP BY department_id`
+Filter aggregate groups | `HAVING COUNT(*) > 1`
+Remove duplicate output rows | `SELECT DISTINCT column_name`
+Combine result sets | `UNION` removes duplicates; `UNION ALL` keeps them
+@end
+@topic Subqueries, Windows, and Data Changes
+@table
+Need | Pattern
+Name a query step | `WITH totals AS (SELECT customer_id, SUM(amount) AS total FROM orders GROUP BY customer_id) SELECT * FROM totals`
+Rank within groups | `ROW_NUMBER() OVER (PARTITION BY department_id ORDER BY salary DESC)`
+Running total | `SUM(amount) OVER (PARTITION BY account_id ORDER BY created_at)`
+Insert rows | `INSERT INTO table_name (column_a) VALUES (?)` (placeholder varies by driver)
+Update rows | `UPDATE table_name SET status = ? WHERE id = ?`
+Delete rows | `DELETE FROM table_name WHERE id = ?`
+Transaction | `BEGIN`; perform changes; `COMMIT` or `ROLLBACK` (syntax varies)
+@end
+@warn Use parameterized queries for values instead of concatenating user input into SQL. Check the database dialect for limit, placeholder, date, and transaction syntax.
