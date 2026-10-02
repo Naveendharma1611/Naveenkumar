@@ -736,3 +736,44 @@ Stage | Focus | Outcome
 1. Audit your current skills against the six stages above and identify the single weakest stage — what's your concrete next action to close that gap?
 2. Pick one project idea and outline it stage by stage: what data, what baseline, what model, what metric, and what you'd say about it in an interview.
 @interview The fastest reliable path from zero to job-ready in ML is: solidify Python and the essential math, master the classic supervised and unsupervised algorithms with real understanding of their assumptions, get rigorous about evaluation and leakage, learn ensembles and real-world data handling, then prove it all with a small number of deep, well-explained end-to-end projects rather than broad shallow coverage — depth you can defend out loud beats breadth you can only list.
+
+@module m29 | 📋 | Quick Reference | Machine Learning Cheat Sheet | Workflow · Algorithms · Validation · Metrics · Deployment
+@topic End-to-End Workflow
+@table
+Step | Key question
+Frame | What decision will the model support, and what is the unit of prediction?
+Split | What split matches deployment: random, grouped, stratified, or chronological?
+Baseline | What simple rule or model is difficult to beat?
+Preprocess | Are transformations fit only on training folds and reused at serving time?
+Evaluate | Which metric reflects the cost of false positives, false negatives, or large errors?
+Deploy | How will inputs, latency, drift, failures, and model versions be monitored?
+@end
+@topic Algorithm Selection at a Glance
+@table
+Method | Useful starting point | Watch for
+Linear regression | Continuous targets and interpretable linear effects | Nonlinearity, outliers, correlated features
+Logistic regression | Binary or multiclass classification baseline | Scaling, regularization, class imbalance
+Decision tree | Nonlinear rules and interpretable small models | High variance and unstable splits
+Random forest | Robust tabular baseline with nonlinear interactions | Larger model size and limited extrapolation
+Gradient boosting | Strong tabular prediction with tuned trees | Leakage, tuning cost, calibration
+k-nearest neighbors | Local similarity when feature scales are meaningful | Scaling and prediction cost with large data
+K-means | Exploratory grouping with a chosen cluster count | Scaling, shape assumptions, and initialization
+PCA | Compact linear representation of correlated features | Centering/scaling and loss of interpretability
+@end
+@topic Validation and Metrics
+@table
+Problem | Useful checks
+Classification | Confusion matrix, precision, recall, F1, ROC-AUC or PR-AUC
+Regression | MAE, RMSE, residual patterns, and a baseline
+Imbalanced classes | Per-class metrics, PR-AUC, threshold costs, stratified split
+Generalization | Cross-validation on training data; untouched final test set
+Time-dependent data | Chronological split or rolling-origin validation
+Calibration | Compare predicted probabilities with observed frequencies
+@end
+@topic Reliable Modeling Habits
+- Put imputation, encoding, scaling, and feature selection inside a fitted pipeline to avoid leakage.
+- Choose thresholds and hyperparameters using validation data, not the final test set.
+- Compare training and validation behavior to diagnose overfitting and underfitting.
+- Record data versions, feature definitions, parameters, random seeds, and evaluation results.
+- Treat feature importance as model-specific evidence, not proof of causation.
+@warn High validation scores can still be misleading when the split leaks groups, time, target information, or preprocessing statistics.

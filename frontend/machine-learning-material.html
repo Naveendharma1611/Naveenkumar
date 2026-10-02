@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>🤖 Machine Learning Complete Study Material</h1>
         <p>Learn machine learning end to end: core algorithms, the full project workflow, evaluation, tuning, deployment and the interview answers that prove you actually understand it.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">28</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">100</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">28</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">54</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">29</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">104</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">28</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">54</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -51,6 +51,7 @@
       <a href="#m26">26 · ML Ethics</a>
       <a href="#m27">27 · Interview Questions</a>
       <a href="#m28">28 · Learning Roadmap</a>
+      <a href="#m29">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -1223,6 +1224,61 @@ print(metric_frame.by_group)</code></pre>
 <ol><li>Audit your current skills against the six stages above and identify the single weakest stage — what's your concrete next action to close that gap?</li><li>Pick one project idea and outline it stage by stage: what data, what baseline, what model, what metric, and what you'd say about it in an interview.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>The fastest reliable path from zero to job-ready in ML is: solidify Python and the essential math, master the classic supervised and unsupervised algorithms with real understanding of their assumptions, get rigorous about evaluation and leakage, learn ensembles and real-world data handling, then prove it all with a small number of deep, well-explained end-to-end projects rather than broad shallow coverage — depth you can defend out loud beats breadth you can only list.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m29">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Machine Learning Cheat Sheet</h2>
+            <p>Workflow · Algorithms · Validation · Metrics · Deployment</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>End-to-End Workflow</h3>
+<table>
+<tr><th>Step</th><th>Key question</th></tr>
+<tr><td>Frame</td><td>What decision will the model support, and what is the unit of prediction?</td></tr>
+<tr><td>Split</td><td>What split matches deployment: random, grouped, stratified, or chronological?</td></tr>
+<tr><td>Baseline</td><td>What simple rule or model is difficult to beat?</td></tr>
+<tr><td>Preprocess</td><td>Are transformations fit only on training folds and reused at serving time?</td></tr>
+<tr><td>Evaluate</td><td>Which metric reflects the cost of false positives, false negatives, or large errors?</td></tr>
+<tr><td>Deploy</td><td>How will inputs, latency, drift, failures, and model versions be monitored?</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Algorithm Selection at a Glance</h3>
+<table>
+<tr><th>Method</th><th>Useful starting point</th><th>Watch for</th></tr>
+<tr><td>Linear regression</td><td>Continuous targets and interpretable linear effects</td><td>Nonlinearity, outliers, correlated features</td></tr>
+<tr><td>Logistic regression</td><td>Binary or multiclass classification baseline</td><td>Scaling, regularization, class imbalance</td></tr>
+<tr><td>Decision tree</td><td>Nonlinear rules and interpretable small models</td><td>High variance and unstable splits</td></tr>
+<tr><td>Random forest</td><td>Robust tabular baseline with nonlinear interactions</td><td>Larger model size and limited extrapolation</td></tr>
+<tr><td>Gradient boosting</td><td>Strong tabular prediction with tuned trees</td><td>Leakage, tuning cost, calibration</td></tr>
+<tr><td>k-nearest neighbors</td><td>Local similarity when feature scales are meaningful</td><td>Scaling and prediction cost with large data</td></tr>
+<tr><td>K-means</td><td>Exploratory grouping with a chosen cluster count</td><td>Scaling, shape assumptions, and initialization</td></tr>
+<tr><td>PCA</td><td>Compact linear representation of correlated features</td><td>Centering/scaling and loss of interpretability</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Validation and Metrics</h3>
+<table>
+<tr><th>Problem</th><th>Useful checks</th></tr>
+<tr><td>Classification</td><td>Confusion matrix, precision, recall, F1, ROC-AUC or PR-AUC</td></tr>
+<tr><td>Regression</td><td>MAE, RMSE, residual patterns, and a baseline</td></tr>
+<tr><td>Imbalanced classes</td><td>Per-class metrics, PR-AUC, threshold costs, stratified split</td></tr>
+<tr><td>Generalization</td><td>Cross-validation on training data; untouched final test set</td></tr>
+<tr><td>Time-dependent data</td><td>Chronological split or rolling-origin validation</td></tr>
+<tr><td>Calibration</td><td>Compare predicted probabilities with observed frequencies</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Reliable Modeling Habits</h3>
+<ul><li>Put imputation, encoding, scaling, and feature selection inside a fitted pipeline to avoid leakage.</li><li>Choose thresholds and hyperparameters using validation data, not the final test set.</li><li>Compare training and validation behavior to diagnose overfitting and underfitting.</li><li>Record data versions, feature definitions, parameters, random seeds, and evaluation results.</li><li>Treat feature importance as model-specific evidence, not proof of causation.</li></ul>
+<div class="warn-box">High validation scores can still be misleading when the split leaks groups, time, target information, or preprocessing statistics.</div>
+</div>
         </div>
       </div>
     </div>
