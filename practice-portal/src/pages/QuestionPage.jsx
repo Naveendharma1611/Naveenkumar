@@ -103,30 +103,19 @@ export default function QuestionPage() {
     setBusy(true);
     setResultsKind("submit");
     try {
-      const all = toRunnerTests(testCases);
-      const outcome = await runTests(code, all);
-      const merged = outcome.map((r, i) => ({ ...r, isSample: testCases[i]?.is_sample }));
-      setResults(merged);
-      const passed = merged.every((r) => r.passed);
-
-      const { count } = await supabase
-        .from("submissions")
-        .select("id", { count: "exact", head: true })
-        .eq("student_id", user.id)
-        .eq("question_id", questionId)
-        .eq("is_submit", true);
-
-      await supabase.from("submissions").insert({
-        student_id: user.id,
-        question_id: questionId,
-        code,
-        passed,
-        is_submit: true,
-        results: merged,
-        attempt_number: (count || 0) + 1,
+      // Graded against sample + HIDDEN test cases server-side (Edge Function,
+      // service role) — the client never sees hidden expected/actual values
+      // or writes the submissions row itself. See SECURITY_REPORT.md.
+      const { data, error: fnError } = await supabase.functions.invoke("grade-submission", {
+        body: { questionId, code },
       });
-
-      if (passed) {
+      if (fnError) {
+        // supabase-js puts a non-2xx response body on fnError.context; surface it if present.
+        const detail = await fnError.context?.json?.().catch(() => null);
+        throw new Error(detail?.error || fnError.message || "Could not grade submission.");
+      }
+      setResults(data.results);
+      if (data.passed) {
         setSolved(true);
       } else {
         setFailedAttempts((n) => n + 1);

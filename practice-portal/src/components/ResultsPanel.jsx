@@ -34,6 +34,12 @@ export default function ResultsPanel({ results, title }) {
           </div>
           {r.error ? (
             <pre className="whitespace-pre-wrap text-rose-700 dark:text-rose-300">{r.error}</pre>
+          ) : r.expected === undefined ? (
+            // Hidden test case: the judge only ever returns pass/fail for these,
+            // never the expected/actual values, so there's nothing to leak here.
+            <p className="text-slate-500 dark:text-slate-400">
+              Hidden test case — {r.passed ? "passed." : "did not match the expected output."}
+            </p>
           ) : (
             <div className="grid gap-2 sm:grid-cols-2">
               {r.stdin && (

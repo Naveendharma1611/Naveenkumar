@@ -1,28 +1,43 @@
 # NK Practice Portal
 
 A HackerRank-style Python practice site for college students: 10 topics (beginner → intermediate),
-3+ auto-graded practice questions each, an in-browser code editor and Python runtime (Pyodide — no
-backend execution server), hints/solutions unlocked after 3 failed attempts, progress tracking,
-a college leaderboard, and an admin page for faculty to manage questions and export results.
+auto-graded practice questions, an in-browser code editor, hints/solutions unlocked after 3 failed
+attempts, progress tracking, a college leaderboard, and an admin page for faculty to manage
+questions and export results.
 
 Student side and admin side both live in this one app; `/admin` is only reachable by accounts with
-`profiles.is_admin = true`.
+`profiles.role = 'admin'`. A `faculty` role also exists, scoped to students in its assigned
+department(s) (see `SECURITY_REPORT.md`).
 
 ## Tech stack
 
-- **React 18 + Vite + Tailwind CSS** — no separate backend server.
-- **Supabase** (Postgres + Auth) — stores students, topics, questions, test cases, submissions. Free tier is enough to start.
-- **Pyodide** (CPython compiled to WebAssembly) — runs student code entirely in the student's browser, inside a Web Worker so an infinite loop freezes only the runner, not the page.
+- **React 18 + Vite + Tailwind CSS** — no custom backend server to run yourself.
+- **Supabase** (Postgres + Auth + Edge Functions) — stores students, topics, questions, test cases,
+  submissions, and grades submissions server-side. Free tier is enough to start.
+- **Pyodide** (CPython compiled to WebAssembly) — runs **Run** (sample-test, instant-feedback) code
+  client-side in a Web Worker, so an infinite loop freezes only the runner, not the page.
+- **Piston** (emkc.org) — the free public judge the **Submit** Edge Function uses to actually grade
+  code against hidden test cases server-side (see "How grading works" below).
 - **CodeMirror 6** — the in-browser code editor.
 - **SheetJS (xlsx)** — client-side Excel export on the admin Students page.
 
-## 1. Create a Supabase project
+## 1. Create a Supabase project and apply the schema
 
 1. Go to [supabase.com](https://supabase.com), create a free account and a new project.
-2. In the project dashboard, open **SQL Editor → New query**, paste the contents of
-   [`supabase/schema.sql`](supabase/schema.sql), and run it.
-3. In a second query, paste the contents of [`supabase/seed.sql`](supabase/seed.sql) and run it —
-   this loads the 10 topics and 30 sample questions (3 per topic).
+2. In the project dashboard, open **SQL Editor → New query** and run, **in this order**:
+   1. [`supabase/schema.sql`](supabase/schema.sql) — base tables, views, RLS.
+   2. [`supabase/seed.sql`](supabase/seed.sql) — 10 topics + 30 sample questions (3 per topic).
+   3. [`supabase/migrations/0001_security_hardening.sql`](supabase/migrations/0001_security_hardening.sql)
+      — role model (student/faculty/admin), moves hidden test cases server-side-only, locks down
+      direct submission writes, adds `admin_activity_log`. **Required** — the app's Submit button
+      won't work without this (it calls the Edge Function this migration's RLS changes expect).
+   Any further schema changes land as `supabase/migrations/0002_*.sql`, `0003_*.sql`, etc. — numbered,
+   in order, never edited after being applied.
+3. Deploy the grading Edge Function: **Edge Functions → New Function**, name it exactly
+   `grade-submission`, paste in [`supabase/functions/grade-submission/index.ts`](supabase/functions/grade-submission/index.ts), deploy.
+   (Or with the Supabase CLI installed and logged in: `supabase functions deploy grade-submission`
+   from inside `practice-portal/`.) `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` are injected by the
+   platform automatically — don't set them yourself.
 4. Go to **Project Settings → API** and copy the **Project URL** and **anon public** key.
 5. In **Authentication → Providers**, Email is enabled by default — that's all this app uses. If you
    don't want students to confirm their email before logging in, turn off "Confirm email" under
@@ -42,52 +57,64 @@ npm run dev               # http://localhost:5173
 Sign up normally through the app (`/signup`), then in the Supabase SQL editor run:
 
 ```sql
-update profiles set is_admin = true where roll_number = 'YOUR-ROLL-OR-STAFF-ID';
+update profiles set role = 'admin' where roll_number = 'YOUR-ROLL-OR-STAFF-ID';
+-- or: update profiles set role = 'faculty' where roll_number = '...';
+-- then assign a faculty account to a department it can see submissions for:
+-- insert into faculty_departments (faculty_id, department)
+--   select id, 'CSE' from profiles where roll_number = '...';
 ```
 
 Reload the app — an **Admin** link now appears in the navbar, with a question manager (per topic:
-add/edit/delete questions and their test cases) and a Students page (progress table + **Export to
-Excel** button).
+add/edit/delete questions, sample test cases, and hidden test cases) and a Students page (progress
+table + **Export to Excel** button).
 
-## How grading works (and an important trade-off to know about)
+## How grading works
 
-When a student clicks **Run**, their code executes locally in a Web Worker via Pyodide against the
-topic's *sample* test case(s) only — fast feedback, nothing is saved. **Submit** runs the code
-against every test case (sample + hidden), records the attempt in `submissions`, and — if all cases
-pass — counts the question as solved (adds its points to the leaderboard and topic progress).
+- **Run** executes the student's code locally in a Web Worker via Pyodide, against the question's
+  *sample* test case(s) only — instant feedback, nothing is saved to the database.
+- **Submit** sends the code to the `grade-submission` Edge Function, which runs it against sample
+  **and hidden** test cases using the public [Piston](https://github.com/engineer-man/piston) code
+  execution API, then writes the graded `submissions` row itself using Supabase's service-role key.
 
-Because there is deliberately no backend execution server, grading happens entirely in the
-student's own browser: their Supabase session can read every test case's `expected_output` and
-every question's `solution_code` (that's how the Pyodide runner and the "show solution" button get
-their data). **"Hidden" test cases and the locked solution are a UI convention, not a cryptographic
-secret** — a student determined enough to open devtools and query Supabase directly could see them
-early. For a learning/practice tool this is a normal, accepted trade-off (the alternative is running
-a real grading server, which the brief explicitly avoided). If this ever needs to be exam-grade
-tamper-proof, the fix is a Supabase Edge Function that keeps `expected_output`/`solution_code` in a
-table only the function's service-role key can read, and have the client send it the code's output
-to compare server-side instead.
+This is a deliberate change from how this app worked before Phase 1: hidden test cases used to live
+in a student-readable table and grading ran entirely client-side (documented then as an accepted
+MVP trade-off). They're now in a separate `hidden_test_cases` table with **no** RLS policy granting
+student/anon access at all — only the Edge Function's service-role key (never shipped to the
+browser) can read them — and the `submissions` table has no INSERT policy for students either, so a
+direct `supabase.from('submissions').insert(...)` call from the browser can no longer forge a
+"passed" result. Full reasoning, the Piston-vs-Pyodide-in-Deno-vs-Judge0 trade-off, and the
+exact policy SQL are in [`SECURITY_REPORT.md`](SECURITY_REPORT.md).
 
 ## Adding more content
 
-- **As faculty**: use `/admin` in the running app — no SQL needed.
-- **In bulk**: write more `insert into questions (...) values (...)` / `insert into test_cases (...)`
-  statements following the pattern in `supabase/seed.sql` and run them in the SQL editor.
+- **As faculty/admin**: use `/admin` in the running app — no SQL needed. Every question needs at
+  least one sample test case (shown to students) and at least one hidden test case (used for real
+  grading).
+- **In bulk**: write more `insert into questions (...) values (...)` /
+  `insert into test_cases (...)` / `insert into hidden_test_cases (...)` statements following the
+  pattern in `supabase/seed.sql` and run them as a new numbered migration file.
 
 ## Project structure
 
 ```
 practice-portal/
   supabase/
-    schema.sql        tables, views (leaderboard, topic_progress, solved_questions), RLS policies
-    seed.sql           10 topics + 30 sample questions (3 per topic) + test cases
+    schema.sql          base tables, views (leaderboard, topic_progress, solved_questions), RLS
+    seed.sql             10 topics + 30 sample questions (3 per topic) + test cases
+    migrations/          numbered schema changes applied after schema.sql+seed.sql, in order
+    functions/
+      grade-submission/  Edge Function: grades Submit server-side via Piston, writes submissions
   public/
-    pyodide-worker.js  loads Pyodide from CDN, runs student code against test cases, off the main thread
+    pyodide-worker.js  loads Pyodide from CDN, runs sample-test Run attempts off the main thread
   src/
-    lib/               supabaseClient.js, pyodideRunner.js (Worker wrapper + timeout handling)
+    lib/               supabaseClient.js, pyodideRunner.js (Worker wrapper), adminLog.js
     context/           AuthContext (session/profile), ThemeContext (dark/light, persisted)
     components/        Navbar, CodeEditor, ResultsPanel, DifficultyBadge, Markdown, route guards
     pages/             Login, Signup, Dashboard, TopicPage, QuestionPage, Leaderboard, Profile
     pages/admin/       AdminLayout, AdminQuestions (+ AdminQuestionForm), AdminStudents (Excel export)
+AUDIT.md             Phase-by-phase gap list against the full product spec
+SECURITY_REPORT.md   Table-by-table RLS model, the grading-architecture trade-off, known gaps
+TEST_REPORT.md       Pass/Fail verification log, appended to after every phase
 ```
 
 ## Deployment

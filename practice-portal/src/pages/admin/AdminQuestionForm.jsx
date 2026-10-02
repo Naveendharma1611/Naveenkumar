@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { supabase, DIFFICULTY_POINTS } from "../../lib/supabaseClient";
+import { useAuth } from "../../context/AuthContext";
+import { logAdminAction } from "../../lib/adminLog";
 
 const emptyTestCase = (isSample = false) => ({
   localId: crypto.randomUUID(),
@@ -38,6 +40,7 @@ function toFormState(question, testCases) {
 }
 
 export default function AdminQuestionForm({ topicId, question, testCases, onSaved, onCancel }) {
+  const { user } = useAuth();
   const [form, setForm] = useState(() => toFormState(question, testCases || []));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -62,10 +65,28 @@ export default function AdminQuestionForm({ topicId, question, testCases, onSave
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (!form.title.trim() || !form.prompt.trim()) {
+      setError("Title and prompt are required.");
+      return;
+    }
+    if (!Number.isFinite(Number(form.points)) || Number(form.points) <= 0) {
+      setError("Points must be a positive number.");
+      return;
+    }
     if (!form.testCases.some((tc) => tc.is_sample)) {
       setError("At least one test case must be marked as sample (shown to students).");
       return;
     }
+    if (!form.testCases.some((tc) => !tc.is_sample)) {
+      setError("Add at least one hidden test case — grading relies on them, not just the sample.");
+      return;
+    }
+    if (form.testCases.some((tc) => !tc.expected_output.trim())) {
+      setError("Every test case needs an expected output.");
+      return;
+    }
+
     setBusy(true);
     try {
       const payload = {
@@ -81,25 +102,51 @@ export default function AdminQuestionForm({ topicId, question, testCases, onSave
       };
 
       let questionId = question?.id;
+      let action = "create";
       if (questionId) {
+        action = "update";
         const { error: updateErr } = await supabase.from("questions").update(payload).eq("id", questionId);
         if (updateErr) throw updateErr;
-        await supabase.from("test_cases").delete().eq("question_id", questionId);
+        await Promise.all([
+          supabase.from("test_cases").delete().eq("question_id", questionId),
+          supabase.from("hidden_test_cases").delete().eq("question_id", questionId),
+        ]);
       } else {
         const { data, error: insertErr } = await supabase.from("questions").insert(payload).select().single();
         if (insertErr) throw insertErr;
         questionId = data.id;
       }
 
-      const rows = form.testCases.map((tc, idx) => ({
-        question_id: questionId,
-        stdin: tc.stdin,
-        expected_output: tc.expected_output,
-        is_sample: !!tc.is_sample,
-        order_index: idx,
-      }));
-      const { error: casesErr } = await supabase.from("test_cases").insert(rows);
-      if (casesErr) throw casesErr;
+      const sampleRows = form.testCases
+        .filter((tc) => tc.is_sample)
+        .map((tc, idx) => ({
+          question_id: questionId,
+          stdin: tc.stdin,
+          expected_output: tc.expected_output,
+          is_sample: true,
+          order_index: idx,
+        }));
+      const hiddenRows = form.testCases
+        .filter((tc) => !tc.is_sample)
+        .map((tc, idx) => ({
+          question_id: questionId,
+          stdin: tc.stdin,
+          expected_output: tc.expected_output,
+          order_index: idx,
+        }));
+
+      const [{ error: sampleErr }, { error: hiddenErr }] = await Promise.all([
+        sampleRows.length ? supabase.from("test_cases").insert(sampleRows) : { error: null },
+        hiddenRows.length ? supabase.from("hidden_test_cases").insert(hiddenRows) : { error: null },
+      ]);
+      if (sampleErr) throw sampleErr;
+      if (hiddenErr) throw hiddenErr;
+
+      await logAdminAction(user.id, action, "questions", questionId, {
+        title: form.title,
+        sample_count: sampleRows.length,
+        hidden_count: hiddenRows.length,
+      });
 
       onSaved();
     } catch (err) {

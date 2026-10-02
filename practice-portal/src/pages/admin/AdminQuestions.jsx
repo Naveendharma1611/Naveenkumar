@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
+import { useAuth } from "../../context/AuthContext";
+import { logAdminAction } from "../../lib/adminLog";
 import DifficultyBadge from "../../components/DifficultyBadge";
 import AdminQuestionForm from "./AdminQuestionForm";
 
 export default function AdminQuestions() {
+  const { user } = useAuth();
   const [topics, setTopics] = useState([]);
   const [topicId, setTopicId] = useState("");
   const [questions, setQuestions] = useState([]);
@@ -33,17 +36,21 @@ export default function AdminQuestions() {
   }, [topicId]);
 
   const startEdit = async (question) => {
-    const { data: cases } = await supabase
-      .from("test_cases")
-      .select("*")
-      .eq("question_id", question.id)
-      .order("order_index");
-    setEditing({ question, testCases: cases || [] });
+    const [{ data: sampleCases }, { data: hiddenCases }] = await Promise.all([
+      supabase.from("test_cases").select("*").eq("question_id", question.id).order("order_index"),
+      supabase.from("hidden_test_cases").select("*").eq("question_id", question.id).order("order_index"),
+    ]);
+    const merged = [
+      ...(sampleCases || []),
+      ...(hiddenCases || []).map((tc) => ({ ...tc, is_sample: false })),
+    ];
+    setEditing({ question, testCases: merged });
   };
 
   const handleDelete = async (question) => {
     if (!confirm(`Delete "${question.title}"? This also deletes its test cases and submissions.`)) return;
     await supabase.from("questions").delete().eq("id", question.id);
+    await logAdminAction(user.id, "delete", "questions", question.id, { title: question.title });
     loadQuestions(topicId);
   };
 
