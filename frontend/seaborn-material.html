@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>🌊 Seaborn Complete Study Material</h1>
         <p>Learn Seaborn, Python's statistical visualization library built on Matplotlib: master tidy data, figure-level vs axes-level functions, and build polished statistical graphics for real exploratory data analysis.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">16</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">52</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">33</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">30</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">17</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">55</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">33</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">30</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -39,6 +39,7 @@
       <a href="#m14">14 · Mistakes &amp; Best Practices</a>
       <a href="#m15">15 · Interview Questions</a>
       <a href="#m16">16 · Learning Roadmap</a>
+      <a href="#m17">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -745,6 +746,55 @@ plt.show()</code></pre>
 <ol><li>Pick a <code>load_dataset</code> you have not used in this material (e.g. <code>"diamonds"</code>, <code>"titanic"</code>, <code>"mpg"</code>) and run a full 4-step EDA pass on it unaided.</li><li>Rebuild one of this material's figures using only axes-level functions and a manual <code>plt.subplots()</code> layout, to confirm you understand the figure-level/axes-level split rather than just copying the figure-level call.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>Given a new tidy dataset, I can move from individual distributions through relationships and correlations to categorical comparisons, choosing the right seaborn function at each step and justifying why over its closest alternative.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m17">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Seaborn Cheat Sheet</h2>
+            <p>Tidy data · Plot choice · Facets · Styling · Matplotlib</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Start an EDA Figure</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Load example data</td><td><code>df = sns.load_dataset("penguins")</code></td></tr>
+<tr><td>Set a consistent theme</td><td><code>sns.set_theme(style="whitegrid", context="notebook")</code></td></tr>
+<tr><td>Figure-level relationship plot</td><td><code>sns.relplot(data=df, x="bill_length_mm", y="bill_depth_mm", hue="species")</code></td></tr>
+<tr><td>Axes-level plot</td><td><code>sns.scatterplot(data=df, x="x", y="y", ax=ax)</code></td></tr>
+<tr><td>Distribution</td><td><code>sns.histplot(data=df, x="value", kde=True)</code></td></tr>
+<tr><td>Categorical distribution</td><td><code>sns.boxplot(data=df, x="group", y="value")</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Compare Relationships and Groups</h3>
+<table>
+<tr><th>Question</th><th>Starting plot</th></tr>
+<tr><td>Numeric relationship</td><td><code>scatterplot</code> or <code>lineplot</code> with meaningful <code>hue</code>/<code>style</code></td></tr>
+<tr><td>Numeric distribution</td><td><code>histplot</code>, <code>kdeplot</code>, or <code>ecdfplot</code></td></tr>
+<tr><td>Category counts</td><td><code>countplot</code></td></tr>
+<tr><td>Estimate by category</td><td><code>pointplot</code> or <code>barplot</code>; inspect the underlying distribution too</td></tr>
+<tr><td>Many variables</td><td><code>pairplot</code> for a quick scan; <code>PairGrid</code> for custom mappings</td></tr>
+<tr><td>Small multiples</td><td>Figure-level <code>relplot</code>, <code>catplot</code>, or <code>displot</code> with <code>col=</code>/<code>row=</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Customize and Verify</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Group by color</td><td><code>hue="species"</code>; choose a palette suited to the variable</td></tr>
+<tr><td>Facet by column</td><td><code>col="site"</code>, optionally <code>col_wrap=3</code></td></tr>
+<tr><td>Control uncertainty</td><td>Set <code>errorbar=</code> deliberately for estimators such as <code>barplot</code></td></tr>
+<tr><td>Compose panels</td><td>Create <code>fig, axes = plt.subplots(...)</code> and pass <code>ax=</code> to axes-level calls</td></tr>
+<tr><td>Finish axes</td><td>Use Matplotlib methods such as <code>ax.set(...)</code>, <code>ax.legend()</code>, and <code>fig.savefig(...)</code></td></tr>
+<tr><td>Reduce overplotting</td><td>Lower <code>alpha</code>, sample carefully, or use binned density plots</td></tr>
+</table>
+<div class="warn-box">Tidy data shape matters: observations belong in rows and variables in columns. A plotted mean and interval do not reveal the full group distribution, and a dense scatter can hide structure.</div>
+</div>
         </div>
       </div>
     </div>

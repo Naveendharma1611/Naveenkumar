@@ -486,3 +486,36 @@ Stage | Focus | Outcome
 1. Pick a `load_dataset` you have not used in this material (e.g. `"diamonds"`, `"titanic"`, `"mpg"`) and run a full 4-step EDA pass on it unaided.
 2. Rebuild one of this material's figures using only axes-level functions and a manual `plt.subplots()` layout, to confirm you understand the figure-level/axes-level split rather than just copying the figure-level call.
 @interview Given a new tidy dataset, I can move from individual distributions through relationships and correlations to categorical comparisons, choosing the right seaborn function at each step and justifying why over its closest alternative.
+
+@module m17 | 📋 | Quick Reference | Seaborn Cheat Sheet | Tidy data · Plot choice · Facets · Styling · Matplotlib
+@topic Start an EDA Figure
+@table
+Need | Pattern
+Load example data | `df = sns.load_dataset("penguins")`
+Set a consistent theme | `sns.set_theme(style="whitegrid", context="notebook")`
+Figure-level relationship plot | `sns.relplot(data=df, x="bill_length_mm", y="bill_depth_mm", hue="species")`
+Axes-level plot | `sns.scatterplot(data=df, x="x", y="y", ax=ax)`
+Distribution | `sns.histplot(data=df, x="value", kde=True)`
+Categorical distribution | `sns.boxplot(data=df, x="group", y="value")`
+@end
+@topic Compare Relationships and Groups
+@table
+Question | Starting plot
+Numeric relationship | `scatterplot` or `lineplot` with meaningful `hue`/`style`
+Numeric distribution | `histplot`, `kdeplot`, or `ecdfplot`
+Category counts | `countplot`
+Estimate by category | `pointplot` or `barplot`; inspect the underlying distribution too
+Many variables | `pairplot` for a quick scan; `PairGrid` for custom mappings
+Small multiples | Figure-level `relplot`, `catplot`, or `displot` with `col=`/`row=`
+@end
+@topic Customize and Verify
+@table
+Need | Pattern
+Group by color | `hue="species"`; choose a palette suited to the variable
+Facet by column | `col="site"`, optionally `col_wrap=3`
+Control uncertainty | Set `errorbar=` deliberately for estimators such as `barplot`
+Compose panels | Create `fig, axes = plt.subplots(...)` and pass `ax=` to axes-level calls
+Finish axes | Use Matplotlib methods such as `ax.set(...)`, `ax.legend()`, and `fig.savefig(...)`
+Reduce overplotting | Lower `alpha`, sample carefully, or use binned density plots
+@end
+@warn Tidy data shape matters: observations belong in rows and variables in columns. A plotted mean and interval do not reveal the full group distribution, and a dense scatter can hide structure.
