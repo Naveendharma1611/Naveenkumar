@@ -1,6 +1,6 @@
 // Study-material pages (python-material.html, c-material.html, etc.):
 // W3Schools-inspired learning interface:
-// - Top language/tutorial switcher bar (Java, Data Science, Python, NumPy, C, C++, HTML, CSS, SQL, Django)
+// - Top language/tutorial switcher bar (Java, Data Science, Machine Learning, Deep Learning, AI, Python, NumPy, Excel, C, C++, HTML, CSS, SQL, Django)
 // - Left sidebar with ALL headings in the left side corner
 // - Clicking any heading displays ALL context on the right side
 // - Previous / Next navigation controls at top & bottom
@@ -12,8 +12,12 @@ import { page, setTitle } from "../ui.js";
 const TUTORIALS = [
   { slug: "java", file: "java-material.html", name: "Java", emoji: "☕" },
   { slug: "data-science", file: "data-science-material.html", name: "Data Science", emoji: "📊" },
+  { slug: "machine-learning", file: "machine-learning-material.html", name: "Machine Learning", emoji: "🤖" },
+  { slug: "deep-learning", file: "deep-learning-material.html", name: "Deep Learning", emoji: "🧠" },
+  { slug: "ai", file: "ai-material.html", name: "AI", emoji: "✨" },
   { slug: "python", file: "python-material.html", name: "Python", emoji: "🐍" },
   { slug: "numpy", file: "numpy-material.html", name: "NumPy", emoji: "🔢" },
+  { slug: "excel", file: "excel-material.html", name: "Excel", emoji: "📗" },
   { slug: "c", file: "c-material.html", name: "C", emoji: "💻" },
   { slug: "cpp", file: "cpp-material.html", name: "C++", emoji: "⚙️" },
   { slug: "html", file: "html-material.html", name: "HTML", emoji: "🌐" },

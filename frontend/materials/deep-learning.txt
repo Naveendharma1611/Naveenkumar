@@ -1,0 +1,665 @@
+@page 🧠 Deep Learning Complete Study Material
+@intro Master deep learning from first principles to production: neurons, backpropagation, CNNs, RNNs, Transformers, GANs, and the practical skills to train, tune and deploy real models.
+
+@module m1 | 🧠 | 1 · Foundations | Module 1 — What Is Deep Learning? From Neurons to Networks | Representation learning · Why deep · Classical ML vs DL
+@topic 🧩 Learning features instead of hand-crafting them
+Classical machine learning relies on a human or a separate pipeline to engineer features — edge detectors for images, TF-IDF for text, manually chosen ratios for tabular data — and then fits a relatively simple model like logistic regression or a random forest on top of those features. Deep learning collapses that pipeline: a neural network with multiple layers learns its own hierarchy of features directly from raw data, with early layers detecting simple patterns (edges, word co-occurrences) and later layers combining them into increasingly abstract concepts (shapes, objects, sentiment). This is called **representation learning**, and it's the core reason deep learning scales so well with data — the model keeps discovering better features as you feed it more examples, whereas hand-crafted features plateau.
+@topic ⚖️ When deep learning wins and when it doesn't
+Deep learning dominates when you have large amounts of data, high-dimensional unstructured inputs (images, audio, text, video), and a tolerance for needing significant compute and longer training times. It tends to underperform simpler models on small tabular datasets, where gradient-boosted trees (XGBoost, LightGBM) are often both more accurate and far cheaper to train and interpret. A practical rule: if your dataset has fewer than a few thousand rows and well-structured columns, try classical ML first; if you have raw pixels, waveforms, or large text corpora, deep learning is usually the right tool.
+@table
+Aspect | Classical ML | Deep Learning
+Feature engineering | Manual, domain-expert driven | Learned automatically from data
+Data requirement | Works with small datasets | Needs large datasets to shine
+Compute cost | Low | High (GPUs/TPUs typically needed)
+Interpretability | Often higher | Often lower (improving with tools like SHAP, attention maps)
+Best inputs | Structured/tabular data | Images, audio, text, video, sequences
+@end
+@info Deep learning is a subset of machine learning, which is a subset of AI. "Deep" refers to having multiple stacked layers of learned transformations, not any particular algorithm.
+@practice
+1. Give an example of a problem where a gradient-boosted tree would likely beat a deep neural network, and explain why.
+2. Explain representation learning to a non-technical stakeholder in two sentences.
+@interview Deep learning automatically learns hierarchical feature representations from raw data using stacked layers, which is why it excels on large, unstructured datasets like images and text, while classical ML with hand-crafted features often remains competitive — and cheaper — on small, structured datasets.
+
+@module m2 | ⚙️ | 2 · Neurons | Module 2 — The Perceptron & Multi-Layer Perceptron | Weights · Bias · Layers · Universal approximation
+@topic 🔢 The single neuron: a weighted vote
+A perceptron computes a weighted sum of its inputs, adds a bias term, and passes the result through an activation function: `z = w1*x1 + w2*x2 + ... + wn*xn + b`, then `a = f(z)`. Geometrically, a single perceptron with a step or sigmoid activation draws a linear decision boundary — it can only separate linearly separable data, which is why a lone perceptron famously cannot learn XOR. The bias term shifts that boundary away from the origin, which is just as important as the weights for fitting real data.
+@topic 🏗️ Stacking neurons into layers
+A Multi-Layer Perceptron (MLP) stacks perceptrons into an input layer, one or more hidden layers, and an output layer, with every neuron in one layer connected to every neuron in the next (a "fully connected" or "dense" layer). Each hidden layer applies a linear transformation followed by a non-linear activation; without that non-linearity, stacking layers would collapse mathematically into a single linear transformation, no matter how many layers you add. The **Universal Approximation Theorem** says that an MLP with even one sufficiently wide hidden layer and a non-linear activation can approximate any continuous function on a bounded domain — in practice, though, going deeper (more layers, moderate width) is far more parameter-efficient than going wider with a single layer.
+@code python
+import torch
+import torch.nn as nn
+
+class MLP(nn.Module):
+    def __init__(self, in_features, hidden, out_features):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(in_features, hidden),
+            nn.ReLU(),
+            nn.Linear(hidden, hidden),
+            nn.ReLU(),
+            nn.Linear(hidden, out_features),
+        )
+
+    def forward(self, x):
+        return self.net(x)
+
+model = MLP(in_features=784, hidden=128, out_features=10)
+print(model)
+@end
+@result
+Component | Shape / value
+Input layer | 784 (e.g. flattened 28x28 image)
+Hidden layers | 128 units each, ReLU activation
+Output layer | 10 (class logits)
+Total learnable params | weights + biases of every Linear layer
+@end
+@practice
+1. Why can't a single perceptron with a linear activation solve XOR, and why does adding a hidden layer fix it?
+2. What would happen to a 10-layer MLP if every activation function were removed (replaced with identity)?
+@interview An MLP stacks weighted-sum-plus-bias neurons with non-linear activations across multiple layers; the non-linearity is essential because stacked linear layers collapse into one linear function, and the Universal Approximation Theorem guarantees enough hidden units can approximate any continuous function, though deep narrow networks are usually far more efficient than shallow wide ones.
+
+@module m3 | ⚡ | 3 · Activations | Module 3 — Activation Functions | Sigmoid · Tanh · ReLU · Leaky ReLU · Softmax
+@topic 📈 Sigmoid and tanh — the classic squashing functions
+Sigmoid, `f(z) = 1/(1+e^-z)`, squashes any input into (0, 1), which made it a natural choice for binary probabilities, but its derivative is at most 0.25 and shrinks toward zero for large |z|, so gradients vanish quickly as they're multiplied through many layers — this is the core reason sigmoid fell out of favor for hidden layers. Tanh squashes to (-1, 1) and is zero-centered, which helps optimization slightly more than sigmoid, but it suffers the same saturating-gradient problem at its extremes.
+@topic ⚡ ReLU and its variants — why they won
+ReLU, `f(z) = max(0, z)`, has a derivative of exactly 1 for any positive input, so gradients pass through unchanged instead of shrinking — this is the single biggest reason ReLU enabled training much deeper networks than sigmoid/tanh ever could. Its weakness is the **dying ReLU** problem: if a neuron's weights update such that its input is always negative, its gradient is permanently 0 and it stops learning. Leaky ReLU (`f(z) = z if z>0 else 0.01z`) and its relatives (PReLU, ELU, GELU) fix this by allowing a small non-zero gradient for negative inputs, trading a bit of simplicity for robustness against dead neurons. GELU in particular is the default in most modern Transformers (BERT, GPT) because its smooth curve empirically improves optimization.
+@topic 🎯 Softmax — turning logits into a probability distribution
+Softmax is used only at the output layer for multi-class classification: it exponentiates each logit and normalizes by the sum of all exponentials, `softmax(z_i) = e^zi / sum(e^zj)`, producing values that are all positive and sum to 1. It's paired with categorical cross-entropy loss, and the combination has a clean, numerically stable gradient (`predicted - actual`) that makes training efficient.
+@table
+Function | Range | Common failure mode | Typical use
+Sigmoid | (0, 1) | Vanishing gradients, not zero-centered | Binary output layer, gates in LSTM
+Tanh | (-1, 1) | Vanishing gradients at extremes | RNN hidden states
+ReLU | [0, ∞) | Dying neurons | Default for hidden layers in CNNs/MLPs
+Leaky ReLU / GELU | (-∞, ∞) / smooth | Slightly more compute | Deep nets, Transformers
+Softmax | (0,1), sums to 1 | Overconfidence if not calibrated | Multi-class output layer
+@end
+@warn Never use softmax in a hidden layer — it forces all activations to compete and sum to 1, destroying the independent feature signals that deeper layers need.
+@practice
+1. Explain why sigmoid activations in a 50-layer network would make training nearly impossible.
+2. Why does Leaky ReLU keep neurons from "dying" when regular ReLU does not?
+@interview ReLU replaced sigmoid/tanh in hidden layers because its gradient is constant and doesn't vanish across many layers, enabling much deeper networks, while softmax is reserved for the output layer of multi-class classifiers because it converts logits into a proper probability distribution for use with cross-entropy loss.
+
+@module m4 | 📉 | 4 · Forward & Loss | Module 4 — Forward Propagation & Loss Functions | MSE · Cross-entropy · Prediction to learning
+@topic ➡️ Forward propagation: computing a prediction
+Forward propagation is simply evaluating the network layer by layer: take the input, apply each layer's linear transform and activation in sequence, and read off the output. Every intermediate activation is cached during this pass because backpropagation will need those values to compute gradients — this is the main reason training uses more memory than pure inference.
+@topic 📏 Choosing the right loss function
+The loss function quantifies how wrong a prediction is and is the single signal that drives all learning. **Mean Squared Error (MSE)**, `(1/n) * sum((y_pred - y_true)^2)`, is the standard choice for regression — it penalizes large errors quadratically, which makes it sensitive to outliers. **Cross-entropy loss** is the standard choice for classification: binary cross-entropy for two classes, categorical cross-entropy for multi-class, both derived from maximizing the likelihood of the correct class under the model's predicted probability distribution. Cross-entropy punishes confident wrong predictions far more harshly than MSE would, which is exactly the behavior you want for probabilistic classifiers.
+@code python
+import torch
+import torch.nn as nn
+
+y_pred = torch.tensor([2.5, 0.0, 2.1])
+y_true = torch.tensor([3.0, -0.5, 2.0])
+mse = nn.MSELoss()
+print(mse(y_pred, y_true).item())
+
+logits = torch.tensor([[2.0, 0.5, 0.1]])
+target = torch.tensor([0])
+ce = nn.CrossEntropyLoss()
+print(ce(logits, target).item())
+@end
+@tip PyTorch's `CrossEntropyLoss` expects raw logits, not softmax probabilities — it applies log-softmax internally for numerical stability. Applying softmax yourself first and then calling it is a very common bug.
+@practice
+1. Why does cross-entropy penalize a confident wrong prediction more severely than MSE would on the same error?
+2. You're predicting house prices and a few mansions are 50x the median price. What problem might MSE cause, and what loss could you use instead?
+@interview Forward propagation computes predictions layer by layer while caching activations for later use, and the loss function — MSE for regression, cross-entropy for classification — converts the gap between prediction and ground truth into a single scalar signal that backpropagation can turn into gradients.
+
+@module m5 | 🔁 | 5 · Backprop | Module 5 — Backpropagation & Gradient Descent | Chain rule · Computational graph · Learning rate
+@topic 🔗 The chain rule, applied layer by layer
+Backpropagation computes how much each weight contributed to the final loss by applying the chain rule of calculus backward through the network's computational graph. Starting from the loss, you compute the gradient with respect to the output layer, then use that to compute the gradient with respect to the layer before it, and so on back to the first layer — each layer's local gradient is multiplied by the gradient flowing in from the layer after it. This is why it's called **backpropagation of error**: the error signal flows backward, and each weight update is `w = w - learning_rate * dLoss/dw`.
+@topic 🗺️ The computational graph and automatic differentiation
+Modern frameworks (PyTorch, TensorFlow) build a computational graph of every operation during the forward pass and use it to compute exact gradients automatically via reverse-mode automatic differentiation — you never hand-derive gradients yourself. In PyTorch, calling `loss.backward()` walks this graph in reverse and populates `.grad` on every parameter that required gradients.
+@code python
+import torch
+
+x = torch.tensor(2.0, requires_grad=True)
+w = torch.tensor(3.0, requires_grad=True)
+b = torch.tensor(1.0, requires_grad=True)
+
+y = w * x + b          # forward
+loss = (y - 10) ** 2    # loss as a function of y
+
+loss.backward()         # backprop: computes d(loss)/dw, d(loss)/db, d(loss)/dx
+print(w.grad, b.grad, x.grad)
+@end
+@topic 🎛️ The learning rate — the most important hyperparameter
+Gradient descent updates every parameter in the direction that reduces loss fastest, scaled by the learning rate. Too large a learning rate causes the loss to oscillate or diverge, overshooting minima; too small a learning rate makes training painfully slow and can get stuck in shallow local structure. In practice, learning rate is the single hyperparameter worth tuning first, often with a schedule that decreases it over time (see Module 19).
+@practice
+1. Walk through, in words, how the gradient of the loss with respect to a weight in the first hidden layer is computed in a 4-layer network.
+2. You set the learning rate to 1.0 and the loss explodes to NaN after a few steps. What's the most likely cause and fix?
+@interview Backpropagation applies the chain rule to propagate the loss gradient backward through the network's computational graph, giving the exact gradient for every weight, and gradient descent then nudges each weight opposite that gradient scaled by the learning rate — a rate too high diverges, too low stalls learning.
+
+@module m6 | 🎚️ | 6 · Optimizers | Module 6 — Optimizers | SGD · Momentum · RMSProp · Adam
+@topic 🧭 Plain SGD and the problem of noisy, ravine-shaped loss surfaces
+Stochastic Gradient Descent updates weights using the gradient computed on a mini-batch rather than the full dataset, which is noisy but far cheaper and, counter-intuitively, the noise itself helps escape shallow local minima. Its weakness shows up in loss surfaces shaped like narrow ravines: plain SGD oscillates violently across the steep direction while making slow progress along the shallow direction toward the minimum.
+@topic 🏃 Momentum — smoothing the path
+Momentum keeps a running exponentially-weighted average of past gradients and uses that average (not just the current gradient) to update weights, `v = beta*v + (1-beta)*grad; w = w - lr*v`. This dampens oscillation across ravines and accelerates progress along consistent directions, much like a ball rolling downhill accumulates speed.
+@topic 🌊 RMSProp and Adam — adapting the learning rate per parameter
+RMSProp divides the learning rate for each parameter by a running average of the magnitude of recent gradients for that parameter, so parameters with large, noisy gradients get smaller effective steps and parameters with small, consistent gradients get larger effective steps. **Adam** combines momentum (first moment of gradients) with RMSProp-style per-parameter scaling (second moment of gradients) and adds bias correction for the early training steps — this combination makes it robust to a wide range of problems with minimal tuning, which is why it's the default optimizer for most deep learning work today. SGD with momentum can still generalize slightly better on some vision tasks when carefully tuned, which is why it's still common in large-scale image classification training.
+@table
+Optimizer | Mechanism | Strength | Weakness
+SGD | Raw gradient step | Simple, can generalize well | Slow, sensitive to learning rate
+SGD + Momentum | Exponential average of gradients | Smooths ravines, faster convergence | One more hyperparameter (beta)
+RMSProp | Per-parameter adaptive learning rate | Handles sparse/noisy gradients well | No momentum term
+Adam | Momentum + adaptive learning rate + bias correction | Fast, robust default, little tuning | Can generalize slightly worse than tuned SGD
+@end
+@code python
+import torch
+
+model_params = [torch.nn.Parameter(torch.randn(10, 10))]
+optimizer = torch.optim.Adam(model_params, lr=1e-3, betas=(0.9, 0.999))
+# typical training step:
+# optimizer.zero_grad()
+# loss.backward()
+# optimizer.step()
+@end
+@practice
+1. Explain why Adam usually converges faster than plain SGD on a new, untuned problem.
+2. Why is `optimizer.zero_grad()` necessary before every `loss.backward()` call in PyTorch?
+@interview Adam is the default optimizer because it combines momentum, which smooths noisy gradients and accelerates consistent directions, with per-parameter adaptive learning rates from RMSProp, giving fast and robust convergence with little tuning — though carefully tuned SGD with momentum can still edge out Adam on final generalization in some vision benchmarks.
+
+@module m7 | 🎲 | 7 · Initialization | Module 7 — Weight Initialization | Zero-init failure · Xavier/Glorot · He init
+@topic 🚫 Why initializing all weights to zero fails completely
+If every weight in a layer starts at zero, every neuron in that layer receives the same input and computes the same output, and — crucially — receives the exact same gradient during backpropagation. Every neuron in the layer updates identically forever, so the layer behaves like a single neuron no matter how many units it has. This symmetry must be broken by randomizing the initial weights.
+@topic 🎯 Xavier/Glorot and He initialization — matching variance to the activation
+Random initialization alone isn't enough — the *scale* of the randomness matters. If weights are too large, activations and gradients explode as they pass through layers; if too small, they vanish. **Xavier/Glorot initialization** scales weights by `sqrt(1/fan_in)` (or `sqrt(2/(fan_in+fan_out))`) and is derived to keep the variance of activations roughly constant across layers for symmetric activations like sigmoid and tanh. **He initialization** scales weights by `sqrt(2/fan_in)`, accounting for the fact that ReLU zeroes out roughly half of its inputs, and is the standard choice for ReLU-based networks.
+@code python
+import torch.nn as nn
+
+layer = nn.Linear(256, 256)
+nn.init.xavier_uniform_(layer.weight)   # for tanh/sigmoid networks
+nn.init.kaiming_normal_(layer.weight, nonlinearity='relu')  # He init, for ReLU networks
+nn.init.zeros_(layer.bias)
+@end
+@tip Biases are almost always safely initialized to zero — it's the weight matrices that need careful scaling to avoid vanishing/exploding signals.
+@practice
+1. Why does initializing all weights to the same non-zero constant also fail, even though it's not zero?
+2. You switch a network's activation from tanh to ReLU but keep Xavier initialization. What problem might you see, and what's the fix?
+@interview Zero or constant initialization fails because it makes every neuron in a layer symmetric and they learn identically forever, so weights must be randomized with a variance scaled to the layer size — Xavier/Glorot for tanh/sigmoid networks and He initialization for ReLU networks — to keep activations and gradients from vanishing or exploding as they propagate through depth.
+
+@module m8 | 🛡️ | 8 · Regularization | Module 8 — Regularization in Deep Learning | Dropout · BatchNorm · L2/weight decay · Early stopping
+@topic 🎭 Dropout — training an implicit ensemble
+Dropout randomly zeroes a fraction of neurons' activations (typically 20-50%) during each training step, forcing the network to not rely too heavily on any single neuron or co-adapted group of neurons. At inference time, dropout is turned off and activations are scaled accordingly (inverted dropout scales during training so inference needs no change), which approximates averaging over an exponential number of thinned sub-networks — an implicit ensemble effect that reduces overfitting.
+@topic 📊 Batch Normalization — stabilizing the distribution of activations
+BatchNorm normalizes each layer's activations (per mini-batch) to have zero mean and unit variance, then applies a learnable scale and shift so the network can undo the normalization if that's optimal. Its main effect is to reduce internal covariate shift — the tendency for the distribution of each layer's inputs to keep changing as earlier layers' weights update during training — which lets you use higher learning rates and makes training noticeably less sensitive to initialization. As a side effect, the noise introduced by per-batch statistics also acts as a mild regularizer, sometimes reducing (but not replacing) the need for dropout.
+@code python
+import torch.nn as nn
+
+block = nn.Sequential(
+    nn.Linear(256, 256),
+    nn.BatchNorm1d(256),
+    nn.ReLU(),
+    nn.Dropout(p=0.3),
+)
+# call model.train() during training (dropout active, batch stats used)
+# call model.eval() during inference (dropout off, running stats used)
+@end
+@topic ⚖️ L2 weight decay and early stopping
+**L2 regularization** (weight decay) adds `lambda * sum(w^2)` to the loss, penalizing large weights and encouraging the network to find simpler, smoother solutions that generalize better; in most optimizers it's implemented directly as a `weight_decay` parameter rather than literally modifying the loss. **Early stopping** monitors validation loss during training and stops once it starts rising even as training loss keeps falling — a direct, cheap defense against overfitting that requires no architecture change.
+@warn Forgetting to call `model.eval()` before validation/inference is one of the most common deep learning bugs — dropout stays active and BatchNorm keeps using batch statistics instead of its learned running statistics, giving inconsistent or degraded results.
+@practice
+1. Explain why dropout is disabled at test time but weight decay is not.
+2. A model's training loss keeps dropping but validation loss starts rising after epoch 15. Name two regularization techniques you'd apply and why.
+@interview Dropout, batch normalization, L2 weight decay and early stopping all fight overfitting through different mechanisms — dropout trains an implicit ensemble by randomly disabling neurons, BatchNorm stabilizes layer input distributions (with regularization as a side benefit), L2 penalizes large weights for simpler solutions, and early stopping simply halts training once validation performance stops improving.
+
+@module m9 | 🌊 | 9 · Gradient Problems | Module 9 — Vanishing & Exploding Gradients | Causes · ReLU · BatchNorm · Residual connections
+@topic 📉 Why gradients vanish in deep networks
+During backpropagation, the gradient at an early layer is the product of many derivatives from all the layers after it (chain rule). If each of those derivatives is consistently less than 1 — which happens with saturating activations like sigmoid/tanh whose derivative maxes out at 0.25 and 1.0 respectively — the product shrinks exponentially with depth, so early layers receive a gradient close to zero and effectively stop learning. This is the **vanishing gradient problem**, and it's the main reason very deep sigmoid/tanh networks were nearly untrainable before modern techniques.
+@topic 💥 Why gradients explode, and the opposite failure mode
+If weights are initialized too large, or activations/derivatives are consistently greater than 1, the same repeated multiplication through many layers causes gradients to grow exponentially instead, leading to huge weight updates, NaN losses, and unstable training. This is especially common in deep or recurrent networks over long sequences.
+@topic 🧰 The modern toolkit that fixes both
+Four techniques, usually combined, solve this in practice: **ReLU-family activations** avoid the small-derivative saturation region that sigmoid/tanh suffer from; **careful initialization** (He/Xavier) keeps signal variance stable layer to layer at the start of training; **Batch Normalization** actively re-normalizes activations at every layer, preventing drift in either direction; and **residual/skip connections** (`output = F(x) + x`) give gradients a direct additive path straight back to earlier layers that bypasses the multiplicative chain entirely, which is the key architectural idea that let ResNet train networks with over 100 layers. **Gradient clipping** (capping the gradient's norm before the update) is the standard defense specifically against exploding gradients, widely used in RNN/LSTM training.
+@code python
+import torch
+
+# gradient clipping, applied after loss.backward() and before optimizer.step()
+torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+@end
+@practice
+1. Why does a residual connection (`x + F(x)`) help gradients flow to early layers even when `F(x)`'s own gradient is tiny?
+2. You're training an RNN on long sequences and the loss occasionally jumps to NaN. What's happening and what's the standard fix?
+@interview Vanishing and exploding gradients both come from repeatedly multiplying per-layer derivatives through depth via the chain rule — saturating activations shrink that product toward zero while unstable scale grows it toward infinity — and the fix is a combination of ReLU activations, proper initialization, batch normalization, residual connections for a direct gradient path, and gradient clipping to cap exploding updates.
+
+@module m10 | 🔲 | 10 · CNN Basics | Module 10 — Convolutional Neural Networks: Convolution & Pooling | Kernels · Stride · Padding · Receptive field
+@topic 🔲 The convolution operation — sliding, shared filters
+A convolutional layer slides a small learnable filter (kernel, e.g. 3x3) across the input, computing a dot product at each position to produce a feature map. Two properties make this powerful for images: **parameter sharing** (the same filter, and therefore the same edge/texture detector, is applied at every spatial position, drastically cutting parameters versus a fully connected layer) and **translation equivariance** (a detected pattern is found regardless of where it appears in the image). Multiple filters per layer each learn to detect a different pattern, stacked as output channels.
+@topic 🧮 Stride, padding and output size
+**Stride** controls how far the kernel moves between applications — stride 2 roughly halves the spatial output size, trading resolution for larger receptive field and less compute. **Padding** (typically zero-padding) adds pixels around the input's border so the kernel can be centered on edge pixels and, with "same" padding, keeps output spatial size equal to input size. The output size formula is `(W - K + 2P) / S + 1` for input width W, kernel size K, padding P, stride S.
+@topic 🏊 Pooling — downsampling while keeping the strongest signal
+Pooling layers (max pooling is most common) reduce the spatial dimensions of feature maps by taking the max (or average) value in each small window, which shrinks computation, adds a small amount of translation invariance, and enlarges the effective **receptive field** — the region of the original input that influences a given output unit — of subsequent layers. Modern architectures increasingly replace pooling with strided convolutions, but the intuition (downsample while increasing receptive field) stays the same.
+@code python
+import torch.nn as nn
+
+conv_block = nn.Sequential(
+    nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3, stride=1, padding=1),
+    nn.BatchNorm2d(32),
+    nn.ReLU(),
+    nn.MaxPool2d(kernel_size=2, stride=2),  # halves H and W
+)
+# input: (batch, 3, 224, 224) -> output: (batch, 32, 112, 112)
+@end
+@result
+Layer | Output shape (batch=1)
+Input image | (1, 3, 224, 224)
+After Conv2d (padding=1, stride=1) | (1, 32, 224, 224)
+After MaxPool2d (kernel=2, stride=2) | (1, 32, 112, 112)
+@end
+@practice
+1. Compute the output spatial size of a 32x32 input with a 5x5 kernel, stride 1, and no padding.
+2. Why does parameter sharing in convolutions make CNNs far more data-efficient than MLPs for images?
+@interview Convolutional layers slide shared, learnable filters across an input to produce feature maps, giving parameter efficiency and translation equivariance, while stride, padding, and pooling together control spatial output size and grow each neuron's receptive field as the network goes deeper.
+
+@module m11 | 🖼️ | 11 · CNN Architectures | Module 11 — CNN Architectures: LeNet to ResNet | LeNet · AlexNet · VGG · ResNet · Skip connections
+@topic 🕰️ The evolution: deeper, and the problem that stopped "just stack more layers"
+**LeNet-5** (1998) established the conv-pool-conv-pool-fully-connected pattern for digit recognition. **AlexNet** (2012) scaled this up with ReLU activations, dropout, and GPU training, and its ImageNet win is widely credited with igniting the modern deep learning boom. **VGG** (2014) showed that stacking many small 3x3 convolutions (instead of fewer large ones) gives the same receptive field with fewer parameters and more non-linearity, pushing depth to 16-19 layers — but going deeper than that made accuracy *worse*, not from overfitting but because gradients struggled to propagate through so many layers (the degradation problem, related to vanishing gradients).
+@topic 🔗 ResNet — skip connections solve the degradation problem
+**ResNet** (2015) introduced the residual block: instead of a stack of layers learning a direct mapping `H(x)`, it learns a residual `F(x) = H(x) - x`, and the block outputs `F(x) + x`. The addition gives gradients a direct, unimpeded path back to earlier layers regardless of how deep the network is, which allowed training networks with 50, 101, even 152+ layers that actually got more accurate with depth instead of degrading. This single idea — identity/skip connections — now appears throughout deep learning, including inside Transformer blocks.
+@table
+Architecture | Year | Key idea | Depth
+LeNet-5 | 1998 | Conv + pooling pattern for digits | 7 layers
+AlexNet | 2012 | ReLU + dropout + GPU training at scale | 8 layers
+VGG | 2014 | Stacked small 3x3 kernels, uniform design | 16-19 layers
+ResNet | 2015 | Residual/skip connections fix degradation | 50-152+ layers
+@end
+@code python
+import torch
+import torch.nn as nn
+
+class ResidualBlock(nn.Module):
+    def __init__(self, channels):
+        super().__init__()
+        self.conv1 = nn.Conv2d(channels, channels, 3, padding=1)
+        self.bn1 = nn.BatchNorm2d(channels)
+        self.conv2 = nn.Conv2d(channels, channels, 3, padding=1)
+        self.bn2 = nn.BatchNorm2d(channels)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        identity = x
+        out = self.relu(self.bn1(self.conv1(x)))
+        out = self.bn2(self.conv2(out))
+        return self.relu(out + identity)   # the skip connection
+@end
+@practice
+1. Why did simply stacking more layers in plain (non-residual) VGG-style networks eventually hurt accuracy?
+2. Explain in one sentence why `F(x) + x` is easier to optimize than learning `H(x)` directly when the ideal mapping is close to identity.
+@interview CNN architectures evolved from LeNet's basic conv-pool pattern through AlexNet and VGG's increasing depth, but plain stacking hit a degradation wall until ResNet's residual/skip connections gave gradients a direct path around each block, which is what finally made networks over 100 layers deep both trainable and more accurate.
+
+@module m12 | 🔄 | 12 · RNNs | Module 12 — Recurrent Neural Networks | Sequence modeling · Hidden state · Long-range limits
+@topic 🔄 Processing sequences with a hidden state
+A Recurrent Neural Network processes a sequence one element at a time, maintaining a hidden state vector that's updated at each step: `h_t = tanh(W_hh * h_{t-1} + W_xh * x_t + b)`, and the same weight matrices are reused at every time step (parameter sharing across time, analogous to parameter sharing across space in CNNs). This hidden state acts as a compressed summary of everything the network has seen so far in the sequence, which is why RNNs naturally suit text, speech, time series, and any variable-length sequential data.
+@topic ⛓️ Backpropagation through time and why long sequences are hard
+Training an RNN uses **Backpropagation Through Time (BPTT)**: the network is conceptually "unrolled" into one layer per time step, and gradients flow backward through every step. Because the same weight matrix is multiplied repeatedly across many time steps — exactly like depth in a feedforward network — vanilla RNNs suffer vanishing (and sometimes exploding) gradients over long sequences, which means they effectively "forget" information from many steps earlier. A plain RNN can struggle to connect a pronoun to a noun that appeared 50 words earlier, even though architecturally nothing prevents it.
+@code python
+import torch.nn as nn
+
+rnn = nn.RNN(input_size=50, hidden_size=128, num_layers=1, batch_first=True)
+# x: (batch, seq_len, input_size) -> output: (batch, seq_len, hidden_size), h_n: (1, batch, hidden_size)
+@end
+@practice
+1. Why is the same weight matrix reused at every time step in an RNN, rather than having a separate matrix per step?
+2. Explain, using the chain rule, why gradients vanish over long sequences in a vanilla RNN.
+@interview Vanilla RNNs maintain a hidden state updated at every time step with shared weights, which makes them naturally suited to sequences, but backpropagation through time multiplies that shared weight matrix repeatedly across steps, causing vanishing gradients that prevent plain RNNs from reliably learning long-range dependencies.
+
+@module m13 | 🚪 | 13 · LSTM & GRU | Module 13 — LSTM & GRU | Gating mechanisms · Long-range dependencies
+@topic 🚪 LSTM — gates that control what to remember and forget
+The Long Short-Term Memory cell adds a separate **cell state** that runs through the sequence with only minor, mostly additive modifications, plus three sigmoid "gates" that control information flow: the **forget gate** decides what to erase from the cell state, the **input gate** decides what new information to add, and the **output gate** decides what part of the cell state to expose as the hidden state. Because the cell state is updated additively (`C_t = forget_gate * C_{t-1} + input_gate * candidate`) rather than through a repeated matrix multiplication, gradients can flow across many time steps largely unimpeded — directly analogous to how residual connections help CNNs.
+@topic ⚡ GRU — a simpler, faster alternative
+The Gated Recurrent Unit merges the cell state and hidden state into one, and uses only two gates (reset and update) instead of three, making it roughly 25-30% fewer parameters than an equivalent LSTM and often just as accurate on moderate-length sequences, with faster training. The practical choice between them is usually empirical: try GRU first for speed, switch to LSTM if you need the extra modeling capacity on longer or more complex sequences.
+@code python
+import torch.nn as nn
+
+lstm = nn.LSTM(input_size=50, hidden_size=128, num_layers=1, batch_first=True)
+gru = nn.GRU(input_size=50, hidden_size=128, num_layers=1, batch_first=True)
+# LSTM returns (output, (h_n, c_n)) -- note the extra cell state c_n
+# GRU returns (output, h_n) -- no separate cell state
+@end
+@table
+Model | Gates | States carried | Relative speed | Typical use
+Vanilla RNN | None | Hidden state only | Fastest | Short sequences, baselines
+GRU | Reset, update | Hidden state only | Fast | General sequence tasks, fewer params
+LSTM | Forget, input, output | Hidden + cell state | Slower | Long or complex sequences
+@end
+@practice
+1. Why does the LSTM's additive cell-state update help with vanishing gradients compared to a vanilla RNN's repeated matrix multiplication?
+2. In what situation would you prefer GRU over LSTM, and vice versa?
+@interview LSTM and GRU both solve vanilla RNNs' vanishing gradient problem using learned gates that control what information is kept, forgotten, or output, with LSTM's separate additive cell state providing the most robust long-range memory and GRU offering a simpler, faster alternative with a merged state that performs comparably on many tasks.
+
+@module m14 | 🔗 | 14 · Seq2Seq & Attention | Module 14 — Sequence-to-Sequence Models & Attention | Encoder-decoder · Bottleneck problem · Why attention
+@topic 🔗 Encoder-decoder: mapping sequence to sequence
+A sequence-to-sequence (seq2seq) model uses an encoder RNN/LSTM to compress an entire input sequence (e.g. a sentence in French) into a single final hidden state, then a decoder RNN/LSTM generates the output sequence (e.g. the English translation) one token at a time, conditioned on that compressed state and its own previous outputs. This architecture enabled machine translation, summarization and other variable-length-in, variable-length-out tasks.
+@topic 🎯 The bottleneck problem and why attention was introduced
+Forcing the entire input sequence — whether 5 words or 100 — through a single fixed-size final hidden state is a severe information bottleneck, and translation quality measurably degrades on longer sentences as early-sequence information gets diluted or overwritten. **Attention** (Bahdanau 2014, Luong 2015) fixes this by letting the decoder, at each output step, look back at *all* encoder hidden states and compute a weighted combination of them, with the weights (attention scores) learned to reflect how relevant each input position is to the current output step. This removes the single-vector bottleneck entirely and also gives a human-interpretable alignment — you can visualize which input words the decoder attended to for each output word.
+@code python
+import torch
+import torch.nn.functional as F
+
+def attention(decoder_hidden, encoder_outputs):
+    # decoder_hidden: (batch, hidden), encoder_outputs: (batch, seq_len, hidden)
+    scores = torch.bmm(encoder_outputs, decoder_hidden.unsqueeze(2)).squeeze(2)  # (batch, seq_len)
+    weights = F.softmax(scores, dim=1)                                          # attention weights
+    context = torch.bmm(weights.unsqueeze(1), encoder_outputs).squeeze(1)       # weighted sum
+    return context, weights
+@end
+@practice
+1. Why does compressing an entire sentence into one fixed-size vector hurt translation quality more for long sentences than short ones?
+2. What does it mean, mechanically, for attention weights to be "learned" rather than fixed?
+@interview Seq2seq models compress an input sequence into a single hidden state via an encoder and decode it one token at a time, but that fixed-size bottleneck loses information on long sequences, which is exactly the problem attention solves by letting the decoder dynamically weight and combine all encoder hidden states at every output step instead of relying on one compressed summary.
+
+@module m15 | 🧩 | 15 · Transformers | Module 15 — Transformer Architecture | Self-attention · Multi-head · Positional encoding · Why it replaced RNNs
+@topic 🧩 Self-attention — every token looks at every other token
+Self-attention lets each position in a sequence directly attend to every other position in a single step, rather than passing information sequentially through a chain of hidden states. Each token is projected into a **Query**, **Key**, and **Value** vector; the attention score between token i and token j is the dot product of i's query with j's key (scaled by `sqrt(d_k)` for stability), passed through softmax to get weights, which are then used to compute a weighted sum of all the value vectors — giving token i a representation informed by the whole sequence in one operation. Because this has no inherent sequential dependency, it's fully parallelizable across the sequence, unlike an RNN that must process token t before token t+1.
+@topic 🎭 Multi-head attention and positional encoding
+**Multi-head attention** runs several self-attention computations in parallel with different learned projections, letting different heads specialize in different relationship types (e.g. one head tracking syntactic dependencies, another tracking coreference), then concatenates and projects the results. Because self-attention itself has no notion of token order (it's a set operation), Transformers add **positional encodings** — fixed sinusoidal or learned vectors added to each token's embedding — so the model can tell position 1 from position 50.
+@topic 🚀 Why Transformers replaced RNNs for most sequence tasks
+Transformers won out over RNNs/LSTMs for three practical reasons: full parallelization during training (no sequential dependency, so GPUs are used far more efficiently and training is dramatically faster), a constant-length path between any two tokens regardless of distance (versus an RNN's path length growing with sequence distance, which hurts long-range dependency learning), and better empirical scaling — Transformer accuracy keeps improving predictably as you add more data and parameters, which underlies the entire modern large language model era. The trade-off is quadratic compute and memory cost in sequence length (`O(n^2)`) from computing attention between every pair of tokens, which has driven a lot of recent research into efficient/sparse attention variants.
+@code python
+import torch.nn as nn
+
+encoder_layer = nn.TransformerEncoderLayer(
+    d_model=512, nhead=8, dim_feedforward=2048, dropout=0.1, batch_first=True
+)
+transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=6)
+# x: (batch, seq_len, 512) -> output: (batch, seq_len, 512), fully attended
+@end
+@table
+Property | RNN/LSTM | Transformer
+Sequential dependency | Yes (token t needs t-1) | No (fully parallel)
+Path length between distant tokens | O(n) | O(1)
+Training parallelism | Limited | High (GPU-friendly)
+Compute/memory cost | O(n) per step | O(n^2) for full attention
+@end
+@practice
+1. Why is a Transformer's training step more parallelizable on a GPU than an RNN's?
+2. Explain why positional encoding is necessary for Transformers but not for RNNs.
+@interview Transformers replaced RNNs because self-attention lets every token attend directly to every other token in a constant-length path and fully in parallel, which both fixes long-range dependency learning and makes training vastly more GPU-efficient, at the cost of quadratic compute in sequence length — and because attention has no inherent order, positional encodings are added to inject sequence position.
+
+@module m16 | 🔄 | 16 · Transfer Learning | Module 16 — Transfer Learning & Fine-Tuning | Pretrained models · Freezing layers · Feature extraction vs fine-tuning
+@topic 🔄 Why reuse a pretrained model at all
+Training a large CNN or Transformer from scratch requires enormous labeled datasets and compute that most teams don't have. Transfer learning reuses a model pretrained on a large, general dataset (ImageNet for vision, a web-scale corpus for language) whose early/middle layers have already learned broadly useful features (edges, textures, shapes for vision; syntax, semantics for language), and adapts it to a new, often much smaller, target dataset.
+@topic 🧊 Feature extraction vs fine-tuning
+**Feature extraction** freezes all pretrained weights and trains only a new final layer (or small head) on top, which is fast, needs little data, and resists overfitting — ideal when your target dataset is small or similar to the pretraining domain. **Fine-tuning** unfreezes some or all of the pretrained layers and continues training on the new data, typically with a much smaller learning rate so as not to destroy the useful pretrained weights; it needs more data but can adapt the model's features more deeply, which matters when the target domain differs significantly from the pretraining domain (e.g. medical images vs. natural photos). A common middle ground is to freeze early layers (generic features) and fine-tune only the later layers (task-specific features).
+@code python
+import torch
+import torchvision.models as models
+import torch.nn as nn
+
+model = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
+
+for param in model.parameters():        # freeze all pretrained layers
+    param.requires_grad = False
+
+model.fc = nn.Linear(model.fc.in_features, 10)  # new head for 10 classes
+# only model.fc has requires_grad=True and will be updated
+
+optimizer = torch.optim.Adam(model.fc.parameters(), lr=1e-3)
+# for fine-tuning instead: unfreeze model.layer4 too, use a smaller lr e.g. 1e-5
+@end
+@table
+Strategy | What's trained | Data needed | When to use
+Feature extraction | Only new head/final layer | Small dataset | Target domain similar to pretraining domain
+Partial fine-tuning | Final layers + head | Moderate dataset | Target domain somewhat different
+Full fine-tuning | All layers (small lr) | Larger dataset | Target domain quite different, enough data available
+@end
+@tip Always use a smaller learning rate when fine-tuning than you would use for training from scratch — a large step can wipe out the useful pretrained weights in a single epoch, a failure mode called "catastrophic forgetting."
+@practice
+1. You have 500 labeled X-ray images and a model pretrained on ImageNet. Would you use feature extraction or full fine-tuning, and why?
+2. Why do most fine-tuning recipes use a learning rate 10-100x smaller than training from scratch?
+@interview Transfer learning reuses features already learned by a model pretrained on a large dataset, either by freezing the backbone and training only a new head (feature extraction, best for small or similar datasets) or by unfreezing and continuing training with a small learning rate (fine-tuning, best when more data is available or the target domain differs), avoiding the cost of training from scratch.
+
+@module m17 | 🗜️ | 17 · Autoencoders | Module 17 — Autoencoders | Encoder-decoder · Latent space · Denoising · Anomaly detection
+@topic 🗜️ Compressing data into a latent space and reconstructing it
+An autoencoder is trained to reconstruct its own input: an encoder compresses the input into a lower-dimensional **latent representation** (the bottleneck), and a decoder reconstructs the original input from that compressed representation, trained end to end by minimizing reconstruction error (typically MSE for continuous data). Because the bottleneck is smaller than the input, the network is forced to learn which features of the data are most important to retain — an unsupervised way to learn compact, informative representations without any labels.
+@topic 🧬 Practical use cases beyond toy compression
+**Dimensionality reduction**: the latent vector itself is a learned, non-linear alternative to PCA, useful as input features for downstream models or for visualization. **Denoising autoencoders** are trained to reconstruct a clean input from a deliberately corrupted/noisy version, which forces the latent space to capture robust, noise-invariant structure — useful directly for image/audio denoising. **Anomaly detection** exploits the fact that an autoencoder trained only on "normal" data will reconstruct normal inputs well but reconstruct anomalous/out-of-distribution inputs poorly; a high reconstruction error at inference time flags the anomaly, which is widely used for fraud detection, manufacturing defect detection and network intrusion detection.
+@code python
+import torch.nn as nn
+
+class Autoencoder(nn.Module):
+    def __init__(self, input_dim=784, latent_dim=32):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(input_dim, 128), nn.ReLU(),
+            nn.Linear(128, latent_dim),
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(latent_dim, 128), nn.ReLU(),
+            nn.Linear(128, input_dim), nn.Sigmoid(),
+        )
+
+    def forward(self, x):
+        z = self.encoder(x)
+        return self.decoder(z)
+
+# anomaly score for a new sample x: reconstruction_error = MSE(model(x), x)
+@end
+@practice
+1. Why does a denoising autoencoder generalize better than a plain autoencoder trained only to copy clean inputs?
+2. Explain why high reconstruction error is a reasonable anomaly signal, and name one situation where it would give a false positive.
+@interview Autoencoders learn a compressed latent representation of data by training an encoder-decoder pair to reconstruct the input, and that forced compression is useful well beyond compression itself — denoising autoencoders learn robust features by reconstructing clean data from corrupted input, and anomaly detection exploits the fact that a model trained on normal data reconstructs out-of-distribution inputs poorly.
+
+@module m18 | 🎭 | 18 · GANs | Module 18 — Generative Adversarial Networks (GANs) | Generator vs discriminator · Adversarial training · Mode collapse
+@topic 🎭 Two networks in an adversarial game
+A GAN pits two networks against each other: the **generator** takes random noise as input and tries to produce fake data realistic enough to fool the discriminator, while the **discriminator** is a binary classifier trained to distinguish real data from the generator's fakes. They're trained simultaneously with opposing objectives — the discriminator's loss rewards correctly spotting fakes, the generator's loss rewards fooling the discriminator — and ideally converge to a point where the generator produces samples indistinguishable from real data and the discriminator is reduced to guessing (50% accuracy).
+@topic ⚠️ Training instability and mode collapse
+GAN training is notoriously unstable because it's a minimax game between two networks rather than a single loss being minimized, so if either network becomes too strong too quickly, the other stops receiving a useful gradient signal (e.g. a discriminator that's too good gives the generator vanishing gradients). **Mode collapse** is the signature GAN failure mode: the generator discovers a small number of outputs that reliably fool the current discriminator and keeps producing only those, losing the diversity of the real data distribution entirely. Common mitigations include using Wasserstein loss with gradient penalty (WGAN-GP) for smoother gradients, feature matching, minibatch discrimination to explicitly penalize low output diversity, and simply careful learning-rate and architecture balancing between the two networks.
+@code python
+import torch.nn as nn
+
+class Generator(nn.Module):
+    def __init__(self, noise_dim=100, out_dim=784):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(noise_dim, 256), nn.ReLU(),
+            nn.Linear(256, out_dim), nn.Tanh(),
+        )
+    def forward(self, z):
+        return self.net(z)
+
+class Discriminator(nn.Module):
+    def __init__(self, in_dim=784):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(in_dim, 256), nn.LeakyReLU(0.2),
+            nn.Linear(256, 1), nn.Sigmoid(),
+        )
+    def forward(self, x):
+        return self.net(x)
+
+# training loop alternates: update D on real + fake batches, then update G to fool D
+@end
+@practice
+1. Why can a discriminator that becomes "too good too fast" actually stall generator training?
+2. Describe mode collapse and name one technique used to mitigate it.
+@interview GANs train a generator and discriminator against each other in a minimax game, where the generator learns to fool the discriminator and the discriminator learns to catch fakes, but this adversarial setup is unstable and prone to mode collapse, where the generator produces only a narrow set of outputs — mitigated with techniques like Wasserstein loss with gradient penalty and minibatch discrimination.
+
+@module m19 | 🛠️ | 19 · Training Tricks | Module 19 — Training Tricks | LR schedules · Data augmentation · Early stopping · Checkpointing · Mixed precision
+@topic 📐 Learning rate schedules
+Rather than a fixed learning rate, most training runs use a schedule: **warmup** gradually ramps the learning rate up over the first few hundred/thousand steps to avoid early instability (especially important for Transformers and large batch sizes), followed by **decay** — step decay, cosine annealing, or exponential decay — that lowers the learning rate as training progresses so the model can settle into a sharper minimum rather than oscillating around it. `ReduceLROnPlateau` instead decays the learning rate automatically when validation loss stops improving.
+@topic 🖼️ Data augmentation — more effective data without more labels
+Data augmentation applies label-preserving random transformations to training examples — random crops, flips, rotations, color jitter for images; synonym replacement or back-translation for text; time-shifting or noise injection for audio — generating effectively more diverse training data for free and reducing overfitting, especially valuable when labeled data is limited. Augmentation is applied only to the training set, never to validation/test data, since you need a realistic, un-augmented estimate of real-world performance.
+@topic 💾 Checkpointing and mixed precision
+**Checkpointing** periodically saves model weights (and optimizer state) during training, which protects against crashes on long runs and lets you keep the best-validation-performance snapshot rather than whatever the model looked like when training happened to stop. **Mixed precision training** performs most computation in 16-bit floating point instead of 32-bit, roughly halving memory usage and often significantly speeding up training on modern GPUs with tensor cores, while keeping a 32-bit master copy of weights (and loss scaling) to avoid numerical underflow in the small gradient values — frameworks automate this (`torch.cuda.amp`, Keras `mixed_precision` policy).
+@code python
+import torch
+
+optimizer = torch.optim.Adam(params=[torch.nn.Parameter(torch.randn(3))], lr=1e-3)
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=50)
+scaler = torch.cuda.amp.GradScaler()   # for mixed precision
+
+# inside training loop:
+# with torch.cuda.amp.autocast():
+#     output = model(x); loss = criterion(output, y)
+# scaler.scale(loss).backward()
+# scaler.step(optimizer); scaler.update()
+# scheduler.step()
+@end
+@practice
+1. Why is warmup especially important when training Transformers with large batch sizes?
+2. Explain why data augmentation is applied only to the training set and never to the validation set.
+@interview Reliable deep learning training relies on a handful of compounding tricks: a learning rate schedule with warmup and decay for stable, well-converged optimization, data augmentation to effectively multiply limited labeled data, checkpointing to protect long runs and keep the best model, and mixed precision training to cut memory and speed up computation on modern GPUs without losing numerical stability.
+
+@module m20 | 🎛️ | 20 · Hyperparameter Tuning | Module 20 — Hyperparameter Tuning for Deep Networks | Learning rate search · Batch size trade-offs · Architecture search
+@topic 🔍 Finding a good learning rate before tuning anything else
+Learning rate is the hyperparameter with the largest effect on whether training succeeds at all, so it should be tuned first and in isolation. The **learning rate range test** (or "LR finder") trains for a few hundred steps while exponentially increasing the learning rate from very small to very large and plots loss against learning rate — the ideal starting learning rate is typically the point of steepest descent on that curve, just before loss starts rising. Random search over a log-uniform range consistently outperforms grid search for continuous hyperparameters like learning rate, because grid search wastes trials on unimportant dimensions while random search explores each dimension more densely for the same budget.
+@topic ⚖️ Batch size trade-offs
+Larger batch sizes give more stable, less noisy gradient estimates and better hardware utilization (more parallelism per step), but very large batches can generalize worse unless the learning rate is scaled up accordingly (the "linear scaling rule") and warmup is used — this is because the implicit regularization from gradient noise at smaller batch sizes is itself beneficial for generalization. Smaller batches train more slowly in wall-clock terms per epoch but can reach comparable or better final accuracy with proper tuning, and they require far less GPU memory.
+@topic 🏗️ Architecture search, at an overview level
+Neural Architecture Search (NAS) automates the choice of architecture itself (number of layers, layer types, connectivity) by treating it as an optimization or reinforcement learning problem, searching a defined space of possible architectures and evaluating candidates against validation performance. It's extremely compute-intensive in its original form, so practical teams today mostly use proven reference architectures and spend their tuning budget on learning rate, regularization strength, and data quality instead, reserving full NAS for organizations with very large compute budgets (its main legacy is the efficient architectures, like EfficientNet, that came out of early NAS research).
+@table
+Hyperparameter | Typical tuning approach | Priority
+Learning rate | LR range test, log-uniform random search | Highest — tune first
+Batch size | Largest that fits memory, scale LR accordingly | High, but secondary to LR
+Regularization strength (dropout, weight decay) | Random/grid search around known good defaults | Medium
+Architecture (layers, width) | Start from a known reference, adjust depth/width | Medium, often fixed by task
+Full neural architecture search | Automated search over architecture space | Low priority for most teams
+@end
+@practice
+1. Why does random search tend to beat grid search for tuning learning rate in a fixed compute budget?
+2. If you double the batch size, what else do you typically need to adjust, and why?
+@interview Learning rate should be tuned first, ideally with an LR range test, because it has the largest effect on whether training converges at all; batch size trades off gradient stability and GPU utilization against generalization and memory, needing a scaled-up learning rate at large batch sizes; and full neural architecture search, while powerful, is usually reserved for teams with heavy compute budgets rather than a first line of attack.
+
+@module m21 | 🧰 | 21 · Frameworks | Module 21 — Deep Learning Frameworks: TensorFlow/Keras vs PyTorch | Tiny model in both · Philosophy comparison
+@topic 🐍 Two philosophies: define-and-run vs define-by-run
+**PyTorch** builds its computational graph dynamically as the code executes ("define-by-run" / eager execution), which makes debugging straightforward — you can inspect tensors and use standard Python control flow and debuggers at any point — and it has become the dominant framework in research for this flexibility. **TensorFlow/Keras** historically built a static graph first and ran it afterward ("define-and-run"), optimized for production deployment and performance, though TensorFlow 2.x adopted eager execution by default too, narrowing the gap considerably; Keras remains valued for its high-level, highly readable API that gets a standard model training in very few lines. In practice, both are production-capable today — PyTorch via TorchScript/ONNX export, TensorFlow via its mature `SavedModel`/TF Serving ecosystem — and the choice is often driven by team familiarity and the surrounding ecosystem (e.g. Hugging Face defaults to PyTorch for most research checkpoints).
+@topic ⌨️ The same model, defined both ways
+@code python
+# PyTorch
+import torch.nn as nn
+
+class Net(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layers = nn.Sequential(
+            nn.Linear(20, 64), nn.ReLU(),
+            nn.Linear(64, 1), nn.Sigmoid(),
+        )
+    def forward(self, x):
+        return self.layers(x)
+
+model = Net()
+# training requires an explicit loop: forward -> loss -> backward -> optimizer.step()
+@end
+@code python
+# TensorFlow / Keras
+import tensorflow as tf
+
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(64, activation='relu', input_shape=(20,)),
+    tf.keras.layers.Dense(1, activation='sigmoid'),
+])
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+# model.fit(X_train, y_train, epochs=10, batch_size=32, validation_split=0.2)
+@end
+@table
+Aspect | PyTorch | TensorFlow / Keras
+Execution style | Eager by default (define-by-run) | Eager by default since TF2, graph-optimizable via `tf.function`
+Training loop | Usually explicit, full control | `model.fit()` high-level, or custom loop
+Debugging | Native Python debugging | Improved greatly in TF2, still more abstraction with `fit()`
+Common strength | Research flexibility, huge model-hub ecosystem | Production tooling (TF Serving, TFLite), high-level API speed
+@end
+@practice
+1. What practical debugging advantage does PyTorch's eager execution give over a static-graph approach?
+2. Name one scenario where you'd reach for Keras's `model.fit()` and one where you'd write a custom PyTorch training loop instead.
+@interview PyTorch's eager, define-by-run execution gives flexible, Python-native debugging and dominates research, while Keras's high-level API trains standard models in very few lines and TensorFlow's ecosystem remains strong for production serving — but since TensorFlow 2 adopted eager execution and PyTorch gained strong deployment tooling, the practical gap has narrowed and the choice often comes down to team and ecosystem fit.
+
+@module m22 | 🚀 | 22 · Deployment | Module 22 — Model Deployment for Deep Learning | ONNX · Quantization · Pruning · Serving · Latency vs accuracy
+@topic 📦 Portable formats: ONNX and framework interoperability
+**ONNX** (Open Neural Network Exchange) is a standardized format for representing trained models that lets you train in one framework (e.g. PyTorch) and run inference in another runtime (e.g. ONNX Runtime, TensorRT) optimized for the target hardware, avoiding vendor lock-in and often improving inference speed through runtime-specific graph optimizations (operator fusion, constant folding).
+@topic 🗜️ Quantization and pruning — shrinking models for inference
+**Quantization** reduces the numerical precision of weights and activations, typically from 32-bit floats to 8-bit integers (INT8), cutting model size roughly 4x and often speeding up inference 2-4x on supporting hardware, at a usually small accuracy cost; post-training quantization is fast to apply, while quantization-aware training (simulating quantization during training) recovers more accuracy for sensitive models. **Pruning** removes weights (or entire neurons/channels) that contribute little to the output — identified by small magnitude or low importance scores — shrinking the model and sometimes speeding up inference, especially with structured pruning (removing whole channels) which hardware can exploit more easily than unstructured (individual weight) pruning. **Knowledge distillation** trains a small "student" model to mimic a large "teacher" model's output distribution, often recovering most of the teacher's accuracy in a much smaller, faster package.
+@topic 🌐 Serving and the latency-accuracy trade-off
+Serving a model behind a REST or gRPC API (via frameworks like TensorFlow Serving, TorchServe, or a custom FastAPI wrapper) needs to handle batching of concurrent requests, model versioning, and autoscaling under load. Every deployment decision trades latency, throughput, model size and accuracy against each other: a larger, more accurate model may be unacceptable for a real-time mobile app but perfectly fine for an offline batch-scoring job, so the right choice depends entirely on the product's latency budget and hardware target (cloud GPU, CPU server, or on-device).
+@code python
+from fastapi import FastAPI
+import torch
+
+app = FastAPI()
+model = torch.jit.load("model_scripted.pt")  # TorchScript export for fast, dependency-light inference
+model.eval()
+
+@app.post("/predict")
+def predict(features: list[float]):
+    with torch.no_grad():
+        x = torch.tensor([features])
+        output = model(x)
+    return {"prediction": output.tolist()}
+@end
+@table
+Technique | Effect | Typical cost
+ONNX export | Cross-framework portability, runtime optimization | Conversion/validation effort
+INT8 quantization | ~4x smaller, 2-4x faster inference | Small accuracy drop
+Structured pruning | Smaller, hardware-friendly speedup | Retraining/fine-tuning needed
+Knowledge distillation | Much smaller student model | Requires training a second model
+@end
+@warn Always validate accuracy on a held-out set after quantization or pruning — the drop is usually small but can be severe for specific classes or edge cases, especially with aggressive INT8 quantization on sensitive models.
+@practice
+1. You need to run a vision model on a low-power edge device with strict latency limits. Which two techniques from this module would you reach for first, and why?
+2. Explain the difference between post-training quantization and quantization-aware training, and when you'd choose the latter.
+@interview Deploying a deep learning model means shrinking and standardizing it for the target environment — exporting to ONNX for cross-framework portability, quantizing to INT8 and pruning unneeded weights to cut size and latency, optionally distilling into a smaller student model, and serving it behind a batching-aware API — all while explicitly trading off latency, model size and accuracy against the product's real constraints.
+
+@module m23 | 🎤 | 23 · Interview Questions | Module 23 — Deep Learning Interview Questions | 20+ core Q&A, direct and structured
+@topic Q: Why does ReLU help with the vanishing gradient problem compared to sigmoid?
+ReLU's derivative is exactly 1 for any positive input, so gradients pass through unchanged during backpropagation instead of being repeatedly multiplied by small numbers. Sigmoid's derivative maxes out at 0.25 and shrinks toward zero at its saturated extremes, so across many layers that product collapses to near zero. The trade-off is that ReLU can "die" — a neuron stuck with negative input forever has zero gradient — which Leaky ReLU and GELU address by allowing a small gradient for negative inputs.
+@topic Q: What does Batch Normalization actually do, mechanically and conceptually?
+Mechanically, it normalizes each layer's activations to zero mean and unit variance across the mini-batch, then applies a learnable scale and shift so the network can recover the original distribution if that's optimal. Conceptually, it reduces internal covariate shift — the constant drift in each layer's input distribution as earlier layers' weights update — which lets you train with higher learning rates and makes results far less sensitive to initialization. A secondary effect is mild regularization from the noise of per-batch statistics, though that's not its primary purpose.
+@topic Q: Explain dropout and why it's turned off at inference time.
+Dropout randomly zeroes a fraction of activations during each training step, which prevents neurons from co-adapting and forces the network to learn redundant, robust representations — effectively training an ensemble of thinned sub-networks sharing weights. At inference you want the full network's deterministic best estimate, not a randomly thinned version, so dropout is disabled; with inverted dropout, the scaling is handled during training so no rescaling is needed at inference.
+@topic Q: Why is Adam usually preferred over plain SGD, and when would you still choose SGD?
+Adam combines momentum with per-parameter adaptive learning rates, so it converges quickly with little tuning and handles sparse or noisy gradients gracefully, making it a strong default. I'd still choose well-tuned SGD with momentum for large-scale image classification where research has repeatedly shown it can reach a slightly better final generalization than Adam, at the cost of needing a careful learning rate schedule and more tuning effort.
+@topic Q: CNN vs RNN vs Transformer — when would you choose each?
+I'd use a CNN when the data has strong local spatial structure, like images, because convolution's weight sharing and locality are exactly the right inductive bias. I'd reach for an RNN/LSTM only for small-data or strictly streaming/online sequence problems where its sequential, low-memory-footprint processing is actually an advantage. For most sequence tasks today — text, and increasingly audio, time series and even vision via patches — I'd default to a Transformer, because full self-attention captures long-range dependencies better and trains far faster in parallel, provided the sequence length doesn't make the quadratic attention cost prohibitive.
+@topic Q: What's the intuition behind the attention mechanism?
+Attention lets a model, at each step, dynamically decide which parts of the input are most relevant and combine them with weights computed on the fly, rather than relying on a single fixed-size summary of everything. Each output position computes a similarity score (via query-key dot products) against every input position, turns those scores into weights with softmax, and takes a weighted sum of the corresponding value vectors. This removes the information bottleneck of older encoder-decoder models and also gives an interpretable map of what the model focused on for each output.
+@topic Q: How do you fix overfitting specifically in a deep neural network?
+I'd start with the cheapest fixes: more training data or data augmentation, since deep nets are extremely data-hungry. Then I'd add or increase dropout, add L2 weight decay, and use early stopping based on validation loss. If the model is simply too large for the dataset, I'd reduce its capacity (fewer layers or units) before reaching for more exotic regularization, and I'd also double-check the train/validation split for leakage, since apparent overfitting sometimes has a data problem at its root.
+@topic Q: What's the difference between a Convolution layer and a Fully Connected layer?
+A fully connected layer connects every input to every output with its own independent weight, so it has no notion of spatial locality and its parameter count scales directly with input size. A convolutional layer uses a small shared filter that slides across the input, so it has far fewer parameters, encodes locality (nearby pixels matter more than distant ones) and translation equivariance (a pattern is detected the same way wherever it appears), which is exactly the right inductive bias for image-like data.
+@topic Q: Why do we initialize weights randomly instead of to zero?
+If all weights start identical (including zero), every neuron in a layer computes the same output and receives the same gradient during backpropagation, so they update identically forever and the layer never breaks symmetry — effectively behaving like one neuron no matter its width. Random initialization breaks that symmetry so different neurons can learn different features, and the scale of that randomness still matters, which is why we use variance-aware schemes like Xavier (for tanh/sigmoid) or He (for ReLU) rather than arbitrary random noise.
+@topic Q: What is the difference between batch gradient descent, stochastic gradient descent, and mini-batch gradient descent?
+Batch gradient descent computes the gradient using the entire dataset before each update, which is accurate but slow and memory-heavy for large datasets. Stochastic gradient descent updates after every single example, which is fast per step but very noisy. Mini-batch gradient descent, used almost universally in practice, computes the gradient over a small batch (say 32-256 examples), balancing update stability against computational efficiency and making good use of parallel hardware like GPUs.
+@topic Q: Why does increasing model depth sometimes hurt performance, and how does ResNet fix it?
+Beyond a certain depth, plain stacked networks suffer a degradation problem where accuracy gets worse even on the training set, not from overfitting but because gradients struggle to propagate cleanly through so many sequential transformations. ResNet's residual connections give each block an additive identity shortcut, `F(x) + x`, so gradients have a direct path back to earlier layers regardless of depth, and the network only needs to learn a residual adjustment rather than a full transformation, which made networks over 100 layers trainable and accurate.
+@topic Q: What is the vanishing gradient problem and name three distinct ways to address it?
+It's the exponential shrinkage of gradients as they're backpropagated through many layers or time steps, caused by repeatedly multiplying small derivatives, which leaves early layers barely updating. Three independent fixes are: using non-saturating activations like ReLU so derivatives don't shrink near zero, adding residual/skip connections so gradients have an additive shortcut path, and using gated architectures like LSTM whose cell state updates additively rather than through repeated multiplication.
+@topic Q: Explain overfitting vs underfitting and how you'd diagnose which one you have.
+Underfitting is when the model is too simple or undertrained to capture the pattern in the data, showing up as high error on both training and validation sets. Overfitting is when the model has memorized training-set-specific noise, showing up as low training error but notably higher validation error. I'd diagnose by plotting training and validation loss curves over epochs — converging high losses suggest underfitting (needs a bigger model, more features, or more training), while a widening gap between a low training loss and a higher validation loss suggests overfitting (needs regularization, more data, or a smaller model).
+@topic Q: Why is cross-entropy loss preferred over MSE for classification?
+Cross-entropy's gradient with respect to the output logits, when paired with softmax or sigmoid, simplifies to essentially `predicted - actual`, giving a clean and well-scaled gradient regardless of how confident or wrong the prediction is. MSE, by contrast, can produce vanishingly small gradients when paired with a saturating output activation like sigmoid on a very wrong, confident prediction, slowing learning exactly when you need it fastest. Cross-entropy is also directly derived from maximum likelihood estimation of a categorical distribution, which is the correct probabilistic framing for classification.
+@topic Q: What is the difference between a GAN and a Variational Autoencoder (VAE) for generative modeling?
+A GAN trains a generator to fool a discriminator in an adversarial game, typically producing sharper, more realistic samples but with unstable training and no explicit likelihood estimate. A VAE instead trains an encoder-decoder pair with an explicit probabilistic latent space (with a KL-divergence term pulling the latent distribution toward a prior, usually a standard normal), giving smoother, more interpretable latent spaces and stable training, but samples are often blurrier than a GAN's because the reconstruction loss encourages averaging over plausible outputs.
+@topic Q: How would you handle a severely imbalanced dataset when training a deep classifier?
+I'd start with data-level fixes: oversampling the minority class (or SMOTE-style synthetic generation), undersampling the majority class, or both. At the loss level, I'd use class-weighted cross-entropy or focal loss, which down-weights easy, well-classified examples and focuses the gradient on hard and minority-class examples. Finally, I'd make sure the evaluation metric itself isn't misleading — accuracy is nearly useless on a 99:1 imbalance, so I'd track precision, recall, F1, or AUC-PR per class instead.
+@topic Q: What is label smoothing and why is it used?
+Label smoothing replaces hard one-hot targets (like [0, 1, 0]) with softened targets (like [0.033, 0.933, 0.033]), preventing the model from becoming overconfident and pushing logits to extreme values. This typically improves generalization and calibration, since a model trained on hard labels has no incentive to ever stop increasing the correct class's logit, which can hurt performance on slightly noisy or ambiguous real-world labels.
+@topic Q: Why do Transformers need positional encoding but RNNs don't?
+Self-attention treats the input as a set and computes attention scores based only on content similarity between tokens, with no inherent sense of order — shuffling the input tokens would produce the same set of pairwise attention scores, just rearranged. RNNs process tokens sequentially, one at a time, so order is built into the architecture itself via the recurrence. Transformers add positional encodings — sinusoidal or learned vectors — directly to the token embeddings specifically to inject the order information that self-attention otherwise lacks.
+@topic Q: What's the difference between parameter count and FLOPs, and why does it matter for deployment?
+Parameter count measures how many learnable weights a model has, which determines its storage/memory footprint, while FLOPs (floating point operations) measure the actual compute required for one forward pass, which determines inference latency and energy use. The two don't always correlate — a model can have few parameters but expensive operations (e.g. large spatial feature maps early in a CNN), so for latency-sensitive deployment you should profile actual FLOPs and real device latency, not just count parameters.
+@topic Q: How do you decide how many layers and units to use in a new network?
+I start from a known, proven reference architecture close to my task rather than designing from scratch, since architecture search is expensive and most of the value comes from well-established patterns. I then scale capacity up if the model underfits (high training error) or down/add regularization if it overfits badly, treating depth and width as hyperparameters to adjust empirically against a validation set rather than guessing a "correct" size analytically.
+@topic Q: What is gradient clipping and when is it necessary?
+Gradient clipping caps the norm (or value) of the gradient before the optimizer step, preventing any single update from being enormous even if the computed gradient temporarily spikes. It's especially important training RNNs/LSTMs on long sequences, where backpropagation through time can produce exploding gradients, and it's cheap insurance in Transformer training too — applied right after `loss.backward()` and before `optimizer.step()`.
+@interview I treat interview questions as a chance to show both the direct mechanism and the trade-off — for example, explaining not just that Adam converges faster than SGD, but why, and when a well-tuned SGD might still be the better choice; that structure signals real understanding rather than memorized definitions.
+
+@module m24 | 🗺️ | 24 · Roadmap | Module 24 — Learning Roadmap | Prerequisites to shipped models · Prioritization for an applied AI engineer role
+@topic 🧭 From zero to building and shipping real models
+Deep learning rewards a specific learning order: shaky fundamentals compound into confusion later, so resist the urge to jump straight to Transformers. Build mathematical and programming fundamentals first (linear algebra for understanding layers and attention as matrix operations, calculus for backpropagation, probability for loss functions and Bayesian intuition, and solid Python plus NumPy/pandas), then classical machine learning (to understand what deep learning is actually improving on and to recognize when a simpler model is the right call), then core deep learning mechanics (this file's modules 2-9), then the two major architecture families (CNNs and RNN/LSTM/Transformer), and only then specialized/generative topics and production deployment.
+@topic 🎯 Prioritization advice for an applied AI engineer role
+For a job focused on applying deep learning rather than publishing new research, prioritize breadth and shipping ability over exotic architecture knowledge: be fluent in one framework (PyTorch is the more common industry and research default today), be comfortable fine-tuning pretrained models rather than training from scratch (which is rare in applied roles), know how to diagnose training problems from loss curves, and be able to take a model from a notebook to a served API with reasonable latency. Interviewers for applied roles weight practical debugging and trade-off judgment ("the model overfits, what do you do") much more heavily than deriving backpropagation by hand, though you should still be able to explain the core mechanics confidently.
+@table
+Stage | Focus | Outcome
+1. Foundations | Linear algebra, calculus, probability, Python, NumPy/pandas | Comfortable reading and writing the math and code behind any model
+2. Classical ML | Regression, trees, boosting, evaluation metrics, bias/variance | Know when deep learning is the right tool and when it isn't
+3. Core deep learning | Perceptrons, backprop, optimizers, regularization, initialization | Can build, train and debug an MLP from scratch confidently
+4. Architectures | CNNs for vision, RNN/LSTM then Transformers for sequences | Can pick and implement the right architecture family for a task
+5. Specialized topics | Transfer learning, autoencoders, GANs, attention deep-dive | Can adapt pretrained models and understand generative approaches
+6. Production skills | Hyperparameter tuning, quantization/pruning, serving, monitoring | Can take a trained model to a reliable, fast, served product
+@end
+@tip Build one small end-to-end project per stage (train on a public dataset, evaluate properly, write a short README) rather than only completing tutorials — a shipped, explainable project is worth more in interviews than a longer list of courses.
+@practice
+1. Pick a public dataset and outline, stage by stage, what you'd build at each step of this roadmap to end with a deployed model.
+2. If you only had eight weeks to prepare for an applied deep learning interview, which two stages of this roadmap would you prioritize, and which would you deliberately skim?
+@interview I'd describe the deep learning learning path as fundamentals first, then classical ML for judgment, then core mechanics, then architectures matched to data type, then specialized and production skills last — and for an applied AI engineer role specifically, I'd over-index on fine-tuning, debugging and deployment competence over novel architecture design, since that's what most real jobs actually require day to day.
+

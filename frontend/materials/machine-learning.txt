@@ -1,0 +1,738 @@
+@page 🤖 Machine Learning Complete Study Material
+@intro Learn machine learning end to end: core algorithms, the full project workflow, evaluation, tuning, deployment and the interview answers that prove you actually understand it.
+
+@module m1 | 🤖 | 1 · Introduction | Module 1 — What Is Machine Learning? | Supervised · Unsupervised · Reinforcement
+@topic 🤖 Learning from data instead of rules
+Machine learning builds systems that improve at a task by learning patterns from data rather than being explicitly programmed with rules. Instead of writing `if-else` logic for every case, you give an algorithm examples (data) and let it find a function that maps inputs to outputs, then you validate that the function generalizes to new, unseen data. The central risk in every ML project is not whether a model fits the data you have — it's whether it generalizes to data it hasn't seen.
+@topic 🧭 The three big paradigms
+Supervised learning trains on labeled data (input-output pairs) to predict labels for new inputs — regression predicts a continuous number, classification predicts a discrete category. Unsupervised learning works on unlabeled data to find structure — clustering groups similar points, dimensionality reduction compresses features. Reinforcement learning trains an agent to take actions in an environment to maximize cumulative reward through trial and error, using feedback (reward signals) rather than labeled examples.
+@table
+Paradigm | Data | Goal | Example
+Supervised | Labeled (X, y) | Predict y for new X | Spam detection, house price prediction
+Unsupervised | Unlabeled (X only) | Find structure in X | Customer segmentation
+Reinforcement | State-action-reward | Maximize cumulative reward | Game playing, robotics
+Semi-supervised | Mostly unlabeled, some labeled | Use the few labels to guide structure | Medical imaging with scarce labels
+@end
+@info Supervised learning dominates real-world business applications because labeled historical data (did the customer churn, was the transaction fraud) is usually available from existing systems.
+@practice
+1. Classify these as supervised, unsupervised, or reinforcement: predicting loan default, grouping news articles by topic, training a robot to walk.
+2. Why can a model with 99% training accuracy still be useless in production?
+@interview Machine learning lets a system learn a mapping from data instead of hand-coded rules. Supervised learning needs labeled outcomes, unsupervised learning finds structure without labels, and reinforcement learning learns from reward signals through interaction — the right choice depends entirely on what data and feedback you actually have.
+
+@module m2 | 🔄 | 2 · Workflow | Module 2 — The ML Project Lifecycle | Framing · Data · Features · Model · Evaluation · Deployment
+@topic 🧭 Framing the problem before touching data
+Every ML project starts by translating a business question into a precise ML task: what exactly are you predicting, what's the unit of prediction (per customer? per transaction?), and what decision will the prediction drive. A model that's 2% more accurate but can't be explained to a regulator, or arrives too late to act on, is worse than a simpler model that ships. Define the baseline you must beat — often a simple heuristic or the current manual process — before building anything complex.
+@topic 🛠️ The stages in practice
+The typical pipeline is: define the metric that matters for the business → collect and audit data → split data to prevent leakage → clean and engineer features → train a baseline model → iterate with more complex models → evaluate against the held-out test set and business constraints → deploy behind an API or batch job → monitor for drift and retrain. Real projects loop back constantly — a bad validation score often means going back to feature engineering or even problem framing, not just trying a fancier algorithm.
+@table
+Stage | Key question | Common failure
+Problem framing | What decision does this prediction drive? | Optimizing a metric nobody acts on
+Data collection | Is this data available at prediction time? | Using future information (leakage)
+Feature engineering | What signal actually predicts the target? | Over-engineering before a baseline exists
+Modeling | What's the simplest model that meets the bar? | Jumping straight to deep learning
+Evaluation | Does this generalize, and is it fair? | Only checking accuracy on one split
+Deployment | How will this be served and monitored? | No plan for retraining or drift
+@end
+@tip Always build a dumb baseline first (majority class, mean prediction, or a simple rule). It tells you the floor and catches leakage early — if a complex model doesn't beat the baseline by much, something is probably wrong with the setup.
+@practice
+1. Write out the ML lifecycle for a project predicting customer churn, one line per stage.
+2. Give an example of a feature that would cause leakage in a churn model and explain why.
+@interview An ML project is a loop, not a line: frame the business question as a measurable ML task, gather and audit data for leakage, engineer features, train a baseline before anything fancy, evaluate against a held-out set and real constraints, then deploy with monitoring so you catch drift and retrain. Most failed projects skip the baseline or the monitoring, not the modeling.
+
+@module m3 | 🧹 | 3 · Preprocessing | Module 3 — Data Preprocessing & Feature Engineering | Scaling · Encoding · Missing values
+@topic 🧼 Handling missing values
+Missing data can be dropped (rows or columns, only when the proportion missing is small and not systematic) or imputed (filled in). Mean/median imputation is simple but shrinks variance and ignores relationships between features; model-based imputation (e.g. `IterativeImputer`, k-NN imputation) uses other columns to predict the missing value and is usually better. Always add a binary "was_missing" indicator column when missingness itself might be informative — e.g. a missing income field might correlate with the outcome.
+@topic 📏 Scaling and encoding
+Feature scaling matters for distance-based and gradient-based models (k-NN, SVM, logistic regression, neural nets) but is irrelevant for tree-based models, which split on thresholds regardless of scale. `StandardScaler` centers to mean 0, std 1; `MinMaxScaler` compresses to a fixed range like [0,1] and is sensitive to outliers. Categorical variables need encoding: one-hot encoding for unordered, low-cardinality categories; ordinal encoding when there's a real order; target/mean encoding for high-cardinality categories (careful — this leaks the target unless done with cross-validation folds).
+@code python
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+
+numeric_features = ["age", "income"]
+categorical_features = ["city", "plan_type"]
+
+preprocess = ColumnTransformer([
+    ("num", SimpleImputer(strategy="median"), numeric_features),
+    ("cat", OneHotEncoder(handle_unknown="ignore"), categorical_features),
+])
+X_transformed = preprocess.fit_transform(X)
+@end
+@topic 🧩 Feature engineering ideas
+Good features often beat fancy algorithms. Create interaction terms (price_per_sqft = price / area), date-based features (day_of_week, is_weekend, days_since_signup), aggregations (average spend over last 30 days), and domain-specific ratios. Always fit transformers (scalers, imputers, encoders) only on the training fold and apply the same fitted transform to validation/test — fitting on the full dataset leaks test information into training.
+@warn Never call `.fit()` or `.fit_transform()` on the full dataset before splitting. Fit preprocessing only on the training set, then `.transform()` validation and test data with those fitted parameters.
+@practice
+1. You have a numeric column that's 15% missing and correlates with the target when missing. How would you handle it?
+2. Why does one-hot encoding become a problem with a categorical feature that has 50,000 unique values, and what would you do instead?
+@interview Preprocessing turns raw, messy data into a form models can learn from: impute or flag missing values, scale numeric features for distance-based models, and encode categoricals appropriately for their cardinality. The one non-negotiable rule is fitting every transformer only on training data to avoid leaking test information.
+
+@module m4 | ✂️ | 4 · Validation | Module 4 — Train/Test Split, Cross-Validation & Data Leakage | Holdout · k-fold · Leakage
+@topic ✂️ Why a single split isn't enough
+A simple train/test split (e.g. 80/20) gives one noisy estimate of generalization performance — if you're unlucky with how the split falls, your estimate is misleading, and if you tune hyperparameters against the test set repeatedly, you leak information into it and overestimate real performance. k-fold cross-validation splits the data into k folds, trains on k-1 and validates on the remaining fold, k times, then averages the score — giving a more stable estimate and using all data for both training and validation.
+@topic 🔁 Cross-validation variants
+Stratified k-fold preserves class proportions in each fold — essential for imbalanced classification. Group k-fold ensures that all rows from the same group (e.g. the same patient or the same user) stay in one fold, preventing leakage when rows aren't independent. Time-series split respects chronological order, always validating on data that comes after the training window.
+@code python
+from sklearn.model_selection import StratifiedKFold, cross_val_score
+from sklearn.linear_model import LogisticRegression
+
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+scores = cross_val_score(LogisticRegression(max_iter=1000), X, y, cv=cv, scoring="roc_auc")
+print(scores.mean(), scores.std())
+@end
+@topic 🚨 Data leakage — the silent killer
+Leakage happens when information that wouldn't be available at real prediction time sneaks into training — scaling using the full dataset, target encoding without cross-validation, including a feature that's a proxy for the label (like "account_closed_date" when predicting churn), or splitting time-series data randomly instead of chronologically. The symptom is a validation score that looks great but the model fails in production. Always ask: "would I have known this value at the moment I needed to make the prediction?"
+@warn A suspiciously high validation score (near-perfect AUC or accuracy) is a red flag for leakage far more often than it's a sign of a great model — investigate before celebrating.
+@practice
+1. Explain why random k-fold cross-validation is wrong for time-series forecasting, and what to use instead.
+2. Give a concrete example of target leakage in a credit default prediction model.
+@interview Cross-validation gives a more reliable generalization estimate than one split by averaging performance across multiple folds, and stratified or grouped variants keep that estimate honest when classes are imbalanced or rows aren't independent. Data leakage — using information unavailable at prediction time — is the most common reason an impressive validation score collapses in production, so I always fit preprocessing inside the CV loop and double-check that every feature would actually exist before the prediction moment.
+
+@module m5 | 📈 | 5 · Linear Regression | Module 5 — Linear Regression | Assumptions · Cost function · Gradient descent
+@topic 📈 The model and its assumptions
+Linear regression models the target as a weighted sum of features: `y = w0 + w1*x1 + ... + wn*xn + ε`. It assumes a linear relationship between features and target, independent errors, homoscedasticity (constant error variance across predictions), and low multicollinearity between features. Violating these doesn't make the model crash, but it does make coefficient interpretation and confidence intervals unreliable.
+@topic 🧮 Cost function and how it's fit
+The model is fit by minimizing mean squared error (MSE): the average squared difference between predicted and actual values. This has a closed-form solution (the normal equation, `w = (XᵀX)⁻¹Xᵀy`) for small-to-medium datasets, but for large or high-dimensional data, gradient descent iteratively adjusts weights in the direction that most reduces the cost, scaled by a learning rate. Too high a learning rate overshoots and diverges; too low converges painfully slowly.
+@code python
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+preds = model.predict(X_test)
+print("RMSE:", mean_squared_error(y_test, preds, squared=False))
+print("R2:", r2_score(y_test, preds))
+print("Coefficients:", dict(zip(X_train.columns, model.coef_)))
+@end
+@topic 🔍 Reading and trusting coefficients
+Each coefficient represents the expected change in the target for a one-unit change in that feature, holding others constant — but this interpretation breaks down under multicollinearity, where correlated features "share" credit unstably. Check the variance inflation factor (VIF) to detect multicollinearity, and always plot residuals versus fitted values to check for non-linearity or heteroscedasticity before trusting the model's inferences.
+@practice
+1. Your residual plot shows a clear curve instead of random scatter. What does that tell you, and what would you try next?
+2. Two features in your linear regression are highly correlated. Why might one coefficient flip sign unexpectedly?
+@interview Linear regression fits weights that minimize squared error between predictions and actual values, either via the closed-form normal equation or gradient descent for larger data. It's powerful because it's interpretable — each coefficient is a marginal effect — but that interpretation only holds when its assumptions (linearity, independent errors, constant variance, low multicollinearity) are reasonably satisfied, so I always check residual plots before trusting the coefficients.
+
+@module m6 | 🎯 | 6 · Logistic Regression | Module 6 — Logistic Regression & Classification Basics | Sigmoid · Decision boundary · Log-odds
+@topic 🎯 From linear scores to probabilities
+Logistic regression applies the sigmoid function `σ(z) = 1 / (1 + e^-z)` to a linear combination of features, squashing the output into a probability between 0 and 1. It's trained by minimizing log loss (cross-entropy), not MSE, because log loss heavily penalizes confident wrong predictions, which matches how we want a probability estimator to behave. A threshold (commonly 0.5, but tunable) converts the probability into a class label.
+@topic 🔢 Odds, log-odds, and interpretation
+The model's linear part actually predicts the log-odds: `log(p / (1-p)) = w0 + w1*x1 + ...`. Exponentiating a coefficient gives an odds ratio — e.g. a coefficient of 0.7 means `e^0.7 ≈ 2.0`, so a one-unit increase in that feature roughly doubles the odds of the positive class, holding others constant. This makes logistic regression one of the few ML models whose outputs translate directly into a business-readable statement.
+@code python
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+
+clf = LogisticRegression(max_iter=1000, class_weight="balanced")
+clf.fit(X_train, y_train)
+probs = clf.predict_proba(X_test)[:, 1]
+preds = (probs >= 0.5).astype(int)
+print(classification_report(y_test, preds))
+@end
+@topic 🧩 Decision boundaries and limits
+Logistic regression draws a linear decision boundary in feature space — it can't separate classes that require a curved boundary unless you add polynomial or interaction features. It works well when classes are roughly linearly separable, as a fast, interpretable baseline, and as the final layer logic in many more complex pipelines (it's literally the output layer math of a basic neural network).
+@practice
+1. A logistic regression coefficient for `has_credit_card` is -1.2. Interpret it in terms of odds.
+2. Why is log loss a better training objective than accuracy for a probabilistic classifier?
+@interview Logistic regression models the log-odds of the positive class as a linear function of the features and squashes it through a sigmoid to get a probability, trained by minimizing log loss. Its coefficients translate directly into odds ratios, which makes it one of the most interpretable classifiers available, but its decision boundary is linear, so it underfits problems with genuinely non-linear class separation unless you engineer interaction or polynomial features.
+
+@module m7 | ⚖️ | 7 · Regularization | Module 7 — Regularization: Ridge, Lasso & ElasticNet | L1 · L2 · Why and when
+@topic ⚖️ Why regularize
+Regularization adds a penalty on the size of model coefficients to the loss function, discouraging the model from fitting noise and reducing overfitting — especially important when you have many features relative to samples, or correlated features that let coefficients blow up in opposite directions. It trades a small increase in training bias for a larger reduction in variance, usually improving test performance.
+@topic 🧮 Ridge (L2), Lasso (L1), ElasticNet
+Ridge regression adds `λ * Σw²` to the loss — it shrinks all coefficients toward zero smoothly but never exactly to zero, so it keeps every feature but dampens their influence; good when most features are at least a little useful and are correlated. Lasso adds `λ * Σ|w|` — it can shrink coefficients exactly to zero, performing automatic feature selection; good when you believe many features are irrelevant. ElasticNet combines both penalties, useful when you want some sparsity but also want correlated features to be shrunk together rather than one being picked arbitrarily.
+@code python
+from sklearn.linear_model import Ridge, Lasso, ElasticNet
+from sklearn.model_selection import GridSearchCV
+
+ridge = Ridge(alpha=1.0)
+lasso = Lasso(alpha=0.01)
+elastic = ElasticNet(alpha=0.01, l1_ratio=0.5)  # l1_ratio=1 -> pure Lasso, 0 -> pure Ridge
+
+param_grid = {"alpha": [0.001, 0.01, 0.1, 1, 10]}
+search = GridSearchCV(Ridge(), param_grid, cv=5, scoring="neg_mean_squared_error")
+search.fit(X_train, y_train)
+print(search.best_params_)
+@end
+@topic 🎚️ Choosing the regularization strength
+The strength `alpha` (or `λ`) controls how aggressively coefficients shrink — too high underfits (everything shrinks toward the mean/zero), too low barely regularizes at all. Always choose `alpha` by cross-validation, never by eyeballing training error, since training error always looks better with less regularization. Features should be standardized before applying L1/L2 penalties, since the penalty is scale-sensitive — an unscaled large-magnitude feature gets penalized unfairly compared to a small-scale one.
+@practice
+1. You have 200 features but suspect only 15 actually matter. Which regularizer would you reach for first, and why?
+2. Why must you scale features before fitting a Ridge or Lasso model?
+@interview Regularization penalizes large coefficients to trade a bit of bias for a lot less variance. Ridge (L2) shrinks everything smoothly and handles correlated features well, Lasso (L1) can zero out coefficients entirely and acts as built-in feature selection, and ElasticNet blends both when you want sparsity without arbitrarily discarding one of two correlated features. The strength should always be tuned via cross-validation, and features must be scaled first since the penalty is scale-dependent.
+
+@module m8 | 📍 | 8 · k-NN | Module 8 — k-Nearest Neighbors | Distance metrics · Curse of dimensionality · Choosing k
+@topic 📍 How k-NN predicts
+k-NN is a lazy, instance-based learner — it stores the training data and, at prediction time, finds the k closest training points to the query (by a distance metric, usually Euclidean) and predicts the majority class (classification) or average value (regression) among them. There's no explicit training phase, which makes it cheap to "train" but expensive to predict, since every prediction scans the stored data (or a spatial index like a KD-tree/ball-tree).
+@topic 📏 Distance metrics and scaling
+Euclidean distance is the default but is sensitive to feature scale, so features must be standardized first or a feature with a larger numeric range will dominate the distance calculation. Manhattan distance is more robust to outliers; cosine distance is preferred for high-dimensional sparse data like text embeddings, since it measures angle rather than magnitude.
+@code python
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import GridSearchCV
+
+pipe = make_pipeline(StandardScaler(), KNeighborsClassifier())
+grid = GridSearchCV(pipe, {"kneighborsclassifier__n_neighbors": range(1, 30, 2)}, cv=5)
+grid.fit(X_train, y_train)
+print(grid.best_params_)
+@end
+@topic 🌌 The curse of dimensionality and choosing k
+As the number of features grows, distances between points become increasingly similar and "nearest" neighbors stop being meaningfully close — this is the curse of dimensionality, and it's why k-NN degrades badly on high-dimensional data without prior dimensionality reduction. Small k (like 1) gives a low-bias, high-variance model that's sensitive to noise; large k smooths the decision boundary (higher bias, lower variance) but can blur genuinely different regions together. Always pick k via cross-validation, and prefer odd k for binary classification to avoid ties.
+@practice
+1. Why does k-NN need feature scaling but a decision tree doesn't?
+2. Your dataset has 500 features and k-NN performs poorly. What would you try before abandoning k-NN entirely?
+@interview k-NN predicts by majority vote or averaging among the k closest training points, with no real training phase, so all the cost shifts to prediction time. It requires scaled features since it's distance-based, and it struggles in high dimensions because the curse of dimensionality makes all points look roughly equidistant — in practice I'd pair it with dimensionality reduction or feature selection before relying on it in high-dimensional settings, and always tune k by cross-validation rather than guessing.
+
+@module m9 | 🌳 | 9 · Decision Trees | Module 9 — Decision Trees | Gini · Entropy · Pruning · Interpretability
+@topic 🌳 How a tree splits
+A decision tree recursively splits the data on the feature and threshold that most reduces impurity in the resulting child nodes. For classification, impurity is measured by Gini impurity (`1 - Σp_i²`, probability a randomly picked pair is misclassified) or entropy (`-Σp_i log2(p_i)`, information-theoretic uncertainty) — both pick similar splits in practice, Gini is slightly cheaper to compute. For regression, trees typically split to minimize variance (MSE) in each child node.
+@code python
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+
+tree = DecisionTreeClassifier(max_depth=4, min_samples_leaf=20, criterion="gini")
+tree.fit(X_train, y_train)
+importances = dict(zip(X_train.columns, tree.feature_importances_))
+@end
+@topic ✂️ Pruning and controlling overfitting
+An unconstrained tree grows until every leaf is pure, which almost always overfits — it memorizes training noise. Pre-pruning limits growth directly via `max_depth`, `min_samples_split`, `min_samples_leaf`, or `max_leaf_nodes`. Post-pruning (cost-complexity pruning, `ccp_alpha` in scikit-learn) grows a full tree then removes branches that don't improve validation performance enough to justify their complexity. In practice, tuning `max_depth` and `min_samples_leaf` via cross-validation covers most needs.
+@topic 🔍 Why trees are interpretable (and their real limits)
+A trained tree can be read top-to-bottom as a sequence of if-else rules, and `feature_importances_` ranks features by how much they reduce impurity across all splits — this makes trees popular when stakeholders need to see "why" a decision was made. But a single tree is high-variance: small changes in training data can produce a very different tree structure, which is exactly the instability that ensembles like Random Forest and Gradient Boosting are built to fix.
+@practice
+1. Why does an unconstrained decision tree almost always achieve 100% training accuracy, and why is that a red flag?
+2. Name two hyperparameters you'd tune first to reduce overfitting in a decision tree, and explain what each does.
+@interview A decision tree greedily picks the feature and threshold that most reduces impurity — Gini or entropy for classification, variance for regression — at each node, which makes it naturally interpretable as a set of if-else rules. Left unconstrained it overfits badly since it can grow until every leaf is pure, so I control it with max_depth, min_samples_leaf, or cost-complexity pruning tuned by cross-validation. Its biggest weakness is high variance to small data changes, which is precisely what bagging and boosting ensembles address.
+
+@module m10 | 🌲 | 10 · Bagging & Random Forests | Module 10 — Ensemble Learning: Bagging & Random Forests | Bootstrap · Aggregation · Feature randomness
+@topic 🌲 Bootstrap aggregating
+Bagging trains many base models (usually decision trees) independently and in parallel, each on a different bootstrap sample (random sample with replacement) of the training data, then averages their predictions (regression) or takes a majority vote (classification). Because each tree sees a slightly different dataset, their errors are partially uncorrelated, and averaging cancels out a lot of the variance — bagging mainly reduces variance, it doesn't help much with bias.
+@topic 🌳 Random Forest adds feature randomness
+Random Forest extends bagging by also randomly restricting each split to consider only a random subset of features (controlled by `max_features`), which decorrelates the trees further — without this, trees would still often pick the same dominant feature at the top and end up correlated anyway. More decorrelated trees means the variance-reduction from averaging is stronger. Each tree can also be grown deep (low bias, high variance individually) since the ensemble handles the variance.
+@code python
+from sklearn.ensemble import RandomForestClassifier
+
+rf = RandomForestClassifier(
+    n_estimators=300, max_depth=None, max_features="sqrt",
+    min_samples_leaf=2, n_jobs=-1, random_state=42
+)
+rf.fit(X_train, y_train)
+print(dict(sorted(zip(X_train.columns, rf.feature_importances_), key=lambda x: -x[1])[:10]))
+@end
+@topic 📦 Out-of-bag evaluation and feature importance caveats
+Since each tree only sees ~63% of samples (bootstrap sampling), the remaining ~37% "out-of-bag" (OOB) samples can be used to estimate generalization error without a separate validation set — `oob_score=True` in scikit-learn. Be cautious with built-in impurity-based `feature_importances_`: it's biased toward high-cardinality numeric features; permutation importance (shuffle a feature and measure performance drop) is more trustworthy.
+@practice
+1. Explain why Random Forest's feature-subsampling step is necessary even though bagging already uses bootstrap sampling.
+2. What does OOB score estimate, and why don't you need a separate validation set to compute it?
+@interview Random Forest is bagging plus feature randomness: it trains many deep decision trees on bootstrap samples, restricting each split to a random subset of features so the trees decorrelate, then averages their predictions to cancel out variance. It mainly fights overfitting from high-variance base learners rather than fixing high bias, it gives a free generalization estimate via out-of-bag samples, and I prefer permutation importance over the built-in impurity importances when ranking features for a real decision.
+
+@module m11 | 🚀 | 11 · Boosting | Module 11 — Boosting: AdaBoost, Gradient Boosting & XGBoost | Sequential · Residuals · Bagging vs boosting
+@topic 🚀 Sequential, error-correcting learners
+Unlike bagging, which trains independent models in parallel, boosting trains models sequentially, where each new model focuses on correcting the errors of the ensemble so far. This means boosting primarily reduces bias (it can fit complex patterns bagging alone cannot) while bagging primarily reduces variance — in practice boosted trees often beat random forests on tabular data if tuned carefully, but they're more prone to overfitting and more sensitive to hyperparameters.
+@topic 📉 AdaBoost vs Gradient Boosting
+AdaBoost reweights training examples after each round, increasing the weight of misclassified points so the next weak learner focuses on them, and combines learners with weights based on their accuracy. Gradient Boosting instead fits each new model to the negative gradient (residual errors) of the loss function with respect to the current ensemble's predictions — effectively doing gradient descent in function space. This generalizes to any differentiable loss, not just classification error, which is why gradient boosting is more widely used today.
+@code python
+from xgboost import XGBClassifier
+
+model = XGBClassifier(
+    n_estimators=500, max_depth=4, learning_rate=0.05,
+    subsample=0.8, colsample_bytree=0.8,
+    reg_lambda=1.0, eval_metric="auc", early_stopping_rounds=30
+)
+model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
+@end
+@topic ⚙️ Why XGBoost/LightGBM dominate tabular competitions
+XGBoost and LightGBM add regularization terms directly into the boosting objective, use second-order gradient information (Newton boosting) for faster, more accurate updates, and include engineering optimizations (histogram-based splits, leaf-wise growth in LightGBM) for speed on large datasets. Key hyperparameters to tune: `learning_rate` (lower is more robust but needs more trees), `max_depth` (shallow trees, 3-8, are typical), `n_estimators` with early stopping, and subsampling (`subsample`, `colsample_bytree`) to add bagging-style randomness that curbs overfitting.
+@warn Boosted trees can overfit the training set badly if `n_estimators` is too high without early stopping on a validation set — always monitor validation loss, not just training loss.
+@practice
+1. Explain the core difference between how bagging and boosting combine their base learners.
+2. Why does gradient boosting typically need a lower learning rate paired with more trees rather than a high learning rate with few trees?
+@interview Boosting builds models sequentially, where each new tree corrects the residual errors of the ensemble so far, which lets it reduce bias in a way bagging can't — bagging averages independent models to cut variance, boosting chains dependent models to cut bias. Gradient boosting generalizes this by fitting each tree to the negative gradient of an arbitrary loss function, and XGBoost/LightGBM add regularization and second-order gradients on top, which is why they dominate tabular leaderboard problems when tuned with a low learning rate, shallow trees, and early stopping.
+
+@module m12 | 🧮 | 12 · SVM | Module 12 — Support Vector Machines | Margin · Kernel trick · When SVMs make sense
+@topic 🧮 Maximizing the margin
+A Support Vector Machine finds the hyperplane that separates classes with the maximum margin — the largest possible distance to the nearest points of either class (the "support vectors"). A larger margin tends to generalize better. The soft-margin formulation introduces a penalty parameter `C` that trades off margin width against misclassified/within-margin points: large `C` fits training data tightly (risk of overfitting), small `C` allows more margin violations for a smoother, more regularized boundary.
+@topic 🌀 The kernel trick
+SVMs can learn non-linear boundaries by implicitly mapping data into a higher-dimensional space where a linear separator exists, without ever computing that mapping explicitly — the kernel function computes the dot product in that space directly. The RBF (Gaussian) kernel is the most common nonlinear choice, controlled by `gamma` (how far the influence of a single training point reaches — high gamma means tight, complex boundaries and overfitting risk; low gamma means smoother boundaries). A linear kernel is just the plain max-margin hyperplane, used when data is high-dimensional and already roughly linearly separable (e.g. text classification with TF-IDF features).
+@code python
+from sklearn.svm import SVC
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+svm = make_pipeline(StandardScaler(), SVC(kernel="rbf", C=1.0, gamma="scale", probability=True))
+svm.fit(X_train, y_train)
+@end
+@topic ⚖️ When to reach for an SVM
+SVMs work well on small-to-medium datasets with clear margins and high-dimensional feature spaces (text, bioinformatics), and the kernel trick gives them real nonlinear power. They scale poorly to large datasets (training is roughly `O(n²)` to `O(n³)`), need careful scaling and hyperparameter tuning (`C`, `gamma`), and don't naturally output calibrated probabilities (though `probability=True` approximates this via extra internal cross-validation, at a performance cost). For large, messy tabular data, gradient boosting usually wins; for small, clean, high-dimensional data, SVMs are still a strong, sometimes underrated choice.
+@practice
+1. Explain what happens to the decision boundary as `C` increases from very small to very large.
+2. Why does the kernel trick avoid the cost of explicitly transforming data into a high-dimensional space?
+@interview An SVM finds the maximum-margin hyperplane separating classes, with the soft-margin parameter C trading off margin width against training errors, and the kernel trick lets it learn non-linear boundaries by implicitly operating in a higher-dimensional space without ever computing the transformation explicitly. It shines on small-to-medium, high-dimensional, cleanly-separable data like text, but it scales poorly and needs careful tuning of C and gamma, so for large tabular datasets I'd usually reach for gradient boosting instead.
+
+@module m13 | 📨 | 13 · Naive Bayes | Module 13 — Naive Bayes | Conditional independence · Text classification
+@topic 📨 Bayes' theorem with a naive assumption
+Naive Bayes applies Bayes' theorem — `P(class | features) ∝ P(class) * P(features | class)` — but makes the "naive" simplifying assumption that all features are conditionally independent given the class. This is rarely true in reality (words in a sentence are correlated), but the model is surprisingly effective anyway because it only needs the *ranking* of class probabilities to be roughly right to classify correctly, not perfectly calibrated probabilities.
+@topic 📝 Variants and use cases
+`MultinomialNB` works well for word-count or TF-IDF features in text classification (spam filtering, sentiment analysis). `BernoulliNB` suits binary features (word present/absent). `GaussianNB` assumes continuous features are normally distributed within each class, useful for simple continuous-feature baselines. Naive Bayes trains extremely fast (just counting frequencies), handles high-dimensional sparse data gracefully, and needs very little training data compared to more complex models.
+@code python
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+
+pipe = make_pipeline(TfidfVectorizer(stop_words="english"), MultinomialNB(alpha=0.5))
+pipe.fit(train_texts, train_labels)
+preds = pipe.predict(test_texts)
+@end
+@topic 🧮 Laplace smoothing
+Without smoothing, a word that never appeared with a given class in training gets probability zero, which zeroes out the entire product for any document containing it — a single unseen word would wipe out an otherwise confident prediction. Laplace (additive) smoothing, controlled by `alpha`, adds a small constant to every count so no probability is ever exactly zero.
+@practice
+1. Why does Naive Bayes still perform well in practice despite its independence assumption being clearly false for most data?
+2. What problem does Laplace smoothing solve, and what would happen without it on an unseen word?
+@interview Naive Bayes applies Bayes' theorem with the simplifying assumption that features are conditionally independent given the class, which is almost never literally true but works well anyway because classification only needs correct ranking of class probabilities, not calibrated ones. It's a go-to fast baseline for text classification with word-count or TF-IDF features, trains in a single pass over the data, and needs Laplace smoothing so an unseen word doesn't zero out an entire prediction.
+
+@module m14 | 🧩 | 14 · Clustering | Module 14 — Clustering: K-Means, Hierarchical & DBSCAN | Centroids · Dendrograms · Density
+@topic 🧩 K-Means: centroid-based clustering
+K-Means partitions data into k clusters by iteratively assigning each point to its nearest centroid, then recomputing centroids as the mean of assigned points, until convergence. It requires choosing k upfront, assumes roughly spherical, similarly-sized clusters, and is sensitive to initialization (`k-means++` initialization spreads initial centroids apart to reduce bad local optima) and to feature scale. The elbow method (plotting within-cluster sum of squares against k) or the silhouette score help choose k.
+@code python
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
+for k in range(2, 8):
+    km = KMeans(n_clusters=k, n_init=10, random_state=42).fit(X_scaled)
+    print(k, silhouette_score(X_scaled, km.labels_))
+@end
+@topic 🌲 Hierarchical clustering
+Agglomerative hierarchical clustering starts with every point as its own cluster and repeatedly merges the two closest clusters (by a linkage criterion — single, complete, average, or Ward) until one cluster remains, producing a dendrogram. You don't need to choose k upfront — you cut the dendrogram at whatever height gives the desired number of clusters — but it's `O(n²)` or worse in memory/time, making it impractical for very large datasets.
+@topic 🌊 DBSCAN: density-based clustering
+DBSCAN groups points that are densely packed together (within `eps` distance and having at least `min_samples` neighbors), and marks sparse points as noise/outliers. Unlike K-Means, it doesn't need k specified, finds arbitrarily-shaped clusters (not just spherical), and naturally handles outliers — but it struggles when clusters have very different densities, and `eps`/`min_samples` can be tricky to tune.
+@table
+Algorithm | Needs k? | Cluster shape | Handles outliers | Scales to large n
+K-Means | Yes | Spherical, similar size | No | Yes (fast)
+Hierarchical | No (cut dendrogram) | Flexible | Not directly | No (O(n²)+)
+DBSCAN | No | Arbitrary | Yes (marks noise) | Moderate
+@end
+@practice
+1. Your data has two moon-shaped, interleaving clusters. Which of the three algorithms would you expect to fail, and which would succeed?
+2. How would you choose k for K-Means without just guessing?
+@interview K-Means assigns points to the nearest of k centroids and works well for compact, roughly spherical clusters but needs k chosen upfront and struggles with irregular shapes. Hierarchical clustering builds a dendrogram bottom-up so you can pick the cluster count after the fact, at the cost of poor scalability. DBSCAN defines clusters by density, so it finds arbitrarily-shaped clusters and naturally flags outliers as noise, but it falters when clusters have very different densities — I pick based on whether I know k, how clusters are shaped, and how much I care about outlier detection.
+
+@module m15 | 📉 | 15 · Dimensionality Reduction | Module 15 — Dimensionality Reduction | PCA · t-SNE · UMAP
+@topic 📉 PCA: finding directions of maximum variance
+Principal Component Analysis finds a new set of orthogonal axes (principal components), ordered so the first captures the most variance in the data, the second the most remaining variance, and so on. It's computed via eigendecomposition of the covariance matrix (or SVD of the centered data matrix). Keeping the top k components compresses the data while retaining as much variance (information) as possible, which helps fight the curse of dimensionality, speeds up downstream models, and removes multicollinearity, since components are uncorrelated by construction.
+@code python
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+X_scaled = StandardScaler().fit_transform(X)
+pca = PCA(n_components=0.95)  # keep enough components for 95% variance
+X_reduced = pca.fit_transform(X_scaled)
+print(pca.explained_variance_ratio_.cumsum())
+@end
+@topic 🎨 t-SNE and UMAP for visualization
+t-SNE and UMAP are nonlinear techniques designed mainly for 2D/3D visualization of high-dimensional data — they preserve local neighborhood structure (nearby points stay nearby) rather than global variance like PCA. Critically, distances and cluster sizes in a t-SNE/UMAP plot are not reliably meaningful (don't read "cluster A is twice as spread out as cluster B" as a fact), and both are stochastic and sensitive to hyperparameters (`perplexity` for t-SNE, `n_neighbors`/`min_dist` for UMAP). Neither should feed into a downstream supervised model the way PCA output can — they're for human eyeballing, not as general-purpose engineered features.
+@topic 🔀 Choosing the right tool
+Use PCA when you need a fast, linear, reproducible compression step before modeling, or to remove correlated noise. Use t-SNE or UMAP when you want to visually inspect whether your high-dimensional data has natural cluster structure. UMAP is generally preferred over t-SNE today — it's faster, scales better to large datasets, and better preserves some global structure.
+@practice
+1. Why shouldn't you feed t-SNE output into a downstream classifier the way you would PCA output?
+2. You need to go from 500 correlated features down to 50 for a production model that must retrain nightly. Which technique fits, and why?
+@interview PCA finds orthogonal directions of maximum variance via eigendecomposition and is the right tool when you need fast, linear, reproducible dimensionality reduction that feeds into a downstream model. t-SNE and UMAP are nonlinear and built for visualizing cluster structure in 2D/3D by preserving local neighborhoods, but their output is stochastic and their distances aren't quantitatively meaningful, so I treat them as exploratory visualization tools, not as general feature engineering for modeling.
+
+@module m16 | 🎯 | 16 · Classification Metrics | Module 16 — Classification Metrics | Confusion matrix · Precision/Recall/F1 · ROC-AUC
+@topic 🎯 The confusion matrix as the foundation
+Every classification metric derives from the confusion matrix: true positives (TP), false positives (FP), true negatives (TN), false negatives (FN). Accuracy = `(TP+TN)/total` is intuitive but dangerously misleading on imbalanced data — a model that always predicts "not fraud" on a 99.5% non-fraud dataset gets 99.5% accuracy while catching zero fraud.
+@topic ⚖️ Precision, recall, and F1
+Precision = `TP/(TP+FP)` — of everything predicted positive, how much was actually positive; it matters when false positives are costly (e.g. flagging a legitimate transaction as fraud and blocking a customer). Recall = `TP/(TP+FN)` — of everything actually positive, how much was caught; it matters when false negatives are costly (e.g. missing an actual cancer case). F1 is the harmonic mean of precision and recall, `2*P*R/(P+R)`, useful as a single number when you need to balance both, though the harmonic mean specifically punishes a large gap between the two more than an arithmetic mean would.
+@code python
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, roc_auc_score
+
+preds = model.predict(X_test)
+probs = model.predict_proba(X_test)[:, 1]
+print(confusion_matrix(y_test, preds))
+print("Precision:", precision_score(y_test, preds))
+print("Recall:", recall_score(y_test, preds))
+print("F1:", f1_score(y_test, preds))
+print("ROC-AUC:", roc_auc_score(y_test, probs))
+@end
+@topic 📈 ROC-AUC vs Precision-Recall curves
+The ROC curve plots true positive rate against false positive rate across all thresholds; AUC (area under the curve) summarizes ranking quality independent of threshold — a random classifier scores 0.5, perfect scores 1.0. But on heavily imbalanced data, ROC-AUC can look deceptively good because the false positive rate denominator (true negatives) is huge. The Precision-Recall curve is more informative in that case, since it focuses entirely on the positive class, which is usually the rare, interesting one (fraud, disease, churn).
+@table
+Metric | Formula | Use when
+Precision | TP/(TP+FP) | False positives are expensive
+Recall | TP/(TP+FN) | False negatives are expensive
+F1 | 2PR/(P+R) | Need one number balancing both
+ROC-AUC | Area under TPR vs FPR | Comparing ranking quality, balanced data
+PR-AUC | Area under Precision vs Recall | Imbalanced data, positive class is rare
+@end
+@practice
+1. A fraud model has 99% accuracy but a recall of 10% on fraud cases. Explain why accuracy is the wrong headline metric here, and propose a better one.
+2. When would you optimize for precision over recall, and give a real business example.
+@interview Accuracy is misleading on imbalanced data because a trivial majority-class predictor can score very high while being useless, so I look at precision when false positives are expensive, recall when false negatives are expensive, and F1 when I need one balanced number. For threshold-independent ranking quality I use ROC-AUC on roughly balanced data, but I switch to PR-AUC on imbalanced problems since ROC-AUC can look artificially good when true negatives dominate the denominator.
+
+@module m17 | 📏 | 17 · Regression Metrics | Module 17 — Regression Metrics | MAE · MSE · RMSE · R²
+@topic 📏 Error magnitude metrics
+Mean Absolute Error (MAE) averages the absolute difference between predictions and actuals — it's in the same units as the target and treats all errors linearly, making it robust to outliers. Mean Squared Error (MSE) averages squared differences, which heavily penalizes large errors (an error of 10 contributes 100x more than an error of 1), making it sensitive to outliers but a natural fit when large errors are disproportionately costly. Root Mean Squared Error (RMSE) is the square root of MSE, bringing the units back to the target's scale while keeping MSE's sensitivity to large errors.
+@code python
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import numpy as np
+
+mae = mean_absolute_error(y_test, preds)
+rmse = mean_squared_error(y_test, preds, squared=False)
+r2 = r2_score(y_test, preds)
+print(f"MAE={mae:.2f} RMSE={rmse:.2f} R2={r2:.3f}")
+@end
+@topic 📊 R² and when it misleads
+R² (coefficient of determination) measures the proportion of variance in the target explained by the model, relative to always predicting the mean — `1` is perfect, `0` means no better than predicting the mean, negative means worse than predicting the mean. R² always increases (or stays flat) as you add more features even if they're useless, which is why adjusted R² (which penalizes additional features) is preferred for comparing models with different feature counts.
+@topic 🎯 Choosing between MAE and RMSE
+Prefer MAE when outliers shouldn't dominate the error signal and you want an interpretable "average miss" — e.g. forecasting typical delivery time, where one freak 10-hour delay shouldn't define the whole metric. Prefer RMSE when large errors are genuinely much worse than small ones in the real-world cost function — e.g. structural load predictions where a big miss could be catastrophic. Always report the metric in the business's language — "on average we're off by $4,200" (MAE) is more actionable to a stakeholder than an abstract R².
+@practice
+1. Your delivery-time model has a few extreme outlier errors from rare data entry mistakes. Which metric, MAE or RMSE, would be less distorted by them, and why?
+2. Why can R² increase even when you add a completely random, uninformative feature to the model?
+@interview MAE gives the average absolute miss in the target's own units and is robust to outliers, while MSE and RMSE square the errors first, which punishes large misses much more heavily and makes them better when big errors are disproportionately costly. R² tells you what fraction of variance your model explains relative to just predicting the mean, but it mechanically increases with more features, so I use adjusted R² or cross-validated error when comparing models with different feature sets rather than trusting plain R² alone.
+
+@module m18 | ⚖️ | 18 · Bias-Variance | Module 18 — Bias-Variance Tradeoff, Overfitting & Underfitting | Learning curves · Diagnosis · Fixes
+@topic ⚖️ Decomposing prediction error
+Expected test error decomposes into three parts: bias² (error from the model being too simple to capture the true pattern), variance (error from the model being too sensitive to the specific training sample it saw), and irreducible noise (error no model can remove). High-bias models underfit — they perform poorly on both training and validation data because they can't capture the underlying pattern at all. High-variance models overfit — they perform great on training data but poorly on validation data because they've memorized noise specific to that training sample.
+@topic 📈 Diagnosing with learning curves
+A learning curve plots training and validation error as a function of training set size. High bias shows both curves converging to a similarly poor (high) error — more data won't help much, you need a more expressive model or better features. High variance shows a large, persistent gap between low training error and higher validation error — more data, regularization, or a simpler model will help close that gap.
+@code python
+from sklearn.model_selection import learning_curve
+import numpy as np
+
+train_sizes, train_scores, val_scores = learning_curve(
+    model, X, y, cv=5, train_sizes=np.linspace(0.1, 1.0, 10), scoring="neg_mean_squared_error"
+)
+train_err = -train_scores.mean(axis=1)
+val_err = -val_scores.mean(axis=1)
+@end
+@topic 🧪 Fixing each regime deliberately
+For high bias (underfitting): use a more expressive model, add features or polynomial/interaction terms, reduce regularization strength, or train longer. For high variance (overfitting): get more training data, add regularization, reduce model complexity (shallower trees, fewer features, smaller neural nets), use dropout/early stopping, or use ensembling (bagging specifically targets variance). Always compare validation performance, not training performance, when judging whether a change actually helped — training error almost always improves with more complexity, which is exactly the trap.
+@practice
+1. Sketch (in words) what the learning curve looks like for a linear model trying to fit a strongly non-linear relationship.
+2. You add polynomial features and training error drops a lot but validation error gets worse. What's happening, and what are two fixes?
+@interview Underfitting (high bias) means the model is too simple to capture the real pattern, showing up as both training and validation error being high and close together; overfitting (high variance) means it's captured noise specific to the training set, showing up as a persistent gap between low training error and higher validation error. I diagnose with learning curves and validation-curve sweeps over model complexity, then fix bias with more expressive models or features, and fix variance with regularization, more data, or ensembling — always judging by validation performance, never training performance.
+
+@module m19 | 🛠️ | 19 · Hyperparameter Tuning | Module 19 — Hyperparameter Tuning | Grid search · Random search · Bayesian optimization · Nested CV
+@topic 🛠️ Grid search vs random search
+Grid search exhaustively tries every combination in a specified hyperparameter grid — thorough but combinatorially expensive, especially with many hyperparameters (the grid grows multiplicatively). Random search instead samples a fixed number of random combinations from specified distributions — counterintuitively, it's usually more efficient for the same compute budget, because most hyperparameters don't matter much and random search explores more distinct values of the important ones instead of wasting trials on fine-grained combinations of unimportant ones.
+@code python
+from sklearn.model_selection import RandomizedSearchCV
+from scipy.stats import uniform, randint
+from sklearn.ensemble import GradientBoostingClassifier
+
+param_dist = {
+    "n_estimators": randint(100, 600),
+    "max_depth": randint(2, 8),
+    "learning_rate": uniform(0.01, 0.3),
+    "subsample": uniform(0.6, 0.4),
+}
+search = RandomizedSearchCV(
+    GradientBoostingClassifier(), param_dist, n_iter=50, cv=5,
+    scoring="roc_auc", random_state=42, n_jobs=-1
+)
+search.fit(X_train, y_train)
+print(search.best_params_, search.best_score_)
+@end
+@topic 🧠 Bayesian optimization
+Bayesian optimization (e.g. via `Optuna` or `scikit-optimize`) builds a probabilistic surrogate model of how hyperparameters map to validation performance, and uses it to intelligently choose the next combination to try — balancing exploring uncertain regions against exploiting known-good regions. This converges to good hyperparameters in far fewer trials than grid or random search, which matters a lot when each trial (training a model) is expensive.
+@code python
+import optuna
+
+def objective(trial):
+    params = {
+        "max_depth": trial.suggest_int("max_depth", 2, 8),
+        "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3, log=True),
+        "n_estimators": trial.suggest_int("n_estimators", 100, 600),
+    }
+    model = GradientBoostingClassifier(**params)
+    return cross_val_score(model, X_train, y_train, cv=5, scoring="roc_auc").mean()
+
+study = optuna.create_study(direction="maximize")
+study.optimize(objective, n_trials=50)
+@end
+@topic 🔁 Nested cross-validation
+If you tune hyperparameters using the same cross-validation folds you report performance on, your reported score is optimistically biased — you've effectively fit the hyperparameters to the validation folds. Nested CV solves this with an outer loop (for honest performance estimation) wrapping an inner loop (for hyperparameter selection) — the outer test fold is never touched during inner tuning. It's computationally expensive but is the correct way to both tune and honestly report performance when you can afford it.
+@practice
+1. Why does random search often outperform grid search for the same compute budget?
+2. Explain in your own words why tuning hyperparameters on the test set and then reporting the test score is a form of leakage.
+@interview I default to random search or Bayesian optimization (via Optuna) over grid search because they explore the hyperparameter space more efficiently — grid search wastes trials on combinations of unimportant parameters. For honest performance reporting, I use nested cross-validation so the score isn't inflated by having tuned hyperparameters against the same folds I'm evaluating on — the outer fold must stay completely untouched during inner-loop tuning.
+
+@module m20 | 🧮 | 20 · Imbalanced Data | Module 20 — Handling Imbalanced Data | Class weighting · Resampling · Metric choice
+@topic 🧮 Why imbalance breaks naive training
+When one class vastly outnumbers another (fraud, rare disease, churn), a model trained to minimize overall error learns to mostly predict the majority class, since that minimizes average loss even while being useless for the minority class that usually matters most. The fix isn't a single trick — it's a combination of choosing the right metric, adjusting the loss, and sometimes resampling the data.
+@topic ⚖️ Class weighting and resampling
+Class weighting (`class_weight="balanced"` in scikit-learn) increases the loss penalty for misclassifying the minority class, without changing the actual data — usually the first thing to try since it's free and doesn't risk information loss or synthetic artifacts. SMOTE (Synthetic Minority Oversampling Technique) generates synthetic minority examples by interpolating between existing minority points and their nearest minority neighbors, rather than just duplicating rows (random oversampling), which reduces exact-duplicate overfitting. Random undersampling drops majority examples, which is fast but throws away potentially useful data — best only when you have abundant majority data.
+@code python
+from imblearn.over_sampling import SMOTE
+from imblearn.pipeline import Pipeline as ImbPipeline
+from sklearn.ensemble import RandomForestClassifier
+
+pipe = ImbPipeline([
+    ("smote", SMOTE(random_state=42)),
+    ("clf", RandomForestClassifier(n_estimators=300, random_state=42)),
+])
+pipe.fit(X_train, y_train)  # SMOTE applied only inside each CV training fold, never on validation data
+@end
+@warn Always apply SMOTE or any resampling only to the training fold, inside the cross-validation loop — resampling before splitting leaks synthetic near-duplicates of test points into training and inflates validation scores.
+@topic 🎯 Picking the right evaluation and threshold
+On imbalanced data, report precision, recall, F1, and PR-AUC per class instead of overall accuracy. Often the single most effective lever is moving the classification threshold away from the default 0.5 — lowering it increases recall at the cost of precision, which usually matches the real cost asymmetry (missing fraud is worse than a false alarm). Precision-recall curves and cost-based threshold analysis (actual business cost of FP vs FN) should guide the final threshold, not a default.
+@practice
+1. You trained a fraud model with SMOTE applied before the train/test split. What's wrong with that evaluation, and how would you fix it?
+2. Besides resampling, name two other ways to handle severe class imbalance.
+@interview Imbalanced data breaks naive accuracy-driven training because the model can minimize loss by ignoring the rare class entirely, so I start with class weighting since it's free, add SMOTE or targeted resampling only inside the training fold if weighting isn't enough, and always evaluate with precision, recall, F1, or PR-AUC instead of accuracy. Often the biggest lever isn't resampling at all — it's moving the decision threshold to match the real-world cost asymmetry between false positives and false negatives.
+
+@module m21 | 🔍 | 21 · Feature Selection & Importance | Module 21 — Feature Selection & Feature Importance | Filter · Wrapper · Embedded · SHAP
+@topic 🔍 Filter, wrapper, and embedded methods
+Filter methods score features independently of any model — correlation with the target, chi-squared test, mutual information — and are fast but ignore feature interactions. Wrapper methods (like Recursive Feature Elimination) repeatedly train a model on feature subsets and keep whichever subset performs best, which captures interactions but is computationally expensive. Embedded methods select features as part of model training itself — Lasso's coefficient shrinkage to zero, or a tree ensemble's built-in importance ranking — giving a good balance of quality and cost.
+@code python
+from sklearn.feature_selection import RFECV
+from sklearn.ensemble import RandomForestClassifier
+
+selector = RFECV(RandomForestClassifier(n_estimators=200), step=1, cv=5, scoring="roc_auc")
+selector.fit(X_train, y_train)
+selected_features = X_train.columns[selector.support_]
+@end
+@topic 🎲 Permutation importance: a model-agnostic check
+Permutation importance measures how much a model's performance drops when a single feature's values are randomly shuffled, breaking its relationship with the target while keeping its marginal distribution intact — a large performance drop means the model relies heavily on that feature. Unlike impurity-based importance from trees, it works for any model, is computed on held-out data (so it reflects generalization usefulness, not just training-time splits), and isn't biased toward high-cardinality features.
+@code python
+from sklearn.inspection import permutation_importance
+
+result = permutation_importance(model, X_test, y_test, n_repeats=10, random_state=42, scoring="roc_auc")
+importances = dict(zip(X_test.columns, result.importances_mean))
+@end
+@topic 🧩 SHAP for individual-prediction explanations
+SHAP (SHapley Additive exPlanations) uses game-theory-based Shapley values to attribute each prediction's deviation from the average prediction to individual features, consistently and with theoretical guarantees (additivity: feature contributions sum exactly to the prediction). Unlike global feature importance, SHAP explains individual predictions — "why did this specific customer get flagged as high churn risk" — which matters for regulatory explainability and debugging specific errors, at the cost of being more computationally expensive than permutation importance.
+@practice
+1. Why is permutation importance generally more trustworthy than a tree's built-in impurity-based feature_importances_?
+2. A stakeholder asks "why did the model deny this specific loan application?" Which technique answers that, and why wouldn't global feature importance be enough?
+@interview I use embedded methods like Lasso or tree-based importance as a fast first pass, permutation importance on held-out data when I need a trustworthy, model-agnostic global ranking, and SHAP when I need to explain an individual prediction — which global importance simply can't do, since it only tells you what matters on average, not what drove one specific decision.
+
+@module m22 | ⏳ | 22 · Time Series | Module 22 — Time Series Forecasting Basics | Stationarity · Lag features · Leakage-free splits
+@topic ⏳ Why time series breaks standard ML assumptions
+Standard supervised learning assumes independent, identically distributed samples — time series data violates this directly, since consecutive observations are correlated (autocorrelation) and the underlying process can change over time (trend, seasonality, regime shifts). This is why you can never randomly shuffle time series data into train/test folds — you must always split chronologically, training on the past and validating on the future, to get an honest estimate of forecast performance.
+@topic 📉 Stationarity and making a series learnable
+A stationary series has constant statistical properties (mean, variance) over time, which most classical forecasting methods assume. Trends and seasonality break stationarity — differencing (subtracting the previous value) removes trend, and seasonal differencing (subtracting the value from one season ago) removes seasonality. The Augmented Dickey-Fuller test checks stationarity statistically. Modern gradient-boosting-based approaches sidestep strict stationarity requirements by instead engineering lag and rolling features and letting a non-linear model learn the pattern directly.
+@code python
+import pandas as pd
+
+df["lag_1"] = df["sales"].shift(1)
+df["lag_7"] = df["sales"].shift(7)
+df["rolling_mean_7"] = df["sales"].shift(1).rolling(7).mean()
+df["day_of_week"] = df["date"].dt.dayofweek
+df["month"] = df["date"].dt.month
+
+split_date = "2024-01-01"
+train = df[df["date"] < split_date]
+test = df[df["date"] >= split_date]
+@end
+@topic 🚨 Avoiding leakage from the future
+The most common time-series mistake is using information that wouldn't have been known at prediction time — a `rolling_mean` that includes the current row instead of only past rows, a feature built from the full dataset's statistics (like global mean) instead of only data up to that point, or random k-fold cross-validation instead of a forward-chaining time split. `TimeSeriesSplit` in scikit-learn enforces expanding or rolling windows where validation folds always come after their training fold.
+@code python
+from sklearn.model_selection import TimeSeriesSplit
+
+tscv = TimeSeriesSplit(n_splits=5)
+for train_idx, val_idx in tscv.split(df):
+    pass  # train_idx always precedes val_idx chronologically
+@end
+@practice
+1. Why is shuffling rows before splitting a critical bug in a time series project, even though it's standard practice elsewhere?
+2. You compute a feature as `rolling_mean()` including the current day's value instead of `shift(1).rolling_mean()`. What's the problem?
+@interview Time series data is autocorrelated and often non-stationary, which breaks the i.i.d. assumption behind standard cross-validation, so splits must always be chronological — train on the past, validate on the future — using something like TimeSeriesSplit rather than random k-fold. Beyond that, the main failure mode is leakage: any lag or rolling feature must only use information available strictly before the prediction point, and I always double check that by asking what I would actually have known at that moment in real deployment.
+
+@module m23 | 🎬 | 23 · Recommender Systems | Module 23 — Recommender Systems Basics | Collaborative filtering · Content-based
+@topic 🎬 Collaborative filtering
+Collaborative filtering recommends items based on patterns across many users' behavior, without needing to understand item content at all — "users who liked what you liked also liked X." User-based CF finds similar users and recommends what they liked; item-based CF finds items similar to ones the user already liked, based on co-occurrence in user histories. Matrix factorization (e.g. SVD-based, or implicit-feedback ALS) decomposes the sparse user-item interaction matrix into low-dimensional latent user and item vectors, whose dot product approximates predicted preference — this scales much better than pairwise similarity computation.
+@code python
+from surprise import SVD, Dataset, Reader
+from surprise.model_selection import cross_validate
+
+reader = Reader(rating_scale=(1, 5))
+data = Dataset.load_from_df(ratings_df[["user_id", "item_id", "rating"]], reader)
+algo = SVD(n_factors=50, reg_all=0.05)
+cross_validate(algo, data, measures=["RMSE"], cv=5, verbose=True)
+@end
+@topic 🏷️ Content-based filtering
+Content-based filtering recommends items similar to what a user liked before, based on item features (genre, text description, tags, embeddings) rather than other users' behavior — it computes similarity (often cosine similarity on TF-IDF or embedding vectors) between item profiles and a user's profile built from their history. It works well for new items with no interaction history yet (no cold-start problem for items), but tends to over-specialize recommendations (always more of the same) and needs good item metadata to work at all.
+@topic 🥶 The cold-start problem and hybrid approaches
+Collaborative filtering fails for new users or new items with no interaction history (cold start) — there's nothing to base similarity on yet. Content-based filtering handles new items fine (it just needs their features) but still struggles with brand-new users with no history. Most production recommenders are hybrid: content-based or popularity-based recommendations bootstrap new users/items, and collaborative filtering takes over as interaction data accumulates.
+@practice
+1. A brand-new item with zero ratings needs to be recommended. Which approach handles this naturally, and which fails?
+2. Explain in one sentence why matrix factorization scales better than computing full pairwise user similarity.
+@interview Collaborative filtering finds patterns across many users' behavior — via similarity or matrix factorization into latent vectors — and needs no item content, but it fails completely for brand-new users or items with no history, the cold-start problem. Content-based filtering recommends based on item features and similarity to a user's past preferences, which solves item cold-start but can over-specialize and still struggles with new users. Production systems are almost always hybrid, leaning on content-based or popularity signals until enough interaction data accumulates for collaborative filtering to take over.
+
+@module m24 | 🛠️ | 24 · ML Pipelines | Module 24 — Building ML Pipelines with scikit-learn | Pipeline · ColumnTransformer · Leakage prevention
+@topic 🛠️ Why pipelines, not manual steps
+Manually preprocessing data (scale, then encode, then impute) outside of a formal pipeline is a common source of data leakage and production bugs — it's easy to accidentally fit a scaler on the full dataset, or forget to apply the exact same transformation at inference time that was used during training. `Pipeline` chains preprocessing and modeling steps into one object that's fit and used as a single unit, guaranteeing the same transformations are applied consistently in training, cross-validation, and inference.
+@code python
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.impute import SimpleImputer
+from sklearn.ensemble import GradientBoostingClassifier
+
+numeric = ["age", "income", "tenure_months"]
+categorical = ["plan_type", "region"]
+
+preprocess = ColumnTransformer([
+    ("num", Pipeline([
+        ("impute", SimpleImputer(strategy="median")),
+        ("scale", StandardScaler()),
+    ]), numeric),
+    ("cat", Pipeline([
+        ("impute", SimpleImputer(strategy="most_frequent")),
+        ("encode", OneHotEncoder(handle_unknown="ignore")),
+    ]), categorical),
+])
+
+full_pipeline = Pipeline([
+    ("preprocess", preprocess),
+    ("model", GradientBoostingClassifier(random_state=42)),
+])
+full_pipeline.fit(X_train, y_train)
+@end
+@topic 🔒 Why this prevents leakage automatically
+When `cross_val_score` or `GridSearchCV` is run on a `Pipeline`, scikit-learn refits the entire pipeline — including the scaler and imputer — fresh inside each training fold, and only transforms (never refits) the validation fold. This structurally prevents the classic leakage bug of fitting preprocessing on the full dataset before splitting, because there's no way to accidentally call `fit` on anything outside the current fold's training data.
+@code python
+from sklearn.model_selection import GridSearchCV
+
+param_grid = {"model__max_depth": [2, 3, 4], "model__n_estimators": [200, 400]}
+grid = GridSearchCV(full_pipeline, param_grid, cv=5, scoring="roc_auc")
+grid.fit(X_train, y_train)
+@end
+@topic 📦 Pipelines as deployment artifacts
+A fitted `Pipeline` can be serialized as a single artifact (`joblib.dump`) that bundles preprocessing and model together — at inference time you load one object and call `.predict()` on raw-ish input, without separately re-implementing the preprocessing logic in the serving code. This eliminates training/serving skew, one of the most common causes of silent production bugs where the live model behaves differently than it did in validation.
+@practice
+1. Explain precisely why wrapping preprocessing and the model in one Pipeline prevents the leakage that manual preprocessing risks.
+2. Why does serializing the whole pipeline (not just the model) reduce the risk of training/serving skew?
+@interview A scikit-learn Pipeline chains preprocessing and modeling into one fit/predict unit so that cross-validation and grid search automatically refit preprocessing fresh inside each training fold, which structurally prevents leaking validation-fold information into imputers, scalers, or encoders. It also collapses training and serving into one deployable artifact, so the exact transformations used in training are guaranteed to run in production too — eliminating a whole class of training/serving skew bugs.
+
+@module m25 | 🚀 | 25 · Deployment & MLOps | Module 25 — Model Deployment & MLOps Basics | Serialization · Serving · Monitoring · Retraining
+@topic 🚀 Serializing and serving a model
+A trained model (ideally a full pipeline including preprocessing) is serialized with `joblib` or `pickle` for scikit-learn models, or framework-native formats (`ONNX`, `TorchScript`, `SavedModel`) for cross-framework portability and faster inference. It's then served either as a real-time API (wrapped in FastAPI/Flask, returning predictions on each request — needed for synchronous use cases like fraud scoring at checkout) or as a batch job (scoring a large table on a schedule — simpler, higher-throughput, fine when predictions don't need to be instantaneous).
+@code python
+import joblib
+from fastapi import FastAPI
+import pandas as pd
+
+model = joblib.load("churn_pipeline.joblib")
+app = FastAPI()
+
+@app.post("/predict")
+def predict(payload: dict):
+    df = pd.DataFrame([payload])
+    proba = model.predict_proba(df)[0, 1]
+    return {"churn_probability": float(proba)}
+@end
+@topic 📉 Monitoring for drift
+Once deployed, a model's performance can silently degrade due to data drift (the distribution of input features changes — e.g. new customer demographics) or concept drift (the relationship between features and target changes — e.g. customer behavior shifts after a pricing change), neither of which shows up until you actively monitor for it, since ground-truth labels often arrive late or not at all. Monitor input feature distributions against the training distribution (e.g. population stability index, KL divergence), prediction distribution over time, and — whenever labels eventually arrive — live accuracy/error against training-time performance.
+@topic 🔁 Retraining triggers
+Retraining shouldn't be purely calendar-based ("retrain every month") without also being triggered by evidence — a sustained drop in a monitored proxy metric, detected drift beyond a threshold, or a known business change (new product launch, policy change) that invalidates old patterns. A robust MLOps setup version-controls data, features, and models together (not just code), so any production prediction can be traced back to the exact model version, training data snapshot, and feature pipeline that produced it — essential for debugging and for regulatory audits.
+@info Shadow deployment (running a new model silently alongside the live one, logging its predictions without acting on them) and canary releases (rolling a new model out to a small traffic percentage first) are the standard safe ways to validate a new model against real traffic before full cutover.
+@practice
+1. Explain the difference between data drift and concept drift with one example of each.
+2. Why is calendar-based retraining ("every Monday") alone not a sufficient MLOps strategy?
+@interview Deployment means serializing a model — ideally the full preprocessing pipeline — and serving it either as a real-time API or a batch job depending on latency needs, but the job isn't done at deploy time. I monitor input feature distributions for data drift and, once labels arrive, live performance for concept drift, and I trigger retraining off real evidence of degradation rather than a blind calendar schedule, while keeping data, features, and model versions tied together so any production prediction is fully traceable.
+
+@module m26 | ⚠️ | 26 · ML Ethics | Module 26 — ML Ethics & Responsible AI | Fairness · Bias · Transparency · Privacy
+@topic ⚠️ Bias enters through the data, not just the algorithm
+Models learn whatever patterns exist in their training data, including historical discrimination — a hiring model trained on past hiring decisions will reproduce past biases against whichever groups were historically disadvantaged, even if the protected attribute itself is removed from the features, because other correlated features (zip code, school name) can act as proxies. Auditing training data for representation gaps and historical bias is a prerequisite step, not an afterthought bolted on after the model is built.
+@topic ⚖️ Fairness metrics and their tensions
+Different fairness definitions can conflict mathematically and can't all be satisfied simultaneously in general: demographic parity (equal positive prediction rate across groups), equalized odds (equal true positive and false positive rates across groups), and predictive parity (equal precision across groups) each capture a different notion of "fair," and satisfying one can require violating another when base rates genuinely differ between groups. Choosing which fairness definition matters requires understanding the specific decision's real-world stakes and legal context — it's a judgment call informed by domain and ethics expertise, not something a library auto-solves.
+@code python
+from fairlearn.metrics import MetricFrame, selection_rate
+from sklearn.metrics import recall_score
+
+metric_frame = MetricFrame(
+    metrics={"selection_rate": selection_rate, "recall": recall_score},
+    y_true=y_test, y_pred=preds, sensitive_features=X_test["gender"]
+)
+print(metric_frame.by_group)
+@end
+@topic 🔍 Transparency and privacy
+Explainability tools (SHAP, LIME, or inherently interpretable models like logistic regression and shallow trees) matter most in high-stakes decisions — lending, hiring, healthcare, criminal justice — where affected individuals have a right to understand why a decision was made, and regulators (e.g. GDPR's "right to explanation") may require it. Privacy risks include training data memorization (a model can leak specifics of individual training records, demonstrable via membership inference attacks), and techniques like differential privacy (adding calibrated noise during training) and federated learning (training without centralizing raw data) mitigate this at some cost to accuracy.
+@practice
+1. A credit model excludes race as a feature but still shows a large approval-rate gap by race. How could that happen, and what would you check?
+2. Explain why you can't generally satisfy demographic parity and equalized odds at the same time when base rates differ between groups.
+@interview Bias usually enters through historical patterns baked into training data, not through the algorithm itself, and removing a protected attribute doesn't fix it if correlated proxy features remain — so I audit training data representation and check fairness metrics like demographic parity and equalized odds across protected groups, understanding they can mathematically conflict and the right tradeoff depends on the decision's real stakes. For high-stakes, regulated decisions I also prioritize explainability and think about privacy risks like training-data memorization, not just raw predictive performance.
+
+@module m27 | 🎤 | 27 · Interview Questions | Module 27 — Machine Learning Interview Questions | Core concepts · Algorithms · Practical judgment
+@topic Q: What is the bias-variance tradeoff?
+Bias is the error from a model being too simple to capture the true pattern, variance is the error from a model being too sensitive to the specific training sample. Total expected error is bias² + variance + irreducible noise, and reducing one often increases the other — a deeper decision tree lowers bias but raises variance, more regularization does the opposite. I diagnose which regime I'm in with learning curves: a persistent gap between training and validation error signals high variance, while both being high and close together signals high bias.
+
+@topic Q: How do you prevent overfitting in a model?
+I use several levers together rather than one: simplify the model (shallower trees, fewer features, stronger regularization), get more training data if possible, use cross-validation to tune complexity honestly rather than by training error, apply early stopping for iterative models, and use ensembling like bagging to average out variance. The key is to always judge by held-out validation performance, since training error improves monotonically with complexity regardless of whether it's actually helping.
+
+@topic Q: Explain precision and recall, and give a real scenario for each being the priority metric.
+Precision is the fraction of positive predictions that were actually correct; recall is the fraction of actual positives that were caught. For spam detection, I'd prioritize precision — flagging a legitimate email as spam (false positive) is worse than missing one spam email. For cancer screening, I'd prioritize recall — missing an actual cancer case (false negative) is far worse than an extra follow-up test on a healthy patient.
+
+@topic Q: Why is accuracy a poor metric for imbalanced classification?
+Accuracy weighs every prediction equally, so on a dataset that's 99% negative, a model that always predicts "negative" scores 99% accuracy while catching zero positives, which is exactly the class we usually care most about. I'd report precision, recall, F1, and PR-AUC per class instead, and in extreme cases design the metric around the actual business cost of false positives versus false negatives.
+
+@topic Q: What's the difference between bagging and boosting?
+Bagging trains independent models in parallel on bootstrap samples and averages them, mainly reducing variance — Random Forest is the classic example. Boosting trains models sequentially, each correcting the previous ensemble's residual errors, mainly reducing bias — Gradient Boosting and XGBoost are the classic examples. In practice boosting often gets better accuracy with careful tuning, but it's more prone to overfitting and more sensitive to hyperparameters than bagging.
+
+@topic Q: How does a Random Forest reduce overfitting compared to a single decision tree?
+A single deep tree overfits because it has high variance — small data changes produce very different trees. Random Forest trains many such deep, high-variance trees on different bootstrap samples with feature subsampling at each split, then averages their predictions; since each tree's errors are only partially correlated, averaging cancels out a lot of that variance while the bias stays roughly the same as a single deep tree's bias. The feature subsampling step specifically decorrelates the trees further than bootstrap sampling alone would.
+
+@topic Q: Explain the kernel trick in SVMs.
+The kernel trick lets an SVM learn a non-linear decision boundary by implicitly computing dot products as if the data had been mapped into a much higher-dimensional space, without ever actually performing that mapping. The kernel function directly computes what that dot product would be, which is computationally far cheaper than transforming the data explicitly, especially when the implicit space is infinite-dimensional, as with the RBF kernel.
+
+@topic Q: When would you choose logistic regression over a random forest, or vice versa?
+I'd choose logistic regression when I need interpretable, auditable coefficients (regulated domains like lending), when the relationship is roughly linear in log-odds, when the dataset is small, or when inference speed and simplicity matter most. I'd choose a random forest when the relationship is non-linear with complex feature interactions, I have enough data, and I care more about predictive performance than coefficient-level interpretability — though I'd still use SHAP or permutation importance to explain it afterward.
+
+@topic Q: What is regularization and why does it help?
+Regularization adds a penalty on model complexity — typically the size of coefficients — to the loss function, which discourages the model from fitting noise in the training data. It trades a small increase in bias for a often much larger reduction in variance, which usually improves generalization. Ridge (L2) shrinks coefficients smoothly, Lasso (L1) can zero them out entirely for built-in feature selection, and the right strength is always chosen via cross-validation, never by training error.
+
+@topic Q: How does cross-validation work and why is it better than a single train/test split?
+Cross-validation splits data into k folds, trains on k-1 folds and validates on the remaining one, repeats this k times rotating which fold is held out, then averages the scores. This uses every data point for both training and validation at some point, and gives a more stable, less luck-dependent estimate of generalization performance than a single split, which can look artificially good or bad depending purely on how the split happened to fall.
+
+@topic Q: What is data leakage and how do you detect it?
+Data leakage is when information that wouldn't be available at real prediction time ends up influencing training — for example fitting a scaler on the full dataset before splitting, using a feature that's a disguised proxy for the label, or randomly splitting time series data instead of chronologically. I detect it by being suspicious of unrealistically high validation scores, by auditing every feature with "would I actually know this at prediction time," and by always building preprocessing inside a Pipeline fit only on training folds.
+
+@topic Q: Explain the curse of dimensionality.
+As the number of features grows, the volume of the feature space grows exponentially, so data points become sparse and distances between points become increasingly similar — "nearest" neighbors stop being meaningfully close. This hurts distance-based methods like k-NN and clustering especially badly, and is one reason dimensionality reduction (PCA) or feature selection is often necessary before applying such methods to high-dimensional data.
+
+@topic Q: How would you handle a dataset with 40% missing values in one important column?
+First I'd investigate whether the missingness is random or systematic — if it correlates with the target, that's informative and I'd add a "was_missing" indicator feature rather than just imputing silently. For the imputation itself, I'd prefer a model-based approach (like iterative imputation using other columns) over a single mean/median fill, since 40% missing is too much to handle naively without losing real signal. I'd also check whether the column could be dropped if a similarly predictive, more complete feature exists.
+
+@topic Q: What's the difference between a validation set and a test set?
+The validation set is used during development to tune hyperparameters and select between model candidates — you look at it repeatedly, so some information inevitably leaks into your choices. The test set is touched exactly once, at the very end, to report an honest, unbiased estimate of real-world performance; if you tune based on test set results, it stops being a valid estimate of generalization and effectively becomes a second validation set.
+
+@topic Q: How do you choose k in k-fold cross-validation?
+Common choices are k=5 or k=10 — higher k means each training fold uses more data (less bias in the error estimate, closer to using the full dataset) but costs more compute and the folds are more correlated with each other (slightly higher variance in the estimate). For very small datasets, leave-one-out cross-validation (k=n) extracts the most training signal per fold but is expensive and can have high variance across folds; for large datasets, a lower k like 3-5 is usually sufficient and far cheaper.
+
+@topic Q: What is the difference between L1 and L2 regularization in terms of the resulting coefficients?
+L2 (Ridge) shrinks all coefficients smoothly toward zero but essentially never makes them exactly zero, because the penalty's gradient shrinks as the coefficient approaches zero. L1 (Lasso) can drive coefficients exactly to zero because its penalty has a constant gradient regardless of coefficient size, creating a sparse solution — effectively performing feature selection. This is why I reach for Lasso when I suspect many features are irrelevant, and Ridge when I believe most features contribute at least a little and are correlated.
+
+@topic Q: Explain how gradient descent works and what the learning rate controls.
+Gradient descent iteratively updates model parameters by moving them in the direction that most reduces the loss function — specifically, opposite to the gradient of the loss with respect to the parameters. The learning rate controls the step size of each update: too large and the optimizer can overshoot the minimum and diverge or oscillate; too small and convergence is painfully slow and can get stuck in a shallow local region. In practice, techniques like learning rate schedules or adaptive optimizers (Adam) adjust the step size automatically during training.
+
+@topic Q: What is the difference between parametric and non-parametric models?
+Parametric models assume a fixed functional form with a fixed number of parameters regardless of dataset size — linear regression, logistic regression — which makes them fast, interpretable, and low variance, but potentially high bias if the true relationship doesn't match that form. Non-parametric models (k-NN, decision trees, kernel SVMs) let the model's effective complexity grow with the data, which can capture more complex patterns but typically needs more data and risks higher variance.
+
+@topic Q: How would you explain a complex model's prediction to a non-technical stakeholder?
+I'd use SHAP values to decompose that specific prediction into each feature's individual contribution relative to the average prediction, then translate the top 3-4 contributing features into plain language — "this application was flagged mainly because of a short credit history and a high debt-to-income ratio, which together pushed the risk score up by 18 points." I'd avoid presenting the raw model mechanics and instead focus on the concrete, ranked reasons behind that one decision.
+
+@topic Q: What would you do if your model performs well in validation but poorly in production?
+I'd first suspect leakage or a train/serving mismatch — check whether any feature used in training wouldn't actually be available at real prediction time, and verify that the exact same preprocessing pipeline runs in both environments. If that's clean, I'd check for data drift between the training distribution and current production inputs, and confirm the validation split was representative (not leaking information or failing to reflect real deployment conditions, like a non-chronological split on time-dependent data).
+
+@topic Q: What is ensemble learning and why does it generally improve performance?
+Ensemble learning combines predictions from multiple models to produce a better result than any single model alone, exploiting the fact that different models' errors are often only partially correlated. Bagging averages independent models to cancel variance, boosting chains models to progressively reduce bias, and stacking trains a meta-model to learn how to best combine several base models' predictions. The main cost is reduced interpretability and increased training/serving complexity in exchange for typically better and more robust predictive performance.
+
+@topic Q: How do you decide which algorithm to try first on a new tabular problem?
+I start with a simple, fast baseline — logistic or linear regression — to establish a performance floor and sanity-check the data pipeline, since if a complex model can't beat this by much, something is likely wrong upstream. Then I typically move to a tree ensemble like Random Forest or gradient boosting (XGBoost/LightGBM), since they handle non-linearity, feature interactions, and mixed data types well with relatively little preprocessing, and they're usually the strongest off-the-shelf performers on tabular data.
+@interview I treat interview questions the way I'd treat a real stakeholder conversation: answer directly first, explain the mechanism concretely, then name the practical trade-off — because in ML the honest answer is almost always "it depends on the data and the cost of being wrong," and showing that judgment matters more than reciting a definition.
+
+@module m28 | 🗺️ | 28 · Learning Roadmap | Module 28 — Learning Roadmap: Zero to Job-Ready | Math · Python · Algorithms · Projects · Interviews
+@topic 🗺️ Build the foundation before the algorithms
+Skipping straight to `model.fit()` without the underlying math leaves you unable to debug why a model fails or to answer "why" in an interview. Prioritize working, intuitive understanding over derivations you can't apply: linear algebra (vectors, matrices, dot products, eigenvectors — enough to understand PCA and how a neural net layer works), calculus (derivatives and gradients — enough to understand gradient descent), and probability/statistics (distributions, Bayes' theorem, hypothesis testing, confidence intervals — enough to understand model assumptions and evaluate uncertainty). Pair this with solid Python: NumPy, pandas, and matplotlib/seaborn fluency, since every subsequent stage depends on manipulating data comfortably.
+@topic 📈 Prioritization for an ML engineer / data scientist role
+Depth on the classic supervised learning algorithms (modules 5-13, 16-21 here) and rock-solid evaluation/validation practice matters more for interviews and real jobs than breadth into exotic models — most interviewers probe whether you deeply understand bias-variance, regularization, tree ensembles, and metrics, not whether you've touched every algorithm that exists. Build 3-5 complete, end-to-end projects (not just notebooks — include data cleaning, a real baseline, proper validation, and a brief write-up of trade-offs) rather than dozens of shallow tutorial completions; a hiring manager trusts one project you can explain in depth over ten you can only describe vaguely.
+@table
+Stage | Focus | Outcome
+1. Foundations | Python, NumPy/pandas, linear algebra, probability/statistics basics | Comfortable manipulating and visualizing real data
+2. Core ML | Linear/logistic regression, regularization, trees, k-NN, Naive Bayes, SVM, clustering, PCA | Can explain and implement the classic algorithm toolkit from scratch and via scikit-learn
+3. Evaluation & tuning | Cross-validation, leakage, all classification/regression metrics, bias-variance, hyperparameter search | Can defend a model's validity, not just its score
+4. Ensembles & real data | Random Forest, XGBoost/LightGBM, imbalanced data, feature selection, pipelines | Can build production-grade tabular models end to end
+5. Specialization | Pick 1-2: time series, recommenders, NLP, deep learning, or MLOps | A differentiated area of depth beyond the generalist baseline
+6. Portfolio & interviews | 3-5 polished end-to-end projects, mock interviews, this module's Q&A bank | Job-ready: can build, explain, and defend real ML work
+@end
+@tip Don't wait until "stage 6" to start interview prep — explain every project out loud to yourself (or a friend) as you build it, the way you would to an interviewer, from day one. It's far more effective than cramming explanations after the fact.
+@practice
+1. Audit your current skills against the six stages above and identify the single weakest stage — what's your concrete next action to close that gap?
+2. Pick one project idea and outline it stage by stage: what data, what baseline, what model, what metric, and what you'd say about it in an interview.
+@interview The fastest reliable path from zero to job-ready in ML is: solidify Python and the essential math, master the classic supervised and unsupervised algorithms with real understanding of their assumptions, get rigorous about evaluation and leakage, learn ensembles and real-world data handling, then prove it all with a small number of deep, well-explained end-to-end projects rather than broad shallow coverage — depth you can defend out loud beats breadth you can only list.

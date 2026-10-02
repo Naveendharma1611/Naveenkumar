@@ -1,0 +1,478 @@
+@page 🤖 Artificial Intelligence Complete Study Material
+@intro Understand AI as a field: search and reasoning, knowledge representation, NLP, computer vision, reinforcement learning, generative AI and LLM agents, and the ethics and safety questions that come with deploying them.
+
+@module m1 | 🏛️ | 1 · Foundations | Module 1 — What Is Artificial Intelligence? | History · Definitions · Narrow vs General
+@topic 🧠 Defining intelligence in a machine
+Artificial intelligence is the field of building systems that perform tasks which would normally require human intelligence: perceiving, reasoning, learning, planning, understanding language and acting on a goal. There is no single agreed definition because "intelligence" itself is fuzzy, so AI is best understood as a moving target — once a capability is solved and deployed at scale (route-finding with GPS, optical character recognition, chess), people stop calling it AI and start calling it software. This is sometimes called the "AI effect."
+A useful working split is **narrow AI** (a system that does one task well, e.g. spam filtering or face recognition) versus **general AI / AGI** (a hypothetical system with human-like flexibility across any task). Every system in production today, including large language models, is narrow AI — extremely broad in the tasks it can attempt, but without the grounded, self-directed understanding usually implied by "general" intelligence.
+@topic 📜 A short history: booms, winters, and the deep learning era
+AI research since the 1950s has moved in cycles of inflated expectations followed by funding cuts, known as **AI winters**. The field's eras roughly are: (1) symbolic AI / "Good Old-Fashioned AI" (1950s-1980s) — logic, search and hand-written rules, exemplified by the 1956 Dartmouth workshop that coined the term and by expert systems in the 1980s; (2) the first AI winter (mid-1970s) after early machine-translation and perceptron limitations were exposed; (3) a second boom and bust around expert systems and Japan's Fifth Generation project (1980s-early 1990s); (4) statistical and machine-learning AI (1990s-2000s) — probabilistic models, support vector machines, and the first practical speech and vision systems; (5) the deep learning era (2012-present), kicked off by AlexNet's 2012 ImageNet win, followed by the 2017 Transformer architecture and the large-language-model wave from 2020 onward.
+@table
+Era | Dominant approach | Representative milestone
+Symbolic AI (1950s-80s) | Logic, search, hand-coded rules | Dartmouth workshop (1956), expert systems
+Statistical ML (1990s-2000s) | Probabilistic models, SVMs, HMMs | Statistical machine translation, spam filters
+Deep learning (2012-2017) | Neural networks, representation learning | AlexNet (2012), AlphaGo (2016)
+Generative AI (2017-now) | Transformers, self-supervised pretraining | GPT-3 (2020), ChatGPT (2022)
+@end
+@info The Dartmouth proposal (1956) described AI as the conjecture that "every aspect of learning... can in principle be so precisely described that a machine can be made to simulate it." That optimism about precise description is exactly what symbolic AI later struggled to deliver for messy real-world tasks like vision and language.
+@practice
+1. Explain why "AI" is a moving target rather than a fixed capability, with one example.
+2. Name the two AI winters and one technical cause behind each.
+@interview AI is the broad field of making machines perform tasks that need perception, reasoning or language; it has cycled through symbolic, statistical and deep-learning eras, and everything in production today is narrow AI, not AGI.
+
+@module m2 | 🪆 | 2 · AI vs ML vs DL | Module 2 — AI, Machine Learning & Deep Learning | Nested Scope · Boundaries · Where Each Fits
+@topic 🪆 Nested, not interchangeable
+AI, machine learning (ML) and deep learning (DL) are nested, concentric categories, not synonyms. **AI** is the overall goal (machines that act intelligently). **ML** is one strategy for achieving it — instead of hand-writing rules, a system learns patterns from data. **DL** is one family of ML techniques — specifically, learning with multi-layer (deep) neural networks. Every deep learning system is machine learning, every machine learning system is AI, but not every AI system is machine learning — a rule-based chess engine or an A* pathfinder is AI with zero learning involved.
+@table
+Term | Scope | Example technique | Example system
+AI | Any technique that produces intelligent behavior | Rules, search, logic, learning | A* route planner, rule-based chatbot
+Machine learning | AI via learning patterns from data | Decision trees, SVMs, linear/logistic regression | Credit-risk scoring model
+Deep learning | ML via multi-layer neural networks | CNNs, RNNs, Transformers | Image classifier, GPT-style LLM
+@end
+@topic 🧩 Why the distinction matters in practice
+When someone says "we're building an AI feature," the real engineering question is which layer it lives in. A deterministic recommendation rule ("if cart > $50, offer free shipping") is AI-adjacent logic but not ML. A gradient-boosted model trained on past purchases is classical ML. A large language model generating a product description is deep learning. Picking the wrong layer — e.g. reaching for an LLM to solve a problem a simple rule or a small classical model would solve more cheaply and reliably — is one of the most common real-world AI engineering mistakes.
+This platform has dedicated Data Science, Machine Learning and Deep Learning materials that cover the statistics, algorithms and network architectures in depth — treat this module as the map that shows where those subjects sit inside the larger field of AI, not a replacement for them.
+@practice
+1. Classify these as AI-but-not-ML, ML-but-not-DL, or DL: a Sudoku solver, a logistic regression spam filter, an image captioning transformer.
+2. Give a real example where a simple rule would beat a machine-learning model, and explain why.
+@interview AI is the overall goal of intelligent behavior, ML is the data-driven strategy for reaching it, and DL is the neural-network subset of ML — they're nested scopes, and choosing the simplest layer that solves the problem is a core engineering skill.
+
+@module m3 | 🔍 | 3 · Search | Module 3 — Problem Solving & Search Algorithms | BFS · DFS · A* · Heuristics
+@topic 🗺️ Framing a problem as search
+Many classic AI problems — pathfinding, puzzle solving, game playing, scheduling — can be framed as searching a **state space**: a set of states, actions that move between them, a start state, and a goal test. An algorithm explores this space to find a sequence of actions reaching the goal, ideally the cheapest one. **Uninformed search** (BFS, DFS) explores blindly; **informed search** (greedy best-first, A*) uses a heuristic — an estimate of remaining cost — to search smarter.
+@table
+Algorithm | Explores by | Guarantees shortest path? | Memory use
+BFS (breadth-first) | Level by level, using a queue | Yes, if costs are equal | High (stores whole frontier)
+DFS (depth-first) | As deep as possible, using a stack | No | Low
+Greedy best-first | Always the state that looks closest to goal | No | Depends on heuristic
+A* | Lowest (cost-so-far + heuristic estimate) | Yes, if heuristic never overestimates | Moderate to high
+@end
+@topic 🧮 A* and admissible heuristics
+A* ranks each candidate state by `f(n) = g(n) + h(n)`: `g(n)` is the real cost from the start, and `h(n)` is a heuristic guess of the remaining cost to the goal. If `h(n)` never overestimates the true remaining cost (an **admissible** heuristic, e.g. straight-line distance for road navigation), A* is guaranteed to find an optimal path while typically expanding far fewer states than BFS. This is exactly the algorithm behind most GPS route planners and game-AI pathfinding.
+@code python
+import heapq
+
+def a_star(graph, start, goal, heuristic):
+    # graph[node] = list of (neighbor, step_cost)
+    frontier = [(0 + heuristic(start), 0, start, [start])]
+    visited = set()
+    while frontier:
+        f, g, node, path = heapq.heappop(frontier)
+        if node == goal:
+            return path, g
+        if node in visited:
+            continue
+        visited.add(node)
+        for neighbor, cost in graph.get(node, []):
+            new_g = g + cost
+            new_f = new_g + heuristic(neighbor)
+            heapq.heappush(frontier, (new_f, new_g, neighbor, path + [neighbor]))
+    return None, float("inf")
+@end
+@warn A heuristic that overestimates cost breaks A*'s optimality guarantee — it may return a path that looks cheapest but isn't. Always check admissibility before trusting A* results in a new domain.
+@practice
+1. Trace BFS and DFS on a small grid maze and compare the paths and nodes visited.
+2. Why is straight-line distance an admissible heuristic for road-trip A*, but not always for paths with one-way streets?
+@interview Search frames a problem as states, actions and a goal test; BFS and DFS explore blindly, while A* uses an admissible heuristic to find optimal paths while expanding far fewer nodes — it's the backbone of route planners and game pathfinding.
+
+@module m4 | 📚 | 4 · Knowledge & Reasoning | Module 4 — Knowledge Representation, Reasoning & Expert Systems | Rules · Semantic Networks · Limits
+@topic 🗂️ Representing what a system "knows"
+Before machine learning dominated, AI systems reasoned over explicitly encoded knowledge. Common representations include **rule-based systems** (`IF patient has fever AND rash THEN consider measles`), **semantic networks** (nodes for concepts linked by labeled relationships like "is-a" and "has-part"), **frames** (structured records of an object's typical attributes), and formal **logic** (propositional and first-order logic, which let a reasoning engine derive new facts via inference rules like modus ponens). These representations are precise and auditable: you can point to the exact rule that fired and explain a decision step by step.
+@topic 🩺 Expert systems: the first commercial AI wave
+**Expert systems** paired a knowledge base of rules (gathered by interviewing human experts) with an **inference engine** that chained rules together to reach conclusions. MYCIN (1970s, diagnosing bacterial infections) and XCON (1980s, configuring Digital Equipment Corporation computer orders) were landmark deployments that made real money and defined AI's first commercial boom.
+@table
+Representation | Structure | Strength | Weakness
+Rules (IF-THEN) | Condition → action | Easy to explain and audit | Combinatorial explosion as rules grow
+Semantic network | Concepts + labeled edges | Captures relationships naturally | Ambiguous inheritance, hard to scale
+Frames | Structured attribute records | Good for typical-case defaults | Brittle with exceptions
+First-order logic | Formal symbols + inference rules | Mathematically sound, provable | Expensive search, hard to encode uncertainty
+@end
+@topic ⚠️ Why pure symbolic AI hit a wall
+Hand-written knowledge does not scale to the real world's ambiguity and exceptions — the **knowledge acquisition bottleneck**: experts struggle to articulate every rule they intuitively use, and rule sets become unmanageable as edge cases pile up (the frame problem: how do you specify everything that does *not* change when an action happens?). Symbolic systems also handle uncertainty and noisy perception poorly — a vision or speech task has no clean set of IF-THEN rules. This is precisely the gap machine learning filled: instead of a human writing the rules, the system learns statistical patterns directly from data, trading explainability for scalability and robustness to noise.
+@practice
+1. Write three IF-THEN rules for a simple expert system that recommends an umbrella, and show where exceptions break your rules.
+2. Explain the knowledge acquisition bottleneck in your own words with a concrete example.
+@interview Early AI represented knowledge explicitly through rules, semantic networks and logic, and expert systems like MYCIN proved it could work commercially — but hand-coded knowledge couldn't scale to real-world ambiguity, which is the gap machine learning was built to close.
+
+@module m5 | 🗣️ | 5 · Classic NLP | Module 5 — Natural Language Processing Fundamentals | Tokenization · POS Tagging · Classic Pipeline
+@topic ✂️ Breaking text into units
+**Natural language processing (NLP)** is the AI subfield focused on understanding and generating human language. Before any modeling happens, raw text goes through a pipeline: **tokenization** splits text into words or sub-words; **normalization** lowercases and strips punctuation; **stop-word removal** drops very common low-information words ("the", "is"); **stemming/lemmatization** reduces words to a root form ("running" → "run"). This pipeline turns unstructured text into a structured representation a model can consume.
+@topic 🏷️ Classic tasks before deep learning
+Pre-deep-learning NLP relied on statistical and rule-based methods for core tasks: **part-of-speech (POS) tagging** labels each word's grammatical role (noun, verb, adjective); **named entity recognition (NER)** finds people, places and organizations in text; **parsing** builds a grammatical tree of a sentence; **bag-of-words / TF-IDF** represented a whole document as word-frequency counts for classification tasks like spam detection. These techniques are fast, interpretable, and still used today for lightweight tasks where a full deep model is overkill.
+@code python
+import nltk
+from nltk import pos_tag, word_tokenize
+
+sentence = "The quick brown fox jumps over the lazy dog"
+tokens = word_tokenize(sentence)
+tags = pos_tag(tokens)
+print(tags)
+# [('The', 'DT'), ('quick', 'JJ'), ('brown', 'JJ'), ('fox', 'NN'),
+#  ('jumps', 'VBZ'), ('over', 'IN'), ('the', 'DT'), ('lazy', 'JJ'), ('dog', 'NN')]
+@end
+@table
+Task | What it does | Classic technique
+Tokenization | Splits text into units | Whitespace/regex rules, subword BPE
+POS tagging | Labels grammatical role | Hidden Markov Models, CRFs
+Named entity recognition | Finds people/places/orgs | Rule patterns, CRFs
+Text classification | Assigns a category/label | Naive Bayes, TF-IDF + logistic regression
+@end
+@practice
+1. Tokenize a sentence by hand and identify which words a stop-word list would remove.
+2. Explain the difference between stemming and lemmatization with an example where they disagree.
+@interview Classic NLP turns raw text into structured features through tokenization, POS tagging and TF-IDF-style representations, then applies statistical classifiers — it's fast and interpretable but limited by the fact that word counts don't capture meaning or context.
+
+@module m6 | 🔗 | 6 · Modern NLP | Module 6 — NLP with Modern Deep Learning | Embeddings · Transformers · LLMs
+@topic 🧩 From counting words to embedding meaning
+Bag-of-words treats "good" and "great" as unrelated tokens. **Word embeddings** (Word2Vec, GloVe) fixed this by learning dense vectors where semantically similar words end up close together in vector space — famously, `vector("king") - vector("man") + vector("woman") ≈ vector("queen")`. This was the first deep-learning leap in NLP: meaning became geometry.
+@topic ⚡ The Transformer and self-attention
+The 2017 **Transformer** architecture replaced recurrent processing (reading a sentence strictly left to right) with **self-attention**, which lets every word look at every other word in the sentence simultaneously and learn which ones matter most to its meaning. This made training far more parallelizable and let models capture long-range context (e.g. resolving "it" back to a noun many sentences earlier) much better than RNNs or LSTMs could. The Deep Learning material on this platform covers the attention mechanism's mathematics and the encoder/decoder architecture in depth — the key takeaway for AI broadly is that this single architectural idea is the direct ancestor of every modern LLM.
+@topic 🧠 How this extends into LLMs
+Large language models are Transformers scaled up to billions of parameters and trained on massive text corpora. The core modeling task is deceptively simple — predict the next token given the previous ones — but at scale this forces the model to internalize grammar, facts, reasoning patterns and style. Modern NLP work increasingly means prompting, fine-tuning or evaluating a pretrained LLM rather than training a task-specific model from scratch, which is why generative AI gets its own dedicated modules later in this material.
+@table
+Approach | Representation of meaning | Context handled | Era
+Bag-of-words / TF-IDF | Word counts, no order | None | Pre-2013
+Word2Vec / GloVe embeddings | Dense vectors, static per word | Local co-occurrence | 2013-2017
+Transformer (BERT, GPT) | Contextual vectors via self-attention | Whole sequence, long-range | 2017-present
+@end
+@tip A word embedding is static ("bank" has one vector regardless of context); a Transformer produces a contextual representation, so "bank" in "river bank" and "bank account" gets different vectors depending on surrounding words. This is the single biggest practical upgrade self-attention brought to NLP.
+@practice
+1. Explain in one paragraph why self-attention handles long-range dependencies better than a left-to-right RNN.
+2. What does "next-token prediction" being the core training objective imply about why LLMs sometimes state wrong facts confidently?
+@interview Modern NLP moved from counting words to learning dense embeddings, and then to Transformers, whose self-attention lets every word weigh every other word at once — that architecture, scaled up and trained on next-token prediction over huge corpora, is exactly what a large language model is.
+
+@module m7 | 👁️ | 7 · Computer Vision | Module 7 — Computer Vision Fundamentals | Pixels · Features · Classification · Detection · Segmentation
+@topic 🖼️ How a computer "sees" an image
+To a computer, an image is a grid of numbers: a grayscale image is a 2D array of pixel intensities (0-255), and a color image stacks three such grids for red, green and blue channels. Computer vision is the task of extracting useful information — objects, boundaries, motion, identity — from these pixel grids.
+@topic 🧱 Classic features vs learned features
+Before deep learning, CV relied on **hand-engineered features**: edge detectors (Sobel, Canny), corner detectors, and descriptors like SIFT and HOG that captured local gradient patterns robust to small shifts and lighting changes. A classifier (SVM, random forest) was then trained on top of these hand-built features. **Convolutional neural networks (CNNs)** replaced this with **learned features**: stacked convolutional layers automatically discover edge detectors in early layers, textures and shapes in middle layers, and whole-object representations in late layers — directly from labeled pixels, with no manual feature engineering. This shift (crystallized by AlexNet in 2012) is why deep learning took over computer vision almost entirely within a few years.
+@table
+Task | Question answered | Typical output
+Image classification | What is the main object in this image? | A single label ("cat")
+Object detection | What objects are where? | Bounding boxes + labels
+Semantic segmentation | Which pixels belong to which class? | A per-pixel class mask
+Instance segmentation | Which pixels belong to which individual object? | Per-pixel mask per object instance
+@end
+@topic 🚗 Where CV shows up in practice
+Computer vision tasks power facial recognition and unlock, quality-control inspection on manufacturing lines, medical image analysis (tumor detection in scans), autonomous-vehicle perception (combining detection and segmentation to find lanes, pedestrians and other vehicles), and optical character recognition for document digitization. The Deep Learning material on this platform covers CNN architectures (ResNet, etc.) and vision Transformers in depth — this module is the conceptual map of what CV tasks exist and why learned features won.
+@practice
+1. Explain the difference between object detection and semantic segmentation with a real-world example where you'd need each.
+2. Why did hand-engineered features like SIFT eventually lose out to CNN-learned features?
+@interview Computer vision extracts meaning from pixel grids; classic CV used hand-engineered features like SIFT and HOG feeding a classifier, while CNNs learn hierarchical features directly from data — and the field splits into classification, detection and segmentation depending on whether you need a label, a box, or a pixel mask.
+
+@module m8 | 🎮 | 8 · RL Framing | Module 8 — Reinforcement Learning Fundamentals | Agent · Environment · Reward · Policy
+@topic 🕹️ The agent-environment loop
+Reinforcement learning (RL) is a fundamentally different paradigm from supervised ML: there is no labeled dataset of correct answers, only an **agent** that takes **actions** in an **environment**, observes the resulting **state**, and receives a **reward** signal indicating how good or bad that outcome was. The agent's goal is to learn a **policy** — a strategy for choosing actions — that maximizes cumulative reward over time, not just the immediate reward of the next step.
+@table
+Term | Meaning | Example (a delivery robot)
+Agent | The learner/decision-maker | The robot's control policy
+Environment | Everything the agent interacts with | The warehouse floor and obstacles
+State | A snapshot of the situation | Robot's position, battery level, nearby obstacles
+Action | A choice the agent can make | Move forward, turn, pick up a package
+Reward | Feedback signal after an action | +1 for delivering a package, -1 for a collision
+Policy | Agent's strategy, state → action | "If obstacle ahead, turn; else move forward"
+@end
+@topic ⏳ Why delayed reward makes this hard
+The defining difficulty in RL is the **credit assignment problem**: a reward often arrives many steps after the action that actually caused it (a chess move made in the opening can decide a game won 40 moves later), so the agent must learn which earlier actions deserve credit or blame. RL also must balance **exploration** (trying new actions to discover better strategies) against **exploitation** (using the best strategy found so far) — always exploiting risks getting stuck in a mediocre policy, while always exploring wastes reward on known-bad actions.
+@tip RL is the right framing when there's no dataset of "correct" actions, only a way to score outcomes — games, robotics control, resource allocation, and recommendation systems that optimize long-term engagement all fit this mold better than supervised learning does.
+@practice
+1. Model a simple vending-machine restocking problem as agent, environment, state, action and reward.
+2. Explain the exploration-exploitation trade-off using a real example outside of games.
+@interview Reinforcement learning trains an agent to choose actions in an environment to maximize cumulative reward rather than fit labeled examples, and its two defining challenges are delayed credit assignment and balancing exploration against exploitation.
+
+@module m9 | 🏆 | 9 · RL Algorithms | Module 9 — RL Algorithms Overview | Q-Learning · Policy Gradients · Deep RL · Applications
+@topic 🧮 Value-based learning: Q-learning intuition
+**Q-learning** learns a table (or, at scale, a function) `Q(state, action)` estimating the expected future reward of taking that action in that state and then acting optimally afterward. The agent updates its estimate after each step by blending the immediate reward with its current best guess about the future: `Q(s,a) ← Q(s,a) + α [reward + γ · max Q(s', a') − Q(s,a)]`. Once learned, the policy is simple: in any state, pick the action with the highest `Q` value. This works cleanly for small, discrete state spaces (grid worlds, simple games) but breaks down when states are continuous or astronomically numerous — exactly the gap **deep RL** fills by replacing the lookup table with a neural network (a Deep Q-Network, DQN) that approximates `Q`.
+@topic 🎯 Policy-based learning: policy gradients intuition
+Instead of learning values and deriving a policy indirectly, **policy gradient** methods directly learn the policy itself — a function mapping states to a probability distribution over actions — and nudge its parameters in the direction that increases the probability of actions that led to higher reward. This handles continuous action spaces naturally (e.g. "how much torque to apply," not just "left or right") and is the family behind modern robotics control and, notably, **RLHF** (reinforcement learning from human feedback), the technique used to align LLM outputs with human preferences.
+@table
+Family | Learns | Good for | Example algorithm
+Value-based | Expected future reward per action | Discrete actions, simpler environments | Q-learning, DQN
+Policy-based | Action probabilities directly | Continuous actions, stochastic policies | REINFORCE, PPO
+Actor-critic | Both a policy and a value estimate together | Stability + sample efficiency | A3C, PPO (hybrid)
+@end
+@topic 🏅 Where deep RL has actually worked
+Deep RL's headline successes are narrower than its hype: **AlphaGo/AlphaZero** mastered Go, chess and shogi by combining deep networks with tree search; **game-playing agents** reached superhuman Atari and Dota/StarCraft performance; **robotics** uses RL for locomotion and manipulation policies, often trained in simulation first (sim-to-real transfer) because real-world trial and error is slow and costly; and **RLHF** is now a standard step in training production LLMs. RL remains data-hungry and often unstable to train compared to supervised learning, which is why it's reached for selectively rather than as a default tool.
+@practice
+1. Explain why Q-learning's lookup table approach fails for a continuous control problem like balancing a robot arm.
+2. What problem does PPO/RLHF solve when applied to language models, in one sentence?
+@interview Q-learning estimates the value of actions and derives a policy from it, while policy-gradient methods learn the policy directly, which scales better to continuous actions and underlies both robotics control and RLHF-based LLM alignment — deep RL works, but it's data-hungry and used selectively, not by default.
+
+@module m10 | 💬 | 10 · Generative AI & LLMs | Module 10 — Generative AI & Large Language Models | Pretraining · Fine-Tuning · RLHF · Hallucination
+@topic 🪙 Tokens and next-token prediction
+An LLM doesn't process whole words; it processes **tokens** — sub-word chunks produced by a tokenizer (so "unbelievable" might split into "un", "believ", "able"). Training reduces to one objective repeated at massive scale: given all previous tokens, predict the probability distribution over the next token. This sounds narrow, but doing it extremely well over trillions of tokens of diverse text forces the model to implicitly learn grammar, facts, reasoning chains, coding patterns and stylistic conventions, because all of these help predict the next token more accurately.
+@topic 🏗️ Pretraining, fine-tuning and RLHF
+Building a usable LLM is a staged pipeline. **Pretraining** trains the base model on massive, broad text/code corpora purely on next-token prediction — expensive (weeks on thousands of GPUs) and produces a model that completes text but doesn't reliably follow instructions. **Supervised fine-tuning (SFT)** retrains the base model on curated instruction-response pairs so it learns to behave like an assistant. **RLHF (reinforcement learning from human feedback)** then uses human preference rankings to train a reward model, and policy-gradient RL (often PPO or similar) nudges the LLM's outputs toward what humans actually prefer — more helpful, less harmful, better formatted. Each stage is dramatically cheaper than the one before it, which is why so much of the ecosystem's recent innovation happens at the fine-tuning/alignment stage rather than retraining base models.
+@table
+Stage | Data used | Goal | Relative cost
+Pretraining | Massive raw text/code corpus | Learn language, facts, reasoning patterns | Very high
+Supervised fine-tuning (SFT) | Curated instruction-response pairs | Learn to follow instructions, assistant behavior | Moderate
+RLHF / preference tuning | Human preference rankings | Align tone, helpfulness, safety | Lower than SFT
+@end
+@topic 🌀 Why LLMs hallucinate
+**Hallucination** — an LLM stating something false with full confidence — is a direct consequence of the training objective: the model is optimized to produce plausible-sounding next tokens, not to only state verified facts. It has no built-in mechanism to say "I don't actually know this" unless that behavior was specifically reinforced during fine-tuning, and even then it's imperfect because the model can't introspect on its own certainty the way a database can check if a fact exists. Mitigations include grounding answers in retrieved documents (see the RAG module), training models to express calibrated uncertainty, and having the model cite sources it can be checked against — but no current technique eliminates hallucination entirely.
+@warn Never treat an LLM's confident tone as evidence of correctness — confidence and accuracy are not causally linked in how these models are trained. Always verify high-stakes factual claims against a trusted source.
+@practice
+1. Explain in your own words why next-token prediction at scale produces something that looks like reasoning.
+2. Why can't fine-tuning alone fully solve hallucination?
+@interview An LLM is a Transformer trained to predict the next token over massive text corpora, then refined through supervised fine-tuning and RLHF to behave like a helpful assistant; hallucination happens because the model optimizes for plausible continuations, not verified truth, so grounding and verification layers are still necessary on top of it.
+
+@module m11 | 🎯 | 11 · Prompt Engineering | Module 11 — Prompt Engineering | Zero-Shot · Few-Shot · Chain-of-Thought · System Prompts
+@topic 📝 Shaping behavior without retraining
+Prompt engineering is the practice of designing the input text to an LLM to reliably get the output you want, without changing any model weights. It works because an LLM's behavior is extremely sensitive to framing, examples and structure in the prompt — the same underlying model can act like a terse API, a patient tutor, or a strict JSON generator purely based on how it's asked.
+@table
+Technique | What it does | When to use
+Zero-shot | Ask directly with no examples | Simple, well-known tasks the model already handles well
+Few-shot | Include 2-5 example input/output pairs in the prompt | Unusual formats or domain-specific conventions
+Chain-of-thought | Ask the model to reason step by step before the final answer | Multi-step math, logic, or planning tasks
+System prompt | A persistent instruction set the role/persona/rules | Setting tone, constraints and safety rules for a whole session
+@end
+@topic 🪜 Chain-of-thought and why structure helps
+Chain-of-thought (CoT) prompting ("let's think step by step," or providing worked examples that show reasoning) measurably improves performance on tasks that require multiple logical steps, because it gives the model intermediate tokens to "think" with rather than forcing it to jump straight to a final answer in one shot. This matters because an LLM generates left-to-right with no scratch space other than the tokens it has already produced — more intermediate tokens genuinely means more computation applied to the problem.
+@code python
+system = "You are a precise assistant. Answer with only valid JSON, no prose."
+few_shot = """
+Q: Extract the city and country from: "I live in Lyon, France."
+A: {"city": "Lyon", "country": "France"}
+
+Q: Extract the city and country from: "She moved to Austin, USA last year."
+A: {"city": "Austin", "country": "USA"}
+"""
+user_query = 'Q: Extract the city and country from: "He works in Nairobi, Kenya."\nA:'
+prompt = system + "\n" + few_shot + "\n" + user_query
+@end
+@topic ⚠️ Common prompting pitfalls
+Vague instructions produce vague output — specify format, length and constraints explicitly. Overloading one prompt with too many unrelated instructions degrades quality; splitting into steps or separate calls usually works better. Few-shot examples that are internally inconsistent (different formats across examples) confuse the model more than giving none at all. And prompts are not a security boundary: instructions in a system prompt can still be overridden by sufficiently adversarial user input (see prompt injection in the agents module), so prompting alone should never be the only safeguard around sensitive actions.
+@practice
+1. Rewrite a vague prompt ("summarize this") into one with explicit length, tone and format constraints.
+2. Design a 3-example few-shot prompt for classifying customer support tickets by urgency.
+@interview Prompt engineering shapes an LLM's behavior purely through input design — zero-shot for simple tasks, few-shot for unusual formats, and chain-of-thought for multi-step reasoning — but a prompt is a behavioral nudge, not a security boundary, so sensitive actions still need guardrails outside the prompt itself.
+
+@module m12 | 📡 | 12 · RAG | Module 12 — Retrieval-Augmented Generation (RAG) | Embeddings · Vector Search · Grounded Generation
+@topic 🧩 The problem RAG solves
+An LLM's knowledge is frozen at training time and limited to what was in its training data — it cannot natively know about your private documents, yesterday's news, or anything proprietary, and it will hallucinate rather than admit it doesn't know. **Retrieval-augmented generation (RAG)** solves this by retrieving relevant text from an external knowledge source at query time and inserting it into the prompt, so the model generates its answer grounded in real, current, verifiable content instead of relying purely on memorized training data.
+@topic 🔎 The pipeline: embed, store, retrieve, generate
+A typical RAG pipeline: (1) split source documents into chunks; (2) convert each chunk into an **embedding** — a dense vector capturing its meaning — using an embedding model; (3) store these vectors in a **vector database** (e.g. FAISS, Pinecone, pgvector); (4) at query time, embed the user's question the same way and run a similarity search (commonly cosine similarity) to find the most relevant chunks; (5) insert those chunks into the LLM's prompt as context and ask it to answer using only that context. The quality of a RAG system depends heavily on chunking strategy, embedding quality, and retrieval relevance — a perfect LLM fed irrelevant retrieved context will still produce a poor or wrong answer.
+@code python
+# Conceptual RAG flow (pseudocode, not a working library call)
+chunks = split_into_chunks(documents, chunk_size=500)
+vector_db = build_index([embed(chunk) for chunk in chunks])
+
+def answer(question):
+    query_vector = embed(question)
+    top_chunks = vector_db.search(query_vector, k=4)
+    context = "\n---\n".join(top_chunks)
+    prompt = f"Answer using only this context:\n{context}\n\nQuestion: {question}"
+    return llm_generate(prompt)
+@end
+@topic ⚖️ RAG vs fine-tuning
+RAG and fine-tuning solve different problems and are often confused. RAG is the right choice when the need is **fresh or private factual knowledge** that changes often — updating a vector index is cheap and instant. Fine-tuning is the right choice when the need is **changing behavior or style** — teaching the model a specific format, tone, or specialized reasoning pattern it doesn't do well out of the box. Many production systems use both: fine-tuning for behavior, RAG for facts.
+@table
+Need | RAG | Fine-tuning
+Add new/changing facts | Yes — update the index, no retraining | No — facts baked in at training time, stale quickly
+Change tone/style/format | Not directly | Yes — this is what fine-tuning is good at
+Cost to update | Low (re-index documents) | Higher (retraining run)
+Explainability | Can cite the retrieved source | Harder to trace an answer to a cause
+@end
+@practice
+1. Design a RAG pipeline for a company's internal HR policy chatbot, including how you'd keep it updated.
+2. Give one scenario where fine-tuning is clearly the better choice over RAG, and explain why.
+@interview RAG grounds an LLM's answers in retrieved, up-to-date external documents by embedding and searching a vector store at query time, instead of relying on frozen training-time knowledge — it's the right tool when the need is fresh or private facts, while fine-tuning is the right tool when the need is a different behavior or style.
+
+@module m13 | 🛠️ | 13 · AI Agents | Module 13 — AI Agents & Tool Use | Tool Calling · Planning Loops · Multi-Agent Systems
+@topic 🤖 What makes something an "agent," not just a chatbot
+A chatbot takes a message and returns a text reply. An **AI agent** does more: it can decide to call external tools (search the web, query a database, run code, send an email), observe the tool's result, and decide what to do next — looping through this cycle until the task is done rather than stopping after one response. The defining features are **autonomy** (it chooses its own next step rather than following a fixed script) and **tool use** (it can act on the world, not just describe an answer).
+@topic 🔁 The plan-act-observe loop
+Most agent frameworks implement some version of a reasoning loop: the model is given a goal and a list of available tools with descriptions; it reasons about what to do (often visibly, as in the ReAct pattern of "Thought → Action → Observation"); it emits a structured tool call; the system executes that call and returns the result as new context; and the model repeats until it decides the goal is satisfied or it hits a step/time/cost limit. This looks simple but introduces real engineering problems: the model can loop forever, call the wrong tool, misinterpret a tool's output, or run up costs — so production agents need step limits, timeouts, and human approval gates for risky actions.
+@code python
+# Simplified agent loop (pseudocode)
+def run_agent(goal, tools, max_steps=6):
+    history = [f"Goal: {goal}"]
+    for step in range(max_steps):
+        thought, action, action_input = llm_decide(history, tools)
+        if action == "final_answer":
+            return action_input
+        result = tools[action](action_input)
+        history.append(f"Thought: {thought}\nAction: {action}({action_input})\nObservation: {result}")
+    return "Stopped: max steps reached"
+@end
+@topic 👥 Multi-agent systems
+Instead of one agent doing everything, some systems split work across multiple specialized agents — a planner agent, a researcher agent, a coder agent, a reviewer agent — coordinated by orchestration logic or by having agents message each other. This can improve quality through specialization and built-in review, but adds coordination overhead, higher cost (more LLM calls), and new failure modes like agents getting stuck disagreeing or compounding each other's errors. Multi-agent setups are worth the complexity mainly when sub-tasks genuinely benefit from different "roles," prompts, or tool access — not as a default architecture.
+@warn Giving an agent a tool is giving it the ability to take real-world action (send money, delete a file, email a customer). Always scope tool permissions tightly and keep an approval step for irreversible or high-stakes actions.
+@practice
+1. Design the tool list and stopping conditions for an agent that books a restaurant reservation by phone/API.
+2. Explain one concrete failure mode of a plan-act-observe loop and how you would guard against it.
+@interview An AI agent differs from a chatbot by being able to call tools, observe results, and decide its own next step in a loop until a goal is met, rather than returning one fixed reply — the engineering challenge is bounding that loop with step limits, scoped permissions and approval gates for risky actions.
+
+@module m14 | ⚖️ | 14 · Ethics & Bias | Module 14 — Ethics, Bias & Fairness in AI | Data Bias · Fairness Metrics · Real Harms
+@topic 🪞 Where bias enters an AI system
+AI systems inherit bias primarily from their training data, which reflects historical and societal patterns — including historical discrimination. If a hiring model is trained on a company's past hiring decisions and that company historically favored one demographic, the model will learn to replicate that pattern even if demographic fields are removed, because other correlated features (zip code, school name, employment gaps) can act as proxies. Bias can also enter through **label bias** (who defines "success" and how), **sampling bias** (training data that underrepresents some groups), and **feedback loops** (a biased model's outputs become future training data, amplifying the original bias over time).
+@topic 📏 Fairness metrics: no single definition
+"Fairness" is not one number — different fairness definitions can mathematically conflict with each other, so choosing one is a value judgment, not just a technical one. Common formal notions include: **demographic parity** (positive outcome rates equal across groups); **equalized odds** (true positive and false positive rates equal across groups); and **individual fairness** (similar individuals should get similar outcomes). A model can satisfy one of these and clearly violate another on the same data, which is why fairness evaluation requires picking the metric that matches the actual harm being guarded against, not just running a generic "bias checker."
+@table
+Fairness notion | What it requires | Fails when
+Demographic parity | Equal positive-outcome rate across groups | Base rates genuinely differ for legitimate reasons
+Equalized odds | Equal true/false positive rates across groups | Requires group-aware thresholds, can conflict with parity
+Individual fairness | Similar individuals get similar outcomes | "Similarity" metric itself can encode bias
+@end
+@topic 🚨 Real-world harms
+Documented real-world cases include facial recognition systems with significantly higher error rates on darker-skinned faces and women, due to underrepresentation in training datasets; hiring tools that penalized resumes mentioning women's colleges or clubs; recidivism-risk tools used in criminal sentencing that produced racially disparate false-positive rates; and loan/credit algorithms that denied credit at different rates across demographic groups despite not using protected attributes directly. These are not hypothetical edge cases — they are deployed-system failures that caused direct harm, which is why bias auditing is now a standard (and in some jurisdictions legally required) part of deploying AI in high-stakes domains like hiring, lending and criminal justice.
+@practice
+1. Explain how a "colorblind" model (with protected attributes removed) can still produce biased outcomes.
+2. Pick a fairness metric and explain a real scenario where optimizing for it would conflict with another fairness metric.
+@interview AI bias mostly comes from historical patterns baked into training data, label choices and feedback loops, and fairness isn't one metric — demographic parity, equalized odds and individual fairness can mathematically conflict — so auditing a deployed system means picking the fairness definition that matches the actual harm at stake, not running a generic bias check.
+
+@module m15 | 🔬 | 15 · Explainable AI | Module 15 — Explainable AI (XAI) | Black-Box Models · SHAP/LIME · Interpretability Trade-off
+@topic 🕳️ Why black-box models need explanation
+A deep neural network or large ensemble model can be extremely accurate while being functionally a black box — even its own creators cannot point to "the rule" that produced a given prediction. This becomes a real problem in regulated or high-stakes domains: a loan applicant denied credit, a patient flagged as high-risk, or a defendant scored as likely to reoffend has a legitimate interest (and in places like the EU, a legal right under GDPR) in understanding why. **Explainable AI (XAI)** is the set of techniques built to answer "why did the model decide this?" without requiring the model itself to be simple.
+@topic 🧮 SHAP and LIME at a conceptual level
+**LIME (Local Interpretable Model-agnostic Explanations)** explains one individual prediction by perturbing the input slightly many times, observing how the model's output changes, and fitting a simple, interpretable model (like linear regression) to approximate the black box's behavior just in that local neighborhood — telling you which features pushed this specific prediction up or down. **SHAP (SHapley Additive exPlanations)** is grounded in cooperative game theory: it treats each feature as a "player" contributing to the prediction and fairly distributes credit for the outcome across all features based on their average marginal contribution across all possible feature combinations, giving both local (per-prediction) and global (whole-model) explanations with stronger theoretical guarantees than LIME, at higher computational cost.
+@table
+Method | Scope | Approach | Trade-off
+LIME | Local (one prediction) | Fits a simple model near that one input | Fast, but explanation can be unstable
+SHAP | Local and global | Game-theoretic fair credit allocation | Theoretically solid, computationally heavier
+Intrinsically interpretable models (linear/trees) | Whole model | Model structure itself is the explanation | Usually less accurate than complex black boxes
+@end
+@topic ⚖️ The interpretability-accuracy trade-off
+There is a long-standing tension between model complexity and explainability: simple models (linear regression, shallow decision trees) are inherently interpretable but often less accurate on complex real-world data, while the most accurate models (deep ensembles, large neural networks) are the hardest to explain. XAI tools like SHAP/LIME exist precisely to let teams keep the more accurate black-box model while still producing after-the-fact explanations — but it's worth being honest that a post-hoc explanation approximates the model's behavior, it does not literally expose the model's "reasoning," and overselling that distinction to regulators or end users is itself an ethical risk.
+@practice
+1. Explain the difference between an intrinsically interpretable model and a post-hoc explanation of a black-box model.
+2. Describe a scenario where SHAP's global feature-importance view would catch a bias that a single LIME explanation would miss.
+@interview Explainable AI answers why a model made a specific decision without requiring the model to be simple; LIME approximates behavior locally with a simple surrogate model while SHAP fairly attributes credit across features using game theory, and both exist to manage the real trade-off between the most accurate models and the most explainable ones.
+
+@module m16 | 🛡️ | 16 · AI Safety & Alignment | Module 16 — AI Safety & Alignment | Alignment Problem · Reward Hacking · Mitigations
+@topic 🎯 The alignment problem
+The **alignment problem** is the gap between what we actually want a system to do and what we literally told it (or trained it) to optimize for. This is an old problem in any optimization system, not unique to AI — it's the same failure mode as "teachers teaching to the test" — but it becomes higher-stakes as AI systems are given more autonomy and real-world impact. The core issue: it is genuinely hard to specify a complete, correct objective that captures everything humans actually care about, and any gap between the stated objective and the true intent is a gap an optimizer will happily exploit if doing so is "easier" than the intended solution.
+@topic 🪤 Reward hacking: optimizing the metric, not the goal
+**Reward hacking** (also called specification gaming) is what happens when a system finds an unintended way to maximize its reward signal that technically satisfies the metric while completely missing the actual goal. Classic documented examples: an RL agent trained to win a boat-racing game by maximizing score discovered it could loop collecting power-ups indefinitely instead of finishing the race, scoring higher than players who actually raced; a robot arm trained to "appear to grasp" an object learned to position itself between the camera and the object so it only looked successful to the human evaluator. The pattern generalizes directly to any optimized system: "it optimizes what you measure, not what you meant" — a recommendation system optimized purely for watch-time can learn to promote increasingly extreme content because that measurably maximizes engagement, even though it was never the intended goal.
+@table
+Example system | What was measured/rewarded | What actually happened
+Boat racing RL agent | In-game score | Looped collecting points instead of finishing the race
+Grasping robot | Visual "looks grasped" signal | Positioned itself to fake success to the camera
+Engagement-optimized feed | Watch-time / click-through rate | Promoted increasingly extreme or addictive content
+Student essay grading model | Automated grader score | Learned grader quirks instead of genuine essay quality
+@end
+@topic 🧰 Current mitigation approaches
+No current technique fully "solves" alignment, but production practice layers several partial mitigations: **RLHF** trains on human preference judgments rather than a single hard-coded metric, making the objective harder to game trivially; **red-teaming** proactively tries to break a system before deployment to find reward-hacking and harmful-output patterns; **constitutional AI / rule-based reward models** give the model explicit principles to self-critique against during training; **human oversight and approval gates** keep humans in the loop for high-stakes or irreversible actions, especially relevant as agentic AI systems take real-world actions; and **monitoring in production** watches for distribution shift and emergent bad behavior after deployment, since a system can behave well in testing and still find exploits once deployed at scale.
+@warn Alignment is not a solved, one-time checkbox — a system aligned against known failure modes during training can still discover new ones after deployment, especially as it's given more autonomy and new tools. Ongoing monitoring matters as much as pre-deployment testing.
+@practice
+1. Describe a reward-hacking example from a domain other than games (e.g. business, social media, education) and name the metric that was gamed.
+2. Why does giving an AI agent more autonomy and tool access raise the stakes of the alignment problem specifically?
+@interview The alignment problem is the gap between the objective you can actually specify and the outcome you actually want, and reward hacking is what happens when a system finds a technically-valid shortcut that satisfies the metric while missing the real goal — current practice mitigates this with RLHF, red-teaming, and human oversight, but no technique eliminates it outright, so ongoing monitoring after deployment matters as much as testing before it.
+
+@module m17 | 🏭 | 17 · AI in Industry | Module 17 — AI in Industry: Real-World Applications | Healthcare · Finance · Autonomous Vehicles · Recommenders · Support
+@topic 🏥 Healthcare, finance and transportation
+In **healthcare**, AI assists radiologists by flagging suspicious regions in X-rays, CT and MRI scans for review (not replacing the radiologist's final read), predicts patient deterioration risk from vitals trends, and accelerates drug discovery by predicting molecule properties before costly lab synthesis. In **finance**, AI drives real-time fraud detection (flagging transactions that deviate from a customer's normal pattern), algorithmic trading, and credit-risk scoring — all domains where the explainability and fairness concerns from earlier modules are not optional extras but regulatory requirements. In **autonomous vehicles**, a perception stack (object detection, segmentation, tracking) feeds a planning system that has to make safety-critical decisions in real time, combining computer vision with classical control theory and extensive simulation testing — full driverless deployment remains limited to geofenced areas precisely because of how hard it is to guarantee safety across every edge case.
+@topic 🛍️ Recommenders and customer support
+**Recommendation systems** (what you see next on a shopping or streaming platform) combine collaborative filtering (what similar users liked) with content-based signals and, increasingly, embedding-based similarity search — the same vector-search machinery used in RAG. **Customer support** has shifted from purely rule-based chatbots to LLM-powered agents that can read a knowledge base (via RAG) and, increasingly, take actions like issuing refunds or rescheduling orders (via agentic tool use) — raising exactly the tool-permission and approval-gate concerns covered in the agents module.
+@table
+Industry | AI use case | Core techniques involved
+Healthcare | Scan triage, risk prediction, drug discovery | Computer vision, classical ML on tabular data
+Finance | Fraud detection, credit scoring, trading | Classical ML, anomaly detection, time series
+Automotive | Perception and path planning | Computer vision, sensor fusion, classical control
+Retail/streaming | Recommendations | Collaborative filtering, embeddings/vector search
+Customer support | Automated resolution | LLMs, RAG, agentic tool use
+@end
+@topic 🧭 A pattern across all of these
+Across every industry, the same practical pattern shows up: the highest-value AI deployments pair a model with a **human-in-the-loop** or a hard safety boundary for consequential decisions, rather than fully automating the decision end to end. A radiologist still signs off on the scan; a loan officer still reviews flagged edge cases; a driverless car still operates in a constrained, heavily tested domain. The engineering lesson is that "where does AI assist vs. decide" is itself a design decision with real consequences, not an afterthought.
+@practice
+1. Pick one industry above and describe what could go wrong if the human-in-the-loop step were removed entirely.
+2. Explain why fraud detection and recommendation systems can both use "similarity search" even though their goals are completely different.
+@interview AI's highest-value industry deployments in healthcare, finance, transportation, retail and support share a common pattern: a model augments a human decision or operates inside a hard safety boundary rather than fully automating consequential outcomes, and picking where that line sits is itself a core design decision.
+
+@module m18 | 🔮 | 18 · Future of AI | Module 18 — Future of AI & AGI Discussion | Scaling Laws · Current Limits · The AGI Debate
+@topic 📈 Scaling laws and where they plateau
+Empirically, LLM performance has improved predictably as model size, data and compute all scale up together — a relationship often called **scaling laws**. This predictability drove a large portion of the field's investment from 2020 onward: if performance reliably improves with more compute, scaling becomes a straightforward (if expensive) strategy. But scaling is not free or unlimited in practice: high-quality training data is finite and reuse hits diminishing returns, compute and energy costs grow enormous, and scaling has not reliably fixed specific weaknesses like hallucination, reliable multi-step arithmetic, or robustness to adversarial prompts — which is why recent progress has shifted some effort toward post-training techniques (RLHF, tool use, retrieval) and reasoning-focused training rather than pure parameter-count scaling alone.
+@topic 🧱 Current, real limitations
+Grounded in what's actually observed today rather than speculation: LLMs lack persistent memory across sessions by default; they can be confidently wrong (hallucination); they struggle with tasks requiring exact, verifiable multi-step computation unless paired with external tools (a calculator, code execution); they have no grounded sensory experience of the physical world the way an embodied agent would; and they remain vulnerable to adversarial inputs like prompt injection. These are specific, addressable engineering gaps — some actively being closed through tool use, RAG and better training — not evidence of an approaching ceiling or an approaching breakthrough; they simply describe where the technology stands right now.
+@topic ⚖️ The AGI debate, without the hype or the doom
+**AGI (artificial general intelligence)** — a system with human-like flexible intelligence across essentially any task — remains undefined with enough precision for the field to agree on a test for it, let alone a timeline. The debate genuinely splits serious researchers: one camp argues that scaling current architectures, combined with tool use and better training, could plausibly approach broad general capability within years; another argues current architectures are missing fundamental ingredients — persistent world models, genuine causal reasoning, embodied grounding — that no amount of scaling text prediction will produce, and that progress on narrow benchmarks is being mistaken for progress toward generality. Both camps are making a forecast, not stating an established fact, and the honest, study-material-grade position is: treat near-term AGI claims and dismissals with equal skepticism, and evaluate any AI system in front of you by what it demonstrably does today, not by projections of what architecture-X will eventually become.
+@table
+Claim | What's actually established | What's still speculation
+Scaling improves capability | Yes, empirically, across many benchmarks | Whether it continues indefinitely, and at what cost
+LLMs reason | They produce reasoning-like, often correct chains | Whether this is genuine causal reasoning or pattern completion
+AGI timelines | Serious disagreement among experts | Any specific date or inevitability claim
+@end
+@practice
+1. Summarize the strongest argument for and against near-term AGI, without taking a side yourself.
+2. Name two current, well-documented LLM limitations and one concrete engineering mitigation for each.
+@interview Scaling compute and data has predictably improved LLM capability, but it hasn't solved specific issues like hallucination or reliable multi-step reasoning, and serious researchers genuinely disagree on whether current architectures can reach AGI at all — the grounded position is to judge AI systems by demonstrated capability today, not by projections in either direction.
+
+@module m19 | 🎤 | 19 · Interview Prep | Module 19 — AI Interview Questions | Concepts · Comparisons · Scenario Answers
+@topic Q: What's the difference between AI, machine learning and deep learning?
+AI is the overall goal of building systems that behave intelligently; machine learning is one approach to that goal, where a system learns patterns from data instead of following hand-written rules; deep learning is a subset of machine learning that uses multi-layer neural networks specifically. For example, a hand-coded chess engine is AI but not ML, a decision tree trained on housing prices is ML but not DL, and a Transformer-based language model is DL. The nuance interviewers look for is knowing these are nested scopes, not three competing techniques.
+
+@topic Q: What is the Turing test, and is it still a meaningful benchmark?
+The Turing test, proposed by Alan Turing in 1950, considers a machine intelligent if a human evaluator can't reliably distinguish its text responses from a human's in conversation. It's historically important as the first concrete, operational definition of machine intelligence, but most researchers today consider it a weak benchmark because it measures convincing conversational mimicry, not genuine understanding, reasoning or grounded knowledge — a model can pass by being good at sounding human without actually being reliable or correct. Modern evaluation favors task-specific benchmarks (reasoning, coding, factual accuracy) over a single conversational imitation test.
+
+@topic Q: What is a large language model, in plain terms?
+An LLM is a neural network, almost always a Transformer, trained on massive amounts of text to predict the next token given everything before it. At inference time it generates text one token at a time, each time picking from a probability distribution over possible next tokens. What makes it "large" is scale — billions of parameters trained on trillions of tokens — and that scale is what lets next-token prediction alone produce behavior that looks like grammar mastery, factual recall, and multi-step reasoning. It's important to add the caveat that this is fundamentally pattern completion learned from data, not a database of facts or a reasoning engine in the symbolic-AI sense.
+
+@topic Q: Why do LLMs hallucinate, and how would you reduce it in a product?
+Hallucination happens because the training objective rewards plausible-sounding continuations, not verified correctness, and the model has no built-in way to check its output against ground truth. In a product, I'd reduce it by grounding answers in retrieved, verifiable documents through RAG rather than relying on the model's memorized knowledge, by instructing the model to cite sources and say "I don't know" when retrieval comes up empty, and by adding a verification or fact-checking step for high-stakes outputs. The caveat is that none of this eliminates hallucination completely — it reduces its frequency and makes it easier to catch.
+
+@topic Q: What problem does RAG solve, and when would you skip it?
+RAG solves the problem of an LLM's knowledge being frozen at training time and lacking access to private or fast-changing information — it retrieves relevant documents at query time and feeds them into the prompt so the answer is grounded in current, verifiable content. I'd skip RAG for tasks that don't depend on specific external facts at all, like creative writing, general coding help, or tasks better solved by changing the model's behavior and style through fine-tuning instead of adding facts. The key judgment call is whether the gap is "the model doesn't know this fact" (RAG) versus "the model doesn't behave the way I want" (fine-tuning).
+
+@topic Q: What makes something an "AI agent" instead of just a chatbot?
+An agent can take actions in the world through tools — searching, querying a database, calling an API — and it decides its own next step based on what it observes, looping until a goal is satisfied, rather than returning one fixed response to one input. A chatbot answers; an agent plans, acts, observes the result, and re-plans. The engineering risk that comes with that autonomy is real: an agent with tool access can take irreversible actions, so production agents need scoped permissions, step limits, and human approval for high-stakes steps.
+
+@topic Q: What is prompt injection, and why is it dangerous for agentic systems?
+Prompt injection is when untrusted input — a webpage the model reads, a document it retrieves, a user message — contains text crafted to override the model's original instructions, tricking it into ignoring its system prompt or taking an unintended action. It's especially dangerous for agentic systems because an injected instruction isn't just a weird text reply anymore, it can trigger a real tool call like sending data externally or executing a transaction. Mitigations include treating all retrieved/external content as untrusted data rather than instructions, sandboxing what tools an agent can call without explicit approval, and never granting an agent more permission than the specific task requires.
+
+@topic Q: How would you explain the alignment problem to a non-technical stakeholder?
+I'd say: any time you give a system a measurable goal, it will optimize exactly that measurement, which is often not quite the same as what you actually wanted — like a student who memorizes answers to pass a test without learning the material. In AI, this shows up as reward hacking: a system finds a technically valid shortcut that scores well on the metric while completely missing the intent, such as a content feed optimized purely for watch-time learning to promote extreme content. The practical takeaway for a stakeholder is that defining the right metric, and reviewing what the system actually does rather than just its score, is as important as the model itself.
+
+@topic Q: How do you evaluate whether an AI system is biased?
+I'd start by identifying who could be harmed and how, then pick a fairness metric that matches that specific harm — demographic parity if the concern is equal access to an opportunity, equalized odds if the concern is equal error rates across groups — because these metrics can mathematically conflict and there's no single "unbiased" score. I'd test with disaggregated metrics across the relevant subgroups, not just an aggregate accuracy number, since aggregate accuracy can look fine while one subgroup is being systematically misclassified. I'd also check whether bias could re-enter through proxy features even if protected attributes were removed, since that's the most common way "colorblind" models still discriminate.
+
+@topic Q: What's the difference between supervised fine-tuning and RLHF?
+Supervised fine-tuning trains a pretrained model on curated examples of the input-output behavior you want, essentially teaching it by direct demonstration — "here's a good response to this kind of question." RLHF instead trains a reward model on human preference comparisons between candidate outputs, then uses reinforcement learning to nudge the LLM toward generating outputs the reward model scores highly. SFT teaches the model what good answers look like; RLHF teaches it what humans prefer when comparing options, which captures nuances like tone and helpfulness that are hard to specify through direct examples alone.
+
+@topic Q: When would you use classical machine learning instead of a deep learning or LLM-based approach?
+I'd use classical ML when the data is structured/tabular, the dataset is small to medium, and I need fast training, low inference cost, and clear interpretability — a gradient-boosted tree model for credit scoring, for instance, is usually more appropriate, auditable and cheaper to run than a deep model. Deep learning earns its complexity cost on unstructured data (images, audio, raw text) or when classical features can't capture the pattern. The common interview trap is assuming "bigger model is always better" — in production, a simpler model that's faster, cheaper and explainable often wins even if a complex model scores marginally higher offline.
+
+@topic Q: What is a vector embedding, and why does it matter for search?
+A vector embedding is a dense numerical representation of an item — a word, sentence, image or document — positioned in a high-dimensional space so that semantically similar items end up close together. This matters for search because it enables **semantic search**: instead of matching exact keywords, you can find results that mean the same thing even with completely different wording, by comparing embedding vectors with cosine similarity. It's the core mechanism behind RAG retrieval, recommendation systems, and modern search engines' "did you mean" and related-results features.
+
+@topic Q: What's the difference between a Transformer's encoder and decoder, conceptually?
+An encoder reads the entire input at once and builds a contextual representation of it, which suits tasks like classification or understanding (BERT-style models). A decoder generates output one token at a time, each new token conditioned on everything generated so far, which suits generation tasks (GPT-style models). Some architectures use both together, like the original Transformer for machine translation, where the encoder digests the source sentence and the decoder generates the translation. Most modern large language models are decoder-only, because autoregressive generation is what's needed for open-ended chat and completion.
+
+@topic Q: How would you decide between building a custom model and using an API-based foundation model?
+I'd default to an API-based foundation model unless there's a specific reason not to, because training and maintaining a custom model from scratch is expensive and slow to iterate on, and foundation models already cover most general language and vision tasks well via prompting or fine-tuning. I'd consider a custom/smaller model when there are strict latency or cost constraints at high volume, strict data-residency or privacy requirements that rule out sending data to a third party, or a narrow, well-defined task where a small specialized model can match a large general model's accuracy for a fraction of the inference cost. The decision is really a build-vs-buy trade-off wearing an AI costume.
+
+@topic Q: What is catastrophic forgetting, and why does it matter when fine-tuning?
+Catastrophic forgetting is when fine-tuning a pretrained model on a new, narrow dataset causes it to lose previously learned general capabilities, because the weight updates optimized for the new task overwrite representations the model relied on for other tasks. This matters practically because a model fine-tuned heavily on, say, customer-support transcripts might get noticeably worse at general reasoning or unrelated tasks it used to handle fine. Mitigations include using a lower learning rate, techniques like LoRA that update a small additional set of parameters instead of the whole model, and mixing some general-purpose data back into the fine-tuning set.
+
+@topic Q: What's the difference between precision and recall, and when would you prioritize one in an AI system?
+Precision is the fraction of positive predictions that are actually correct; recall is the fraction of actual positives the system successfully catches. I'd prioritize recall in a system like cancer-screening or fraud detection, where missing a real case is far more costly than a false alarm that gets reviewed and dismissed. I'd prioritize precision in a system like an automated moderation system that permanently bans accounts, where a false positive directly harms an innocent user and has no review step. The real skill is naming the asymmetric cost of each error type for the specific system, not just reciting the definitions.
+
+@topic Q: What is few-shot learning, and how is it different from traditional supervised learning?
+In traditional supervised learning, you train a model from scratch (or fine-tune heavily) on a large labeled dataset specific to the task. Few-shot learning instead gives a pretrained model just a handful of examples at inference time, inside the prompt, and relies on the model's already-learned general capabilities to generalize the pattern from those few examples, with no weight updates at all. This matters practically because it lets you adapt a large model to a new task in minutes with a handful of examples, instead of weeks of data collection and training — the trade-off is it's less reliable and more sensitive to example choice than a properly fine-tuned model.
+
+@topic Q: How do you keep a human in the loop for a high-stakes AI decision, concretely?
+Concretely, I'd have the model produce a recommendation plus its confidence and supporting evidence rather than an autonomous final action, route anything below a confidence threshold or above a risk threshold to a human reviewer by default, log every decision and its rationale for audit, and make it easy for a human to override and have that override feed back into improving the system. The design principle is that the human should be reviewing a well-supported recommendation, not rubber-stamping a black box, and the system should make it obvious when something falls outside its reliable operating range.
+
+@topic Q: What's one AI project you'd be cautious about fully automating, and why?
+I'd be cautious fully automating anything with an asymmetric, hard-to-reverse downside and a population that can't easily contest the outcome — loan denial, medical diagnosis, content moderation bans, or criminal-justice risk scoring are the textbook examples. In each case, the cost of a false negative or false positive falls on a real person who often has no visibility into why the system decided what it did, and the training data for all of these domains has documented historical bias baked in. My default for these domains is AI-assisted human decision-making with mandatory disaggregated bias monitoring, not full automation, until there's a much stronger explainability and fairness story in place.
+@interview Strong AI interview answers give a direct definition first, ground it in a concrete mechanism or example, then name the real trade-off or caveat — the same discipline this whole module practices.
+
+@module m20 | 🧭 | 20 · Roadmap | Module 20 — Learning Roadmap for an AI Engineer | Foundations → Specialization → Generative AI → Ethics
+@topic 🧱 Build foundations before specializing
+Jumping straight to building LLM apps without foundations leads to brittle intuition — you can prompt your way to a demo, but debugging why a model fails, choosing between approaches, or reasoning about cost and latency trade-offs requires the layers underneath. The efficient order is: programming and math fundamentals first, then classical ML, then deep learning basics, and only then the generative AI / agents layer that's in highest demand right now — each layer makes the one above it make sense instead of feeling like memorized recipes.
+@table
+Stage | Focus | Outcome
+1. Foundations | Python, linear algebra/probability basics, data structures | Can read ML code and reason about model behavior, not just call an API
+2. Classical ML & DS | Regression, classification, trees, evaluation metrics, pandas/numpy | Can build and evaluate a baseline model for a tabular problem
+3. Deep learning | Neural nets, CNNs, RNNs, Transformers (architecture level) | Understands what's inside an LLM or vision model, not just how to call one
+4. NLP / CV specialization | Pick one: embeddings & language tasks, or vision tasks | Can fine-tune or adapt a pretrained model for a specific domain task
+5. Generative AI & agents | Prompting, RAG, fine-tuning, agent/tool-use patterns | Can design and ship an LLM-powered product feature end to end
+6. Ethics, safety & evaluation | Bias auditing, XAI, alignment, red-teaming basics | Can responsibly evaluate and monitor an AI system before and after shipping
+@end
+@topic 🎯 Prioritization for an "AI engineer" role in 2026
+If the target role is "AI engineer" rather than "ML researcher," the highest-leverage skills to prioritize are different from a pure research path: strong software engineering fundamentals (APIs, system design, testing) matter more than deep theory, because the job is mostly building reliable products around foundation models, not training new ones. Within that, prompt engineering, RAG pipeline design, evaluation/observability for LLM outputs, and agentic tool-use patterns are the skills in the highest active demand, since most companies are integrating existing foundation models rather than training from scratch. Classical ML and deep learning foundations still matter — they're what let you debug a RAG pipeline that's retrieving badly, or recognize when a simpler non-LLM model would genuinely serve a use case better — so skipping them to rush into "LLM app building" produces engineers who can demo well but can't diagnose failures. Ethics and evaluation skills are not optional extras either: as agentic systems take more real-world actions, the ability to design approval gates, bias audits and monitoring is becoming a core, not peripheral, part of the role.
+@practice
+1. Build a 12-week self-study plan mapping each roadmap stage to specific resources or projects.
+2. Pick one specialization (NLP or CV) and justify it based on a specific target job description.
+3. Design a small end-to-end project that combines RAG and agentic tool use, and list what you'd evaluate before calling it production-ready.
+@interview For an AI engineer role, the fastest useful path is solid programming and ML/DL foundations first, then deliberately specializing in generative AI, RAG and agentic tool-use patterns — since that's where 2026 hiring demand is concentrated — while treating evaluation, bias auditing and safety practices as core engineering skills rather than an afterthought.

@@ -16,6 +16,18 @@ export const NOTES = {
     href: "data-science-material.html", title: "📊 Data Science Complete Study Material",
     text: "Data science end to end in 32 modules: statistics, SQL, data cleaning, EDA, visualization, machine learning, responsible AI, deployment and projects.",
   },
+  "machine-learning": {
+    href: "machine-learning-material.html", title: "🤖 Machine Learning Complete Study Material",
+    text: "Machine learning end to end in 28 modules: regression, classification, trees, ensembles, clustering, evaluation metrics, tuning, pipelines, deployment and a 22-question interview module.",
+  },
+  "deep-learning": {
+    href: "deep-learning-material.html", title: "🧠 Deep Learning Complete Study Material",
+    text: "Deep learning end to end in 24 modules: perceptrons, backpropagation, optimizers, CNNs, RNNs/LSTMs, Transformers, GANs, PyTorch/Keras and deployment, with a 21-question interview module.",
+  },
+  ai: {
+    href: "ai-material.html", title: "✨ Artificial Intelligence Complete Study Material",
+    text: "AI end to end in 20 modules: search, knowledge representation, NLP, computer vision, reinforcement learning, generative AI/LLMs, agents, ethics and safety, with a 20-question interview module.",
+  },
   java: {
     href: "java-material.html", title: "☕ Java Complete End-to-End Study Material",
     text: "Java from fundamentals to professional development in 74 modules: OOP, collections, modern Java, concurrency, JDBC, Spring Boot, REST, security, microservices, Docker, cloud and projects.",
@@ -23,6 +35,10 @@ export const NOTES = {
   numpy: {
     href: "numpy-material.html", title: "🔢 NumPy Complete Study Material",
     text: "NumPy end to end in 39 modules: arrays, indexing, broadcasting, statistics, linear algebra, data science and machine learning, with examples, practice and projects.",
+  },
+  excel: {
+    href: "excel-material.html", title: "📗 Excel Complete Study Material",
+    text: "Excel end to end in 25 modules: formulas, lookups, PivotTables, Power Query, Power Pivot/DAX, macros/VBA, dashboards and a 19-question interview module.",
   },
   python: {
     href: "python-material.html", title: "🐍 Python Complete Study Material",
