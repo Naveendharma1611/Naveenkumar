@@ -1059,3 +1059,80 @@ body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; color: var(--text)
 3. Build the admin dashboard layout with Grid template areas and make it work on phones.
 4. Recreate the homepage of a website you like, then compare with DevTools.
 @interview An end-to-end CSS project brings together variables, a reset, Flexbox and Grid layouts, responsive media queries, component states, transitions and animations, and accessible, maintainable structure.
+
+@module m21 | 📋 | Quick Reference | CSS Cheat Sheet | Cascade · Layout · Responsive · States · Accessibility
+@topic Selectors, Cascade, and Box Model
+@table
+Need | Pattern
+Class selector | `.card { ... }`
+Child selector | `.menu > li { ... }`
+Pseudo-class | `button:hover`, `input:focus-visible`
+Pseudo-element | `::before`, `::after`, `::selection`
+Custom property | `:root { --space: 1rem; }`; use `var(--space)`
+Border-box sizing | `*, *::before, *::after { box-sizing: border-box; }`
+Responsive image | `img { max-width: 100%; height: auto; }`
+@end
+@topic Layout and Responsive Design
+@table
+Need | Pattern
+Flex row | `display: flex; gap: 1rem; align-items: center;`
+Grid columns | `display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));`
+Responsive grid | `repeat(auto-fit, minmax(min(100%, 16rem), 1fr))`
+Centered container | `width: min(100% - 2rem, 72rem); margin-inline: auto;`
+Mobile-first breakpoint | `@media (min-width: 48rem) { ... }`
+Reduced motion | `@media (prefers-reduced-motion: reduce) { ... }`
+Sticky header | `position: sticky; top: 0;`
+@end
+@topic Type, Layers, and Accessibility
+@table
+Need | Pattern
+Fluid type | `font-size: clamp(1rem, 2vw, 1.5rem)`
+Layer order | `@layer reset, base, components, utilities;`
+Visible keyboard focus | `:focus-visible { outline: 3px solid currentColor; }`
+Respect theme | `@media (prefers-color-scheme: dark) { ... }`
+Decorative content | Keep it out of the accessibility tree when appropriate
+Debug a rule | Inspect matched rules, computed values, and inherited styles in DevTools
+@end
+@warn Avoid escalating specificity to win every conflict. Prefer a clear cascade, reusable classes, and explicit focus states; check contrast and reduced-motion behavior.
+
+@module m22 | 🎤 | Interview Prep | CSS Interview Questions & Answers | Cascade · Layout · Responsive design · Accessibility
+@topic Q: What is the CSS cascade?
+The cascade determines which declarations apply when rules compete. It considers relevance, origin and importance, cascade layers, specificity, scoping proximity where applicable, and source order; the exact ordering depends on the declarations being compared.
+@topic Q: How is selector specificity compared?
+Specificity is compared in categories: ID selectors, class/attribute/pseudo-class selectors, then type/pseudo-element selectors. A higher category wins before lower categories are considered; source order resolves otherwise equal declarations within the same cascade context.
+@topic Q: What does `box-sizing: border-box` change?
+It makes an element's declared width and height include its padding and border, simplifying predictable sizing. Margins remain outside the box.
+@topic Q: What is the difference between Flexbox and Grid?
+Flexbox is primarily suited to arranging items along one main axis, with alignment on the cross axis. Grid is designed for two-dimensional row-and-column layouts; the two can be combined.
+@topic Q: What is the difference between `align-items` and `justify-content` in Flexbox?
+`justify-content` distributes items along the main axis, while `align-items` aligns them along the cross axis. The axes change when `flex-direction` changes.
+@topic Q: What does the `fr` unit mean in CSS Grid?
+An `fr` unit represents a share of the available space in a grid container after fixed and intrinsic sizing contributions are considered. It is not simply a percentage of the container in every situation.
+@topic Q: How does `position: sticky` behave?
+A sticky element participates in normal flow, then sticks relative to its scroll container after reaching an inset threshold. Ancestor overflow and the available scroll container affect its behavior.
+@topic Q: What containing block does an absolutely positioned element use?
+It is positioned relative to its nearest ancestor that establishes an absolute-positioning containing block, commonly an ancestor with a non-static position. If none exists, it uses the initial containing block.
+@topic Q: What creates a stacking context?
+Properties such as positioned elements with a non-auto `z-index`, transforms, opacity below one, and isolation can create stacking contexts. A child cannot use `z-index` to escape its ancestor's stacking context.
+@topic Q: How does inheritance work in CSS?
+Some properties, such as `color` and font properties, inherit by default; many box and layout properties do not. Explicit inherited values can be set with `inherit`, `initial`, `unset`, or `revert` according to the intended behavior.
+@topic Q: What is the difference between `em` and `rem`?
+`em` is relative to the relevant element's computed font size, which can compound through nesting in some properties. `rem` is relative to the root element's font size.
+@topic Q: How would you build a responsive layout without device-specific breakpoints for every screen?
+Use fluid constraints such as flexible grid tracks, `minmax`, `auto-fit`, percentages, and bounded containers. Add media queries when the design needs a meaningful layout change rather than targeting particular devices.
+@topic Q: What is the difference between a media query and a container query?
+A media query responds to environment features such as viewport width or reduced-motion preference. A container query responds to the size or style of a designated ancestor container.
+@topic Q: What does `:focus-visible` provide?
+It targets focus indication when the browser determines a visible focus cue is appropriate, commonly for keyboard navigation. Preserve a clear indicator so users can identify the active control.
+@topic Q: How should animation respect reduced-motion preferences?
+Use the `prefers-reduced-motion` media feature to reduce or remove nonessential motion for users who request it. Keep state changes understandable without animation.
+@topic Q: What is the difference between `display: none` and `visibility: hidden`?
+`display: none` removes the element from layout; `visibility: hidden` hides it while retaining its layout space. Both generally remove it from the accessibility tree, though semantics and browser behavior should be tested for the use case.
+@topic Q: What causes vertical margin collapsing?
+In certain block formatting contexts, adjacent vertical margins can combine into one margin rather than add. Flex and Grid containers do not collapse item margins in the same way; padding, borders, or a new formatting context can change collapse behavior.
+@topic Q: How can CSS custom properties support theming?
+Define tokens such as colors and spacing with `--name` properties, often on `:root` or a theme container, then consume them with `var()`. Their inheritance lets a subtree override values without duplicating component rules.
+@topic Q: Why use `minmax(0, 1fr)` for a Grid track?
+The zero minimum allows the track to shrink below its min-content contribution, helping prevent long content from forcing overflow. Add `min-width: 0` to grid or flex children when their intrinsic size still causes overflow.
+@topic Q: What makes a form control styling accessible?
+Keep a visible label, sufficient text and focus contrast, clear focus and error states, and usable target sizes. Do not rely on color alone to convey status, and preserve keyboard operation.
