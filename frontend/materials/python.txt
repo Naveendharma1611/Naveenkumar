@@ -1,0 +1,425 @@
+@page 🐍 Python Complete Study Material
+@intro Learn Python from syntax and core data structures through functions, files, object-oriented programming, testing, and interview preparation.
+
+@module m1 | 🐍 | 1 · Foundations | Module 1 — Python Foundations | What Python is · Running programs · Syntax and indentation
+@topic What Python Is
+Python is a high-level, general-purpose programming language known for readable syntax and a broad ecosystem. It is commonly used for automation, web services, data analysis, machine learning, scripting, and education.
+@table
+Term | Meaning
+Interpreter | Program that executes Python code; CPython is the most widely used implementation
+Source file | A Python program commonly saved with the `.py` extension
+Expression | Code that produces a value, such as `2 + 3`
+Statement | An instruction, such as an assignment or `if` statement
+@end
+@topic Running Python
+@code bash
+python --version
+python app.py
+python -m venv .venv
+@end
+Use `py` instead of `python` on Windows when the Python launcher is installed. A virtual environment keeps a project's installed packages separate from other projects.
+@topic Indentation and Comments
+Python uses indentation to group statements. Use consistent four-space indentation; a colon introduces a suite such as a function body or conditional body.
+@code python
+def greet(name):
+    # Return a message; this line belongs to the function body.
+    return f"Hello, {name}!"
+
+print(greet("Mina"))
+@end
+@practice
+1. What is the usual extension for a Python source file?
+2. What does a colon introduce after a function definition?
+3. Run a file from the terminal and print one line of text.
+
+@module m2 | 📦 | 2 · Values | Module 2 — Variables, Types & Operators | Names · Mutability · Arithmetic · Comparisons · Boolean logic
+@topic Variables and Assignment
+A variable is a name bound to an object. Assignment uses `=`; it does not declare a fixed storage type, so the same name can later refer to a different type of object.
+@code python
+count = 3
+count = "three"
+first, second = "Ada", "Lin"
+@end
+Use descriptive `snake_case` names for variables and functions. Constants are conventionally written in `UPPER_SNAKE_CASE`; Python does not enforce immutability from the name alone.
+@topic Built-in Types
+@table
+Type | Example | Notes
+int | `42` | Arbitrary-precision integer
+float | `3.5` | Binary floating-point number
+bool | `True` | Boolean values; a subtype of `int`
+str | `"hello"` | Immutable Unicode text
+NoneType | `None` | Represents the absence of a value
+list | `[1, 2]` | Ordered, mutable sequence
+tuple | `(1, 2)` | Ordered, immutable sequence
+dict | `{"id": 1}` | Mutable mapping of keys to values
+set | `{1, 2}` | Mutable collection of unique hashable values
+@end
+@topic Operators and Comparisons
+`/` performs true division, `//` floors division, `%` gives the remainder, and `**` raises to a power. Use `==` to compare values and `is` to test object identity, most often with `None`.
+@code python
+total = 17
+groups = total // 5  # 3
+remainder = total % 5  # 2
+is_ready = groups >= 3 and remainder == 2
+@end
+@warn `is` is not a substitute for `==`: two equal lists can be distinct objects.
+@practice
+1. What is the result of `17 // 5` and `17 % 5`?
+2. Which built-in value represents the absence of a value?
+3. When should `is` be used instead of `==`?
+
+@module m3 | 🔤 | 3 · Strings | Module 3 — Strings & Formatting | Indexing · Slicing · Methods · f-strings
+@topic String Basics
+Strings are immutable sequences of Unicode characters. Indexing starts at zero; negative indexes count from the end. A slice `text[start:stop:step]` excludes `stop`.
+@code python
+language = "Python"
+print(language[0])      # P
+print(language[-1])     # n
+print(language[1:4])    # yth
+print(language[::-1])   # nohtyP
+@end
+@topic Formatting and Methods
+Prefer f-strings for readable interpolation. Methods such as `strip`, `lower`, `split`, and `replace` return new strings; they do not modify the original string.
+@code python
+name = "Ravi"
+score = 92.5
+message = f"{name} scored {score:.1f}%"
+words = "  learn Python  ".strip().split()
+@end
+@practice
+1. What does `word[-1]` return?
+2. Does `strip()` modify its original string?
+3. Write an f-string containing a name and an integer score.
+
+@module m4 | 🧺 | 4 · Collections | Module 4 — Lists, Tuples, Dictionaries & Sets | Choosing a collection · Common operations · Comprehensions
+@topic Lists and Tuples
+Lists are ordered and mutable. Tuples are ordered and immutable, though a tuple may contain a mutable object. Both support indexing, slicing, iteration, and `len`.
+@code python
+tasks = ["read", "test"]
+tasks.append("ship")
+first_two = tasks[:2]
+coordinates = (4, 9)
+@end
+@topic Dictionaries and Sets
+Dictionaries map unique, hashable keys to values and preserve insertion order. Sets hold unique hashable elements and support operations such as union and intersection.
+@code python
+user = {"name": "Asha", "active": True}
+user["role"] = "editor"
+tags = {"python", "backend", "python"}
+shared = tags & {"backend", "testing"}
+@end
+@topic Comprehensions
+Comprehensions build a collection from an iterable. Keep them simple; use a regular loop when the transformation or condition is difficult to scan.
+@code python
+squares = [number * number for number in range(6)]
+evens = {number for number in range(10) if number % 2 == 0}
+lengths = {word: len(word) for word in ("map", "filter")}
+@end
+@practice
+1. Which collection is mutable: a list or a tuple?
+2. What does a set do with duplicate values?
+3. Create a dictionary that maps two names to their ages.
+
+@module m5 | 🔀 | 5 · Control flow | Module 5 — Decisions & Loops | if · for · while · break · continue · match
+@topic Conditional Logic
+`if`, `elif`, and `else` select a branch. Empty containers, `0`, `0.0`, `None`, and `False` are falsey; most other objects are truthy.
+@code python
+temperature = 18
+if temperature >= 25:
+    label = "warm"
+elif temperature >= 15:
+    label = "mild"
+else:
+    label = "cool"
+@end
+@topic Iteration
+Use `for` to iterate over an iterable and `while` when repetition depends on a condition. `break` exits the nearest loop; `continue` skips to its next iteration. `range(stop)` excludes `stop`.
+@code python
+for index, item in enumerate(("a", "b"), start=1):
+    print(index, item)
+
+for key, value in {"x": 1, "y": 2}.items():
+    print(key, value)
+@end
+@practice
+1. Does `range(4)` include the value `4`?
+2. Which statement skips the remainder of the current loop iteration?
+3. Name one built-in collection that is falsey when empty.
+
+@module m6 | 🧩 | 6 · Functions | Module 6 — Functions & Scope | Parameters · Return values · Defaults · *args · **kwargs
+@topic Defining and Calling Functions
+Functions package reusable behavior. Parameters are names in the function definition; arguments are values supplied by a call. `return` sends a value back, while a function with no return statement returns `None`.
+@code python
+def area(width, height=1):
+    """Return the area of a rectangle."""
+    return width * height
+
+print(area(4, height=3))
+@end
+@topic Argument Patterns
+Positional arguments match parameters by position; keyword arguments match by name. `*args` collects extra positional arguments into a tuple, and `**kwargs` collects extra keyword arguments into a dictionary.
+@code python
+def average(*values):
+    if not values:
+        return 0
+    return sum(values) / len(values)
+
+def show_options(**options):
+    return options
+@end
+@topic Scope and Mutable Defaults
+Local names belong to a function call. Avoid mutable default values: defaults are evaluated once when the function is defined, not once per call.
+@code python
+def add_item(item, items=None):
+    if items is None:
+        items = []
+    items.append(item)
+    return items
+@end
+@practice
+1. What value does a function return if it reaches its end without `return`?
+2. What Python types collect values passed to `*args` and `**kwargs`?
+3. Why is `items=[]` a risky default parameter?
+
+@module m7 | 🧰 | 7 · Reuse | Module 7 — Modules, Packages & Environments | Imports · pip · venv · Project structure
+@topic Imports
+A module is a Python file that can define reusable names. Import only what you need and avoid wildcard imports, which make names and their origins less clear.
+@code python
+import math
+from pathlib import Path
+
+print(math.sqrt(81))
+print(Path("data.txt").suffix)
+@end
+@topic Packages and Virtual Environments
+A package groups modules. A virtual environment isolates dependencies for one project. Install dependencies into the active environment and record them in a project dependency file when sharing the project.
+@code bash
+python -m venv .venv
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+# macOS or Linux
+source .venv/bin/activate
+python -m pip install requests
+@end
+@info Use `python -m pip` so pip is associated with the Python interpreter you are using.
+@practice
+1. What is one benefit of a virtual environment?
+2. How can you import the `math` module without importing every name into the current namespace?
+3. Why is `python -m pip` often preferred to running `pip` directly?
+
+@module m8 | 📂 | 8 · Files | Module 8 — Files, Paths & JSON | with · Encodings · pathlib · Serialization
+@topic Safe File Handling
+The `with` statement uses a context manager to clean up resources, including closing a file after the block. Specify an encoding for text files when portability matters.
+@code python
+from pathlib import Path
+
+path = Path("notes.txt")
+path.write_text("Study steadily.\n", encoding="utf-8")
+text = path.read_text(encoding="utf-8")
+@end
+@topic Reading and Writing JSON
+JSON supports a limited set of data types. The `json` module converts between JSON text and Python values; JSON objects become dictionaries and arrays become lists.
+@code python
+import json
+
+profile = {"name": "Devi", "active": True}
+encoded = json.dumps(profile)
+decoded = json.loads(encoded)
+@end
+@warn Do not deserialize untrusted pickle data. Loading a pickle can execute arbitrary code.
+@practice
+1. What does a `with open(...)` block ensure when the block exits?
+2. Which Python module parses JSON text?
+3. Which `pathlib.Path` method reads a text file?
+
+@module m9 | 🛡️ | 9 · Errors | Module 9 — Exceptions & Debugging | try · except · else · finally · raise
+@topic Handling Exceptions
+An exception signals an error or unusual condition. Catch specific exception types you can handle; broad catches can hide defects. The `else` block runs only when the `try` block raises no exception.
+@code python
+try:
+    quantity = int("12")
+except ValueError as error:
+    print(f"Invalid quantity: {error}")
+else:
+    print(quantity * 2)
+finally:
+    print("Finished")
+@end
+@topic Raising and Debugging
+Raise an appropriate exception when a function cannot fulfill its contract. Use tracebacks, a debugger, assertions for internal assumptions, and small reproducible inputs to investigate problems.
+@code python
+def percentage(part, whole):
+    if whole == 0:
+        raise ValueError("whole must not be zero")
+    return part / whole * 100
+@end
+@practice
+1. Which exception is typically raised when converting `"abc"` to an integer?
+2. When does an `else` block on `try` run?
+3. Why should code catch a specific exception rather than every exception?
+
+@module m10 | 🏛️ | 10 · OOP | Module 10 — Classes & Object-Oriented Programming | Objects · Inheritance · Composition · Special methods
+@topic Classes and Instances
+A class defines a type and its behavior; an instance is an object created from that class. `self` refers to the instance receiving an instance-method call. `__init__` initializes a newly created instance.
+@code python
+class Account:
+    def __init__(self, owner, balance=0):
+        self.owner = owner
+        self.balance = balance
+
+    def deposit(self, amount):
+        if amount <= 0:
+            raise ValueError("amount must be positive")
+        self.balance += amount
+@end
+@topic Inheritance and Composition
+Inheritance expresses an “is-a” relationship and allows a subclass to specialize a base class. Composition builds behavior from collaborating objects and is often more flexible when types are not truly substitutable.
+@table
+Concept | Meaning
+Encapsulation | Keep data and operations together; expose a clear interface
+Inheritance | Derive a specialized class from a base class
+Polymorphism | Use different objects through a shared interface
+Composition | Build an object from other collaborating objects
+@end
+@topic Dataclasses
+`dataclass` generates common methods such as `__init__` and `__repr__`, making it useful for classes that primarily store data.
+@code python
+from dataclasses import dataclass
+
+@dataclass
+class Point:
+    x: float
+    y: float
+@end
+@practice
+1. What does `self` refer to in an instance method?
+2. Which relationship is usually a better fit for “has-a”: inheritance or composition?
+3. What does the `@dataclass` decorator generate by default?
+
+@module m11 | 🔁 | 11 · Iteration | Module 11 — Iterators, Generators & Decorators | Lazy values · yield · Wrappers
+@topic Iterables and Iterators
+An iterable can produce an iterator. An iterator returns values one at a time and signals completion with `StopIteration`. A `for` loop handles this protocol for you.
+@topic Generators
+A generator function uses `yield` to produce values lazily. It can process large sequences without storing every result in memory at once.
+@code python
+def squares(limit):
+    for number in range(limit):
+        yield number * number
+
+for value in squares(4):
+    print(value)
+@end
+@topic Decorators
+A decorator takes a function or class and returns a replacement, commonly to add reusable behavior. The `@decorator` syntax applies it at definition time.
+@code python
+from functools import wraps
+
+def announce(function):
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+        print("Starting")
+        return function(*args, **kwargs)
+    return wrapper
+@end
+@practice
+1. What keyword makes a function produce a generator?
+2. What is one memory advantage of a generator?
+3. What does `functools.wraps` preserve on a wrapped function?
+
+@module m12 | 🧪 | 12 · Quality | Module 12 — Testing, Type Hints & Clean Code | pytest basics · Contracts · Readability
+@topic Unit Tests
+Tests check behavior against expectations. A unit test should be focused and repeatable; test normal inputs, boundaries, and failure cases. `pytest` discovers test functions commonly named `test_*`.
+@code python
+def double(number):
+    return number * 2
+
+def test_double():
+    assert double(4) == 8
+@end
+Run tests with `python -m pytest`. Keep tests independent and avoid relying on execution order or external services unless they are explicitly part of the test.
+@topic Type Hints
+Type hints document expected types and help static analysis tools find mistakes. Python does not automatically enforce ordinary annotations at runtime.
+@code python
+def greet(name: str) -> str:
+    return f"Hello, {name}"
+@end
+@tip Prefer small functions with clear names, explicit error handling, and simple control flow. Readability is a practical maintenance tool.
+@practice
+1. Do ordinary Python type hints enforce types at runtime by themselves?
+2. What prefix is commonly used for pytest test function names?
+3. Name one kind of edge case a useful unit test should cover.
+
+@module m13 | 📋 | Quick Reference | Python Cheat Sheet | Syntax · Collections · Functions · Files · Exceptions
+@topic Core Syntax
+@table
+Need | Pattern
+Comment | `# explanation`
+Assignment | `count = 0`
+Conditional | `if ready: ... elif waiting: ... else: ...`
+Loop | `for item in items: ...`
+Function | `def transform(value): return value`
+Class | `class User: ...`
+@end
+@topic Collections and Common Operations
+@table
+Need | Pattern
+List | `items = [1, 2]`; `items.append(3)`
+Tuple | `point = (4, 8)`
+Dictionary | `user = {"name": "Asha"}`; `user.get("name")`
+Set | `unique = set(values)`; `left & right`
+Length / membership | `len(items)`; `value in items`
+Comprehension | `[f(x) for x in values if condition(x)]`
+@end
+@topic Functions, Files and Errors
+@table
+Need | Pattern
+Keyword arguments | `send(message, urgent=True)`
+Variable positional args | `def f(*args): ...`
+Variable keyword args | `def f(**kwargs): ...`
+Read UTF-8 text | `Path("file.txt").read_text(encoding="utf-8")`
+Handle a known error | `try: ... except ValueError: ...`
+Check for None | `value is None`
+@end
+@warn Use `==` for value equality and `is` for identity. Never use mutable objects as default parameter values.
+
+@module m14 | 🎤 | Interview Prep | Python Interview Questions & Answers | Core concepts · Collections · Functions · Runtime behavior
+@topic Q: Is Python compiled or interpreted?
+Python is commonly described as interpreted, but CPython first compiles source to bytecode and then executes that bytecode on its virtual machine. The exact implementation details vary between Python implementations.
+@topic Q: What is the difference between a list and a tuple?
+A list is mutable and uses square brackets; a tuple is immutable as a sequence and commonly uses parentheses. Choose based on whether the sequence itself should change and on the meaning you want to communicate.
+@topic Q: What is the difference between `==` and `is`?
+`==` checks whether two objects compare equal by value. `is` checks whether two references point to the exact same object; use it for singleton checks such as `value is None`.
+@topic Q: What is the difference between a shallow copy and a deep copy?
+A shallow copy creates a new outer container but keeps references to nested objects. A deep copy recursively copies nested objects; use `copy.deepcopy` only when independent nested state is required.
+@topic Q: Why are mutable default arguments risky?
+Default expressions are evaluated once when the function is defined. A list or dictionary default is then shared across calls, so use `None` and create a fresh object inside the function.
+@topic Q: What are `*args` and `**kwargs`?
+They collect additional positional arguments into a tuple and additional keyword arguments into a dictionary. The same syntax can unpack an iterable or mapping when calling a function.
+@topic Q: What is a decorator?
+A decorator is a callable that receives a function or class and returns a replacement, often adding reusable behavior. The `@name` syntax applies the decorator when the definition is evaluated.
+@topic Q: What is a generator?
+A generator produces values lazily, usually from a function containing `yield`. It retains its execution state between values and is useful for streaming or large inputs.
+@topic Q: How does Python manage memory?
+In CPython, reference counting handles most object reclamation and a cyclic garbage collector detects many reference cycles. Programs should not rely on immediate cleanup of external resources; use context managers for files and similar resources.
+@topic Q: What is the Global Interpreter Lock?
+In standard CPython builds, the GIL allows only one thread at a time to execute Python bytecode within a process. Threads can still help with I/O-bound work; multiprocessing can use multiple processes for CPU-bound work, with added communication costs.
+@topic Q: What is a virtual environment?
+A virtual environment provides an isolated Python interpreter environment and package installation location for a project. It helps projects use different dependency versions without conflicting with one another.
+@topic Q: What is the difference between `append` and `extend` on a list?
+`append(value)` adds one value as a single element. `extend(iterable)` adds each item from an iterable to the list.
+@topic Q: What does `with` do when working with a file?
+`with` uses the file object's context-manager protocol so the file is closed when control leaves the block, including when an exception occurs.
+@topic Q: How do `try`, `except`, `else`, and `finally` differ?
+`try` contains the operation that may fail; `except` handles selected exceptions; `else` runs only if no exception was raised in `try`; and `finally` runs during cleanup whether or not an exception occurred.
+@topic Q: What is the difference between an iterable and an iterator?
+An iterable can provide an iterator, for example through `iter(value)`. An iterator provides values with `next()` and maintains traversal state; it is also iterable itself.
+@topic Q: What is duck typing?
+Duck typing focuses on the operations an object supports rather than its declared class. Code can accept different object types when they satisfy the behavior it needs.
+@topic Q: Are Python type hints enforced at runtime?
+Ordinary annotations are metadata and are not automatically enforced by the Python runtime. Static type checkers and optional runtime validation libraries can use them to detect or report mismatches.
+@topic Q: When would you choose a set?
+Choose a set when you need unique hashable values, fast average-case membership checks, or mathematical operations such as union and intersection. Sets do not provide positional indexing.
+@topic Q: How do modules and packages differ?
+A module is commonly a single Python file. A package groups modules under a package namespace and may contain subpackages.
+@topic Q: How would you make a Python function easier to test?
+Give it a focused responsibility, explicit inputs and outputs, and avoid hidden dependence on global state or external services. Test expected behavior, boundary cases, and relevant failure paths.

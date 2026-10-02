@@ -15,6 +15,7 @@ Format, one instruction per line:
   @interview <text>
 Inline markup: `code` and **bold**.
 """
+import argparse
 import html
 import re
 from pathlib import Path
@@ -208,5 +209,11 @@ def build(source):
 
 
 if __name__ == "__main__":
-    for txt in sorted(HERE.glob("*.txt")):
+    parser = argparse.ArgumentParser(description="Build study-material pages from DSL source files.")
+    parser.add_argument("sources", nargs="*", help="source filenames in this folder; defaults to all .txt files")
+    args = parser.parse_args()
+    sources = [HERE / name for name in args.sources] if args.sources else sorted(HERE.glob("*.txt"))
+    for txt in sources:
+        if not txt.is_file():
+            parser.error(f"source file not found: {txt}")
         build(txt)
