@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>🧮 Statistics for Data Science</h1>
         <p>Build the statistical reasoning that underlies every data science decision: describing data honestly, quantifying uncertainty, testing hypotheses, and knowing when a result is real versus noise.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">22</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">71</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">13</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">42</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">23</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">74</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">13</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">42</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -45,6 +45,7 @@
       <a href="#m20">20 · Bayesian vs Frequentist</a>
       <a href="#m21">21 · Interview Questions</a>
       <a href="#m22">22 · Learning Roadmap</a>
+      <a href="#m23">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -974,6 +975,58 @@ print("required users per arm:", round(n_per_group))</code></pre>
 <ol><li>Pick the stage above that feels shakiest for you right now, and write down one concrete dataset or problem you could use to practice it this week.</li><li>Explain, in your own words and without notes, what a p-value and a confidence interval each mean — if either explanation drifts into "probability the null/true value is correct," that's a signal to revisit Modules 11 and 12.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>I'd describe my statistics learning path as descriptive statistics and probability first, inference and testing second, and experimentation judgment last — because the judgment about when a result is trustworthy only means something once the mechanics underneath it are solid.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m23">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Statistics Cheat Sheet</h2>
+            <p>Summaries · Probability · Inference · Tests · Interpretation</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Describe and Compare Data</h3>
+<table>
+<tr><th>Need</th><th>Reference</th></tr>
+<tr><td>Mean</td><td><code>sum(x) / n</code>; sensitive to extreme values</td></tr>
+<tr><td>Median</td><td>Middle ordered value; robust to extreme values</td></tr>
+<tr><td>IQR</td><td><code>Q3 - Q1</code>; spread of the middle half</td></tr>
+<tr><td>Sample variance</td><td><code>sum((x - mean)^2) / (n - 1)</code></td></tr>
+<tr><td>Sample standard deviation</td><td>Square root of sample variance</td></tr>
+<tr><td>Standard error of the mean</td><td><code>s / sqrt(n)</code>; variability of the estimated mean</td></tr>
+<tr><td>Standardize a value</td><td><code>z = (x - mean) / standard_deviation</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Probability and Inference</h3>
+<table>
+<tr><th>Need</th><th>Reference</th></tr>
+<tr><td>Complement</td><td><code>P(not A) = 1 - P(A)</code></td></tr>
+<tr><td>Conditional probability</td><td><code>P(A given B) = P(A and B) / P(B)</code> when <code>P(B) &gt; 0</code></td></tr>
+<tr><td>Bayes' rule</td><td><code>P(A given B) = P(B given A) P(A) / P(B)</code></td></tr>
+<tr><td>Approximate interval for a mean</td><td><code>estimate +/- critical_value * standard_error</code></td></tr>
+<tr><td>Null hypothesis</td><td>Reference claim evaluated under a specified model</td></tr>
+<tr><td>P-value</td><td>Tail probability of a result at least this extreme, assuming the null and model assumptions</td></tr>
+<tr><td>Power</td><td>Probability a test rejects the null under a specified alternative and design</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Choosing a Test and Checking Assumptions</h3>
+<table>
+<tr><th>Question</th><th>Common starting point</th></tr>
+<tr><td>Two independent numeric groups</td><td>Welch two-sample t-test; inspect distributions and sampling design</td></tr>
+<tr><td>Paired numeric measurements</td><td>Paired t-test on within-pair differences</td></tr>
+<tr><td>Three or more numeric groups</td><td>ANOVA; follow with planned comparisons if appropriate</td></tr>
+<tr><td>Categorical association</td><td>Chi-square test; consider Fisher's exact test for sparse counts</td></tr>
+<tr><td>Monotonic association</td><td>Spearman correlation; Pearson targets linear association</td></tr>
+<tr><td>Before testing</td><td>Check independence, sampling, measurement, missingness, and relevant model assumptions</td></tr>
+<tr><td>Report</td><td>Effect size and uncertainty alongside the test result</td></tr>
+</table>
+<div class="warn-box">Statistical significance is not practical importance. A p-value is not the probability that the null is true, and a confidence interval is not a probability statement about a fixed parameter after observing the data.</div>
+</div>
         </div>
       </div>
     </div>

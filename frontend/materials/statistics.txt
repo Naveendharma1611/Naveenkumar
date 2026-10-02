@@ -678,3 +678,39 @@ If time is limited, prioritize stages 1 through 4 before anything else — they 
 1. Pick the stage above that feels shakiest for you right now, and write down one concrete dataset or problem you could use to practice it this week.
 2. Explain, in your own words and without notes, what a p-value and a confidence interval each mean — if either explanation drifts into "probability the null/true value is correct," that's a signal to revisit Modules 11 and 12.
 @interview I'd describe my statistics learning path as descriptive statistics and probability first, inference and testing second, and experimentation judgment last — because the judgment about when a result is trustworthy only means something once the mechanics underneath it are solid.
+
+@module m23 | 📋 | Quick Reference | Statistics Cheat Sheet | Summaries · Probability · Inference · Tests · Interpretation
+@topic Describe and Compare Data
+@table
+Need | Reference
+Mean | `sum(x) / n`; sensitive to extreme values
+Median | Middle ordered value; robust to extreme values
+IQR | `Q3 - Q1`; spread of the middle half
+Sample variance | `sum((x - mean)^2) / (n - 1)`
+Sample standard deviation | Square root of sample variance
+Standard error of the mean | `s / sqrt(n)`; variability of the estimated mean
+Standardize a value | `z = (x - mean) / standard_deviation`
+@end
+@topic Probability and Inference
+@table
+Need | Reference
+Complement | `P(not A) = 1 - P(A)`
+Conditional probability | `P(A given B) = P(A and B) / P(B)` when `P(B) > 0`
+Bayes' rule | `P(A given B) = P(B given A) P(A) / P(B)`
+Approximate interval for a mean | `estimate +/- critical_value * standard_error`
+Null hypothesis | Reference claim evaluated under a specified model
+P-value | Tail probability of a result at least this extreme, assuming the null and model assumptions
+Power | Probability a test rejects the null under a specified alternative and design
+@end
+@topic Choosing a Test and Checking Assumptions
+@table
+Question | Common starting point
+Two independent numeric groups | Welch two-sample t-test; inspect distributions and sampling design
+Paired numeric measurements | Paired t-test on within-pair differences
+Three or more numeric groups | ANOVA; follow with planned comparisons if appropriate
+Categorical association | Chi-square test; consider Fisher's exact test for sparse counts
+Monotonic association | Spearman correlation; Pearson targets linear association
+Before testing | Check independence, sampling, measurement, missingness, and relevant model assumptions
+Report | Effect size and uncertainty alongside the test result
+@end
+@warn Statistical significance is not practical importance. A p-value is not the probability that the null is true, and a confidence interval is not a probability statement about a fixed parameter after observing the data.
