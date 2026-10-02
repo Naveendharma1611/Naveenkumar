@@ -765,3 +765,39 @@ For a backend/API-engineer role specifically, prioritize in this order: get genu
 2. Take that same project and add one thing from Stage 7 you haven't used before — Redis caching, rate limiting, or a WebSocket endpoint — and explain in writing what problem it solves.
 3. Read FastAPI's own official documentation tutorial section on one topic you're least confident about, and rewrite its example in your own project's style.
 @interview The fastest path to a production-ready FastAPI service is Pydantic and Depends() first since nearly everything else builds on them, testing early rather than bolted on at the end, async-vs-sync treated as a correctness issue rather than a performance toggle, and a real deployed-and-tested project — not just a tutorial finished — as proof you can operate the framework, not just write a hello-world endpoint with it.
+
+@module m22 | 📋 | Quick Reference | FastAPI Cheat Sheet | Routes · Pydantic · Dependencies · Async · Testing
+@topic Routes and Validation
+@table
+Need | Pattern
+Create app | `app = FastAPI()`
+Path operation | `@app.get("/items/{item_id}")`
+Typed path value | `def read_item(item_id: int): ...`
+Query parameter | `def list_items(limit: int = 20): ...`
+Request schema | `class ItemIn(BaseModel): name: str`
+Response schema | `@app.post("/items", response_model=ItemOut)`
+Raise HTTP error | `raise HTTPException(status_code=404, detail="Not found")`
+Set status | `@app.post("/items", status_code=201)`
+@end
+@topic Dependencies, Async, and Security
+@table
+Need | Pattern
+Typed dependency | `Annotated[Session, Depends(get_session)]`
+Router grouping | `router = APIRouter(prefix="/items", tags=["items"])`
+Async endpoint | Use `async def` with awaitable, nonblocking I/O
+Sync endpoint | Use `def` for blocking libraries; FastAPI runs it in a thread pool
+OAuth2 bearer extraction | `OAuth2PasswordBearer(tokenUrl="token")`
+CORS | Configure `CORSMiddleware` with explicit trusted origins
+Settings | Read validated settings from environment or secret storage
+@end
+@topic Testing and Operations
+@table
+Need | Pattern
+Test requests | `client = TestClient(app)`
+Override dependency | `app.dependency_overrides[get_session] = fake_session`
+Reset overrides | `app.dependency_overrides = {}` after the test
+Database transaction | Commit or roll back within a clear unit-of-work boundary
+Application lifecycle | Use a lifespan context for startup/shutdown resources
+Production | Validate config, restrict CORS, set proxy/host policy, expose health and logs
+@end
+@warn An `async def` endpoint must not call blocking I/O directly on the event loop. Use an async library or a synchronous route for blocking libraries, and enforce authorization on every protected operation.

@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>⚡ FastAPI Zero to Production</h1>
         <p>Build fast, type-safe, self-documenting APIs in 21 modules: path operations, Pydantic validation, dependency injection, auth, databases, testing and deployment.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">21</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">67</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">40</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">41</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">22</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">70</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">40</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">41</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -44,6 +44,7 @@
       <a href="#m19">19 · Deployment</a>
       <a href="#m20">20 · Interview Questions</a>
       <a href="#m21">21 · Learning Roadmap</a>
+      <a href="#m22">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -1101,6 +1102,58 @@ CMD ["gunicorn", "main:app", "--workers", "4", "--worker-class", "uvicorn.worker
 <ol><li>Pick a small idea (a bookmarks API, a habit tracker, a URL shortener) and build it end to end: models, auth, a real database, tests, and a Dockerfile — don't stop at "it works on my machine with <code>--reload</code>".</li><li>Take that same project and add one thing from Stage 7 you haven't used before — Redis caching, rate limiting, or a WebSocket endpoint — and explain in writing what problem it solves.</li><li>Read FastAPI's own official documentation tutorial section on one topic you're least confident about, and rewrite its example in your own project's style.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>The fastest path to a production-ready FastAPI service is Pydantic and Depends() first since nearly everything else builds on them, testing early rather than bolted on at the end, async-vs-sync treated as a correctness issue rather than a performance toggle, and a real deployed-and-tested project — not just a tutorial finished — as proof you can operate the framework, not just write a hello-world endpoint with it.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m22">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>FastAPI Cheat Sheet</h2>
+            <p>Routes · Pydantic · Dependencies · Async · Testing</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Routes and Validation</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Create app</td><td><code>app = FastAPI()</code></td></tr>
+<tr><td>Path operation</td><td><code>@app.get("/items/{item_id}")</code></td></tr>
+<tr><td>Typed path value</td><td><code>def read_item(item_id: int): ...</code></td></tr>
+<tr><td>Query parameter</td><td><code>def list_items(limit: int = 20): ...</code></td></tr>
+<tr><td>Request schema</td><td><code>class ItemIn(BaseModel): name: str</code></td></tr>
+<tr><td>Response schema</td><td><code>@app.post("/items", response_model=ItemOut)</code></td></tr>
+<tr><td>Raise HTTP error</td><td><code>raise HTTPException(status_code=404, detail="Not found")</code></td></tr>
+<tr><td>Set status</td><td><code>@app.post("/items", status_code=201)</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Dependencies, Async, and Security</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Typed dependency</td><td><code>Annotated[Session, Depends(get_session)]</code></td></tr>
+<tr><td>Router grouping</td><td><code>router = APIRouter(prefix="/items", tags=["items"])</code></td></tr>
+<tr><td>Async endpoint</td><td>Use <code>async def</code> with awaitable, nonblocking I/O</td></tr>
+<tr><td>Sync endpoint</td><td>Use <code>def</code> for blocking libraries; FastAPI runs it in a thread pool</td></tr>
+<tr><td>OAuth2 bearer extraction</td><td><code>OAuth2PasswordBearer(tokenUrl="token")</code></td></tr>
+<tr><td>CORS</td><td>Configure <code>CORSMiddleware</code> with explicit trusted origins</td></tr>
+<tr><td>Settings</td><td>Read validated settings from environment or secret storage</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Testing and Operations</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Test requests</td><td><code>client = TestClient(app)</code></td></tr>
+<tr><td>Override dependency</td><td><code>app.dependency_overrides[get_session] = fake_session</code></td></tr>
+<tr><td>Reset overrides</td><td><code>app.dependency_overrides = {}</code> after the test</td></tr>
+<tr><td>Database transaction</td><td>Commit or roll back within a clear unit-of-work boundary</td></tr>
+<tr><td>Application lifecycle</td><td>Use a lifespan context for startup/shutdown resources</td></tr>
+<tr><td>Production</td><td>Validate config, restrict CORS, set proxy/host policy, expose health and logs</td></tr>
+</table>
+<div class="warn-box">An <code>async def</code> endpoint must not call blocking I/O directly on the event loop. Use an async library or a synchronous route for blocking libraries, and enforce authorization on every protected operation.</div>
+</div>
         </div>
       </div>
     </div>
