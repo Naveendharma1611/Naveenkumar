@@ -476,3 +476,41 @@ If the target role is "AI engineer" rather than "ML researcher," the highest-lev
 2. Pick one specialization (NLP or CV) and justify it based on a specific target job description.
 3. Design a small end-to-end project that combines RAG and agentic tool use, and list what you'd evaluate before calling it production-ready.
 @interview For an AI engineer role, the fastest useful path is solid programming and ML/DL foundations first, then deliberately specializing in generative AI, RAG and agentic tool-use patterns — since that's where 2026 hiring demand is concentrated — while treating evaluation, bias auditing and safety practices as core engineering skills rather than an afterthought.
+
+@module m21 | 📋 | Quick Reference | AI Cheat Sheet | Search · Learning · Generative AI · Agents · Evaluation · Safety
+@topic Frame an AI Problem
+@table
+Question | Decide
+Goal | What user or organizational decision should improve?
+Baseline | Can a deterministic rule or simpler model solve it adequately?
+Data | What is the provenance, permission, coverage, and quality of the data?
+Risk | Who can be harmed by false positives, false negatives, or automation?
+Constraint | What are the latency, cost, privacy, reliability, and review requirements?
+@end
+@topic Choose an Approach
+@table
+Need | Starting point
+Known rules and stable logic | Deterministic program or search method
+Labeled prediction | Supervised machine learning with a baseline and held-out evaluation
+Unlabeled structure | Clustering, dimensionality reduction, or descriptive analysis
+Language generation | Foundation model with constrained instructions and output validation
+Grounded answers over private documents | Retrieval-augmented generation with source references
+Multi-step external actions | Narrow tools, explicit permissions, approval gates, and action logs
+@end
+@topic Build and Evaluate a Generative AI Feature
+@table
+Layer | Checks
+Prompt | State task, context, constraints, and expected output format
+Retrieval | Measure relevance, coverage, freshness, and access-control filtering
+Generation | Test correctness, groundedness, refusal behavior, and format validity
+System | Measure latency, cost, availability, retries, and fallback behavior
+Human review | Define which actions require approval or escalation
+Release | Use representative test cases, monitoring, incident response, and rollback
+@end
+@topic Responsible AI Safeguards
+- Minimize sensitive data and enforce authorization before sending context to a model.
+- Treat retrieved content and model output as untrusted input; validate before rendering or acting.
+- Test quality and error rates across relevant user groups and high-impact scenarios.
+- Make uncertainty, limitations, and human appeal paths visible where decisions affect people.
+- Prefer reversible, least-privilege actions; require confirmation for consequential side effects.
+@warn A fluent answer is not evidence that it is correct, grounded, unbiased, or safe to act on. Evaluate the whole system, including retrieval, tools, permissions, and human review.

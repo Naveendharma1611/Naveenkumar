@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>🤖 Artificial Intelligence Complete Study Material</h1>
         <p>Understand AI as a field: search and reasoning, knowledge representation, NLP, computer vision, reinforcement learning, generative AI and LLM agents, and the ethics and safety questions that come with deploying them.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">20</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">70</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">5</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">39</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">21</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">74</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">5</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">39</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -43,6 +43,7 @@
       <a href="#m18">18 · Future of AI</a>
       <a href="#m19">19 · Interview Prep</a>
       <a href="#m20">20 · Roadmap</a>
+      <a href="#m21">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -855,6 +856,58 @@ def run_agent(goal, tools, max_steps=6):
 <ol><li>Build a 12-week self-study plan mapping each roadmap stage to specific resources or projects.</li><li>Pick one specialization (NLP or CV) and justify it based on a specific target job description.</li><li>Design a small end-to-end project that combines RAG and agentic tool use, and list what you'd evaluate before calling it production-ready.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>For an AI engineer role, the fastest useful path is solid programming and ML/DL foundations first, then deliberately specializing in generative AI, RAG and agentic tool-use patterns — since that's where 2026 hiring demand is concentrated — while treating evaluation, bias auditing and safety practices as core engineering skills rather than an afterthought.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m21">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>AI Cheat Sheet</h2>
+            <p>Search · Learning · Generative AI · Agents · Evaluation · Safety</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Frame an AI Problem</h3>
+<table>
+<tr><th>Question</th><th>Decide</th></tr>
+<tr><td>Goal</td><td>What user or organizational decision should improve?</td></tr>
+<tr><td>Baseline</td><td>Can a deterministic rule or simpler model solve it adequately?</td></tr>
+<tr><td>Data</td><td>What is the provenance, permission, coverage, and quality of the data?</td></tr>
+<tr><td>Risk</td><td>Who can be harmed by false positives, false negatives, or automation?</td></tr>
+<tr><td>Constraint</td><td>What are the latency, cost, privacy, reliability, and review requirements?</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Choose an Approach</h3>
+<table>
+<tr><th>Need</th><th>Starting point</th></tr>
+<tr><td>Known rules and stable logic</td><td>Deterministic program or search method</td></tr>
+<tr><td>Labeled prediction</td><td>Supervised machine learning with a baseline and held-out evaluation</td></tr>
+<tr><td>Unlabeled structure</td><td>Clustering, dimensionality reduction, or descriptive analysis</td></tr>
+<tr><td>Language generation</td><td>Foundation model with constrained instructions and output validation</td></tr>
+<tr><td>Grounded answers over private documents</td><td>Retrieval-augmented generation with source references</td></tr>
+<tr><td>Multi-step external actions</td><td>Narrow tools, explicit permissions, approval gates, and action logs</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Build and Evaluate a Generative AI Feature</h3>
+<table>
+<tr><th>Layer</th><th>Checks</th></tr>
+<tr><td>Prompt</td><td>State task, context, constraints, and expected output format</td></tr>
+<tr><td>Retrieval</td><td>Measure relevance, coverage, freshness, and access-control filtering</td></tr>
+<tr><td>Generation</td><td>Test correctness, groundedness, refusal behavior, and format validity</td></tr>
+<tr><td>System</td><td>Measure latency, cost, availability, retries, and fallback behavior</td></tr>
+<tr><td>Human review</td><td>Define which actions require approval or escalation</td></tr>
+<tr><td>Release</td><td>Use representative test cases, monitoring, incident response, and rollback</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Responsible AI Safeguards</h3>
+<ul><li>Minimize sensitive data and enforce authorization before sending context to a model.</li><li>Treat retrieved content and model output as untrusted input; validate before rendering or acting.</li><li>Test quality and error rates across relevant user groups and high-impact scenarios.</li><li>Make uncertainty, limitations, and human appeal paths visible where decisions affect people.</li><li>Prefer reversible, least-privilege actions; require confirmation for consequential side effects.</li></ul>
+<div class="warn-box">A fluent answer is not evidence that it is correct, grounded, unbiased, or safe to act on. Evaluate the whole system, including retrieval, tools, permissions, and human review.</div>
+</div>
         </div>
       </div>
     </div>
