@@ -72,6 +72,10 @@ export const NOTES = {
     href: "python-material.html", title: "🐍 Python Complete Study Material",
     text: "All of Python in 20 modules: basics, data types, loops, functions, OOP, file handling and exceptions, with code examples and interview tips.",
   },
+  javascript: {
+    href: "javascript-material.html", title: "🟨 JavaScript Complete Study Material",
+    text: "Modern JavaScript from language fundamentals through functions, objects, modules, asynchronous code, browser APIs, testing, and interview preparation.",
+  },
   c: {
     href: "c-material.html", title: "💻 C Programming Complete Study Material",
     text: "Beginner to advanced C in 23 modules: operators, loops, functions, arrays, strings, pointers, dynamic memory, structures, files and more, with examples and practice questions.",

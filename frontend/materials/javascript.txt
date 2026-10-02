@@ -1,0 +1,420 @@
+@page 🟨 JavaScript Complete Study Material
+@intro Learn modern JavaScript from values and functions through objects, modules, asynchronous programming, browser APIs, testing, and interview preparation.
+
+@module m1 | 🟨 | 1 · Foundations | Module 1 — JavaScript Foundations | Runtime environments · Scripts · Strict mode · Developer tools
+@topic What JavaScript Is
+JavaScript is a dynamic, high-level language standardized as ECMAScript. Browsers provide JavaScript engines and web APIs; Node.js provides a JavaScript runtime with server-side APIs. The language and its host environment are related but not the same thing.
+@table
+Term | Meaning
+ECMAScript | The language specification implemented by JavaScript engines
+Browser API | Host feature such as the DOM, timers, or `fetch`
+Node.js | Server-side JavaScript runtime with its own APIs
+Console | Interactive environment for trying expressions and inspecting values
+@end
+@topic Running a Script
+Open the browser DevTools console to try expressions, or place code in a `.js` file and load it from an HTML page. Node.js can run a script with `node app.js`.
+@code javascript
+"use strict";
+
+const message = "Hello, JavaScript!";
+console.log(message);
+@end
+@info ES modules are automatically strict-mode code. Strict mode helps catch some mistakes but does not turn JavaScript into a statically typed language.
+@practice
+1. Name one JavaScript runtime outside a browser.
+2. What organization maintains the ECMAScript language standard?
+3. Is `fetch` part of the JavaScript language specification or a host-provided API?
+
+@module m2 | 🧮 | 2 · Values | Module 2 — Values, Types & Operators | Primitives · References · Coercion · Equality
+@topic Primitive Values
+JavaScript primitive types are `undefined`, `null`, `boolean`, `number`, `bigint`, `string`, and `symbol`. `NaN` is a special numeric value; test it with `Number.isNaN(value)` rather than equality.
+@table
+Type | Example | Key detail
+string | `"hello"` | Immutable sequence of UTF-16 code units
+number | `42`, `3.14`, `NaN` | IEEE 754 double-precision value
+bigint | `9007199254740993n` | Integer outside Number's safe range
+boolean | `true`, `false` | Logical value
+undefined | `undefined` | Missing or unassigned value
+null | `null` | Intentional absence of an object value
+symbol | `Symbol("id")` | Unique primitive value often used as a key
+@end
+@topic Bindings, Equality and Coercion
+Use `const` by default when a binding will not be reassigned and `let` when it will. `const` protects the binding, not the contents of an object. Prefer `===` and `!==` to avoid most implicit type coercion.
+@code javascript
+const profile = { name: "Mina" };
+profile.name = "Ari"; // Allowed: the object can change.
+
+console.log(5 === "5"); // false
+console.log(Number.isNaN(NaN)); // true
+@end
+@warn `typeof null` returns `"object"` for historical reasons. Test null directly with `value === null`.
+@practice
+1. Can a property of an object bound with `const` be changed?
+2. Which equality operator avoids implicit type coercion?
+3. What does `Number.isNaN(NaN)` return?
+
+@module m3 | 🔀 | 3 · Control flow | Module 3 — Conditions, Loops & Iteration | Truthiness · for · while · break · continue
+@topic Conditions and Truthiness
+`if`, `else if`, and `else` select a branch. Falsey values include `false`, `0`, `-0`, `0n`, `""`, `null`, `undefined`, and `NaN`; empty arrays and objects are truthy.
+@code javascript
+const username = "";
+if (username) {
+  console.log(`Welcome, ${username}`);
+} else {
+  console.log("Please sign in");
+}
+@end
+@topic Looping and Iteration
+Use `for...of` to iterate over values in an iterable such as an array or string. `for...in` iterates over enumerable string keys and is usually not the right way to traverse an array's values.
+@code javascript
+const scores = [82, 91, 76];
+for (const [index, score] of scores.entries()) {
+  console.log(index, score);
+}
+@end
+`break` exits the nearest loop and `continue` skips to the next iteration. Prefer array iteration methods when they make a transformation clearer.
+@practice
+1. Is an empty array truthy or falsey in JavaScript?
+2. Which loop form iterates directly over array values?
+3. What does `continue` do in a loop?
+
+@module m4 | 🔤 | 4 · Strings & arrays | Module 4 — Strings, Arrays & Useful Methods | Template literals · Immutability · map · filter · reduce
+@topic Strings and Template Literals
+Strings are immutable. Template literals use backticks and support interpolation with `${expression}`. String methods such as `trim`, `includes`, and `slice` return values without modifying the original string.
+@code javascript
+const firstName = "Sam";
+const greeting = `Hello, ${firstName}!`;
+const clean = "  learn JS  ".trim();
+@end
+@topic Array Transformations
+`map` creates a transformed array, `filter` keeps matching elements, and `reduce` combines values. These methods do not mutate the original array unless the callback explicitly mutates something.
+@code javascript
+const prices = [5, 12, 20];
+const discounted = prices.map((price) => price * 0.9);
+const large = prices.filter((price) => price >= 10);
+const total = prices.reduce((sum, price) => sum + price, 0);
+@end
+@tip Use `find` when you need the first matching value, and `some` or `every` when you need a boolean answer.
+@practice
+1. Which array method returns a new array containing transformed elements?
+2. Which method returns the first matching element?
+3. Do strings change in place when `trim()` is called?
+
+@module m5 | 🗂️ | 5 · Objects | Module 5 — Objects, Destructuring, Map & Set | Properties · Spread · References · Collection choices
+@topic Objects and Destructuring
+Objects store keyed properties. Dot notation is convenient for known identifier keys; bracket notation handles dynamic keys. Destructuring extracts values into local bindings.
+@code javascript
+const user = { name: "Lee", role: "editor" };
+const { name, role } = user;
+const key = "role";
+console.log(user[key], name, role);
+@end
+@topic Spread and Copies
+Object and array spread make shallow copies. Nested objects remain shared references, so use a deliberate deep-copy strategy only when nested independence is required.
+@code javascript
+const original = { name: "Lee", settings: { theme: "light" } };
+const copy = { ...original, name: "Kai" };
+copy.settings === original.settings; // true
+@end
+@topic Map and Set
+Use `Map` for key-value collections that need keys of any type or frequent updates. Use `Set` to store unique values. Plain objects are often a good fit for records with known string-keyed fields.
+@code javascript
+const ids = new Set([2, 2, 5]);
+const labels = new Map([[1, "one"], [2, "two"]]);
+console.log(ids.size, labels.get(2));
+@end
+@practice
+1. Does object spread make a deep copy of nested objects?
+2. Which collection is designed to hold unique values?
+3. How do you access a property using the key stored in a variable named `key`?
+
+@module m6 | 🧩 | 6 · Functions | Module 6 — Functions, Parameters & Scope | Declarations · Arrow functions · Defaults · Rest parameters
+@topic Function Forms
+Function declarations are hoisted with their function body. Function expressions and arrow functions are values assigned to bindings. Arrow functions use lexical `this` and do not have their own `arguments` object.
+@code javascript
+function add(a, b) {
+  return a + b;
+}
+
+const multiply = (a, b) => a * b;
+@end
+@topic Parameters and Return Values
+JavaScript functions return `undefined` when no value is returned explicitly. Default parameters apply when an argument is `undefined`, not when it is `null`. Rest parameters collect remaining arguments into an array.
+@code javascript
+function greet(name = "friend", ...extras) {
+  return `Hello, ${name}! ${extras.join(" ")}`;
+}
+@end
+@topic Scope and Closures
+Lexical scope determines where names can be accessed. A closure is a function together with access to variables from its surrounding lexical scope, even after that outer function has finished.
+@code javascript
+function makeCounter() {
+  let count = 0;
+  return () => ++count;
+}
+
+const nextCount = makeCounter();
+console.log(nextCount(), nextCount()); // 1 2
+@end
+@practice
+1. What value does a function return by default?
+2. Do arrow functions have their own `this`?
+3. What is one key property of a closure?
+
+@module m7 | 🏛️ | 7 · Objects & classes | Module 7 — Prototypes, `this` & Classes | Method calls · Inheritance · Composition
+@topic `this` and Method Calls
+For an ordinary function, `this` is generally determined by how the function is called. A method call such as `object.method()` supplies `object` as `this`; extracting the method can lose that receiver. Arrow functions capture `this` from their surrounding scope.
+@code javascript
+const account = {
+  balance: 10,
+  showBalance() {
+    return this.balance;
+  },
+};
+console.log(account.showBalance());
+@end
+@topic Prototypes and Classes
+JavaScript objects can delegate property lookup through a prototype chain. `class` syntax provides a clearer way to define constructors, methods, and inheritance over that prototype system.
+@code javascript
+class SavingsAccount {
+  constructor(owner, balance = 0) {
+    this.owner = owner;
+    this.balance = balance;
+  }
+
+  deposit(amount) {
+    this.balance += amount;
+  }
+}
+@end
+Favor composition when objects collaborate without a genuine substitutable “is-a” relationship. Use inheritance when a subtype can honor the base type's contract.
+@practice
+1. What usually determines `this` for an ordinary function call?
+2. What mechanism does JavaScript use for delegated property lookup?
+3. When is composition often preferable to inheritance?
+
+@module m8 | 📦 | 8 · Modules | Module 8 — ES Modules & Project Structure | import · export · Scope · Reuse
+@topic Named and Default Exports
+ES modules make dependencies explicit. A module can export named bindings and at most one default export. Imports are read-only live bindings to the exported names.
+@code javascript
+// math.js
+export const double = (value) => value * 2;
+export default function square(value) {
+  return value * value;
+}
+@end
+@code javascript
+// app.js
+import square, { double } from "./math.js";
+console.log(double(3), square(3));
+@end
+@topic Module Boundaries
+In browsers, load a module with `<script type="module">`. Modules have their own top-level scope and are strict by default. Node.js supports ES modules when configured using supported extensions or package settings.
+@info Keep modules cohesive: export a small, intentional API and avoid circular dependencies when a simpler dependency direction is possible.
+@practice
+1. Can an ES module have more than one default export?
+2. What script attribute value loads a browser JavaScript module?
+3. Are ES modules strict mode by default?
+
+@module m9 | 🛠️ | 9 · Errors | Module 9 — Errors, Debugging & Defensive Code | try · catch · finally · throw · DevTools
+@topic Handling Errors
+Use `try...catch` for operations that can fail and where the program can take a useful recovery action. `finally` runs when control leaves the `try`/`catch`, making it suitable for cleanup.
+@code javascript
+try {
+  const data = JSON.parse('{"ready": true}');
+  console.log(data.ready);
+} catch (error) {
+  console.error("Invalid JSON", error);
+}
+@end
+@topic Throwing and Debugging
+Throw an `Error` with a clear message when a function cannot fulfill its contract. Use browser breakpoints, call stacks, network inspection, and small reproducible cases to find the source of a defect.
+@code javascript
+function divide(numerator, denominator) {
+  if (denominator === 0) {
+    throw new Error("denominator must not be zero");
+  }
+  return numerator / denominator;
+}
+@end
+@warn Do not silently catch and discard errors. Log, handle, or rethrow them with enough context to diagnose the failure.
+@practice
+1. Which block runs for cleanup after a `try` statement completes?
+2. What built-in constructor is commonly used to create an error?
+3. Name one browser DevTools feature useful for locating a bug.
+
+@module m10 | ⏳ | 10 · Async JavaScript | Module 10 — Promises, `async`/`await` & the Event Loop | Pending work · Microtasks · Concurrency
+@topic Promises
+A promise represents the eventual result of an asynchronous operation. It can be pending, fulfilled, or rejected. Use `.then` for fulfillment, `.catch` for rejection, and `.finally` for completion behavior.
+@code javascript
+fetch("/api/items")
+  .then((response) => {
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  })
+  .then((items) => console.log(items))
+  .catch((error) => console.error(error));
+@end
+@topic `async` and `await`
+An `async` function always returns a promise. `await` pauses that function until a promise settles, without blocking the JavaScript thread. Use `try...catch` around awaited operations when handling their rejection.
+@code javascript
+async function loadItems() {
+  try {
+    const response = await fetch("/api/items");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Could not load items", error);
+    throw error;
+  }
+}
+@end
+@topic Concurrent Work and Scheduling
+`Promise.all` waits for all inputs to fulfill and rejects if one rejects. In browsers, promise callbacks use the microtask queue, which is generally processed before the next timer task after the current synchronous work completes.
+@practice
+1. What does every `async` function return?
+2. Which promise combinator rejects when any input promise rejects?
+3. Does `await` block the entire JavaScript thread?
+
+@module m11 | 🖱️ | 11 · Browser DOM | Module 11 — DOM, Events & Forms | Querying · Updating · Delegation · Accessibility
+@topic Selecting and Updating Elements
+The DOM is a browser API representing the document as objects. Select elements with methods such as `querySelector`. Prefer `textContent` for plain text instead of interpreting untrusted strings as HTML.
+@code javascript
+const heading = document.querySelector("h1");
+if (heading) {
+  heading.textContent = "A safer heading update";
+}
+@end
+@topic Events and Delegation
+`addEventListener` registers an event handler. Event bubbling lets a parent handle events from matching descendants, which can reduce listeners for dynamic lists. Use semantic HTML controls and labels to keep interactions accessible.
+@code javascript
+document.querySelector("#tasks")?.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-action]");
+  if (!button) return;
+  console.log(button.dataset.action);
+});
+@end
+@practice
+1. Which DOM property sets an element's text without parsing it as HTML?
+2. What event behavior allows a parent to observe descendant events?
+3. Which method registers a DOM event listener?
+
+@module m12 | 🌐 | 12 · Web data | Module 12 — Fetch, JSON, Storage & Security | HTTP responses · Serialization · Safe rendering
+@topic Fetching Data
+`fetch` returns a promise that normally fulfills with a `Response`, including for HTTP error statuses such as 404. Check `response.ok` when a non-success status should be treated as an error.
+@code javascript
+async function getProfile() {
+  const response = await fetch("/api/profile");
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status}`);
+  }
+  return response.json();
+}
+@end
+@topic JSON and Browser Storage
+`JSON.stringify` converts supported JavaScript values to JSON text; `JSON.parse` converts JSON text back to values. `localStorage` stores string key-value pairs for an origin and is accessible to scripts running on that origin.
+@code javascript
+const settings = { theme: "light" };
+localStorage.setItem("settings", JSON.stringify(settings));
+const saved = JSON.parse(localStorage.getItem("settings") ?? "{}");
+@end
+@warn Never store secrets in browser storage. Treat stored data and network responses as untrusted; avoid passing untrusted text to `innerHTML`.
+@practice
+1. Does `fetch` reject automatically for an HTTP 404 response?
+2. What type of value does `localStorage.setItem` store?
+3. Which is safer for rendering untrusted plain text: `textContent` or `innerHTML`?
+
+@module m13 | 🧪 | 13 · Quality | Module 13 — Testing, Tooling & Maintainable JavaScript | Unit tests · Linting · Bundling · Code quality
+@topic Unit Tests
+Unit tests check behavior in isolation with deterministic inputs and expected outcomes. Frameworks such as Vitest and Jest provide test discovery, assertions, and mocking; browser-level behavior may need integration or end-to-end tests.
+@code javascript
+function clamp(value, minimum, maximum) {
+  return Math.min(Math.max(value, minimum), maximum);
+}
+
+test("clamp limits a value to the range", () => {
+  expect(clamp(12, 0, 10)).toBe(10);
+});
+@end
+@topic Tooling and Maintainability
+Use a formatter and linter to make code consistent and surface common mistakes. A bundler can transform and package source for deployment, but modern browsers can also load native ES modules directly.
+@tip Keep functions focused, handle rejected promises, validate external data at boundaries, and test normal, boundary, and failure cases.
+@practice
+1. What behavior should a unit test verify?
+2. Name one common JavaScript test framework.
+3. What is one advantage of linting?
+
+@module m14 | 📋 | Quick Reference | JavaScript Cheat Sheet | Bindings · Collections · Functions · Async · DOM
+@topic Values and Control Flow
+@table
+Need | Pattern
+Immutable binding | `const name = "Kai";`
+Reassigned binding | `let count = 0; count += 1;`
+Strict equality | `left === right`
+Nullish default | `value ?? fallback`
+Optional access | `user.profile?.name`
+Conditional | `if (ready) { ... } else { ... }`
+Loop values | `for (const item of items) { ... }`
+@end
+@topic Collections and Functions
+@table
+Need | Pattern
+Transform array | `items.map((item) => transform(item))`
+Filter array | `items.filter((item) => matches(item))`
+Find one | `items.find((item) => matches(item))`
+Unique values | `new Set(values)`
+Key-value collection | `new Map([[key, value]])`
+Arrow function | `const add = (a, b) => a + b;`
+Rest parameters | `function f(...args) { ... }`
+@end
+@topic Async and Browser APIs
+@table
+Need | Pattern
+Async function | `async function load() { ... }`
+Await a promise | `const value = await operation();`
+Handle failure | `try { ... } catch (error) { ... }`
+Check HTTP status | `if (!response.ok) throw new Error("Request failed");`
+Safe text update | `element.textContent = text;`
+JSON serialization | `JSON.stringify(value)` / `JSON.parse(text)`
+@end
+@warn Prefer `===`, check `response.ok`, handle promise rejection, and do not render untrusted strings with `innerHTML`.
+
+@module m15 | 🎤 | Interview Prep | JavaScript Interview Questions & Answers | Core language · Functions · Objects · Async · Browser APIs
+@topic Q: What is the difference between `var`, `let`, and `const`?
+`var` is function-scoped and can be redeclared; `let` and `const` are block-scoped and have a temporal dead zone before initialization. `const` prevents reassignment of its binding, but an object or array assigned to it can still be mutated.
+@topic Q: What is the difference between `==` and `===`?
+`==` may coerce operands before comparison, while `===` compares without that coercion. Prefer strict equality so comparisons are more predictable.
+@topic Q: What are JavaScript's primitive types?
+The primitive types are `undefined`, `null`, `boolean`, `number`, `bigint`, `string`, and `symbol`. Objects, including arrays and functions, are non-primitive values.
+@topic Q: What is a closure?
+A closure is a function that retains access to its lexical environment. It can continue using variables from an outer function after that outer function has returned.
+@topic Q: How does `this` differ in arrow functions and ordinary functions?
+An ordinary function's `this` is generally set by its call form. An arrow function captures `this` lexically from its surrounding scope and cannot be rebound with `call` or `bind`.
+@topic Q: What is the prototype chain?
+When a property is not found directly on an object, JavaScript can look for it on that object's prototype and continue up the prototype chain. This is the basis for delegation and class method sharing.
+@topic Q: What is the difference between `Map` and a plain object?
+`Map` accepts keys of any value type, exposes size directly, and is designed for dynamic key-value collections. A plain object is often clearer for records with known string or symbol property names.
+@topic Q: What is the difference between `map` and `forEach`?
+`map` returns a new array containing callback results. `forEach` runs a callback for each element and returns `undefined`; use it for side effects rather than a transformation.
+@topic Q: What is a promise?
+A promise represents an asynchronous operation's eventual fulfillment or rejection. Its state moves from pending to fulfilled or rejected and does not change afterward.
+@topic Q: What does an `async` function return?
+An `async` function always returns a promise. Returning a plain value fulfills that promise with the value; throwing an error rejects it.
+@topic Q: Does `fetch` reject for HTTP error statuses?
+Not usually. It rejects for network-level failures, but fulfills with a `Response` for statuses such as 404; check `response.ok` or `response.status` explicitly.
+@topic Q: What is the event loop?
+The event loop coordinates execution of synchronous JavaScript and queued asynchronous callbacks. In browsers, microtasks such as promise reactions are generally processed after the current stack and before the next task.
+@topic Q: What is event delegation?
+Event delegation attaches a handler to a common ancestor and uses bubbling to handle events from matching descendants. It is useful for dynamic lists and can reduce the number of listeners.
+@topic Q: What is the difference between `null` and `undefined`?
+`undefined` commonly indicates a missing or not-yet-assigned value; `null` is an explicit absence value. Their exact use depends on the API contract, so choose and document one consistently.
+@topic Q: What does object spread do, and what is its limitation?
+Object spread copies enumerable own properties into a new object. It creates a shallow copy, so nested objects remain shared references.
+@topic Q: What is the difference between ES modules and classic scripts?
+ES modules use explicit `import` and `export`, have their own top-level scope, and run in strict mode. Classic scripts share more global scope and use different loading and execution rules.
+@topic Q: How can untrusted text be safely placed into a DOM element?
+Assign it to `textContent` so it is treated as text rather than parsed as markup. Avoid interpolating untrusted data into `innerHTML`.
+@topic Q: What is the difference between `Promise.all` and `Promise.allSettled`?
+`Promise.all` fulfills when every input fulfills and rejects as soon as an input rejects. `Promise.allSettled` waits for all inputs and returns each one's fulfilled or rejected result.
+@topic Q: How do you test an asynchronous function?
+Await its returned promise in the test, then assert on the fulfilled value or expected rejection. Also test error cases and avoid timing assumptions when a controllable promise or mock can be used.
