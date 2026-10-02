@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>🌐 HTML Complete Study Material</h1>
         <p>HTML end to end — from your first page to forms, semantic HTML, SEO, accessibility, HTML5 APIs, responsive design and publishing, with examples and practice questions.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">19</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">67</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">43</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">82</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">21</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">96</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">43</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">86</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -42,6 +42,8 @@
       <a href="#m17">17 · Responsive</a>
       <a href="#m18">18 · Best Practices</a>
       <a href="#m19">19 · Projects</a>
+      <a href="#m20">20 · Interview Prep</a>
+      <a href="#m21">21 · Cheat Sheet</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -1263,6 +1265,222 @@
 <ol><li>Finish the portfolio: add three projects, a skills list and a downloadable resume.</li><li>Build the student registration form with at least 10 different fields and validation.</li><li>Build a responsive landing page and score 90+ in Lighthouse.</li><li>Publish one project online and add the link to your portfolio.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>An end-to-end HTML project combines semantic structure, accessible forms and media, a proper head for SEO, responsive design, validation and deployment.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m20">
+        <div class="module-header">
+          <span class="module-emoji">🎤</span>
+          <div class="module-title-group">
+            <h2>Module 20 — HTML Interview Questions</h2>
+            <p>Semantics · Accessibility · Forms · Performance</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>🧩 Q: Why does semantic HTML matter more than just wrapping everything in <code>&lt;div&gt;</code>s?</h3>
+<p>Semantic elements like <code>&lt;nav&gt;</code>, <code>&lt;article&gt;</code>, and <code>&lt;button&gt;</code> tell the browser, screen readers, and search engines what a piece of content actually is, not just how it should look. A screen reader announces a <code>&lt;button&gt;</code> as an interactive control automatically, while a <code>&lt;div onclick="..."&gt;</code> gets no such treatment unless you bolt on <code>role="button"</code> and keyboard handling yourself. The trade-off is that semantics take a bit more upfront thought about document structure, but you get accessibility, SEO, and maintainability essentially for free instead of reimplementing them later with ARIA and JavaScript.</p>
+</div>
+<div class="topic">
+<h3>🔲 Q: What's the difference between <code>&lt;div&gt;</code> and <code>&lt;span&gt;</code>?</h3>
+<p><code>&lt;div&gt;</code> is a block-level generic container used to group larger chunks of content, like a sidebar or a card, and <code>&lt;span&gt;</code> is an inline generic container used to wrap a small piece of text inside a sentence, like highlighting one word. Because <code>&lt;div&gt;</code> is block-level it stretches to fill the available width and forces line breaks before and after it, while <code>&lt;span&gt;</code> only takes up as much width as its content and sits inline with surrounding text. Neither carries semantic meaning, so I reach for them only when no existing semantic tag fits — <code>&lt;span&gt;</code> for styling a word, <code>&lt;div&gt;</code> for a layout wrapper.</p>
+</div>
+<div class="topic">
+<h3>📐 Q: What's the difference between block-level and inline elements?</h3>
+<p>Block-level elements, like <code>&lt;p&gt;</code>, <code>&lt;div&gt;</code>, and <code>&lt;h1&gt;</code>, start on a new line and stretch to fill their container's width, so you can set width, height, and vertical margin on them directly. Inline elements, like <code>&lt;a&gt;</code>, <code>&lt;span&gt;</code>, and <code>&lt;strong&gt;</code>, flow within surrounding text and ignore top/bottom margin and explicit width/height. CSS's <code>display</code> property can override this — <code>display: inline-block</code> is the common middle ground when you need inline flow but block-style sizing, such as padded nav links.</p>
+</div>
+<div class="topic">
+<h3>🏷️ Q: What's the difference between <code>id</code> and <code>class</code>?</h3>
+<p><code>id</code> uniquely identifies a single element on the page — only one element should ever carry a given id — and it's used for in-page anchors, label/input pairing via <code>for</code>, and JavaScript hooks like <code>getElementById</code>. <code>class</code> is meant to be reused across many elements that share styling or behavior, and one element can carry multiple classes at once. In practice I use classes for styling because they scale better with reusable components, and reserve ids for things that are genuinely singular, like a skip-link target.</p>
+</div>
+<div class="topic">
+<h3>📄 Q: What does <code>&lt;!DOCTYPE html&gt;</code> actually do?</h3>
+<p>It tells the browser to render the page in standards mode rather than quirks mode, a legacy rendering mode that mimics inconsistent browser behavior from the 1990s. Without it, browsers fall back to quirks mode, where box-model calculations and CSS parsing behave differently across browsers. It has to be the very first line of the document — any content above it, even a comment, can trigger quirks mode in some browsers.</p>
+</div>
+<div class="topic">
+<h3>🗂️ Q: What's the difference between <code>&lt;head&gt;</code> and <code>&lt;body&gt;</code>?</h3>
+<p><code>&lt;head&gt;</code> holds metadata the browser needs before it can correctly render or describe the page — title, character encoding, linked stylesheets, meta tags — none of which is visible content. <code>&lt;body&gt;</code> holds everything the user actually sees: text, images, forms, and scripts that manipulate the visible page. A common mistake is putting visible markup in <code>&lt;head&gt;</code>; browsers often try to recover by relocating it into <code>&lt;body&gt;</code>, but you shouldn't rely on that error correction.</p>
+</div>
+<div class="topic">
+<h3>📱 Q: What does the meta viewport tag do and why is it required for responsive design?</h3>
+<p><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</code> tells mobile browsers to render the page at the device's actual CSS pixel width instead of a fake desktop-width viewport, usually 980px, that then gets zoomed out. Without it, a responsive layout built with media queries won't actually respond on a phone — the browser just shrinks the whole desktop layout to fit the screen. <code>width=device-width</code> matches the viewport to the screen width, and <code>initial-scale=1</code> sets the starting zoom level to 100%.</p>
+</div>
+<div class="topic">
+<h3>🔄 Q: When would you use a <code>GET</code> form versus a <code>POST</code> form?</h3>
+<p><code>GET</code> encodes form data into the URL's query string, is visible in the address bar and browser history, and is idempotent, which makes it right for searches and filters a user might bookmark or share. <code>POST</code> sends data in the request body, isn't cached or stored in history by default, and is correct for anything that changes server state or carries sensitive data, since query strings can leak through logs and referrer headers. The practical test: if resubmitting should be safe to repeat silently, use <code>GET</code>; if it could create a duplicate order or charge, use <code>POST</code>.</p>
+</div>
+<div class="topic">
+<h3>🛡️ Q: What built-in form validation does HTML give you without JavaScript?</h3>
+<p>Attributes like <code>required</code>, <code>pattern</code> (a regex the value must match), <code>min</code>/<code>max</code> for numeric or date inputs, <code>minlength</code>/<code>maxlength</code> for text, and type-specific checks like <code>type="email"</code> block submission and show a native error message when they fail. You can style invalid fields with the <code>:invalid</code> CSS pseudo-class. I treat this as a UX convenience, not security — server-side validation is still mandatory because client-side checks can be bypassed entirely by disabling JavaScript or sending a raw request.</p>
+</div>
+<div class="topic">
+<h3>♿ Q: Why does associating a <code>&lt;label&gt;</code> with its <code>&lt;input&gt;</code> matter?</h3>
+<p>Wrapping an input in a <code>&lt;label&gt;</code>, or linking them explicitly with <code>&lt;label for="email"&gt;</code> matched to <code>&lt;input id="email"&gt;</code>, does two concrete things: clicking the label text focuses the input, and screen readers announce the label as the input's accessible name on focus. Without that association, a screen reader user tabbing into a field hears only "edit text" with no indication of what to type, and sighted mouse users lose the larger click target. It's one of the cheapest, highest-impact accessibility fixes in HTML — no ARIA, no JavaScript, just correct markup.</p>
+</div>
+<div class="topic">
+<h3>⚡ Q: What's the difference between <code>defer</code>, <code>async</code>, and a plain <code>&lt;script&gt;</code> tag?</h3>
+<p>With neither attribute, the browser stops parsing HTML entirely to fetch and execute the script synchronously, which blocks rendering — that's why plain scripts traditionally sit at the end of <code>&lt;body&gt;</code>. <code>async</code> downloads in parallel with HTML parsing but pauses parsing to execute the moment it's ready, in whatever order it finishes, so it suits independent scripts like analytics. <code>defer</code> also downloads in parallel but waits to execute until parsing is complete, running deferred scripts in document order — the right default for app scripts that need the full DOM and a predictable execution order.</p>
+</div>
+<div class="topic">
+<h3>🧭 Q: How do you decide between <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, and <code>&lt;footer&gt;</code>?</h3>
+<p><code>&lt;header&gt;</code> holds introductory content or navigation for its nearest sectioning ancestor — often the page banner, but it can also head up an <code>&lt;article&gt;</code>. <code>&lt;nav&gt;</code> wraps major navigation link blocks, not every group of links. <code>&lt;main&gt;</code> wraps the single dominant content of the page and should appear once; <code>&lt;article&gt;</code> is for self-contained content that would make sense distributed on its own, like a blog post, while <code>&lt;section&gt;</code> groups thematically related content that usually has its own heading but isn't necessarily standalone. <code>&lt;footer&gt;</code> holds closing info for its nearest sectioning ancestor.</p>
+</div>
+<div class="topic">
+<h3>🏞️ Q: What makes good <code>alt</code> text, and when should it be empty?</h3>
+<p>The <code>alt</code> attribute gives a text alternative that screen readers announce in place of the image, and it's what displays if the image fails to load. For meaningful images — a product photo, a chart, a functional icon — alt text should describe the content or function concisely, like <code>alt="Red leather wallet, folded"</code>, not <code>alt="image1.jpg"</code>. For purely decorative images that add nothing semantically, use <code>alt=""</code> (not omitting the attribute) so screen readers skip over them instead of reading the filename aloud.</p>
+</div>
+<div class="topic">
+<h3>🗣️ Q: What are ARIA roles for, and what's the first rule of using them?</h3>
+<p>ARIA attributes like <code>role</code>, <code>aria-label</code>, and <code>aria-expanded</code> describe the semantics and state of custom widgets — like a div-based dropdown — to assistive technology when native HTML has no equivalent. The first rule of ARIA is not to use ARIA if a native element already does the job: a <code>&lt;button&gt;</code> is already keyboard-accessible and announced correctly, while <code>&lt;div role="button"&gt;</code> requires manually adding <code>tabindex="0"</code> and keydown handling to replicate what you get for free. ARIA changes how something is announced, not how it behaves, so <code>role="button"</code> alone without keyboard support makes the experience worse, not better.</p>
+</div>
+<div class="topic">
+<h3>👂 Q: How does semantic HTML specifically help screen reader users navigate a page?</h3>
+<p>Screen readers build a navigable outline from the page's semantic structure — headings, landmarks like <code>&lt;nav&gt;</code> and <code>&lt;main&gt;</code>, lists, and form labels — letting users jump straight to "the navigation" or cycle through headings instead of listening to the entire page linearly. If a page is just nested <code>&lt;div&gt;</code>s, that outline collapses to nothing, and screen reader users are stuck tabbing through every element in document order. A correct heading hierarchy and landmark elements are effectively the table of contents a screen reader user relies on.</p>
+</div>
+<div class="topic">
+<h3>🔳 Q: What are <code>&lt;iframe&gt;</code>s useful for, and what risks come with them?</h3>
+<p><code>&lt;iframe&gt;</code> embeds another HTML document inside the current page, commonly used for content you don't control or want isolated — embedded videos, maps, or payment widgets. The risk is clickjacking, where an attacker overlays an invisible iframe over fake UI to hijack clicks, plus the ability to load arbitrary third-party scripts, so sites use the <code>sandbox</code> attribute to restrict an embedded iframe and <code>Content-Security-Policy: frame-ancestors</code> to control whether their own pages can be framed. I avoid iframes for content I control and could include directly, since they carry their own scroll context, styling isolation, and performance cost.</p>
+</div>
+<div class="topic">
+<h3>🌳 Q: What happens between the browser receiving HTML and painting the page?</h3>
+<p>The parser tokenizes raw markup into tags and text, then builds a tree of nodes — the DOM — following the HTML spec's error-recovery rules, which is why malformed markup like an unclosed <code>&lt;p&gt;</code> still renders instead of failing outright. As the parser hits a <code>&lt;link&gt;</code> to a stylesheet it builds the CSSOM in parallel, and when it hits a synchronous <code>&lt;script&gt;</code> it pauses DOM construction to fetch and run it, which is exactly why script placement and <code>defer</code>/<code>async</code> matter for performance. Once the DOM and CSSOM are ready, the browser combines them into the render tree and starts layout and paint.</p>
+</div>
+<div class="topic">
+<h3>🔍 Q: Which HTML tags actually matter for SEO?</h3>
+<p>Search engines rely heavily on <code>&lt;title&gt;</code> (the clickable search-result headline), <code>&lt;meta name="description"&gt;</code> (the snippet shown below it), and a clean heading hierarchy starting with a single <code>&lt;h1&gt;</code> reflecting the page's actual topic. Semantic landmarks and real <code>&lt;a href&gt;</code> links, not JavaScript-only navigation, let crawlers discover and understand site structure, and <code>&lt;img alt&gt;</code> text is one of the few ways image content gets indexed at all. <code>&lt;link rel="canonical"&gt;</code> to avoid duplicate-content penalties and structured data via <code>&lt;script type="application/ld+json"&gt;</code> round out what's actually HTML-level SEO versus content strategy.</p>
+</div>
+<div class="topic">
+<h3>🍪 Q: How do cookies differ from <code>localStorage</code> and <code>sessionStorage</code>?</h3>
+<p>All three store data client-side tied to an origin, but they differ in lifetime and reach: <code>localStorage</code> persists until explicitly cleared, <code>sessionStorage</code> is wiped when the tab closes, and cookies persist based on an explicit expiry and are automatically sent with every HTTP request to that domain, unlike the other two. That automatic transmission makes cookies the right tool for anything the server needs to see, like session tokens, while <code>localStorage</code> suits larger, client-only data such as cached preferences without adding overhead to every request. Cookies also support <code>HttpOnly</code> and <code>Secure</code> flags to reduce XSS exposure and enforce HTTPS-only transmission, protections <code>localStorage</code> doesn't have since any script on the page can read it.</p>
+</div>
+<div class="topic">
+<h3>📶 Q: How do <code>srcset</code> and <code>&lt;picture&gt;</code> make images responsive?</h3>
+<p><code>srcset</code> on an <code>&lt;img&gt;</code> offers multiple resolutions of the same image plus a <code>sizes</code> attribute describing how wide it will render at different viewport widths, so the browser — not your CSS or JavaScript — picks the most efficient file to download. <code>&lt;picture&gt;</code> goes further, letting you swap entirely different image files or formats, like serving WebP with a JPG fallback, based on media queries, which <code>srcset</code> alone can't do since it only varies resolution of the same art. The payoff is real bandwidth savings: a phone on a narrow viewport downloads a small file instead of the same 4K hero image a desktop user gets.</p>
+</div>
+<div class="topic">
+<h3>🚀 Q: What HTML-level techniques actually improve page load performance?</h3>
+<p>Adding <code>loading="lazy"</code> to offscreen <code>&lt;img&gt;</code> and <code>&lt;iframe&gt;</code> tags defers fetching them until they're about to scroll into view, speeding up initial load and saving bandwidth for content the user may never reach. Render-blocking resources — synchronous <code>&lt;script&gt;</code> tags in <code>&lt;head&gt;</code> and large CSS files — delay first paint because the browser won't render until it finishes downloading and parsing them, so the fixes are moving scripts to the end of <code>&lt;body&gt;</code> or using <code>defer</code>, and keeping above-the-fold CSS minimal. These are HTML-level levers; they don't replace image compression or a CDN, but they're often the highest-leverage, lowest-effort wins on a page.</p>
+</div>
+<div class="topic">
+<h3>🏋️ Practice Questions</h3>
+<ol><li>Explain to a junior developer why <code>&lt;section&gt;</code> is not just "a <code>&lt;div&gt;</code> with a nicer name."</li><li>A form submits user search queries. Should it use <code>GET</code> or <code>POST</code>, and why?</li><li>A screen reader user reports that a custom dropdown built from <code>&lt;div&gt;</code>s is unusable. What's likely missing, and how would you fix it with minimal ARIA?</li><li>Walk through what happens, step by step, from the browser receiving <code>&lt;script src="app.js"&gt;</code> in <code>&lt;head&gt;</code> with no attributes, to the page becoming interactive.</li></ol>
+</div>
+<div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>Strong HTML interview answers connect a tag or attribute's correct use to the real problem it solves — accessibility, SEO, performance or maintainability — not just its syntax.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m21">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Module 21 — HTML Cheat Sheet</h2>
+            <p>Tags · Attributes · Forms · Quick reference</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>🏗️ Document Structure Essentials</h3>
+<table>
+<tr><th>Tag / Attribute</th><th>What it does</th></tr>
+<tr><td><code>&lt;!DOCTYPE html&gt;</code></td><td>Declares the document as HTML5; must be the very first line</td></tr>
+<tr><td><code>&lt;html lang="en"&gt;</code></td><td>Root element; <code>lang</code> helps screen readers and search engines</td></tr>
+<tr><td><code>&lt;head&gt;</code></td><td>Holds metadata — not rendered directly on the page</td></tr>
+<tr><td><code>&lt;meta charset="UTF-8"&gt;</code></td><td>Sets character encoding; put it first inside <code>&lt;head&gt;</code></td></tr>
+<tr><td><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</code></td><td>Renders at actual device width so responsive CSS works</td></tr>
+<tr><td><code>&lt;title&gt;</code></td><td>Sets the browser tab title and the search-result headline</td></tr>
+<tr><td><code>&lt;body&gt;</code></td><td>Holds all visible page content</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>📝 Text &amp; Semantic Tags</h3>
+<table>
+<tr><th>Tag</th><th>Purpose</th></tr>
+<tr><td><code>&lt;h1&gt;</code> – <code>&lt;h6&gt;</code></td><td>Headings in order of importance; one <code>&lt;h1&gt;</code> per page</td></tr>
+<tr><td><code>&lt;p&gt;</code></td><td>A paragraph of text</td></tr>
+<tr><td><code>&lt;a href="..."&gt;</code></td><td>A hyperlink; add <code>target="_blank" rel="noopener"</code> for new tabs</td></tr>
+<tr><td><code>&lt;strong&gt;</code> / <code>&lt;em&gt;</code></td><td>Strong importance (bold) / stress emphasis (italic) — semantic, not just visual</td></tr>
+<tr><td><code>&lt;header&gt;</code></td><td>Intro content or navigation for the page or a section</td></tr>
+<tr><td><code>&lt;nav&gt;</code></td><td>Major navigation links</td></tr>
+<tr><td><code>&lt;main&gt;</code></td><td>The page's primary content; one per page</td></tr>
+<tr><td><code>&lt;article&gt;</code></td><td>Self-contained content that makes sense on its own</td></tr>
+<tr><td><code>&lt;section&gt;</code></td><td>Thematic grouping of content, usually with its own heading</td></tr>
+<tr><td><code>&lt;aside&gt;</code></td><td>Tangential content like a sidebar or pull-quote</td></tr>
+<tr><td><code>&lt;footer&gt;</code></td><td>Closing info — copyright, author, related links</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>📜 Lists &amp; Tables</h3>
+<table>
+<tr><th>Tag</th><th>Purpose</th></tr>
+<tr><td><code>&lt;ul&gt;</code></td><td>Unordered (bulleted) list</td></tr>
+<tr><td><code>&lt;ol&gt;</code></td><td>Ordered (numbered) list</td></tr>
+<tr><td><code>&lt;li&gt;</code></td><td>A list item, inside <code>&lt;ul&gt;</code> or <code>&lt;ol&gt;</code></td></tr>
+<tr><td><code>&lt;table&gt;</code></td><td>Tabular data container</td></tr>
+<tr><td><code>&lt;tr&gt;</code></td><td>A table row</td></tr>
+<tr><td><code>&lt;th&gt;</code></td><td>A header cell — bold by default and announced as a header by screen readers</td></tr>
+<tr><td><code>&lt;td&gt;</code></td><td>A standard data cell</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>🧾 Forms &amp; Inputs</h3>
+<table>
+<tr><th>Tag / Attribute</th><th>Purpose</th></tr>
+<tr><td><code>&lt;form action="..." method="post"&gt;</code></td><td>Wraps form controls; <code>method</code> is <code>get</code> or <code>post</code></td></tr>
+<tr><td><code>&lt;label for="id"&gt;</code></td><td>Associates text with an input by matching <code>for</code> to the input's <code>id</code></td></tr>
+<tr><td><code>&lt;input type="text"&gt;</code></td><td>Single-line text field</td></tr>
+<tr><td><code>&lt;input type="email"&gt;</code></td><td>Email field with built-in format validation</td></tr>
+<tr><td><code>&lt;input type="password"&gt;</code></td><td>Masked text field</td></tr>
+<tr><td><code>&lt;input type="checkbox"&gt;</code></td><td>Toggle; multiple can be selected</td></tr>
+<tr><td><code>&lt;input type="radio"&gt;</code></td><td>One choice from a group sharing the same <code>name</code></td></tr>
+<tr><td><code>&lt;input type="number"&gt;</code></td><td>Numeric field; supports <code>min</code>/<code>max</code>/<code>step</code></td></tr>
+<tr><td><code>&lt;input type="date"&gt;</code></td><td>Native date picker</td></tr>
+<tr><td><code>&lt;select&gt;</code> / <code>&lt;option&gt;</code></td><td>Dropdown list of choices</td></tr>
+<tr><td><code>&lt;textarea&gt;</code></td><td>Multi-line text field</td></tr>
+<tr><td><code>&lt;button type="submit"&gt;</code></td><td>Submits the form</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>✅ Validation Attributes</h3>
+<table>
+<tr><th>Attribute</th><th>Effect</th></tr>
+<tr><td><code>required</code></td><td>Blocks submission if the field is empty</td></tr>
+<tr><td><code>pattern="regex"</code></td><td>Blocks submission unless the value matches the regex</td></tr>
+<tr><td><code>minlength</code> / <code>maxlength</code></td><td>Limits text length</td></tr>
+<tr><td><code>min</code> / <code>max</code></td><td>Limits numeric or date range</td></tr>
+<tr><td><code>placeholder</code></td><td>Hint text shown when empty — not a substitute for a <code>&lt;label&gt;</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>🖼️ Media</h3>
+<table>
+<tr><th>Tag / Attribute</th><th>Purpose</th></tr>
+<tr><td><code>&lt;img src="..." alt="..."&gt;</code></td><td>Image; <code>alt</code> is required for meaningful images</td></tr>
+<tr><td><code>&lt;video controls&gt;</code></td><td>Embeds a video with native playback controls</td></tr>
+<tr><td><code>&lt;audio controls&gt;</code></td><td>Embeds an audio player</td></tr>
+<tr><td><code>&lt;picture&gt;</code></td><td>Wraps multiple <code>&lt;source&gt;</code> elements to serve different images by media query or format</td></tr>
+<tr><td><code>srcset</code></td><td>Offers multiple image resolutions; the browser picks the best fit</td></tr>
+<tr><td><code>loading="lazy"</code></td><td>Defers offscreen image/iframe loading until needed</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>🔖 Common Global Attributes</h3>
+<table>
+<tr><th>Attribute</th><th>Purpose</th></tr>
+<tr><td><code>id</code></td><td>Unique identifier for one element</td></tr>
+<tr><td><code>class</code></td><td>Reusable styling/JS hook, shared across elements</td></tr>
+<tr><td><code>data-*</code></td><td>Custom data attribute for JavaScript to read, e.g. <code>data-user-id</code></td></tr>
+<tr><td><code>aria-*</code></td><td>Accessibility state/properties for custom widgets</td></tr>
+<tr><td><code>tabindex</code></td><td>Controls keyboard focus order; <code>0</code> adds natural tab order, <code>-1</code> removes it</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>⚠️ Gotchas &amp; Common Mistakes</h3>
+<div class="tip-box">Self-closing tags like <code>&lt;br&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;input&gt;</code>, and <code>&lt;hr&gt;</code> never get a closing tag — writing <code>&lt;br&gt;&lt;/br&gt;</code> is invalid HTML.</div>
+<div class="warn-box">Every meaningful <code>&lt;img&gt;</code> needs an <code>alt</code> attribute. A missing <code>alt</code> is one of the most common accessibility audit failures.</div>
+<div class="info-box">A <code>&lt;label for="..."&gt;</code> only works if its value exactly matches the input's <code>id</code> — a single typo silently breaks the association with no visible error in the browser.</div>
+<div class="tip-box"><code>id</code> values must be unique per page. Duplicate ids break <code>label for</code>, in-page anchors, and <code>getElementById</code>, often silently.</div>
+</div>
+<div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>A good cheat sheet is organized by what you're trying to DO (structure, text, forms, media), not an alphabetical tag dump — that's what makes it fast to scan under pressure.</span></div>
         </div>
       </div>
     </div>
