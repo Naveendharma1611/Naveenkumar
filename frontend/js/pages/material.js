@@ -16,6 +16,7 @@ const TUTORIALS = [
   { slug: "javascript", file: "javascript-material.html", name: "JavaScript", emoji: "🟨" },
   { slug: "dsa", file: "dsa-material.html", name: "DSA", emoji: "🧠" },
   { slug: "dbms", file: "dbms-material.html", name: "DBMS", emoji: "🗄️" },
+  { slug: "oop", file: "oop-material.html", name: "OOP", emoji: "🧱" },
   { slug: "aptitude", file: "aptitude-material.html", name: "Aptitude", emoji: "🧠" },
   { slug: "data-science", file: "data-science-material.html", name: "Data Science", emoji: "📊" },
   { slug: "machine-learning", file: "machine-learning-material.html", name: "Machine Learning", emoji: "🤖" },

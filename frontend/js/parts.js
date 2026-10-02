@@ -104,6 +104,10 @@ export const NOTES = {
     href: "dbms-material.html", title: "🗄️ DBMS Complete Study Material",
     text: "Database systems from data models and normalization through transactions, concurrency, recovery, indexing, query processing, distributed systems, and governance.",
   },
+  oop: {
+    href: "oop-material.html", title: "🧱 Object-Oriented Programming",
+    text: "A language-independent guide to objects, encapsulation, abstraction, polymorphism, composition, interfaces, SOLID design, patterns, testing, and interview preparation, illustrated with Python.",
+  },
   aptitude: {
     href: "aptitude-material.html", title: "🧠 Aptitude: Quantitative, Logical & Verbal Reasoning",
     text: "Build quantitative, logical, and verbal reasoning through worked methods, timed practice, MCQs, and numeric-answer questions.",

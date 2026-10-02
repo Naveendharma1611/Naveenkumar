@@ -1,0 +1,329 @@
+@page 🧱 Object-Oriented Programming (OOP)
+@intro Understand how objects combine state and behavior, protect invariants, collaborate through clear interfaces, and evolve through composition and polymorphism. Examples use Python; the design concepts apply across object-oriented languages.
+
+@module m1 | 🧭 | 1 · Foundations | Module 1 — Object-Oriented Thinking | State · Behavior · Responsibilities
+@topic What Is Object-Oriented Programming?
+Object-oriented programming organizes software around objects that hold state and expose behavior. A class describes a family of objects; an object is a particular instance. OOP is a set of design tools, not a requirement to model every function or value as a class.
+@table
+Concept | Meaning
+Object | An identity-bearing entity with state and behavior
+Class | A definition for creating objects with shared structure or behavior
+State | Data that describes an object's current condition
+Behavior | Operations the object supports
+Interface | The operations and guarantees visible to a caller
+@end
+@topic Four Common OOP Ideas
+Encapsulation groups state and behavior behind a boundary. Abstraction exposes useful behavior while hiding implementation details. Inheritance derives a specialized type from a base type. Polymorphism lets callers use different implementations through a shared contract.
+@info These ideas are useful when they reduce complexity or clarify ownership; procedural and functional designs remain appropriate for many tasks.
+@practice
+1. Give one example of state and behavior for a `BankAccount` object.
+2. Which OOP idea lets callers use different implementations through one contract?
+
+@module m2 | 🧱 | 2 · Classes and Objects | Module 2 — Classes, Instances & Identity | Construction · Attributes · Methods
+@topic Define a Class and Create an Instance
+A class defines behavior and may define the data each instance owns. Calling a constructor creates or initializes an instance; two instances of the same class can have different state and distinct identity.
+@code python
+class Account:
+    def __init__(self, owner):
+        self.owner = owner
+        self.balance = 0
+
+    def deposit(self, amount):
+        self.balance += amount
+
+first = Account("Mina")
+second = Account("Ravi")
+@end
+`first` and `second` are distinct objects even though both are instances of `Account`. Keep creation syntax separate from the object's public behavior when callers do not need to know implementation details.
+@topic Identity and Equality
+Identity asks whether two references point to the same object. Equality asks whether two values should be considered equivalent according to a defined contract. A value object may compare by its fields; an entity often retains identity as it changes.
+@practice
+1. Can two accounts have the same class but different balances?
+2. Explain the difference between object identity and value equality.
+
+@module m3 | 🔐 | 3 · Encapsulation | Module 3 — Encapsulation & Invariants | Boundaries · Validation · Controlled mutation
+@topic Protect Valid State
+Encapsulation means callers interact through an intentional interface rather than freely changing implementation details. An invariant is a condition that should remain true, such as a nonnegative account balance or an order containing at least one line item.
+@code python
+class Account:
+    def __init__(self, owner):
+        self.owner = owner
+        self._balance = 0
+
+    @property
+    def balance(self):
+        return self._balance
+
+    def deposit(self, amount):
+        if amount <= 0:
+            raise ValueError("amount must be positive")
+        self._balance += amount
+@end
+Python's underscore is a convention, not access control enforced by the runtime. In languages with visibility modifiers, use them to express the intended API. Validate at the boundary where the invariant can be enforced reliably.
+@practice
+1. State one invariant for a shopping cart.
+2. Why is a controlled method safer than letting every caller update a balance directly?
+
+@module m4 | 🎭 | 4 · Abstraction | Module 4 — Abstraction & Contracts | Hide detail · Expose guarantees
+@topic Abstraction
+An abstraction exposes what a caller can do and the guarantees it receives, without requiring knowledge of how the work is implemented. A repository interface can hide whether data comes from a database, memory, or a remote service.
+@code python
+class MessageSender:
+    def send(self, recipient, message):
+        raise NotImplementedError
+
+def notify(sender, recipient, message):
+    sender.send(recipient, message)
+@end
+The `notify` function depends on a small contract instead of a specific email provider. Good abstractions are shaped by stable client needs; speculative layers can make simple code harder to understand.
+@practice
+1. What should a caller know about an abstraction?
+2. Name two implementations that could satisfy a message-sending interface.
+
+@module m5 | 🌳 | 5 · Inheritance | Module 5 — Inheritance & Substitutability | Base types · Overrides · Contracts
+@topic Inheritance
+Inheritance defines a subtype that reuses or specializes behavior from a base type. A subtype should be substitutable wherever the base contract is expected; overriding a method with stronger assumptions or weaker guarantees can break callers.
+@code python
+class Shape:
+    def area(self):
+        raise NotImplementedError
+
+class Rectangle(Shape):
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def area(self):
+        return self.width * self.height
+@end
+Use inheritance for a genuine “is-a” relationship with a compatible contract. Do not use it solely to share a few lines of code; composition may be clearer and less coupled.
+@practice
+1. Why must an override honor the base type's contract?
+2. Give an example where sharing code alone is not a strong reason to inherit.
+
+@module m6 | 🎨 | 6 · Polymorphism | Module 6 — Polymorphism & Dynamic Dispatch | Shared contract · Multiple implementations
+@topic Polymorphism
+Polymorphism lets code call the same operation on different implementations through a shared interface. Dynamic dispatch selects an implementation based on the object's runtime type in languages that support it.
+@code python
+def total_area(shapes):
+    return sum(shape.area() for shape in shapes)
+@end
+The caller needs to know the `area()` contract, not whether each shape is a rectangle, circle, or another valid implementation. This reduces branching in client code when the abstraction is stable.
+@practice
+1. How does polymorphism reduce type-specific conditionals in `total_area`?
+2. What is dynamic dispatch?
+
+@module m7 | 🧩 | 7 · Composition | Module 7 — Composition, Aggregation & Delegation | Has-a · Ownership · Collaboration
+@topic Composition
+Composition builds an object from collaborators: a service has a repository, or an order has line items. The containing object can delegate work rather than inherit implementation. Clarify who owns each collaborator and how long it lives.
+@code python
+class OrderService:
+    def __init__(self, repository, payment_gateway):
+        self.repository = repository
+        self.payment_gateway = payment_gateway
+
+    def place(self, order):
+        self.payment_gateway.charge(order.total)
+        self.repository.save(order)
+@end
+This design makes dependencies visible and replaceable, but it still needs a policy for failures between charging and saving. Composition does not automatically make a workflow transactional.
+@practice
+1. Identify the collaborators in `OrderService`.
+2. What failure could occur between charging and saving, and what design might address it?
+
+@module m8 | 📜 | 8 · Interfaces | Module 8 — Interfaces, Protocols & Dependency Inversion | Small contracts · Substitutability
+@topic Interfaces
+An interface declares operations a caller may rely on; an implementation supplies their behavior. Interfaces can enable substitution, testing, and independent development, but abstractions should remain small and cohesive.
+@table
+Design choice | Benefit | Risk
+Concrete dependency | Direct and simple | Harder to substitute when change is needed
+Small interface | Decouples client from implementation | Extra abstraction to maintain
+Large “god” interface | One place to find methods | Clients depend on operations they do not use
+@end
+@topic Dependency Inversion
+High-level policy should depend on stable abstractions rather than directly constructing low-level details everywhere. Dependency injection supplies collaborators from outside, commonly through constructor parameters.
+@practice
+1. Why is constructor injection useful for a service's dependencies?
+2. What is one cost of creating an interface for every class without a client need?
+
+@module m9 | 🏷️ | 9 · Members | Module 9 — Instance, Class & Static Members | Scope · Shared state · Method binding
+@topic Instance and Class State
+Instance fields belong to an object. Class-level fields are shared by instances in languages that support them; mutable shared state can create surprising coupling. Keep values on the narrowest scope that matches their lifetime and meaning.
+@code python
+class Session:
+    active_count = 0
+
+    def __init__(self):
+        self.user_id = None
+        Session.active_count += 1
+@end
+@topic Static Methods and Utility Behavior
+Static methods do not operate on a particular instance in languages that provide them. Use them when behavior conceptually belongs near a type but needs no instance or class state; otherwise a module-level function may be simpler.
+@practice
+1. Which is shared across `Session` instances: `active_count` or `user_id`?
+2. When might a standalone function be clearer than a static method?
+
+@module m10 | 🏭 | 10 · Construction | Module 10 — Constructors, Factories & Lifecycle | Valid objects · Named creation · Cleanup
+@topic Constructors and Validity
+Construction should establish an object in a valid state. If initialization has multiple modes or complex validation, named factory methods can make the intent explicit and prevent partially initialized objects.
+@table
+Approach | Example intent
+Constructor | Create a valid object from required values
+Factory method | `from_config(...)` communicates an alternate creation path
+Builder | Assemble an object with many optional settings in a readable sequence
+Lifecycle method | Explicitly acquire or release an external resource when required
+@end
+@topic Resource Ownership
+Objects that own files, locks, sockets, or transactions need clear cleanup behavior. Prefer language-supported context managers, deterministic destructors, or resource wrappers; do not rely on garbage collection timing for important external effects.
+@practice
+1. What should be true immediately after a constructor succeeds?
+2. Why shouldn't a program rely on garbage collection timing to close a file?
+
+@module m11 | 🧊 | 11 · Value Objects | Module 11 — Equality, Immutability & Value Objects | Identity · Hashing · Safe sharing
+@topic Entity or Value?
+An entity is tracked by identity over time; a value object is defined by its attributes and is often immutable. Immutable values are easier to share and reason about because they cannot change unexpectedly after creation.
+@topic Equality and Hashing
+If objects are used as dictionary keys or set members, equality and hash behavior must be compatible and stable while stored. Equal values must have equal hashes. Mutable fields that participate in hashing can corrupt lookup behavior after mutation.
+@practice
+1. Is a user account more naturally an entity or a value object? Why?
+2. What must be true about the hashes of equal objects?
+
+@module m12 | 🧭 | 12 · SOLID | Module 12 — SOLID Design Principles | Responsibility · Extension · Substitution · Interfaces · Dependencies
+@topic The Five Principles
+@table
+Principle | Practical interpretation
+Single Responsibility | Give a module one cohesive reason to change
+Open/Closed | Add behavior through extension without repeatedly rewriting stable code
+Liskov Substitution | Subtypes preserve the promises clients rely on
+Interface Segregation | Prefer small client-focused interfaces over a forced large one
+Dependency Inversion | High-level policy depends on stable abstractions
+@end
+@topic Apply Principles with Judgment
+SOLID is a set of design heuristics, not a checklist requiring more classes. Use it to identify high coupling or change friction; an abstraction is helpful only when it clarifies an actual boundary.
+@practice
+1. A class handles billing, email, and report formatting. Which principle suggests separating its responsibilities?
+2. What can go wrong if a subtype violates assumptions made by base-type callers?
+
+@module m13 | 🧰 | 13 · Design Patterns | Module 13 — Common Object-Oriented Patterns | Strategy · Factory · Observer · Adapter
+@topic Patterns as Named Trade-offs
+@table
+Pattern | Problem it can address
+Strategy | Select interchangeable behavior behind one contract
+Factory | Centralize or name a complex object-creation choice
+Observer | Notify subscribers when an event or subject changes
+Adapter | Translate one interface into another expected interface
+Decorator | Add behavior around an object while preserving its interface
+@end
+Patterns communicate structure; they do not prove a design is good. Start from the change or coupling problem, then use a pattern only if it makes the resulting relationships clearer.
+@practice
+1. Which pattern can switch between payment providers behind a common interface?
+2. Which pattern wraps an object to add behavior while keeping its interface?
+
+@module m14 | 🧪 | 14 · Testing | Module 14 — Testing Object-Oriented Designs | Unit tests · Fakes · Contracts
+@topic Test Behavior Through Public Contracts
+Test observable behavior rather than private implementation details. Use a fake or mock collaborator when a boundary such as email, payment, or storage must be controlled; include integration tests for important real collaborations.
+@code python
+class MemoryRepository:
+    def __init__(self):
+        self.saved = []
+
+    def save(self, item):
+        self.saved.append(item)
+@end
+@topic Avoid Over-Mocking
+Mocking every internal call can make tests pass while behavior is broken and can lock tests to implementation details. Keep objects cohesive, dependencies explicit, and tests focused on meaningful guarantees.
+@practice
+1. How can constructor injection make a service easier to test?
+2. Name one risk of mocking every method interaction in a unit test.
+
+@module m15 | 🧱 | 15 · Refactoring | Module 15 — Refactoring Toward Clear Objects | Code smells · Extract class · Replace conditionals
+@topic Signs to Investigate
+Repeated conditional logic by type, classes with unrelated responsibilities, long parameter lists, and objects that expose mutable internals can indicate design friction. A smell is a prompt to investigate, not proof that a pattern must be applied.
+@topic Refactor Safely
+Make a behavior-preserving change in small steps: add or strengthen tests, extract one responsibility, move behavior to the object that owns the relevant state, then rerun the suite. Separate architectural refactors from unrelated feature changes.
+@practice
+1. What code smell might be suggested by a class with many unrelated reasons to change?
+2. Why is changing one responsibility at a time safer than a broad rewrite?
+
+@module m16 | 🧠 | 16 · Design Case Study | Module 16 — Model a Reservation System | Entities · Invariants · Collaborators · Failure cases
+@topic Start with the Domain and Invariants
+Identify the reservation, resource, customer, and time interval. Define what prevents overlapping reservations, what “cancelled” means, how time zones are represented, and which operation owns conflict detection.
+@topic Separate Responsibilities
+An application service can coordinate authorization, availability, persistence, and notifications. A repository hides persistence details; a notification adapter hides provider details. Keep the overlap invariant enforced atomically at the persistence boundary so concurrent requests cannot both reserve the same interval.
+@table
+Concern | Design question
+Identity | What stable key identifies a reservation?
+Value | Which fields should be immutable after confirmation?
+Concurrency | How are simultaneous conflicting requests serialized?
+Failure | What happens if saving succeeds but notification fails?
+Testing | Which boundary and race cases must be verified?
+@end
+@practice
+1. Name one invariant for a room reservation and where it should be enforced.
+2. Explain how a notification retry could avoid sending duplicates.
+
+@module m17 | 📋 | Quick Reference | OOP Cheat Sheet | State · Contracts · Composition · SOLID · Patterns
+@topic Class and Collaboration Checklist
+@table
+Question | Design cue
+What does the object own? | Keep state and behavior that change together cohesive
+What must always be true? | Enforce invariants at a trusted boundary
+What can the caller rely on? | Define a small, explicit public contract
+Who creates collaborators? | Inject dependencies when substitution or testing needs it
+Is this an “is-a” relation? | Inherit only when the subtype preserves the base contract
+Is this a “has-a” relation? | Prefer composition and delegation
+@end
+@topic Principles and Patterns at a Glance
+@table
+Need | Consider
+Multiple interchangeable algorithms | Strategy
+Named creation variants | Factory method
+Notify multiple listeners | Observer
+Bridge incompatible interfaces | Adapter
+Wrap behavior without changing interface | Decorator
+Reduce unrelated changes | Single Responsibility
+Support new behavior without rewriting stable policy | Open/Closed, applied carefully
+@end
+@warn Do not add inheritance, interfaces, or patterns just to make code “more object-oriented.” Use the simplest design that protects invariants and communicates real responsibilities.
+
+@module m18 | 🎤 | Interview Prep | OOP Interview Questions & Answers | Encapsulation · Inheritance · Polymorphism · Design principles
+@topic Q: What is the difference between a class and an object?
+A class defines a type's structure or behavior; an object is a particular instance with its own identity and state. The class describes what instances can do, while each object represents a concrete runtime entity.
+@topic Q: What is encapsulation?
+Encapsulation groups state and behavior behind a deliberate boundary. It lets an object protect invariants and change its implementation without requiring callers to manipulate its internals.
+@topic Q: What is abstraction?
+Abstraction exposes useful operations and guarantees while hiding implementation detail. A client should depend on what a component promises, not how it fulfills that promise.
+@topic Q: What is inheritance?
+Inheritance defines a subtype from a base type so it can reuse or specialize behavior. Use it for a genuine substitutable “is-a” relationship, not merely to share a few lines of code.
+@topic Q: What is polymorphism?
+Polymorphism lets different implementations be used through a shared interface. A caller invokes the contract while the runtime or language dispatch rules select the concrete behavior.
+@topic Q: What is the difference between overloading and overriding?
+Overloading uses the same operation name with different parameter signatures, resolved according to the language's overload rules. Overriding provides a subtype implementation of an inherited virtual or otherwise overridable operation.
+@topic Q: What is composition, and when is it preferred to inheritance?
+Composition builds an object from collaborating objects and delegates work to them. It is preferred when the relationship is “has-a” or when behavior should be replaceable without coupling a subtype to a base implementation.
+@topic Q: What is the Liskov Substitution Principle?
+Code using a base contract should continue to behave correctly when given a valid subtype. A subtype should not strengthen required preconditions or weaken promised postconditions in ways that surprise clients.
+@topic Q: What is the Single Responsibility Principle?
+A module should have one cohesive responsibility or one primary reason to change. It does not mean every method needs its own class; boundaries should reflect meaningful cohesion.
+@topic Q: What does “program to an interface” mean?
+Clients depend on a stable contract rather than a concrete implementation. This allows alternate implementations, tests, or infrastructure choices without rewriting high-level policy.
+@topic Q: What is dependency injection?
+Dependency injection supplies an object's collaborators from outside instead of constructing them internally. Constructor injection makes dependencies explicit and can simplify testing and configuration.
+@topic Q: What is the difference between an entity and a value object?
+An entity is tracked by identity over time, while a value object is defined by its values and is often immutable. The choice affects equality, lifecycle, and how updates are modeled.
+@topic Q: Why are immutable objects useful?
+Their state cannot change after construction, reducing accidental shared-state changes and simplifying reasoning. They are especially useful for values, though immutability can require copying or replacement when updates are needed.
+@topic Q: What is a constructor's responsibility?
+A constructor establishes a valid initial state and required invariants. Complex alternate creation paths may be clearer as named factories than as many ambiguous optional parameters.
+@topic Q: What is the Open/Closed Principle?
+Software entities should support needed extension without requiring repeated changes to stable code. The goal is not to forbid edits, but to place variation behind suitable contracts when change is expected.
+@topic Q: What is the Interface Segregation Principle?
+Clients should not be forced to depend on operations they do not use. Prefer cohesive, client-focused interfaces over a large general interface with irrelevant methods.
+@topic Q: What does the Strategy pattern solve?
+It encapsulates interchangeable algorithms behind a common interface so a client can select behavior without embedding every variant in a large conditional.
+@topic Q: What is the difference between association, aggregation, and composition?
+Association is a general relationship between objects. Aggregation often describes a weak whole-part relationship where parts can outlive the whole; composition describes stronger ownership and lifecycle coupling. Precise semantics vary by modeling convention and language.
+@topic Q: How do you test a class with external dependencies?
+Test its public behavior and inject controlled collaborators such as fakes for external services. Add integration tests where real persistence, networking, or framework behavior is important; avoid coupling every test to private method calls.
+@topic Q: How would you refactor a class with too many responsibilities?
+Identify the cohesive reasons it changes, add behavior-focused tests, and extract one responsibility behind a clear interface at a time. Preserve behavior and avoid introducing abstractions without a concrete client need.
