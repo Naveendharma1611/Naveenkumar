@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>🧭 Agentic AI Complete Study Material</h1>
         <p>How autonomous AI agents actually work: the perceive-reason-act loop, tool and function calling, planning, memory, multi-agent systems, guardrails and evaluation — built on top of an LLM, not a retelling of how the LLM itself works.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">16</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">58</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">2</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">30</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">17</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">61</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">2</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">30</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -39,6 +39,7 @@
       <a href="#m14">14 · Human-in-the-Loop</a>
       <a href="#m15">15 · Interview Questions</a>
       <a href="#m16">16 · Learning Roadmap</a>
+      <a href="#m17">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -675,6 +676,47 @@ Round 2 - model reply (plain text, no further tool call):
 <ol><li>Build a single-tool agent loop from scratch, no framework, and trace its full execution for one example goal.</li><li>Pick one failure mode from Module 12 and add a specific guardrail or evaluation check that would catch it.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>The fastest path into agentic AI is building one real agent loop by hand end to end — tool calling, memory, planning, guardrails and evaluation — before reaching for a framework, since that hands-on grasp of the mechanics is what interviews and production reliability actually test for.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m17">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Agentic AI Cheat Sheet</h2>
+            <p>Loop · Tools · State · Safety · Evaluation · Operations</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Agent Execution Loop</h3>
+<table>
+<tr><th>Stage</th><th>Responsibility</th></tr>
+<tr><td>Goal</td><td>Define a bounded task, success condition, and limits</td></tr>
+<tr><td>Context</td><td>Gather only authorized, relevant state and observations</td></tr>
+<tr><td>Model step</td><td>Request a decision or structured tool call</td></tr>
+<tr><td>Validate</td><td>Check tool name, arguments, policy, and remaining budget</td></tr>
+<tr><td>Act</td><td>Execute an allowed tool and capture its result</td></tr>
+<tr><td>Observe</td><td>Return the result to the next step; stop on success, failure, or limit</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Tool and State Design</h3>
+<table>
+<tr><th>Need</th><th>Practice</th></tr>
+<tr><td>Tool schema</td><td>Narrow inputs, explicit types, documented side effects</td></tr>
+<tr><td>Permissions</td><td>Enforce access in the backend, not only in the prompt</td></tr>
+<tr><td>Memory</td><td>Separate current working state from durable user-approved memory</td></tr>
+<tr><td>Retries</td><td>Bound attempts; use idempotency for operations that may repeat</td></tr>
+<tr><td>Timeouts</td><td>Set per-tool limits and a total run deadline</td></tr>
+<tr><td>Trace</td><td>Record decisions, tool inputs/outputs, errors, and correlation IDs safely</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Safety, Evaluation, and Operations</h3>
+<ul><li>Require approval before irreversible, financial, external, or high-impact actions.</li><li>Use least privilege, sandboxing, rate limits, and explicit resource budgets.</li><li>Treat tool results and retrieved content as untrusted; validate before acting on them.</li><li>Build representative evaluations with measurable task success, safety, steps, latency, and cost.</li><li>Test failures, malformed tool calls, prompt injection, and recovery paths, not only the happy path.</li><li>Provide a stop control, clear user status, auditability, and a safe fallback.</li></ul>
+<div class="warn-box">An agent loop can amplify a small error across multiple actions. Bound steps and cost, verify state-changing results, and never rely on model instructions as the only security control.</div>
+</div>
         </div>
       </div>
     </div>

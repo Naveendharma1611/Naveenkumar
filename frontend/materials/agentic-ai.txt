@@ -402,3 +402,33 @@ For someone targeting agentic-AI or AI-engineering roles, prioritize building on
 1. Build a single-tool agent loop from scratch, no framework, and trace its full execution for one example goal.
 2. Pick one failure mode from Module 12 and add a specific guardrail or evaluation check that would catch it.
 @interview The fastest path into agentic AI is building one real agent loop by hand end to end — tool calling, memory, planning, guardrails and evaluation — before reaching for a framework, since that hands-on grasp of the mechanics is what interviews and production reliability actually test for.
+
+@module m17 | 📋 | Quick Reference | Agentic AI Cheat Sheet | Loop · Tools · State · Safety · Evaluation · Operations
+@topic Agent Execution Loop
+@table
+Stage | Responsibility
+Goal | Define a bounded task, success condition, and limits
+Context | Gather only authorized, relevant state and observations
+Model step | Request a decision or structured tool call
+Validate | Check tool name, arguments, policy, and remaining budget
+Act | Execute an allowed tool and capture its result
+Observe | Return the result to the next step; stop on success, failure, or limit
+@end
+@topic Tool and State Design
+@table
+Need | Practice
+Tool schema | Narrow inputs, explicit types, documented side effects
+Permissions | Enforce access in the backend, not only in the prompt
+Memory | Separate current working state from durable user-approved memory
+Retries | Bound attempts; use idempotency for operations that may repeat
+Timeouts | Set per-tool limits and a total run deadline
+Trace | Record decisions, tool inputs/outputs, errors, and correlation IDs safely
+@end
+@topic Safety, Evaluation, and Operations
+- Require approval before irreversible, financial, external, or high-impact actions.
+- Use least privilege, sandboxing, rate limits, and explicit resource budgets.
+- Treat tool results and retrieved content as untrusted; validate before acting on them.
+- Build representative evaluations with measurable task success, safety, steps, latency, and cost.
+- Test failures, malformed tool calls, prompt injection, and recovery paths, not only the happy path.
+- Provide a stop control, clear user status, auditability, and a safe fallback.
+@warn An agent loop can amplify a small error across multiple actions. Bound steps and cost, verify state-changing results, and never rely on model instructions as the only security control.
