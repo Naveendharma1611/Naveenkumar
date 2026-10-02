@@ -663,3 +663,38 @@ Stage | Focus | Outcome
 2. If you only had eight weeks to prepare for an applied deep learning interview, which two stages of this roadmap would you prioritize, and which would you deliberately skim?
 @interview I'd describe the deep learning learning path as fundamentals first, then classical ML for judgment, then core mechanics, then architectures matched to data type, then specialized and production skills last — and for an applied AI engineer role specifically, I'd over-index on fine-tuning, debugging and deployment competence over novel architecture design, since that's what most real jobs actually require day to day.
 
+@module m25 | 📋 | Quick Reference | Deep Learning Cheat Sheet | Tensors · Training · Architectures · Evaluation · Deployment
+@topic Training Loop and Diagnostics
+@table
+Step | Check
+Batch | Inspect input and target shapes, dtype, device, and label range
+Forward | Run `prediction = model(inputs)`
+Loss | Compare predictions with targets using a task-appropriate objective
+Backward | Clear old gradients, then call `loss.backward()`
+Update | Apply optional gradient clipping, then `optimizer.step()`
+Evaluate | Use evaluation mode and disable gradient tracking for inference
+Monitor | Track train/validation loss, task metrics, learning rate, and examples
+@end
+@topic Architecture and Objective Selection
+@table
+Data or task | Starting point
+Images | CNN or vision Transformer; check input channels and spatial dimensions
+Sequences | RNN/LSTM or Transformer; use masks for padding and causal constraints
+Tabular data | Establish a tree-based ML baseline before a neural network
+Binary classification | Logits with binary cross-entropy with logits
+Multiclass classification | Class logits with cross-entropy and integer class targets
+Regression | Continuous output with MAE or MSE, chosen for the error cost
+Pretrained model | Freeze or fine-tune layers based on data size and validation results
+@end
+@topic Overfitting, Stability, and Deployment
+@table
+Symptom | First checks
+Training and validation loss both high | Data, labels, shapes, learning rate, and model capacity
+Training low, validation high | Leakage, split quality, augmentation, regularization, early stopping
+Loss unstable or NaN | Learning rate, gradient scale, dtype, invalid targets, normalization
+Slow or memory-heavy inference | Batch size, input pipeline, device transfer, quantization options
+Class imbalance | Per-class metrics, sampling or class weights, decision threshold
+Reproducibility | Record data split, code, framework, configuration, and random seed
+@end
+@warn Do not select architectures or thresholds using the test set. Compare on validation data and reserve the test set for final evaluation.
+

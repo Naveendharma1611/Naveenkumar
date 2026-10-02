@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>🧠 Deep Learning Complete Study Material</h1>
         <p>Master deep learning from first principles to production: neurons, backpropagation, CNNs, RNNs, Transformers, GANs, and the practical skills to train, tune and deploy real models.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">24</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">77</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">20</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">46</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">25</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">80</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">20</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">46</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -47,6 +47,7 @@
       <a href="#m22">22 · Deployment</a>
       <a href="#m23">23 · Interview Questions</a>
       <a href="#m24">24 · Roadmap</a>
+      <a href="#m25">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -1094,6 +1095,57 @@ def predict(features: list[float]):
 <ol><li>Pick a public dataset and outline, stage by stage, what you'd build at each step of this roadmap to end with a deployed model.</li><li>If you only had eight weeks to prepare for an applied deep learning interview, which two stages of this roadmap would you prioritize, and which would you deliberately skim?</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>I'd describe the deep learning learning path as fundamentals first, then classical ML for judgment, then core mechanics, then architectures matched to data type, then specialized and production skills last — and for an applied AI engineer role specifically, I'd over-index on fine-tuning, debugging and deployment competence over novel architecture design, since that's what most real jobs actually require day to day.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m25">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Deep Learning Cheat Sheet</h2>
+            <p>Tensors · Training · Architectures · Evaluation · Deployment</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Training Loop and Diagnostics</h3>
+<table>
+<tr><th>Step</th><th>Check</th></tr>
+<tr><td>Batch</td><td>Inspect input and target shapes, dtype, device, and label range</td></tr>
+<tr><td>Forward</td><td>Run <code>prediction = model(inputs)</code></td></tr>
+<tr><td>Loss</td><td>Compare predictions with targets using a task-appropriate objective</td></tr>
+<tr><td>Backward</td><td>Clear old gradients, then call <code>loss.backward()</code></td></tr>
+<tr><td>Update</td><td>Apply optional gradient clipping, then <code>optimizer.step()</code></td></tr>
+<tr><td>Evaluate</td><td>Use evaluation mode and disable gradient tracking for inference</td></tr>
+<tr><td>Monitor</td><td>Track train/validation loss, task metrics, learning rate, and examples</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Architecture and Objective Selection</h3>
+<table>
+<tr><th>Data or task</th><th>Starting point</th></tr>
+<tr><td>Images</td><td>CNN or vision Transformer; check input channels and spatial dimensions</td></tr>
+<tr><td>Sequences</td><td>RNN/LSTM or Transformer; use masks for padding and causal constraints</td></tr>
+<tr><td>Tabular data</td><td>Establish a tree-based ML baseline before a neural network</td></tr>
+<tr><td>Binary classification</td><td>Logits with binary cross-entropy with logits</td></tr>
+<tr><td>Multiclass classification</td><td>Class logits with cross-entropy and integer class targets</td></tr>
+<tr><td>Regression</td><td>Continuous output with MAE or MSE, chosen for the error cost</td></tr>
+<tr><td>Pretrained model</td><td>Freeze or fine-tune layers based on data size and validation results</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Overfitting, Stability, and Deployment</h3>
+<table>
+<tr><th>Symptom</th><th>First checks</th></tr>
+<tr><td>Training and validation loss both high</td><td>Data, labels, shapes, learning rate, and model capacity</td></tr>
+<tr><td>Training low, validation high</td><td>Leakage, split quality, augmentation, regularization, early stopping</td></tr>
+<tr><td>Loss unstable or NaN</td><td>Learning rate, gradient scale, dtype, invalid targets, normalization</td></tr>
+<tr><td>Slow or memory-heavy inference</td><td>Batch size, input pipeline, device transfer, quantization options</td></tr>
+<tr><td>Class imbalance</td><td>Per-class metrics, sampling or class weights, decision threshold</td></tr>
+<tr><td>Reproducibility</td><td>Record data split, code, framework, configuration, and random seed</td></tr>
+</table>
+<div class="warn-box">Do not select architectures or thresholds using the test set. Compare on validation data and reserve the test set for final evaluation.</div>
+</div>
         </div>
       </div>
     </div>
