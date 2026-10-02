@@ -1,0 +1,438 @@
+@page 🧠 Data Structures & Algorithms
+@intro Build durable problem-solving skills with complexity analysis, core data structures, search and sorting, graph algorithms, greedy methods, dynamic programming, and Python examples.
+
+@module m1 | ⏱️ | 1 · Complexity | Module 1 — Complexity Analysis | Big O · Space · Amortized costs
+@topic What Complexity Measures
+Time complexity describes how an algorithm's work grows with input size; space complexity describes its additional memory use. Big O is an asymptotic upper bound and commonly communicates worst-case growth, but state the case and assumptions rather than treating it as an exact runtime.
+@table
+Growth | Common example
+`O(1)` | Array index access
+`O(log n)` | Binary search on sorted data
+`O(n)` | One pass through an array
+`O(n log n)` | Comparison sorting in the general case
+`O(n^2)` | Comparing every pair in a simple nested loop
+`O(2^n)` | Enumerating all subsets
+@end
+@topic Time and Space Trade-offs
+An auxiliary hash set can reduce repeated membership checks from linear to average constant time, at the cost of additional memory. Recursion also uses call-stack space; include it when describing auxiliary space.
+@code python
+def contains_duplicate(values):
+    seen = set()
+    for value in values:
+        if value in seen:
+            return True
+        seen.add(value)
+    return False
+@end
+This routine takes expected `O(n)` time and `O(n)` extra space. Hash-table operations are expected constant time, not a universal worst-case guarantee.
+@topic Amortized Analysis
+An operation can be expensive occasionally but cheap on average over a sequence. Appending to a dynamic array is amortized `O(1)` because resizing copies elements only occasionally; one particular append may still take `O(n)`.
+@practice
+1. State the time and auxiliary-space complexity of checking for duplicates with a set.
+2. Why can one array append be `O(n)` even though append is amortized `O(1)`?
+
+@module m2 | 📚 | 2 · Arrays and Strings | Module 2 — Arrays, Strings & Prefix Sums | Indexing · Traversal · Prefix sums
+@topic Array and String Operations
+Arrays provide constant-time indexed access. In Python, lists are dynamic arrays; inserting near the beginning shifts later elements. Strings are immutable sequences, so repeated concatenation in a loop can copy growing prefixes.
+@table
+Operation | Typical array/list cost
+Index access | `O(1)`
+Search unsorted values | `O(n)`
+Append | Amortized `O(1)`
+Insert or delete near the front | `O(n)`
+Sort | `O(n log n)` for Python's built-in sort
+@end
+@topic Prefix Sums
+A prefix sum stores cumulative totals so a range sum can be answered with two array accesses after linear preprocessing. Choose a consistent indexing convention and test empty and boundary ranges.
+@code python
+def prefix_sums(values):
+    prefix = [0]
+    for value in values:
+        prefix.append(prefix[-1] + value)
+    return prefix
+
+prefix = prefix_sums([4, 2, 7])
+range_sum = prefix[3] - prefix[1]  # sum of indexes 1 through 2
+@end
+The preprocessing costs `O(n)` time and space; each half-open range query `[left, right)` costs `O(1)`.
+@practice
+1. What is the cost of reading `values[i]` from a Python list?
+2. Use prefix sums to answer the sum of values from index `left` inclusive to `right` exclusive.
+
+@module m3 | 🔑 | 3 · Hashing | Module 3 — Hash Maps & Sets | Frequency counts · Membership · Collisions
+@topic Hash-Based Structures
+A hash map associates keys with values; a set stores distinct keys. They are useful for frequency counts, membership checks, and matching values seen earlier. Average lookup and insertion are often `O(1)`, with `O(n)` worst cases possible.
+@code python
+from collections import Counter
+
+counts = Counter(["red", "blue", "red"])
+has_blue = "blue" in counts
+@end
+@topic Hashing Constraints
+Keys must be hashable and have stable equality and hash behavior while stored. A hash collision is possible, so a map still compares keys for equality rather than assuming hashes are unique.
+@tip When a problem asks whether a complement or previously seen value exists, consider storing the values already visited in a set or dictionary.
+@practice
+1. Count how many times each integer appears in an array.
+2. Explain why hash tables provide expected rather than guaranteed worst-case `O(1)` lookup.
+
+@module m4 | ↔️ | 4 · Array Patterns | Module 4 — Two Pointers & Sliding Windows | Sorted pairs · In-place scans · Window invariants
+@topic Two Pointers
+Two pointers scan from opposite ends or move at different speeds. On a sorted array, moving the left pointer when a sum is too small and the right pointer when it is too large can find a target pair in `O(n)` time.
+@code python
+def has_pair_with_sum(sorted_values, target):
+    left, right = 0, len(sorted_values) - 1
+    while left < right:
+        total = sorted_values[left] + sorted_values[right]
+        if total == target:
+            return True
+        if total < target:
+            left += 1
+        else:
+            right -= 1
+    return False
+@end
+@topic Sliding Windows
+A sliding window maintains a contiguous range while moving its endpoints. State the invariant, such as “the current window contains no repeated characters,” then expand and shrink it only as needed.
+@code python
+def longest_unique_span(text):
+    last_seen = {}
+    left = best = 0
+    for right, char in enumerate(text):
+        if char in last_seen:
+            left = max(left, last_seen[char] + 1)
+        last_seen[char] = right
+        best = max(best, right - left + 1)
+    return best
+@end
+@practice
+1. Why does the two-pointer pair-sum method rely on sorted input?
+2. State the window invariant for finding the longest substring with unique characters.
+
+@module m5 | 🔗 | 5 · Linked Lists | Module 5 — Linked Lists | Nodes · Reversal · Cycle detection
+@topic Node-Based Sequences
+A linked list stores values in nodes connected by references. It supports constant-time insertion when the relevant node is already known, but finding an indexed position takes `O(n)` and each node adds memory overhead.
+@code python
+class Node:
+    def __init__(self, value, next_node=None):
+        self.value = value
+        self.next = next_node
+@end
+@topic Fast and Slow Pointers
+Two pointers moving at different speeds can detect cycles. If a cycle exists, a slow pointer advancing one link and a fast pointer advancing two links eventually meet inside the cycle.
+@info Reversing a singly linked list iteratively takes `O(n)` time and `O(1)` extra space by reconnecting one `next` link at a time.
+@practice
+1. Compare indexed access in an array and a singly linked list.
+2. Explain why slow/fast pointers detect a cycle if one exists.
+
+@module m6 | 📥 | 6 · Linear ADTs | Module 6 — Stacks, Queues & Deques | LIFO · FIFO · Monotonic structures
+@topic Stack and Queue
+A stack is last-in, first-out and is useful for parsing, undo histories, and depth-first traversal. A queue is first-in, first-out and is useful for breadth-first traversal and scheduling.
+@code python
+from collections import deque
+
+stack = []
+stack.append("open")
+top = stack.pop()
+
+queue = deque(["first", "second"])
+next_item = queue.popleft()
+@end
+Use `collections.deque` for queue operations; removing index zero from a list requires shifting later elements. A monotonic stack or deque maintains values in sorted order to answer next-greater or sliding-window-extreme queries efficiently.
+@practice
+1. Which structure is used for BFS: stack or queue?
+2. What problem pattern can a monotonic stack solve?
+
+@module m7 | 🔁 | 7 · Recursion | Module 7 — Recursion & Backtracking | Base cases · State · Pruning
+@topic Recursion
+A recursive function solves a smaller instance and needs a base case that stops. Reason about the state passed to each call and how the input shrinks; Python recursion depth is limited, so iterative approaches may be preferable for deep inputs.
+@code python
+def factorial(n):
+    if n < 0:
+        raise ValueError("n must be nonnegative")
+    if n < 2:
+        return 1
+    return n * factorial(n - 1)
+@end
+@topic Backtracking
+Backtracking explores choices, abandons a partial solution when it cannot succeed, and restores state before exploring another branch. The worst case is often exponential, so prune early and avoid copying large state unnecessarily.
+@code python
+def subsets(values):
+    result = []
+    path = []
+
+    def visit(index):
+        if index == len(values):
+            result.append(path.copy())
+            return
+        visit(index + 1)
+        path.append(values[index])
+        visit(index + 1)
+        path.pop()
+
+    visit(0)
+    return result
+@end
+@practice
+1. Identify the base case and decreasing input in a recursive sum function.
+2. For subset generation, how many subsets can an input of size `n` produce?
+
+@module m8 | 🔎 | 8 · Search | Module 8 — Binary Search | Sorted data · Boundaries · Search on answer
+@topic Binary Search on a Sorted Sequence
+Binary search repeatedly halves a monotonic search interval, giving `O(log n)` comparisons. Use a clear interval convention; the example below searches a half-open interval `[left, right)`.
+@code python
+def binary_search(values, target):
+    left, right = 0, len(values)
+    while left < right:
+        middle = (left + right) // 2
+        if values[middle] < target:
+            left = middle + 1
+        else:
+            right = middle
+    return left if left < len(values) and values[left] == target else -1
+@end
+This version finds the first candidate position and verifies equality. Binary search can also find a boundary in a monotonic predicate, even when the answer is not an element in an array.
+@warn Binary search requires a sorted input or a monotonic predicate. Off-by-one errors often come from mixing inclusive and half-open intervals.
+@practice
+1. What is the time complexity of binary search?
+2. Adapt the boundary-search idea to find the first value greater than a target.
+
+@module m9 | 🔀 | 9 · Sorting | Module 9 — Sorting & Selection | Stability · Comparison sorts · Top K
+@topic Sorting
+Sorting orders items by a key. Comparison sorting has an `Ω(n log n)` lower bound in the general case; Python's built-in sort is stable and uses Timsort, with `O(n log n)` worst-case time.
+@code python
+records = [{"name": "Ari", "score": 84}, {"name": "Bo", "score": 91}]
+records.sort(key=lambda record: record["score"], reverse=True)
+@end
+@table
+Algorithm | Typical time | Notes
+Merge sort | `O(n log n)` | Stable; commonly requires `O(n)` auxiliary space
+Heap sort | `O(n log n)` | In-place array form; not stable by default
+Quick sort | Average `O(n log n)`, worst `O(n^2)` | Pivot choice affects behavior
+Counting sort | `O(n + k)` | For integer keys in a manageable range `k`
+@end
+@topic Selection and Top K
+If only the largest `k` values are required and `k` is small, a size-`k` heap can take `O(n log k)` time. Always clarify whether duplicates count and what should happen when `k` is invalid.
+@practice
+1. What does stability preserve when two records have equal sort keys?
+2. When might a heap be preferable to sorting the entire input?
+
+@module m10 | 🌳 | 10 · Trees | Module 10 — Trees & Traversals | Preorder · Inorder · Postorder · Level order
+@topic Tree Traversal
+Depth-first traversals visit nodes in different orders; breadth-first traversal visits nodes by level. A traversal of a tree with `n` nodes takes `O(n)` time.
+@code python
+def inorder(node):
+    if node is None:
+        return []
+    return inorder(node.left) + [node.value] + inorder(node.right)
+@end
+This simple version uses recursion and creates intermediate lists; an explicit stack and output list avoid repeated concatenation for larger trees.
+@table
+Traversal | Visit order | Common use
+Preorder | Node, left, right | Serialize or copy a tree
+Inorder | Left, node, right | Sorted order for a BST
+Postorder | Left, right, node | Delete/free a tree bottom-up
+Level order | Breadth-first by depth | Shortest unweighted depth or level grouping
+@end
+@practice
+1. Which traversal visits a BST's keys in sorted order?
+2. What extra space can recursive DFS use on a tree of height `h`?
+
+@module m11 | 🏆 | 11 · Ordered Trees | Module 11 — BSTs & Heaps | Invariants · Priority queues
+@topic Binary Search Trees
+A binary search tree maintains an ordering invariant between each node and its descendants. Search, insertion, and deletion take `O(h)` where `h` is tree height; an unbalanced tree can have height `O(n)`, while a balanced tree has `O(log n)` height.
+@topic Heaps and Priority Queues
+A binary heap supports retrieving the minimum or maximum in `O(1)` and insertion/removal in `O(log n)`. Python's `heapq` implements a min-heap; store negated priorities or tuples for other orderings.
+@code python
+import heapq
+
+priorities = [7, 2, 5]
+heapq.heapify(priorities)
+next_priority = heapq.heappop(priorities)  # 2
+@end
+@practice
+1. Why is BST operation complexity expressed in terms of height?
+2. What is the root value of a min-heap relative to all other values?
+
+@module m12 | 🕸️ | 12 · Graphs | Module 12 — Graph Representation & Traversal | Adjacency lists · BFS · DFS
+@topic Representing a Graph
+An adjacency list stores each vertex's neighbors and uses `O(V + E)` space. An adjacency matrix uses `O(V^2)` space but provides constant-time edge existence checks; choose based on density and operations.
+@code python
+from collections import deque
+
+def bfs(graph, start):
+    seen = {start}
+    queue = deque([start])
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in seen:
+                seen.add(neighbor)
+                queue.append(neighbor)
+    return order
+@end
+BFS and DFS both take `O(V + E)` with adjacency lists. BFS finds shortest path lengths in an unweighted graph; DFS is useful for reachability, components, and cycle analysis.
+@practice
+1. Why does BFS use a queue?
+2. Which graph representation is usually more space-efficient for a sparse graph?
+
+@module m13 | 🧭 | 13 · Graph Algorithms | Module 13 — Paths, Ordering & Connectivity | Dijkstra · Topological sort · Union-find
+@topic Shortest Paths and DAGs
+Dijkstra's algorithm finds shortest paths from a source when edge weights are nonnegative, commonly in `O((V + E) log V)` with an adjacency list and binary heap. For a directed acyclic graph, topological order supports linear-time dynamic programming over edges.
+@topic Disjoint Set Union
+Union-find tracks connectivity under merges. With path compression and union by rank/size, operations are amortized nearly constant time for practical input sizes; it is useful for Kruskal's minimum spanning tree and connectivity queries.
+@info Choose an algorithm only after clarifying directed versus undirected edges, weight constraints, connectivity, and whether one or all shortest paths are needed.
+@practice
+1. Why is Dijkstra not generally correct with negative edge weights?
+2. Name an algorithm that uses union-find to build a minimum spanning tree.
+
+@module m14 | 🧠 | 14 · Greedy | Module 14 — Greedy Algorithms | Local choices · Invariants · Proofs
+@topic Greedy Strategy
+A greedy algorithm repeatedly chooses a locally attractive option. It is correct only when those choices can be shown to lead to a global optimum; a counterexample can disprove an unjustified greedy rule.
+@table
+Problem | Greedy idea
+Activity selection | Sort by finish time; choose the next compatible activity
+Interval merging | Sort by start; extend the current interval when overlapping
+Minimum spanning tree | Choose safe light edges with Kruskal or Prim
+Fractional knapsack | Sort by value per unit weight
+@end
+@warn The fractional-knapsack ratio rule does not solve the 0/1 knapsack problem; indivisible items can make that greedy choice suboptimal.
+@practice
+1. State why selecting earliest-finish activities is useful for maximizing the number of non-overlapping activities.
+2. Find a small counterexample to choosing 0/1 knapsack items by value-to-weight ratio.
+
+@module m15 | 🧮 | 15 · Dynamic Programming | Module 15 — Dynamic Programming | States · Transitions · Memoization · Tabulation
+@topic Recognize a DP Problem
+Dynamic programming applies when subproblems repeat and an optimal answer can be composed from smaller states. Define the state precisely, write the recurrence, state base cases, choose an evaluation order, and derive complexity from states and transitions.
+@code python
+def climbing_ways(n):
+    if n <= 2:
+        return n
+    two_steps_back, one_step_back = 1, 2
+    for _ in range(3, n + 1):
+        two_steps_back, one_step_back = one_step_back, two_steps_back + one_step_back
+    return one_step_back
+@end
+This uses `O(n)` time and `O(1)` extra space. A table-based implementation stores every state; rolling variables work when only a fixed number of earlier states are needed.
+@table
+Term | Meaning
+State | Smallest description needed to identify a subproblem
+Transition | How a state depends on smaller states
+Memoization | Top-down recursion with cached results
+Tabulation | Bottom-up evaluation in dependency order
+@end
+@practice
+1. Define the state and recurrence for minimum coins to reach amount `x`.
+2. How can rolling variables reduce the space for a one-dimensional recurrence?
+
+@module m16 | 🧰 | 16 · Advanced Structures | Module 16 — Tries, Fenwick Trees & Segment Trees | Prefix queries · Range queries · Updates
+@topic Tries
+A trie shares prefixes among stored strings. Search or insertion takes `O(L)` time for key length `L`, with memory depending on the number of nodes and alphabet representation.
+@topic Range Query Structures
+A Fenwick tree supports prefix sums and point updates in `O(log n)` with compact storage. A segment tree supports more general associative range queries and point updates in `O(log n)`, using more memory and implementation complexity.
+@table
+Structure | Useful for
+Trie | Prefix lookup and dictionary word search
+Fenwick tree | Prefix sums with point updates
+Segment tree | Range aggregate queries with updates
+Union-find | Dynamic connectivity as components merge
+@end
+@practice
+1. Which structure fits prefix-sum queries with point updates?
+2. Why might a trie use substantial memory for a large alphabet?
+
+@module m17 | ✅ | 17 · Problem Solving | Module 17 — Interview Workflow & Correctness | Clarify · Invariant · Test · Analyze
+@topic A Repeatable Workflow
+Clarify constraints and input shape; work through a small example; select a representation; state an invariant; implement the simplest correct approach; test edge cases; then analyze time and space. Improve complexity only after the correctness argument is clear.
+@table
+Check | Examples
+Empty and minimal | Empty array, one node, target absent
+Boundaries | First/last index, duplicate values, all equal
+Shape | Skewed tree, disconnected graph, self-loop
+Numeric | Negative values, overflow constraints, large input
+Correctness | Invariant, induction, or exchange argument
+@end
+@tip In Python, know the typical costs of `list`, `dict`, `set`, `deque`, `heapq`, and sorting, and state when a complexity bound is expected rather than worst-case.
+@practice
+1. For a graph problem, clarify direction, weights, parallel edges, and disconnected components before choosing BFS or Dijkstra.
+2. Explain one solution with a loop invariant and then test its smallest boundary cases.
+
+@module m18 | 📋 | Quick Reference | DSA Cheat Sheet | Complexity · Pattern cues · Python structures
+@topic Complexity at a Glance
+@table
+Operation or algorithm | Typical complexity
+Array index | `O(1)`
+Linear scan | `O(n)`
+Binary search | `O(log n)`
+Comparison sort | `O(n log n)`
+Hash lookup | Expected `O(1)`; worst case can be `O(n)`
+BFS/DFS with adjacency list | `O(V + E)`
+Heap push or pop | `O(log n)`
+@end
+@topic Pattern Cues
+@table
+Signal | Consider
+Sorted input / monotonic condition | Binary search or two pointers
+Contiguous subarray or substring | Sliding window or prefix sums
+Repeated membership / frequencies | Hash map or set
+Nested choices / all combinations | Backtracking with pruning
+Optimal value with repeated subproblems | Dynamic programming
+Unweighted shortest path | BFS
+Nonnegative weighted shortest path | Dijkstra
+Connectivity under merges | Union-find
+Top K values | Heap or selection algorithm
+@end
+@topic Python Data Structures
+@table
+Need | Structure
+Dynamic indexed sequence | `list`
+Fast expected membership | `set`
+Key/value mapping | `dict`
+Queue or deque | `collections.deque`
+Priority queue | `heapq` (min-heap)
+LIFO stack | `list.append()` / `list.pop()`
+@end
+@warn State input assumptions, duplicate handling, output order, and whether complexity is worst-case or expected. Test empty, minimal, and boundary inputs.
+
+@module m19 | 🎤 | Interview Prep | DSA Interview Questions & Answers | Complexity · Structures · Algorithms · Trade-offs
+@topic Q: What does Big O notation describe?
+Big O describes an asymptotic upper bound on how resource use grows with input size. In interviews, state whether you mean worst-case, average, or expected complexity and include auxiliary space when relevant.
+@topic Q: What is amortized complexity?
+Amortized analysis averages the cost of a sequence of operations, even when an individual operation can be expensive. Dynamic-array append is amortized `O(1)` because occasional `O(n)` resizing is spread across many appends.
+@topic Q: When would you choose an array over a linked list?
+Arrays offer `O(1)` indexing and good locality, making them a strong default. Linked lists allow `O(1)` insertion or removal when the node is already known, but locating a position is `O(n)` and each node adds pointer overhead.
+@topic Q: When is a hash map useful, and what is its limitation?
+A hash map is useful for expected constant-time membership, counts, and key-to-value lookup. It uses extra memory, requires hashable keys, and has linear worst-case operations if collisions are pathological.
+@topic Q: How do a stack and a queue differ?
+A stack is LIFO: the most recently added item is removed first. A queue is FIFO: the earliest added item is removed first; BFS uses a queue to visit by distance in an unweighted graph.
+@topic Q: What is a stable sorting algorithm?
+A stable sort preserves the relative order of records with equal keys. Stability is useful when a prior ordering should be retained among ties, such as sorting by a second key in a multi-pass workflow.
+@topic Q: What precondition does binary search require?
+The search range must be ordered or the predicate must be monotonic. Each step discards half the remaining range, giving `O(log n)` time; carefully maintain consistent interval boundaries.
+@topic Q: When does BFS find a shortest path?
+BFS finds a path with the fewest edges in an unweighted graph, or when every edge has equal weight. With varying nonnegative edge weights, use an algorithm such as Dijkstra instead.
+@topic Q: What is a common use of DFS?
+DFS explores as far as possible before backtracking and is useful for reachability, connected components, cycle detection, and tree traversals. Its time on an adjacency-list graph is `O(V + E)`.
+@topic Q: What is a topological ordering?
+It is a linear ordering of a directed acyclic graph's vertices in which each directed edge goes from an earlier to a later vertex. It is useful for dependency scheduling; a directed cycle means no such ordering exists.
+@topic Q: When is Dijkstra's algorithm appropriate?
+It computes shortest paths from a source when edge weights are nonnegative. With an adjacency list and binary heap it commonly runs in `O((V + E) log V)`; negative edges require a different method.
+@topic Q: What is the key idea behind union-find?
+It maintains disjoint sets under union and find operations. Path compression and union by size or rank make a sequence of operations amortized nearly constant time; it is useful for connectivity and Kruskal's algorithm.
+@topic Q: How do you justify a greedy algorithm?
+Show that a locally chosen option can be part of an optimal solution, often with an exchange argument or a greedy-choice property, and prove the remaining subproblem is solved optimally. Examples alone do not establish correctness.
+@topic Q: How do you identify dynamic programming?
+Look for overlapping subproblems and optimal substructure. Define a state, recurrence, base cases, evaluation order, and the number of states and transitions to derive complexity.
+@topic Q: What is the difference between memoization and tabulation?
+Memoization is top-down recursion with cached results for states reached. Tabulation is bottom-up computation in dependency order; it can avoid recursion overhead and may allow rolling-array space optimization.
+@topic Q: What is backtracking?
+Backtracking explores partial choices, checks whether a partial state can still lead to a solution, and undoes choices when returning. Pruning reduces the explored search tree but does not always change exponential worst-case complexity.
+@topic Q: What does a prefix-sum array enable?
+It enables range-sum queries in `O(1)` after `O(n)` preprocessing, using the difference of two cumulative sums. Define whether ranges are inclusive or half-open to avoid boundary mistakes.
+@topic Q: When is a sliding window appropriate?
+It is useful for contiguous ranges where the window can be expanded and contracted while maintaining an invariant, such as a sum bound or uniqueness condition. Not every subarray problem supports a simple monotonic window, especially with negative values.
+@topic Q: What is a loop invariant?
+A loop invariant is a property that is true before and after each iteration and helps prove correctness. State its initialization, preservation, and how it implies the result when the loop ends.
+@topic Q: Why use a heap for a top-K problem?
+A size-`k` heap maintains the best `k` candidates while scanning the input, typically in `O(n log k)` time and `O(k)` extra space. Sorting all values is simpler and may be preferable when `k` is close to `n` or the entire order is needed.

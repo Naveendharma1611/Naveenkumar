@@ -76,6 +76,10 @@ export const NOTES = {
     href: "javascript-material.html", title: "🟨 JavaScript Complete Study Material",
     text: "Modern JavaScript from language fundamentals through functions, objects, modules, asynchronous code, browser APIs, testing, and interview preparation.",
   },
+  dsa: {
+    href: "dsa-material.html", title: "🧠 Data Structures & Algorithms",
+    text: "Learn complexity analysis, core data structures, search and sorting, graph algorithms, greedy methods, dynamic programming, and interview problem-solving with Python examples.",
+  },
   c: {
     href: "c-material.html", title: "💻 C Programming Complete Study Material",
     text: "Beginner to advanced C in 23 modules: operators, loops, functions, arrays, strings, pointers, dynamic memory, structures, files and more, with examples and practice questions.",

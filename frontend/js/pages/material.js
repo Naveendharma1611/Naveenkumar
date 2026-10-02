@@ -1,6 +1,6 @@
 // Study-material pages (python-material.html, c-material.html, etc.):
 // W3Schools-inspired learning interface:
-// - Top language/tutorial switcher bar (Java, JavaScript, Data Science, Machine Learning, Deep Learning, AI,
+// - Top language/tutorial switcher bar (Java, JavaScript, DSA, Data Science, Machine Learning, Deep Learning, AI,
 //   Generative AI, Agentic AI, Python, NumPy, Pandas, Matplotlib, Seaborn, Statistics, Excel,
 //   Power BI, C, C++, HTML, CSS, SQL, Django, FastAPI)
 // - Left sidebar with ALL headings in the left side corner
@@ -14,6 +14,7 @@ import { page, setTitle } from "../ui.js";
 const TUTORIALS = [
   { slug: "java", file: "java-material.html", name: "Java", emoji: "☕" },
   { slug: "javascript", file: "javascript-material.html", name: "JavaScript", emoji: "🟨" },
+  { slug: "dsa", file: "dsa-material.html", name: "DSA", emoji: "🧠" },
   { slug: "data-science", file: "data-science-material.html", name: "Data Science", emoji: "📊" },
   { slug: "machine-learning", file: "machine-learning-material.html", name: "Machine Learning", emoji: "🤖" },
   { slug: "deep-learning", file: "deep-learning-material.html", name: "Deep Learning", emoji: "🧠" },
