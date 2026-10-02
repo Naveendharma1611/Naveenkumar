@@ -874,3 +874,80 @@ Focus especially on **array shapes, indexing, slicing, reshape, axis, broadcasti
 2. Build a weekly plan alternating explanations, coding and review.
 3. Revisit an earlier exercise using a 2D array and explicit axis.
 @interview NumPy mastery comes from reasoning about shapes, dtypes, axes and memory while applying vectorized operations to real numerical problems.
+
+@module m40 | 📋 | Quick Reference | NumPy Cheat Sheet | Arrays · Shapes · Indexing · Broadcasting · Statistics
+@topic Arrays and Shapes
+@table
+Need | Pattern
+Create array | `a = np.array([1, 2, 3])`
+Set dtype | `a = np.array([1, 2], dtype=np.float64)`
+Inspect structure | `a.shape`, `a.ndim`, `a.size`, `a.dtype`
+Create a range | `np.arange(start, stop, step)`
+Create evenly spaced values | `np.linspace(start, stop, count)`
+Reshape | `a.reshape(rows, columns)`; element count must stay equal
+Transpose | `a.T` or `np.transpose(a)`
+@end
+@topic Select, Transform, and Combine
+@table
+Need | Pattern
+Slice | `a[start:stop:step]`
+Boolean selection | `a[a > threshold]`
+Conditional selection | `np.where(condition, yes, no)`
+Elementwise arithmetic | `a + b`, `a * b`, `np.sqrt(a)`
+Matrix multiplication | `a @ b`
+Stack along a new axis | `np.stack([a, b], axis=0)`
+Join along an existing axis | `np.concatenate([a, b], axis=0)`
+@end
+@topic Reductions, Missing Values, and Randomness
+@table
+Need | Pattern
+Reduce columns of a 2D array | `a.sum(axis=0)`
+Reduce rows of a 2D array | `a.sum(axis=1)`
+Ignore NaNs in a mean | `np.nanmean(a, axis=0)`
+Find NaNs | `np.isnan(a)`
+Create a random generator | `rng = np.random.default_rng(seed)`
+Sample values | `rng.integers(low, high, size=count)`
+@end
+@warn Broadcasting compares shapes from the trailing dimensions. Each aligned pair must be equal or one of them must be 1; verify the resulting shape before relying on an operation.
+
+@module m41 | 🎤 | Interview Prep | NumPy Interview Questions & Answers | ndarray · Shapes · Views · Vectorization · Numerical methods
+@topic Q: What is a NumPy `ndarray`?
+An `ndarray` is a multidimensional, homogeneous array with a shape and a dtype. Its regular memory representation enables efficient numerical operations over many values.
+@topic Q: What do `shape`, `ndim`, `size`, and `dtype` describe?
+`shape` gives the length of each dimension, `ndim` is the number of dimensions, `size` is the total number of elements, and `dtype` describes the element type.
+@topic Q: Why are NumPy operations often faster than Python loops?
+Many NumPy operations execute compiled loops over contiguous or efficiently arranged data, avoiding much of the per-element Python interpreter overhead. Performance still depends on data layout, operation, and allocation costs.
+@topic Q: What is broadcasting?
+Broadcasting lets compatible arrays participate in elementwise operations without manually copying data to identical shapes. Dimensions are aligned from the right and are compatible when equal or when one dimension is 1.
+@topic Q: What does `axis=0` mean for a two-dimensional array reduction?
+It reduces along the first axis, combining values down each column and leaving one result per column. `axis=1` combines across each row.
+@topic Q: What is the difference between `*` and `@` for arrays?
+`*` performs elementwise multiplication. `@` performs matrix multiplication, subject to the inner dimensions being compatible.
+@topic Q: What is the difference between a view and a copy?
+A view is a distinct array object that shares underlying data with another array; mutations may be visible through both. A copy owns independent data. Check sharing with `np.shares_memory` when correctness depends on it.
+@topic Q: How do basic slicing and advanced indexing commonly differ?
+Basic slicing commonly returns a view into the original data. Integer-array and Boolean advanced indexing return a copy of the selected values; assigning through an advanced-index expression has distinct semantics from mutating a basic slice.
+@topic Q: How do you select values using a condition?
+Use a Boolean mask such as `values[values > threshold]` to select matching elements. `np.where(condition, x, y)` chooses values from `x` or `y` elementwise.
+@topic Q: What is a NumPy universal function?
+A ufunc is a function designed to operate elementwise on array values and participate in broadcasting. Examples include `np.sqrt`, `np.add`, and `np.isfinite`.
+@topic Q: When would you use `arange` versus `linspace`?
+Use `arange` when specifying a step size and `linspace` when specifying the desired number of evenly spaced samples. Floating-point steps can make `arange` endpoints less predictable than an integer range.
+@topic Q: What must be true before reshaping an array?
+The new shape must contain the same total number of elements as the original. Depending on layout and requested order, a reshape may return a view or require a copy.
+@topic Q: Why should `np.nan` not be compared with `==`?
+NaN is not equal to itself under IEEE floating-point comparison. Use `np.isnan(values)` to detect NaNs and functions such as `np.nanmean` to reduce while ignoring them.
+@topic Q: How should you create random values in modern NumPy code?
+Create a generator with `rng = np.random.default_rng(seed)` and use its methods for sampling. A fixed seed helps reproduce a sequence for a given NumPy implementation and generator configuration.
+@topic Q: What is dtype promotion?
+When an operation combines values with different dtypes, NumPy determines a result dtype capable of representing the operation's values under its promotion rules. Inspect `dtype` and choose it explicitly when precision or memory use matters.
+@topic Q: What is the difference between `stack` and `concatenate`?
+`stack` combines arrays by creating a new axis, so the input shapes must match. `concatenate` joins along an existing axis, so dimensions other than the joining axis must be compatible.
+@topic Q: How do you calculate a matrix product?
+Use the `@` operator or `np.matmul` for matrix multiplication. For two 2D arrays, the left array's column count must equal the right array's row count.
+@topic Q: How can you inspect whether two arrays share memory?
+Use `np.shares_memory(a, b)` to test whether two arrays share at least one memory location. This helps diagnose mutation behavior after slicing or reshaping.
+@topic Q: What does `keepdims=True` do in a reduction?
+It retains reduced dimensions with length one instead of removing them. That can make the reduced result broadcast naturally against the original array.
+@topic Q: How do you make a computation reproducible when it uses random sampling?
+Use an explicit seed with `np.random.default_rng(seed)` and keep the generator's use controlled. Reproducibility can also depend on NumPy version, algorithm, call order, and other libraries involved.

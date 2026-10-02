@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>🔢 NumPy Complete Study Material</h1>
         <p>Learn NumPy from first principles through arrays, data science, machine learning and interviews. Each module explains the idea, shows practical NumPy code and highlights mistakes worth avoiding.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">39</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">79</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">66</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">81</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">41</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">102</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">66</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">81</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -62,6 +62,8 @@
       <a href="#m37">37 · Interview</a>
       <a href="#m38">38 · Practice</a>
       <a href="#m39">Learning Path</a>
+      <a href="#m40">Quick Reference</a>
+      <a href="#m41">Interview Prep</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -1361,6 +1363,149 @@ best_row = np.argmax(clean.mean(axis=1))</code></pre>
 <ol><li>Pick five core topics and teach each with one short example.</li><li>Build a weekly plan alternating explanations, coding and review.</li><li>Revisit an earlier exercise using a 2D array and explicit axis.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>NumPy mastery comes from reasoning about shapes, dtypes, axes and memory while applying vectorized operations to real numerical problems.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m40">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>NumPy Cheat Sheet</h2>
+            <p>Arrays · Shapes · Indexing · Broadcasting · Statistics</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Arrays and Shapes</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Create array</td><td><code>a = np.array([1, 2, 3])</code></td></tr>
+<tr><td>Set dtype</td><td><code>a = np.array([1, 2], dtype=np.float64)</code></td></tr>
+<tr><td>Inspect structure</td><td><code>a.shape</code>, <code>a.ndim</code>, <code>a.size</code>, <code>a.dtype</code></td></tr>
+<tr><td>Create a range</td><td><code>np.arange(start, stop, step)</code></td></tr>
+<tr><td>Create evenly spaced values</td><td><code>np.linspace(start, stop, count)</code></td></tr>
+<tr><td>Reshape</td><td><code>a.reshape(rows, columns)</code>; element count must stay equal</td></tr>
+<tr><td>Transpose</td><td><code>a.T</code> or <code>np.transpose(a)</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Select, Transform, and Combine</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Slice</td><td><code>a[start:stop:step]</code></td></tr>
+<tr><td>Boolean selection</td><td><code>a[a &gt; threshold]</code></td></tr>
+<tr><td>Conditional selection</td><td><code>np.where(condition, yes, no)</code></td></tr>
+<tr><td>Elementwise arithmetic</td><td><code>a + b</code>, <code>a * b</code>, <code>np.sqrt(a)</code></td></tr>
+<tr><td>Matrix multiplication</td><td><code>a @ b</code></td></tr>
+<tr><td>Stack along a new axis</td><td><code>np.stack([a, b], axis=0)</code></td></tr>
+<tr><td>Join along an existing axis</td><td><code>np.concatenate([a, b], axis=0)</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Reductions, Missing Values, and Randomness</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Reduce columns of a 2D array</td><td><code>a.sum(axis=0)</code></td></tr>
+<tr><td>Reduce rows of a 2D array</td><td><code>a.sum(axis=1)</code></td></tr>
+<tr><td>Ignore NaNs in a mean</td><td><code>np.nanmean(a, axis=0)</code></td></tr>
+<tr><td>Find NaNs</td><td><code>np.isnan(a)</code></td></tr>
+<tr><td>Create a random generator</td><td><code>rng = np.random.default_rng(seed)</code></td></tr>
+<tr><td>Sample values</td><td><code>rng.integers(low, high, size=count)</code></td></tr>
+</table>
+<div class="warn-box">Broadcasting compares shapes from the trailing dimensions. Each aligned pair must be equal or one of them must be 1; verify the resulting shape before relying on an operation.</div>
+</div>
+        </div>
+      </div>
+      <div class="module-card" id="m41">
+        <div class="module-header">
+          <span class="module-emoji">🎤</span>
+          <div class="module-title-group">
+            <h2>NumPy Interview Questions &amp; Answers</h2>
+            <p>ndarray · Shapes · Views · Vectorization · Numerical methods</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Q: What is a NumPy <code>ndarray</code>?</h3>
+<p>An <code>ndarray</code> is a multidimensional, homogeneous array with a shape and a dtype. Its regular memory representation enables efficient numerical operations over many values.</p>
+</div>
+<div class="topic">
+<h3>Q: What do <code>shape</code>, <code>ndim</code>, <code>size</code>, and <code>dtype</code> describe?</h3>
+<p><code>shape</code> gives the length of each dimension, <code>ndim</code> is the number of dimensions, <code>size</code> is the total number of elements, and <code>dtype</code> describes the element type.</p>
+</div>
+<div class="topic">
+<h3>Q: Why are NumPy operations often faster than Python loops?</h3>
+<p>Many NumPy operations execute compiled loops over contiguous or efficiently arranged data, avoiding much of the per-element Python interpreter overhead. Performance still depends on data layout, operation, and allocation costs.</p>
+</div>
+<div class="topic">
+<h3>Q: What is broadcasting?</h3>
+<p>Broadcasting lets compatible arrays participate in elementwise operations without manually copying data to identical shapes. Dimensions are aligned from the right and are compatible when equal or when one dimension is 1.</p>
+</div>
+<div class="topic">
+<h3>Q: What does <code>axis=0</code> mean for a two-dimensional array reduction?</h3>
+<p>It reduces along the first axis, combining values down each column and leaving one result per column. <code>axis=1</code> combines across each row.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between <code>*</code> and <code>@</code> for arrays?</h3>
+<p><code>*</code> performs elementwise multiplication. <code>@</code> performs matrix multiplication, subject to the inner dimensions being compatible.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between a view and a copy?</h3>
+<p>A view is a distinct array object that shares underlying data with another array; mutations may be visible through both. A copy owns independent data. Check sharing with <code>np.shares_memory</code> when correctness depends on it.</p>
+</div>
+<div class="topic">
+<h3>Q: How do basic slicing and advanced indexing commonly differ?</h3>
+<p>Basic slicing commonly returns a view into the original data. Integer-array and Boolean advanced indexing return a copy of the selected values; assigning through an advanced-index expression has distinct semantics from mutating a basic slice.</p>
+</div>
+<div class="topic">
+<h3>Q: How do you select values using a condition?</h3>
+<p>Use a Boolean mask such as <code>values[values &gt; threshold]</code> to select matching elements. <code>np.where(condition, x, y)</code> chooses values from <code>x</code> or <code>y</code> elementwise.</p>
+</div>
+<div class="topic">
+<h3>Q: What is a NumPy universal function?</h3>
+<p>A ufunc is a function designed to operate elementwise on array values and participate in broadcasting. Examples include <code>np.sqrt</code>, <code>np.add</code>, and <code>np.isfinite</code>.</p>
+</div>
+<div class="topic">
+<h3>Q: When would you use <code>arange</code> versus <code>linspace</code>?</h3>
+<p>Use <code>arange</code> when specifying a step size and <code>linspace</code> when specifying the desired number of evenly spaced samples. Floating-point steps can make <code>arange</code> endpoints less predictable than an integer range.</p>
+</div>
+<div class="topic">
+<h3>Q: What must be true before reshaping an array?</h3>
+<p>The new shape must contain the same total number of elements as the original. Depending on layout and requested order, a reshape may return a view or require a copy.</p>
+</div>
+<div class="topic">
+<h3>Q: Why should <code>np.nan</code> not be compared with <code>==</code>?</h3>
+<p>NaN is not equal to itself under IEEE floating-point comparison. Use <code>np.isnan(values)</code> to detect NaNs and functions such as <code>np.nanmean</code> to reduce while ignoring them.</p>
+</div>
+<div class="topic">
+<h3>Q: How should you create random values in modern NumPy code?</h3>
+<p>Create a generator with <code>rng = np.random.default_rng(seed)</code> and use its methods for sampling. A fixed seed helps reproduce a sequence for a given NumPy implementation and generator configuration.</p>
+</div>
+<div class="topic">
+<h3>Q: What is dtype promotion?</h3>
+<p>When an operation combines values with different dtypes, NumPy determines a result dtype capable of representing the operation's values under its promotion rules. Inspect <code>dtype</code> and choose it explicitly when precision or memory use matters.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between <code>stack</code> and <code>concatenate</code>?</h3>
+<p><code>stack</code> combines arrays by creating a new axis, so the input shapes must match. <code>concatenate</code> joins along an existing axis, so dimensions other than the joining axis must be compatible.</p>
+</div>
+<div class="topic">
+<h3>Q: How do you calculate a matrix product?</h3>
+<p>Use the <code>@</code> operator or <code>np.matmul</code> for matrix multiplication. For two 2D arrays, the left array's column count must equal the right array's row count.</p>
+</div>
+<div class="topic">
+<h3>Q: How can you inspect whether two arrays share memory?</h3>
+<p>Use <code>np.shares_memory(a, b)</code> to test whether two arrays share at least one memory location. This helps diagnose mutation behavior after slicing or reshaping.</p>
+</div>
+<div class="topic">
+<h3>Q: What does <code>keepdims=True</code> do in a reduction?</h3>
+<p>It retains reduced dimensions with length one instead of removing them. That can make the reduced result broadcast naturally against the original array.</p>
+</div>
+<div class="topic">
+<h3>Q: How do you make a computation reproducible when it uses random sampling?</h3>
+<p>Use an explicit seed with <code>np.random.default_rng(seed)</code> and keep the generator's use controlled. Reproducibility can also depend on NumPy version, algorithm, call order, and other libraries involved.</p>
+</div>
         </div>
       </div>
     </div>
