@@ -559,3 +559,38 @@ If the goal is a data-analyst job specifically, the highest-leverage order is: n
 1. Audit your own current Excel skills against the six stages above and mark the first stage where you're not yet fully confident.
 2. Pick one real messy dataset you have access to and take it from raw import through Power Query cleaning to a one-page PivotTable dashboard.
 @interview I'd describe Excel mastery as a ladder from formula fundamentals through lookups and aggregation, into structured tables and PivotTables, and finally into Power Query, the Data Model and DAX for scale — for a data-analyst role specifically, I'd prioritize lookups, SUMIFS/COUNTIFS and PivotTables first because those are both the most commonly asked interview topics and the most used day-to-day tools.
+
+@module m26 | 📋 | Quick Reference | Excel Cheat Sheet | References · Formulas · Lookups · Analysis · Power Query
+@topic References and Core Formulas
+@table
+Need | Pattern
+Relative reference | `A1` changes when copied
+Absolute reference | `$A$1` locks row and column
+Mixed reference | `A$1` locks row; `$A1` locks column
+Conditional result | `=IF(B2>=60,"Pass","Review")`
+Multiple conditions | `=IFS(A2>=90,"A",A2>=80,"B",TRUE,"Other")`
+Sum with criteria | `=SUMIFS(amounts, regions, H2, dates, ">="&I2)`
+Count with criteria | `=COUNTIFS(statuses,"Open",owners,H2)`
+Handle an error | `=IFERROR(formula,"Check input")`
+@end
+@topic Lookups and Dynamic Arrays
+@table
+Need | Pattern
+Modern exact lookup | `=XLOOKUP(E2,IDs,Names,"Not found")`
+Legacy exact lookup | `=VLOOKUP(E2,Table,3,FALSE)`
+Flexible lookup | `=INDEX(ReturnRange,MATCH(E2,LookupRange,0))`
+Filter rows | `=FILTER(Table,Table[Status]="Open","None")`
+Sort results | `=SORT(FILTER(Table,Table[Region]=H2))`
+Unique values | `=UNIQUE(Table[Category])`
+@end
+@topic Clean, Summarize, and Share
+@table
+Need | Pattern
+Structured reference | `=SUM(Sales[Amount])`
+Pivot summary | Rows + values + filters; choose aggregation deliberately
+Interactive filter | Add a slicer and connect it to relevant PivotTables
+Repeatable data cleaning | Power Query: import → transform → load → refresh
+Model relationships | Use stable keys and a clear one-to-many relationship
+Formula audit | Trace precedents → Evaluate Formula → test edge cases
+@end
+@warn Check whether a lookup should be exact, whether copied formulas use the intended anchored references, and whether totals reconcile to the source data before sharing a workbook.

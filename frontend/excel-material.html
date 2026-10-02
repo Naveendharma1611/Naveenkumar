@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>📊 Excel Complete Study Material</h1>
         <p>Master Excel from the ribbon to Power Query and VBA: formulas, lookups, PivotTables, dashboards, automation and the interview answers that prove you know it.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">25</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">87</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">18</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">49</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">26</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">90</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">18</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">49</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -48,6 +48,7 @@
       <a href="#m23">23 · Dashboards</a>
       <a href="#m24">24 · Interview Prep</a>
       <a href="#m25">25 · Roadmap</a>
+      <a href="#m26">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -1013,6 +1014,57 @@ End Function</code></pre>
 <ol><li>Audit your own current Excel skills against the six stages above and mark the first stage where you're not yet fully confident.</li><li>Pick one real messy dataset you have access to and take it from raw import through Power Query cleaning to a one-page PivotTable dashboard.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>I'd describe Excel mastery as a ladder from formula fundamentals through lookups and aggregation, into structured tables and PivotTables, and finally into Power Query, the Data Model and DAX for scale — for a data-analyst role specifically, I'd prioritize lookups, SUMIFS/COUNTIFS and PivotTables first because those are both the most commonly asked interview topics and the most used day-to-day tools.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m26">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Excel Cheat Sheet</h2>
+            <p>References · Formulas · Lookups · Analysis · Power Query</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>References and Core Formulas</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Relative reference</td><td><code>A1</code> changes when copied</td></tr>
+<tr><td>Absolute reference</td><td><code>$A$1</code> locks row and column</td></tr>
+<tr><td>Mixed reference</td><td><code>A$1</code> locks row; <code>$A1</code> locks column</td></tr>
+<tr><td>Conditional result</td><td><code>=IF(B2&gt;=60,"Pass","Review")</code></td></tr>
+<tr><td>Multiple conditions</td><td><code>=IFS(A2&gt;=90,"A",A2&gt;=80,"B",TRUE,"Other")</code></td></tr>
+<tr><td>Sum with criteria</td><td><code>=SUMIFS(amounts, regions, H2, dates, "&gt;="&amp;I2)</code></td></tr>
+<tr><td>Count with criteria</td><td><code>=COUNTIFS(statuses,"Open",owners,H2)</code></td></tr>
+<tr><td>Handle an error</td><td><code>=IFERROR(formula,"Check input")</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Lookups and Dynamic Arrays</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Modern exact lookup</td><td><code>=XLOOKUP(E2,IDs,Names,"Not found")</code></td></tr>
+<tr><td>Legacy exact lookup</td><td><code>=VLOOKUP(E2,Table,3,FALSE)</code></td></tr>
+<tr><td>Flexible lookup</td><td><code>=INDEX(ReturnRange,MATCH(E2,LookupRange,0))</code></td></tr>
+<tr><td>Filter rows</td><td><code>=FILTER(Table,Table[Status]="Open","None")</code></td></tr>
+<tr><td>Sort results</td><td><code>=SORT(FILTER(Table,Table[Region]=H2))</code></td></tr>
+<tr><td>Unique values</td><td><code>=UNIQUE(Table[Category])</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Clean, Summarize, and Share</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Structured reference</td><td><code>=SUM(Sales[Amount])</code></td></tr>
+<tr><td>Pivot summary</td><td>Rows + values + filters; choose aggregation deliberately</td></tr>
+<tr><td>Interactive filter</td><td>Add a slicer and connect it to relevant PivotTables</td></tr>
+<tr><td>Repeatable data cleaning</td><td>Power Query: import → transform → load → refresh</td></tr>
+<tr><td>Model relationships</td><td>Use stable keys and a clear one-to-many relationship</td></tr>
+<tr><td>Formula audit</td><td>Trace precedents → Evaluate Formula → test edge cases</td></tr>
+</table>
+<div class="warn-box">Check whether a lookup should be exact, whether copied formulas use the intended anchored references, and whether totals reconcile to the source data before sharing a workbook.</div>
+</div>
         </div>
       </div>
     </div>
