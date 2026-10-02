@@ -1228,3 +1228,81 @@ int main(int argc, char *argv[]) {
 3. Copy a file whose source and destination names are given as arguments.
 4. Count the characters in every argument.
 @interview `main(int argc, char *argv[])` receives the number of arguments and an array of argument strings; `argv[0]` is the program name and values must be converted from strings.
+
+@module m24 | 📋 | Quick Reference | C Cheat Sheet | Types · Pointers · Arrays · Memory · Files · Build
+@topic Core Syntax and Types
+@table
+Need | Pattern
+Include header | `#include <stdio.h>`
+Entry point | `int main(void) { return 0; }`
+Constant object | `const int limit = 10;`
+Array length in scope | `sizeof values / sizeof values[0]`
+Pointer declaration | `int *pointer = &value;`
+Null pointer | `int *pointer = NULL;`
+Print integer | `printf("%d", value);`
+Print `size_t` | `printf("%zu", size);`
+@end
+@topic Strings, Memory, and Files
+@table
+Need | Pattern
+Bounded input | `fgets(buffer, sizeof buffer, stdin)`
+String length | `strlen(text)` (requires a null-terminated string)
+Allocate array | `malloc(count * sizeof *items)`; check for `NULL`
+Resize allocation | `realloc(pointer, new_count * sizeof *pointer)` via a temporary pointer
+Release allocation | `free(pointer)`; do not use the allocation afterward
+Open a file | `FILE *file = fopen(path, "r");` then check for `NULL`
+Close a file | `fclose(file)` after successful open
+@end
+@topic Build and Safety
+@table
+Need | Pattern
+Compile with warnings | `gcc -std=c17 -Wall -Wextra -Wpedantic source.c -o app`
+Check input conversion | Verify `scanf` return count or parse with `strtol`
+Prevent buffer overflow | Keep capacity and bounds with every write
+Initialize pointer | Set it to a valid object address or `NULL`
+Use after free | Invalid; set owner to `NULL` when that helps avoid reuse
+File-scope private helper | `static` function has internal linkage
+@end
+@warn Every string buffer needs room for its terminating `\0`. Check allocation and I/O results, and avoid reading uninitialized objects or using dangling pointers.
+
+@module m25 | 🎤 | Interview Prep | C Interview Questions & Answers | Arrays · Pointers · Lifetimes · Memory · Preprocessor
+@topic Q: What is the difference between an array and a pointer in C?
+An array is an object containing a fixed sequence of elements; a pointer is an object that stores an address. In many expressions an array converts to a pointer to its first element, but they are not interchangeable, and `sizeof` on an array in its defining scope gives the array size.
+@topic Q: What does a pointer store?
+A pointer stores a value that can designate an object or function, or be a null pointer. A pointer is only safe to dereference when it points to a live object of a compatible type and the program has valid access to it.
+@topic Q: What is a null pointer?
+A null pointer is guaranteed not to point to an object or function. Use `NULL` or a null pointer constant such as `0` in C; do not dereference it.
+@topic Q: What does pointer arithmetic depend on?
+Adding or subtracting an integer from a pointer advances by that many elements of the pointed-to type, not bytes. The resulting pointer must remain within the same array object or one past its end; dereferencing the one-past pointer is invalid.
+@topic Q: What is the difference between `sizeof(array)` and `sizeof(pointer)`?
+For an actual array in its defining scope, `sizeof(array)` gives the total bytes occupied by all elements. `sizeof(pointer)` gives the size of the pointer object, and an array parameter declaration is adjusted to a pointer parameter.
+@topic Q: What is a C string?
+A C string is a sequence of characters terminated by a null character, `\0`. The buffer must have enough space for all characters plus that terminator; a character array without a terminator is not safe to pass to ordinary string functions.
+@topic Q: Why is `gets` unsafe?
+It cannot limit the number of characters read to the destination buffer's capacity, so input can overflow the buffer. Use bounded input such as `fgets` and validate the result.
+@topic Q: What does `fgets` do with a newline?
+If a newline is read before the buffer fills, `fgets` stores it in the buffer and then appends a null terminator. Code that needs a trimmed line should handle the newline explicitly.
+@topic Q: What is the difference between `malloc` and `calloc`?
+`malloc` allocates a requested number of bytes with indeterminate contents. `calloc` allocates space for an array and initializes all bytes to zero; neither checks whether the requested size calculation overflowed, so validate sizes.
+@topic Q: How should `realloc` be used safely?
+Assign its result to a temporary pointer first. If it returns `NULL` for a nonzero requested size, the original allocation remains valid; overwrite the original pointer only after success.
+@topic Q: What happens when `free` is called with `NULL`?
+It does nothing. Otherwise, pass only a pointer returned by a compatible allocation function that has not already been freed; freeing an invalid or already-freed pointer is undefined behavior.
+@topic Q: What is a dangling pointer?
+A dangling pointer refers to an object whose lifetime has ended or storage that is no longer allocated. Do not dereference it; clear or replace owning pointers after releasing their allocation when useful.
+@topic Q: What is undefined behavior in C?
+Undefined behavior is an operation for which the C standard imposes no requirements on the result, such as signed integer overflow or accessing an object outside its lifetime. The program cannot rely on a particular result or safely recover as if it were a defined error.
+@topic Q: What is the difference between a declaration and a definition?
+A declaration introduces a name and its type to the compiler. A definition provides the entity itself, such as allocating an object or providing a function body; some declarations are also definitions.
+@topic Q: What does `static` mean at file scope?
+At file scope, `static` gives an object or function internal linkage, limiting that name's visibility to the current translation unit. For a block-scope local object, `static` instead gives it static storage duration.
+@topic Q: What does `extern` commonly mean for a file-scope object?
+An `extern` declaration commonly refers to an object defined elsewhere, allowing multiple translation units to share the same external-linkage object. Provide exactly one compatible definition in the program.
+@topic Q: What is the difference between a macro and a function?
+A function has typed parameters and normal function-call semantics. A macro is expanded by the preprocessor before compilation and can evaluate arguments unexpectedly, so parenthesize macro parameters and prefer functions or inline functions when possible.
+@topic Q: What is a structure in C?
+A structure groups named members, potentially of different types, into one aggregate object. Access a member through an object with `.` or through a pointer with `->`.
+@topic Q: What does a function parameter declared as `const int *p` promise?
+It prevents modifying the pointed-to integer through `p` within that function. It does not make the pointer itself constant, nor does it prove that no other alias can modify the object.
+@topic Q: Why should a function check the result of `fopen`?
+`fopen` returns a null pointer if the file cannot be opened. Check it before using the `FILE` pointer, and close the stream with `fclose` after a successful open.
