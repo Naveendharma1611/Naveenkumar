@@ -1336,3 +1336,83 @@ For fresher interviews, prioritize Core Java, OOP, Strings, arrays, collections,
 2. Explain one topic aloud, then implement an example without copying.
 3. Finish one project before adding another framework.
 @interview A practical Java roadmap moves from fundamentals and object design to collections, concurrency, databases, Spring APIs, security and deployment, reinforced by tested projects.
+
+@module m75 | 📋 | Quick Reference | Java Cheat Sheet | Syntax · OOP · Collections · Exceptions · Streams
+@topic Core Syntax and Types
+@table
+Need | Pattern
+Entry point | `public static void main(String[] args) { ... }`
+Immutable binding | `final int limit = 10;`
+String interpolation | `String message = "Hello, " + name;`
+Null check | `if (value == null) { ... }`
+Safe equality | `Objects.equals(left, right)`
+List | `List<String> names = new ArrayList<>();`
+Immutable list | `List<String> names = List.of("Asha", "Noah");`
+Map lookup | `map.getOrDefault(key, fallback)`
+@end
+@topic Classes, Methods, and Collections
+@table
+Need | Pattern
+Constructor | `public User(String name) { this.name = name; }`
+Override | `@Override public String toString() { ... }`
+Interface implementation | `class Service implements Closeable { ... }`
+Generic type | `class Box<T> { private T value; }`
+Iteration | `for (String name : names) { ... }`
+Hash key contract | Override `equals` and `hashCode` together
+Thread-safe compound action | Protect shared state with one synchronization strategy
+@end
+@topic Exceptions, I/O, and Streams
+@table
+Need | Pattern
+Checked exception | `try { ... } catch (IOException e) { ... }`
+Automatic resource closing | `try (var input = Files.newBufferedReader(path)) { ... }`
+Transform a stream | `items.stream().map(this::convert).toList()`
+Filter a stream | `items.stream().filter(Item::isActive).toList()`
+Optional fallback | `optional.orElse(defaultValue)`
+Thread pool | `ExecutorService pool = Executors.newFixedThreadPool(4);`
+@end
+@warn Use `var` only when the initializer makes the type obvious. Never swallow exceptions or expose mutable internal collections without a deliberate API contract.
+
+@module m76 | 🎤 | Interview Prep | Java Interview Questions & Answers | JVM · OOP · Collections · Exceptions · Generics · Concurrency
+@topic Q: What is the difference between the JDK, JRE, and JVM?
+The JVM executes Java bytecode. The JRE is the runtime components needed to run Java applications, conceptually including the JVM and libraries. The JDK includes development tools such as the compiler and debugger along with runtime components; modern distributions may not package a separate JRE installer.
+@topic Q: How does Java code run on different platforms?
+The Java compiler translates source code into platform-independent bytecode. A compatible JVM for the target platform loads and executes that bytecode, with implementation details such as just-in-time compilation varying by JVM.
+@topic Q: What is the difference between primitive and reference types?
+Primitive types hold values such as integers, floating-point numbers, booleans, and characters. Reference variables refer to objects; they can be `null` and support object behavior defined by their class.
+@topic Q: Why is `String` immutable in Java?
+An immutable string cannot change after construction, which makes sharing and caching safer and supports predictable hashing. Operations that appear to modify a string create a new string instead.
+@topic Q: What is the contract between `equals` and `hashCode`?
+If two objects are equal according to `equals`, they must return the same `hashCode`. Unequal objects may have the same hash code; overriding one method generally requires overriding the other consistently.
+@topic Q: What is the difference between method overloading and overriding?
+Overloading uses the same method name with different parameter lists and is resolved at compile time. Overriding supplies a compatible implementation in a subtype and uses runtime dispatch for instance methods.
+@topic Q: What does `static` mean for a field or method?
+A static member belongs to the class rather than to a particular instance. Static methods do not have an instance `this` and cannot directly access instance members without an object reference.
+@topic Q: What does `final` mean for a variable, method, and class?
+A final variable can be assigned only once; a final method cannot be overridden; and a final class cannot be subclassed. A final reference does not make the referenced object's state immutable.
+@topic Q: When would you use an interface instead of an abstract class?
+Use an interface to describe a capability or contract that unrelated classes can implement. Use an abstract class when related subclasses need shared instance state or common implementation; a class can extend only one class but implement multiple interfaces.
+@topic Q: What is encapsulation?
+Encapsulation groups state and behavior behind a deliberate API. Restricting direct access to internal state lets a class enforce invariants and change its implementation without breaking callers.
+@topic Q: How do `ArrayList` and `LinkedList` differ?
+`ArrayList` provides efficient indexed access and is a common default for lists. `LinkedList` has linear indexed access and can insert or remove at its ends efficiently; the right choice depends on actual operation patterns and measurements.
+@topic Q: How does `HashMap` use `hashCode` and `equals`?
+It uses a key's hash code to locate a bucket and equality checks to distinguish keys within that bucket. Correct, stable implementations of both methods are important while an object is used as a key.
+@topic Q: What is the difference between checked and unchecked exceptions?
+Checked exceptions must be caught or declared by the method signature. Unchecked exceptions extend `RuntimeException` and do not have that compile-time requirement; use them for programming errors or conditions callers are not required to handle by declaration.
+@topic Q: What does try-with-resources do?
+It closes resources that implement `AutoCloseable` when the block exits, including when an exception occurs. It is the preferred pattern for files, streams, and similar resources that need deterministic cleanup.
+@topic Q: What is type erasure in Java generics?
+Java generics are primarily enforced by the compiler; generic type information is generally erased from ordinary runtime types. This supports compatibility with older bytecode but means some parameterized type details are unavailable for runtime checks.
+@topic Q: What does `volatile` guarantee, and what does it not guarantee?
+Volatile reads and writes provide visibility and ordering guarantees for that variable between threads. It does not make compound operations such as incrementing a counter atomic; use synchronization or an atomic class for those operations.
+@topic Q: What does `synchronized` provide?
+It provides mutual exclusion for code guarded by the same monitor and establishes visibility guarantees when a thread releases and another acquires that monitor. Keep critical sections small and avoid inconsistent lock ordering.
+@topic Q: Why use an `ExecutorService` instead of creating a thread for every task?
+An executor manages task submission and thread reuse, helping control concurrency and resource usage. It also provides lifecycle management and result handling through `Future` and related APIs.
+@topic Q: What is dependency injection?
+Dependency injection supplies a class's collaborators from the outside rather than having the class construct them directly. It reduces coupling and makes dependencies easier to replace in tests or different application configurations.
+@topic Q: When does a Java Stream operation execute?
+Intermediate operations such as `map` and `filter` are lazy and describe a pipeline. A terminal operation such as `collect`, `toList`, or `forEach` triggers traversal and evaluation.
+@topic Q: What is the purpose of `Optional`?
+`Optional<T>` represents a value that may be absent and encourages callers to handle that absence explicitly. It is commonly used for return values; it is generally not intended as a replacement for every nullable field or parameter.

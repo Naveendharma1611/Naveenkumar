@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>☕ Java Complete End-to-End Study Material</h1>
         <p>Learn Java from your first program to professional backend development: Core Java, object-oriented design, collections, modern Java, concurrency, databases, Spring Boot, security, microservices, Docker, cloud and projects.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">74</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">140</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">69</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">149</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">76</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">164</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">69</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">149</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -97,6 +97,8 @@
       <a href="#m72">72 · Monitoring</a>
       <a href="#m73">Projects</a>
       <a href="#m74">Roadmap</a>
+      <a href="#m75">Quick Reference</a>
+      <a href="#m76">Interview Prep</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -2394,6 +2396,154 @@ log.warn("Payment retry {} for order {}", attempt, orderId);</code></pre>
 <ol><li>Choose a weekly schedule with coding, review and project time.</li><li>Explain one topic aloud, then implement an example without copying.</li><li>Finish one project before adding another framework.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>A practical Java roadmap moves from fundamentals and object design to collections, concurrency, databases, Spring APIs, security and deployment, reinforced by tested projects.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m75">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Java Cheat Sheet</h2>
+            <p>Syntax · OOP · Collections · Exceptions · Streams</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Core Syntax and Types</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Entry point</td><td><code>public static void main(String[] args) { ... }</code></td></tr>
+<tr><td>Immutable binding</td><td><code>final int limit = 10;</code></td></tr>
+<tr><td>String interpolation</td><td><code>String message = "Hello, " + name;</code></td></tr>
+<tr><td>Null check</td><td><code>if (value == null) { ... }</code></td></tr>
+<tr><td>Safe equality</td><td><code>Objects.equals(left, right)</code></td></tr>
+<tr><td>List</td><td><code>List&lt;String&gt; names = new ArrayList&lt;&gt;();</code></td></tr>
+<tr><td>Immutable list</td><td><code>List&lt;String&gt; names = List.of("Asha", "Noah");</code></td></tr>
+<tr><td>Map lookup</td><td><code>map.getOrDefault(key, fallback)</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Classes, Methods, and Collections</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Constructor</td><td><code>public User(String name) { this.name = name; }</code></td></tr>
+<tr><td>Override</td><td><code>@Override public String toString() { ... }</code></td></tr>
+<tr><td>Interface implementation</td><td><code>class Service implements Closeable { ... }</code></td></tr>
+<tr><td>Generic type</td><td><code>class Box&lt;T&gt; { private T value; }</code></td></tr>
+<tr><td>Iteration</td><td><code>for (String name : names) { ... }</code></td></tr>
+<tr><td>Hash key contract</td><td>Override <code>equals</code> and <code>hashCode</code> together</td></tr>
+<tr><td>Thread-safe compound action</td><td>Protect shared state with one synchronization strategy</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Exceptions, I/O, and Streams</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Checked exception</td><td><code>try { ... } catch (IOException e) { ... }</code></td></tr>
+<tr><td>Automatic resource closing</td><td><code>try (var input = Files.newBufferedReader(path)) { ... }</code></td></tr>
+<tr><td>Transform a stream</td><td><code>items.stream().map(this::convert).toList()</code></td></tr>
+<tr><td>Filter a stream</td><td><code>items.stream().filter(Item::isActive).toList()</code></td></tr>
+<tr><td>Optional fallback</td><td><code>optional.orElse(defaultValue)</code></td></tr>
+<tr><td>Thread pool</td><td><code>ExecutorService pool = Executors.newFixedThreadPool(4);</code></td></tr>
+</table>
+<div class="warn-box">Use <code>var</code> only when the initializer makes the type obvious. Never swallow exceptions or expose mutable internal collections without a deliberate API contract.</div>
+</div>
+        </div>
+      </div>
+      <div class="module-card" id="m76">
+        <div class="module-header">
+          <span class="module-emoji">🎤</span>
+          <div class="module-title-group">
+            <h2>Java Interview Questions &amp; Answers</h2>
+            <p>JVM · OOP · Collections · Exceptions · Generics · Concurrency</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Q: What is the difference between the JDK, JRE, and JVM?</h3>
+<p>The JVM executes Java bytecode. The JRE is the runtime components needed to run Java applications, conceptually including the JVM and libraries. The JDK includes development tools such as the compiler and debugger along with runtime components; modern distributions may not package a separate JRE installer.</p>
+</div>
+<div class="topic">
+<h3>Q: How does Java code run on different platforms?</h3>
+<p>The Java compiler translates source code into platform-independent bytecode. A compatible JVM for the target platform loads and executes that bytecode, with implementation details such as just-in-time compilation varying by JVM.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between primitive and reference types?</h3>
+<p>Primitive types hold values such as integers, floating-point numbers, booleans, and characters. Reference variables refer to objects; they can be <code>null</code> and support object behavior defined by their class.</p>
+</div>
+<div class="topic">
+<h3>Q: Why is <code>String</code> immutable in Java?</h3>
+<p>An immutable string cannot change after construction, which makes sharing and caching safer and supports predictable hashing. Operations that appear to modify a string create a new string instead.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the contract between <code>equals</code> and <code>hashCode</code>?</h3>
+<p>If two objects are equal according to <code>equals</code>, they must return the same <code>hashCode</code>. Unequal objects may have the same hash code; overriding one method generally requires overriding the other consistently.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between method overloading and overriding?</h3>
+<p>Overloading uses the same method name with different parameter lists and is resolved at compile time. Overriding supplies a compatible implementation in a subtype and uses runtime dispatch for instance methods.</p>
+</div>
+<div class="topic">
+<h3>Q: What does <code>static</code> mean for a field or method?</h3>
+<p>A static member belongs to the class rather than to a particular instance. Static methods do not have an instance <code>this</code> and cannot directly access instance members without an object reference.</p>
+</div>
+<div class="topic">
+<h3>Q: What does <code>final</code> mean for a variable, method, and class?</h3>
+<p>A final variable can be assigned only once; a final method cannot be overridden; and a final class cannot be subclassed. A final reference does not make the referenced object's state immutable.</p>
+</div>
+<div class="topic">
+<h3>Q: When would you use an interface instead of an abstract class?</h3>
+<p>Use an interface to describe a capability or contract that unrelated classes can implement. Use an abstract class when related subclasses need shared instance state or common implementation; a class can extend only one class but implement multiple interfaces.</p>
+</div>
+<div class="topic">
+<h3>Q: What is encapsulation?</h3>
+<p>Encapsulation groups state and behavior behind a deliberate API. Restricting direct access to internal state lets a class enforce invariants and change its implementation without breaking callers.</p>
+</div>
+<div class="topic">
+<h3>Q: How do <code>ArrayList</code> and <code>LinkedList</code> differ?</h3>
+<p><code>ArrayList</code> provides efficient indexed access and is a common default for lists. <code>LinkedList</code> has linear indexed access and can insert or remove at its ends efficiently; the right choice depends on actual operation patterns and measurements.</p>
+</div>
+<div class="topic">
+<h3>Q: How does <code>HashMap</code> use <code>hashCode</code> and <code>equals</code>?</h3>
+<p>It uses a key's hash code to locate a bucket and equality checks to distinguish keys within that bucket. Correct, stable implementations of both methods are important while an object is used as a key.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between checked and unchecked exceptions?</h3>
+<p>Checked exceptions must be caught or declared by the method signature. Unchecked exceptions extend <code>RuntimeException</code> and do not have that compile-time requirement; use them for programming errors or conditions callers are not required to handle by declaration.</p>
+</div>
+<div class="topic">
+<h3>Q: What does try-with-resources do?</h3>
+<p>It closes resources that implement <code>AutoCloseable</code> when the block exits, including when an exception occurs. It is the preferred pattern for files, streams, and similar resources that need deterministic cleanup.</p>
+</div>
+<div class="topic">
+<h3>Q: What is type erasure in Java generics?</h3>
+<p>Java generics are primarily enforced by the compiler; generic type information is generally erased from ordinary runtime types. This supports compatibility with older bytecode but means some parameterized type details are unavailable for runtime checks.</p>
+</div>
+<div class="topic">
+<h3>Q: What does <code>volatile</code> guarantee, and what does it not guarantee?</h3>
+<p>Volatile reads and writes provide visibility and ordering guarantees for that variable between threads. It does not make compound operations such as incrementing a counter atomic; use synchronization or an atomic class for those operations.</p>
+</div>
+<div class="topic">
+<h3>Q: What does <code>synchronized</code> provide?</h3>
+<p>It provides mutual exclusion for code guarded by the same monitor and establishes visibility guarantees when a thread releases and another acquires that monitor. Keep critical sections small and avoid inconsistent lock ordering.</p>
+</div>
+<div class="topic">
+<h3>Q: Why use an <code>ExecutorService</code> instead of creating a thread for every task?</h3>
+<p>An executor manages task submission and thread reuse, helping control concurrency and resource usage. It also provides lifecycle management and result handling through <code>Future</code> and related APIs.</p>
+</div>
+<div class="topic">
+<h3>Q: What is dependency injection?</h3>
+<p>Dependency injection supplies a class's collaborators from the outside rather than having the class construct them directly. It reduces coupling and makes dependencies easier to replace in tests or different application configurations.</p>
+</div>
+<div class="topic">
+<h3>Q: When does a Java Stream operation execute?</h3>
+<p>Intermediate operations such as <code>map</code> and <code>filter</code> are lazy and describe a pipeline. A terminal operation such as <code>collect</code>, <code>toList</code>, or <code>forEach</code> triggers traversal and evaluation.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the purpose of <code>Optional</code>?</h3>
+<p><code>Optional&lt;T&gt;</code> represents a value that may be absent and encourages callers to handle that absence explicitly. It is commonly used for return values; it is generally not intended as a replacement for every nullable field or parameter.</p>
+</div>
         </div>
       </div>
     </div>
