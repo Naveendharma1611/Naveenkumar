@@ -528,3 +528,37 @@ For someone targeting a BI or data-analyst role specifically, prioritization mat
 2. Build that dataset into a three-page report (overview, detail, drill-through) and publish it to a free workspace, including at least one time-intelligence measure.
 
 @interview The fastest way to get good at Power BI is building one real dashboard end to end — connect, shape, model as a star schema, write a handful of correct DAX measures, design for clarity, and publish it — then deepening DAX, governance, and performance skills only as a specific project actually demands them.
+
+@module m20 | 📋 | Quick Reference | Power BI Cheat Sheet | Power Query · Modeling · DAX · Reports · Governance
+@topic Connect and Model Data
+@table
+Need | Pattern
+Import | Load a copy into the semantic model; schedule refresh as needed
+DirectQuery | Query the source at interaction time; check source support and performance
+Power Query | Connect → transform → set types → load; use for repeatable shaping
+Star schema | Fact table at a declared grain with dimension tables around it
+Relationship | Dimension one-side → fact many-side; prefer clear single-direction filtering
+Date analysis | Use a marked date table with unique, continuous date values
+@end
+@topic DAX Context and Measures
+@table
+Need | Pattern
+Measure | `Total Sales = SUM(Sales[Amount])`
+Iterator | `Sales Amount = SUMX(Sales, Sales[Quantity] * Sales[Unit Price])`
+Change filter context | `CALCULATE([Total Sales], Product[Color] = "Blue")`
+Clear a filter | `CALCULATE([Total Sales], REMOVEFILTERS(Product[Color]))`
+Calculated column | Row-level value stored during model refresh
+Measure | Evaluated in the current filter context
+Time intelligence | Use a valid date table and functions such as `DATESYTD` where appropriate
+@end
+@topic Report, Security, and Performance
+@table
+Need | Check
+Report page | One clear question, deliberate visual hierarchy, readable labels
+Filter interaction | Confirm slicers and visual interactions produce intended context
+Drill-through | Pass the relevant entity or dimension context to the detail page
+Row-Level Security | Define roles, test as role, and verify service identity behavior
+Performance | Inspect Performance Analyzer, model cardinality, visual count, and query cost
+Publishing | Workspace permissions, credentials, refresh schedule, gateway, and ownership
+@end
+@warn Measures depend on filter context. Validate totals at multiple grains, inspect relationship paths, and test security in the published service rather than assuming a desktop preview proves access control.

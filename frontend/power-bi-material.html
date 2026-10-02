@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>🔶 Power BI Zero to Hero</h1>
         <p>Power BI from first data connection to a published production dashboard: sources, Power Query, modeling, DAX, visuals, the Service, security and performance — in 19 modules.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">19</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">68</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">9</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">38</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">20</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">71</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">9</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">38</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -42,6 +42,7 @@
       <a href="#m17">17 · Performance Best Practices</a>
       <a href="#m18">18 · Interview Questions</a>
       <a href="#m19">19 · Learning Roadmap</a>
+      <a href="#m20">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -757,6 +758,56 @@ DIVIDE ( [Total Sales] - [Sales LY], [Sales LY] )</code></pre>
 <ol><li>Pick a public dataset you actually find interesting and sketch, on paper, the star schema you'd build from it before opening Power BI at all.</li><li>Build that dataset into a three-page report (overview, detail, drill-through) and publish it to a free workspace, including at least one time-intelligence measure.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>The fastest way to get good at Power BI is building one real dashboard end to end — connect, shape, model as a star schema, write a handful of correct DAX measures, design for clarity, and publish it — then deepening DAX, governance, and performance skills only as a specific project actually demands them.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m20">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Power BI Cheat Sheet</h2>
+            <p>Power Query · Modeling · DAX · Reports · Governance</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Connect and Model Data</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Import</td><td>Load a copy into the semantic model; schedule refresh as needed</td></tr>
+<tr><td>DirectQuery</td><td>Query the source at interaction time; check source support and performance</td></tr>
+<tr><td>Power Query</td><td>Connect → transform → set types → load; use for repeatable shaping</td></tr>
+<tr><td>Star schema</td><td>Fact table at a declared grain with dimension tables around it</td></tr>
+<tr><td>Relationship</td><td>Dimension one-side → fact many-side; prefer clear single-direction filtering</td></tr>
+<tr><td>Date analysis</td><td>Use a marked date table with unique, continuous date values</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>DAX Context and Measures</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Measure</td><td><code>Total Sales = SUM(Sales[Amount])</code></td></tr>
+<tr><td>Iterator</td><td><code>Sales Amount = SUMX(Sales, Sales[Quantity] * Sales[Unit Price])</code></td></tr>
+<tr><td>Change filter context</td><td><code>CALCULATE([Total Sales], Product[Color] = "Blue")</code></td></tr>
+<tr><td>Clear a filter</td><td><code>CALCULATE([Total Sales], REMOVEFILTERS(Product[Color]))</code></td></tr>
+<tr><td>Calculated column</td><td>Row-level value stored during model refresh</td></tr>
+<tr><td>Measure</td><td>Evaluated in the current filter context</td></tr>
+<tr><td>Time intelligence</td><td>Use a valid date table and functions such as <code>DATESYTD</code> where appropriate</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Report, Security, and Performance</h3>
+<table>
+<tr><th>Need</th><th>Check</th></tr>
+<tr><td>Report page</td><td>One clear question, deliberate visual hierarchy, readable labels</td></tr>
+<tr><td>Filter interaction</td><td>Confirm slicers and visual interactions produce intended context</td></tr>
+<tr><td>Drill-through</td><td>Pass the relevant entity or dimension context to the detail page</td></tr>
+<tr><td>Row-Level Security</td><td>Define roles, test as role, and verify service identity behavior</td></tr>
+<tr><td>Performance</td><td>Inspect Performance Analyzer, model cardinality, visual count, and query cost</td></tr>
+<tr><td>Publishing</td><td>Workspace permissions, credentials, refresh schedule, gateway, and ownership</td></tr>
+</table>
+<div class="warn-box">Measures depend on filter context. Validate totals at multiple grains, inspect relationship paths, and test security in the published service rather than assuming a desktop preview proves access control.</div>
+</div>
         </div>
       </div>
     </div>
