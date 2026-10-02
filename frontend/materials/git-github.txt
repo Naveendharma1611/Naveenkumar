@@ -1,0 +1,234 @@
+@page 🐙 Git & GitHub Complete Study Material
+@intro Learn Git's snapshot model, branching, recovery, and collaboration through GitHub repositories, pull requests, security controls, and continuous integration.
+
+@module m1 | 🧭 | 1 · Foundations | Module 1 — Git & Repository Basics | Distributed history · Working tree · Index · Commits
+@topic Git and GitHub
+Git is a distributed version-control system that records project history locally. GitHub hosts Git repositories and adds collaboration features such as pull requests, issues, access control, and automation; Git also works with other hosts or without a remote.
+@table
+Term | Meaning
+Working tree | Checked-out files you edit
+Index / staging area | Proposed content for the next commit
+Commit | A snapshot with parent history and metadata
+Branch | A movable reference to a line of development
+Remote | A named reference to another repository location
+@end
+@topic Repository Commands
+`git init` creates repository metadata in the current folder. `git clone <url>` creates a local copy of an existing repository and commonly configures `origin` as its remote.
+@practice
+1. Is GitHub required to create local commits with Git? **Answer:** No. **Why:** Git history and commits are local; a host is needed only for hosted collaboration.
+2. Which area contains changes selected for the next commit? **Answer:** The index or staging area. **Why:** A commit records staged content.
+
+@module m2 | 📝 | 2 · Daily Workflow | Module 2 — Status, Stage & Commit | Focused changes · Review · Messages
+@topic A Deliberate Commit Workflow
+Inspect changes, stage only intended paths, review the staged diff, then commit one coherent change. A commit message should explain the outcome rather than merely say “updates.”
+@practice
+1. Which command shows staged changes? **Answer:** `git diff --cached`. **Why:** It compares the index with the current commit.
+2. Why stage specific paths instead of always running `git add .`? **Answer:** To avoid including unrelated or generated files. **Why:** The index defines exactly what enters the commit.
+3. What does `git commit -m "Add search filter"` create? **Answer:** A commit from the staged snapshot. **Why:** The command records the index, not every unstaged edit.
+
+@module m3 | 🔍 | 3 · Inspect Changes | Module 3 — Status, Diff & History | Staged vs unstaged · Log · Blame
+@topic Read Each Change Boundary
+`git status` summarizes branch and file state. `git diff` shows working-tree changes not staged; `git diff --cached` shows staged changes relative to HEAD. Review both when deciding what to commit.
+@topic Inspect History
+Use `git log --oneline --decorate --graph` for a compact history view. `git show <commit>` inspects one commit. `git blame <path>` can show which commit last changed each line, but it explains history, not necessarily intent.
+@practice
+1. Which command compares your working tree with the index? **Answer:** `git diff`. **Why:** It shows unstaged changes.
+2. Which command displays a commit's changes and metadata? **Answer:** `git show <commit>`. **Why:** It inspects a specific history object.
+
+@module m4 | 🧹 | 4 · Ignore & Secrets | Module 4 — `.gitignore` & Sensitive Data | Generated files · Credentials · Rotation
+@topic Ignore Rules
+Use `.gitignore` for intentionally untracked build outputs, caches, and local configuration. Ignore rules do not stop tracking files already in Git; removing an already tracked file requires an explicit repository change.
+@topic Keep Credentials Out of History
+Never commit passwords, tokens, private keys, or production environment files. If a secret is committed, revoke or rotate it immediately. Deleting it in a later commit does not remove the earlier copy from history or collaborators' clones.
+@warn Do not put secrets in a public repository, commit message, issue, or workflow log. Rotate exposed credentials first; history cleanup and coordination come afterward.
+@practice
+1. Does adding a tracked file to `.gitignore` remove it from the repository? **Answer:** No. **Why:** Ignore rules affect untracked files.
+2. What is the first response to a committed API token? **Answer:** Revoke or rotate it. **Why:** Deleting a later copy does not make the exposed credential safe.
+
+@module m5 | 🌿 | 5 · Branches | Module 5 — Branches & Merging | Isolated work · Fast-forward · Merge commit
+@topic Branches as References
+A branch is a lightweight movable reference to a commit, not a full copy of every file. Keep branches focused and use descriptive names such as `feature/search-filter` or `fix/login-timeout`.
+@topic Merge Work
+A merge integrates histories and can preserve both lines of development. A fast-forward is possible when the target has not diverged; otherwise a merge commit may record the integration.
+@practice
+1. Does creating a branch duplicate the whole repository? **Answer:** No. **Why:** A branch is a reference to a commit.
+2. When can Git fast-forward a branch? **Answer:** When the target branch is an ancestor of the branch being integrated. **Why:** No divergent history needs to be joined.
+
+@module m6 | ⚔️ | 6 · Conflicts | Module 6 — Merge Conflicts & Resolution | Inspect · Resolve · Test · Continue
+@topic Resolve Intentionally
+A conflict means Git could not automatically reconcile overlapping changes. Inspect both sides and their intent, edit the desired result, remove markers, stage the resolution, run relevant tests, then finish the merge or continue the rebase.
+@table
+Marker | Meaning
+`<<<<<<<` | Start of one side
+`=======` | Separator between sides
+`>>>>>>>` | End marker identifying the other side
+@end
+Do not resolve every conflict by blindly accepting “ours” or “theirs”; the correct result may combine both changes or require a new design.
+@practice
+1. Should conflict markers remain in a completed source file? **Answer:** No. **Why:** They are temporary syntax indicating unresolved content.
+2. What should follow a conflict resolution? **Answer:** Review the final diff and run relevant tests. **Why:** A syntactically resolved conflict can still be behaviorally wrong.
+
+@module m7 | 🔄 | 7 · Remotes | Module 7 — Fetch, Pull & Push | Remote-tracking refs · Upstream · Synchronization
+@topic Fetch and Pull
+`git fetch origin` downloads objects and updates remote-tracking references without integrating them into the current branch. `git pull` fetches and then integrates, commonly by merge or rebase depending on configuration.
+@topic Push and Upstream
+`git push -u origin feature/name` publishes a branch and configures an upstream tracking reference. Check repository policy before pushing to a protected or shared branch.
+@warn Force-pushing can replace remote history and disrupt collaborators. Do not use it on shared branches without explicit agreement and a recovery plan.
+@practice
+1. Does `git fetch` merge changes into the current branch by itself? **Answer:** No. **Why:** It updates remote-tracking refs only.
+2. What does `-u` do on a first push? **Answer:** Sets the upstream tracking branch. **Why:** Later pull and push commands can infer the remote branch.
+
+@module m8 | 🐙 | 8 · Collaboration | Module 8 — GitHub Pull Requests & Issues | Review · Discussion · Checks
+@topic Pull Requests
+A pull request proposes integrating a branch and provides a place to discuss the diff, review changes, run checks, and record decisions. Explain the problem, approach, validation, risks, and migration requirements.
+@table
+PR detail | What to include
+Problem | Why the change is needed
+Approach | What changed and important trade-offs
+Validation | Tests, commands, or manual evidence
+Risk | Compatibility, data, security, and rollout considerations
+@end
+@topic Issues and Reviews
+Use issues to track work, questions, and defects. Review correctness, tests, security, maintainability, and scope; make comments actionable and distinguish blockers from suggestions.
+@practice
+1. What does a pull request provide beyond pushing a branch? **Answer:** Review, discussion, checks, and a recorded integration decision. **Why:** It creates a collaboration workflow around the proposed diff.
+2. Name two useful items for a PR description. **Answer:** Approach and validation, among others. **Why:** Reviewers need context and evidence.
+
+@module m9 | 🔀 | 9 · History Integration | Module 9 — Merge, Rebase & Cherry-Pick | Preserve topology · Replay commits · Select changes
+@topic Merge and Rebase
+Merge combines histories and may create a merge commit while preserving branch topology. Rebase replays commits on a new base and creates new commit IDs; rewriting commits others rely on requires coordination.
+@topic Cherry-Pick
+Cherry-pick applies the change from selected commits onto the current branch, creating new commit IDs. It is useful for targeted backports but may duplicate work if the original branch is later merged without care.
+@practice
+1. Why can rebasing a shared branch disrupt collaborators? **Answer:** It changes commit IDs and rewrites history others may have based on. **Why:** Their references no longer match the rewritten commits.
+2. Does cherry-pick preserve the source commit ID? **Answer:** No. **Why:** It creates a new commit on the current history.
+
+@module m10 | 🏷️ | 10 · Releases | Module 10 — Tags, Releases & Versioning | Annotated tags · SemVer · Release notes
+@topic Tags and Releases
+A tag names a specific commit. Annotated tags include metadata and are commonly used for releases. A GitHub release associates notes and artifacts with a tag; it does not replace testing or deployment approval.
+@topic Versioning
+Semantic Versioning communicates compatibility intent using major, minor, and patch components when a project follows that convention. Release notes should explain user-visible changes, fixes, breaking changes, and upgrade steps.
+@practice
+1. What commit does a Git tag identify? **Answer:** A specific commit. **Why:** A tag is a named reference to a point in history.
+2. What change commonly increments a patch version? **Answer:** A backward-compatible bug fix. **Why:** SemVer reserves patch releases for compatible fixes.
+
+@module m11 | 🔐 | 11 · Security | Module 11 — Repository Security & Permissions | Protected branches · CODEOWNERS · Secret scanning
+@topic Protect Important Branches
+Repository rules can require pull requests, approvals, passing status checks, signed commits, or linear history before changes merge. Review who can bypass these controls and grant repository permissions with least privilege.
+@topic Ownership and Secrets
+`CODEOWNERS` can request review from responsible maintainers for selected paths. Secret scanning and dependency alerts can surface risks, but teams still need response procedures and controlled access.
+@practice
+1. Name two rules a protected branch can require. **Answer:** Required PR reviews and passing checks, for example. **Why:** Both gate integration on reviewable evidence.
+2. What is one purpose of CODEOWNERS? **Answer:** Request review from owners of changed paths. **Why:** It routes changes to responsible maintainers.
+
+@module m12 | 🤖 | 12 · Automation | Module 12 — GitHub Actions & CI | Workflows · Jobs · Permissions · Artifacts
+@topic Continuous Integration
+GitHub Actions workflows run jobs in response to repository events such as pushes or pull requests. CI can test, lint, build, and package changes; passing checks provide evidence but do not prove correctness.
+@table
+Concept | Meaning
+Workflow | Automation definition triggered by events or schedules
+Job | Group of steps executed on a runner
+Step | Action or command within a job
+Artifact | Output retained or shared between jobs
+Secret | Protected configuration exposed only to authorized workflow contexts
+@end
+@warn Pin or review third-party actions, grant minimum token permissions, protect deployment environments, and avoid exposing secrets to untrusted pull-request code.
+@practice
+1. What is the difference between a workflow and a job? **Answer:** A workflow is the event-triggered automation; a job is work run within it. **Why:** A workflow can coordinate multiple jobs.
+2. Why restrict workflow token permissions? **Answer:** To limit damage if a step or dependency is compromised. **Why:** Automation should have least privilege.
+
+@module m13 | 🧯 | 13 · Recovery | Module 13 — Undo Changes Safely | Restore · Revert · Reset · Stash
+@topic Choose an Undo Command by State
+@table
+State | Starting point
+Unstaged edit | Inspect `git diff`; restore a path only if you intend to discard it
+Staged change | `git restore --staged path` keeps the working-tree edit
+Published commit | `git revert <commit>` creates an inverse commit
+Temporary work | `git stash push -m "description"`; inspect before applying
+Local unshared commit | Consider reset modes only after checking what will be preserved
+@end
+`git reset --soft` moves HEAD but keeps changes staged; default `--mixed` keeps them in the working tree; `--hard` discards tracked working-tree and index changes. Inspect status and confirm the target before any operation that can discard work.
+@practice
+1. Which command records a new commit that reverses a published commit? **Answer:** `git revert`. **Why:** It preserves shared history and records an inverse change.
+2. What happens to staged changes with `git reset --soft`? **Answer:** They remain staged. **Why:** Soft reset moves HEAD without changing the index.
+
+@module m14 | 🧭 | 14 · Team Workflow | Module 14 — A Reliable Collaboration Workflow | Branch · Commit · Review · Merge
+@topic A Practical Cycle
+Start from an up-to-date base, create a focused branch, make coherent commits, inspect staged and unstaged diffs, run checks, push, open a pull request, resolve feedback, pass required checks, and merge using repository policy.
+@table
+Stage | Sanity check
+Before editing | Clean or understood worktree; correct base and branch
+Before commit | Intended paths staged; diff reviewed; secrets excluded
+Before PR | Tests pass; scope is focused; description explains why and how
+Before merge | Required review and checks pass; conflicts resolved and retested
+After merge | Branch cleanup and release follow team policy
+@end
+@practice
+1. Describe a safe path from local edit to protected-branch merge. **Answer:** Focused branch, reviewed commit, PR, passing checks and approval, then policy-compliant merge. **Why:** Each boundary makes intent and quality observable.
+2. Why check `git status` before starting a task? **Answer:** To understand existing changes and avoid mixing unrelated work. **Why:** Commits include staged content, which may not all belong to the task.
+
+@module m15 | 📋 | Quick Reference | Git & GitHub Cheat Sheet | Inspect · Commit · Branch · Remote · Review
+@topic Inspect and Commit
+@table
+Need | Command
+Status | `git status --short --branch`
+Unstaged diff | `git diff`
+Staged diff | `git diff --cached`
+Stage one path | `git add path/to/file`
+Commit staged work | `git commit -m "Describe the change"`
+Recent graph | `git log --oneline --decorate --graph -10`
+@end
+@topic Branch, Remote, and Recovery
+@table
+Need | Command
+Create and switch | `git switch -c feature/name`
+Switch branch | `git switch branch-name`
+Fetch refs | `git fetch origin`
+Push with upstream | `git push -u origin feature/name`
+Merge branch | `git merge feature/name`
+Unstage path | `git restore --staged path/to/file`
+Undo published commit | `git revert <commit>`
+@end
+@warn Inspect status and diffs before undoing work. Rotate committed secrets, coordinate before rewriting shared history, and never rely on a prompt or ignore file to secure a credential.
+
+@module m16 | 🎤 | Interview Prep | Git & GitHub Interview Questions & Answers | History · Branches · Collaboration · Security · CI
+@topic Q: What is the difference between Git and GitHub?
+Git is a distributed version-control system that records history locally. GitHub hosts Git repositories and adds collaboration features such as pull requests, issues, access control, and automation.
+@topic Q: What are the working tree, index, and repository?
+The working tree contains checked-out files; the index is the proposed next snapshot; the repository stores commits and references. Staging chooses what enters a commit.
+@topic Q: What is a commit?
+A commit is a snapshot of tracked content with metadata and parent references, identified by an object ID. It records a point in history rather than only a patch.
+@topic Q: What is a branch in Git?
+A branch is a lightweight movable reference to a commit. New commits advance the current branch reference.
+@topic Q: How do `fetch` and `pull` differ?
+Fetch downloads objects and updates remote-tracking references without integrating changes into the current branch. Pull fetches and then integrates, commonly by merge or rebase according to configuration.
+@topic Q: What does `git diff --cached` show?
+It shows differences between the index and the current commit, which is the content prepared for the next commit.
+@topic Q: How should a merge conflict be resolved?
+Inspect both sides and their intent, edit the desired result, remove markers, stage the resolution, run relevant tests, and complete the merge or rebase. Do not blindly accept one side.
+@topic Q: How do merge and rebase differ?
+Merge combines histories and may preserve topology with a merge commit. Rebase replays commits on a new base and creates new commit IDs, so rewriting shared history requires coordination.
+@topic Q: When is `git revert` appropriate?
+Use revert to undo a published change without rewriting existing shared history; it creates a new commit that inverses the earlier change.
+@topic Q: How does `git reset` differ from `git revert`?
+Reset moves the current branch reference and may change the index or working tree depending on mode. Revert preserves history and creates an inverse commit.
+@topic Q: What does `.gitignore` do, and what does it not do?
+It tells Git to ignore matching untracked paths. It does not stop tracking an already tracked file or remove secrets from history.
+@topic Q: What should you do if a secret is committed?
+Revoke or rotate it immediately, assess exposure, and coordinate history cleanup if needed. Deleting the secret in a later commit does not invalidate the exposed credential.
+@topic Q: What is a pull request?
+A pull request proposes integrating a branch and provides a space for discussion, review, automated checks, and an integration decision.
+@topic Q: Why protect a main branch?
+Protection can require reviews and passing checks before changes merge, reducing unreviewed updates. Bypass permissions must also be controlled.
+@topic Q: What does CODEOWNERS do?
+It maps paths to owners so changes can request review from responsible maintainers; it does not guarantee the review is sufficient.
+@topic Q: What is continuous integration?
+CI runs repeatable checks such as tests, linting, and builds on repository events. Passing CI is useful evidence, not a proof of correctness.
+@topic Q: Why use least privilege for GitHub Actions?
+Limiting token and secret access reduces the impact of compromised workflow steps or dependencies.
+@topic Q: What is a detached HEAD?
+HEAD points directly to a commit rather than a branch. Commits can still be created, but they are not automatically attached to a named branch; create or switch to a branch to retain intended work.
+@topic Q: How does a tag differ from a branch?
+A branch is a movable reference that advances as work is committed. A tag names a specific commit and is commonly used to identify a release.
+@topic Q: How do you unstage a file without losing its edits?
+Use `git restore --staged path`. It updates the index while leaving the working-tree content intact.

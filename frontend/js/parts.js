@@ -112,6 +112,10 @@ export const NOTES = {
     href: "aptitude-material.html", title: "🧠 Aptitude: Quantitative, Logical & Verbal Reasoning",
     text: "Build quantitative, logical, and verbal reasoning through worked methods, timed practice, MCQs, and numeric-answer questions.",
   },
+  "git-github": {
+    href: "git-github-material.html", title: "🐙 Git & GitHub Complete Study Material",
+    text: "Learn Git history, branching, collaboration through GitHub pull requests, recovery, repository security, and CI workflows.",
+  },
   django: {
     href: "django-material.html", title: "🌿 Django Zero to Hero",
     text: "Build a complete blog in 24 modules: URLs, views, templates, ORM, admin, forms, auth, REST APIs, testing, security, caching and deployment.",
