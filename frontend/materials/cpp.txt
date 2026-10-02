@@ -1279,3 +1279,80 @@ What is a template? | Code written once and generated for each type used
 3. Build the library system with a `Book` base class and `EBook`/`PrintedBook` derived classes.
 4. Practise 20 array/string problems on LeetCode or HackerRank using the STL.
 @interview An end-to-end C++ project combines classes and inheritance, STL containers and algorithms, smart pointers, exceptions and file I/O, organised into headers and source files and built with a tool like CMake.
+
+@module m25 | 📋 | Quick Reference | C++ Cheat Sheet | Types · References · STL · Ownership · Build
+@topic Types, Functions, and Constness
+@table
+Need | Pattern
+Immutable local | `const int limit = 10;`
+Read-only parameter | `void print(const std::string& value);`
+Value-initialized object | `Widget widget{};`
+Type deduction | `auto count = items.size();`
+Range loop | `for (const auto& item : items) { ... }`
+Optional result | `std::optional<int> find_id();`
+Null pointer | `Widget* item = nullptr;`
+@end
+@topic Standard Library and Ownership
+@table
+Need | Pattern
+Dynamic array | `std::vector<T>`
+Ordered key lookup | `std::map<Key, Value>`
+Hash-based lookup | `std::unordered_map<Key, Value>`
+Sort a range | `std::sort(values.begin(), values.end())`
+Find a value | `std::find(values.begin(), values.end(), target)`
+Unique ownership | `auto item = std::make_unique<Widget>();`
+Shared ownership | `auto item = std::make_shared<Widget>();`
+Transfer ownership | `destination = std::move(source);`
+@end
+@topic Lifetime, Errors, and Build
+@table
+Need | Pattern
+Resource lifetime | Acquire in a constructor; release in a destructor (RAII)
+Custom exception | `throw std::runtime_error("message");`
+Catch by reference | `catch (const std::exception& error) { ... }`
+Build one source | `g++ -std=c++20 -Wall -Wextra -Wpedantic main.cpp -o app`
+Build with CMake | Configure a build directory, then build the generated project
+@end
+@warn Prefer the Rule of Zero and standard-library resource owners over manual `new` and `delete`. A `std::move` expression enables moving; it does not itself move an object.
+
+@module m26 | 🎤 | Interview Prep | C++ Interview Questions & Answers | Object lifetime · Ownership · Polymorphism · Templates · STL
+@topic Q: What is RAII?
+Resource Acquisition Is Initialization ties a resource's lifetime to an object's lifetime. The constructor acquires or takes ownership, and the destructor releases it, including when control leaves a scope through an exception.
+@topic Q: What is the Rule of Zero?
+Prefer composing types that already manage their resources so the class does not need custom copy, move, or destruction operations. This reduces ownership bugs and often removes the need to implement the Rule of Five manually.
+@topic Q: What is the Rule of Five?
+If a type must define any of its destructor, copy constructor, copy assignment, move constructor, or move assignment, it may need to define or deliberately delete the others to preserve correct resource ownership.
+@topic Q: What does `std::move` do?
+`std::move` casts an expression to an rvalue reference category so move-aware overloads can be selected. It does not transfer resources by itself; the selected operation performs the move.
+@topic Q: What is the difference between a pointer and a reference?
+A pointer is an object that can be null and reassigned to point elsewhere. A reference is an alias that must be initialized when declared and cannot be reseated; neither should outlive the object it refers to.
+@topic Q: When should a base class have a virtual destructor?
+Give a polymorphic base class a public virtual destructor when callers may destroy derived objects through base pointers. This ensures the derived destructor also runs; a protected non-virtual destructor can instead prevent deletion through that interface.
+@topic Q: What is the difference between `unique_ptr` and `shared_ptr`?
+`unique_ptr` expresses exclusive ownership and is the lightweight default for dynamic ownership. `shared_ptr` shares ownership through a reference count; use it only when the lifetime is genuinely shared and be careful about ownership cycles.
+@topic Q: What does `weak_ptr` solve?
+`weak_ptr` observes an object managed by `shared_ptr` without increasing its strong reference count. It can break ownership cycles and must be locked to a `shared_ptr` before safely using the object.
+@topic Q: What is a dangling reference or pointer?
+It refers to an object whose lifetime has ended or to storage that is no longer valid. Prevent it by clear ownership and lifetime design, returning values or owning smart pointers when appropriate, and avoiding references to local objects that escape their scope.
+@topic Q: What is the difference between `const T*` and `T* const`?
+`const T*` is a pointer to a const-qualified `T`, so the pointee cannot be modified through that pointer but the pointer can change. `T* const` is a const pointer to a mutable `T`, so the pointer cannot change but the pointee can.
+@topic Q: What does `const` on a member function mean?
+A const member function promises not to modify the observable state of the object through ordinary non-mutable members. It can be called on const objects and const references.
+@topic Q: What is the difference between a virtual function and a pure virtual function?
+A virtual function supports runtime dispatch and can provide a base implementation. A pure virtual function is declared with `= 0` and makes the class abstract until derived classes implement the required interface.
+@topic Q: What is object slicing?
+Object slicing happens when a derived object is copied into a base object by value, discarding the derived portion. Use references, pointers, or suitable polymorphic value wrappers when preserving dynamic type matters.
+@topic Q: What is a template in C++?
+A template defines a family of functions or types parameterized by types or values. The compiler instantiates specializations as needed, with constraints and diagnostics determined by the language version and template form.
+@topic Q: What are iterators used for in the STL?
+Iterators provide a common way to traverse ranges of elements. Iterator categories express supported operations; algorithms require particular categories, so an algorithm's complexity and validity depend on the iterator type.
+@topic Q: What can invalidate iterators into a `std::vector`?
+Operations that reallocate storage, such as some insertions or capacity changes, invalidate all iterators, pointers, and references to its elements. Erasing or inserting without reallocation can still invalidate iterators at or after the affected position.
+@topic Q: What is the difference between `std::map` and `std::unordered_map`?
+`std::map` keeps keys ordered and provides logarithmic lookup. `std::unordered_map` uses hashing and offers average constant-time lookup, with linear worst-case behavior and no sorted iteration order.
+@topic Q: Why should a `std::thread` be joined or detached?
+A joinable thread must have its lifetime resolved before its thread object is destroyed; otherwise the program calls `std::terminate`. Joining waits for completion, while detaching gives up direct ownership of the running thread and requires careful lifetime control.
+@topic Q: What is a data race?
+A data race occurs when threads access the same memory concurrently, at least one access is a write, and the accesses are not properly synchronized. In C++, a data race causes undefined behavior; use synchronization or safe ownership strategies.
+@topic Q: What is the difference between undefined behavior and an exception?
+An exception is a defined language mechanism that can transfer control to a handler. Undefined behavior means the C++ standard imposes no requirements on the program's behavior, so it cannot be reliably handled as an exception.

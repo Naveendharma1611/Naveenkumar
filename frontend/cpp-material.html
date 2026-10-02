@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>⚙️ C++ Complete Study Material</h1>
         <p>C++ end to end — basics, OOP, templates, the STL, memory, smart pointers, modern C++ and multithreading, with short explanations, examples, practice questions and projects.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">24</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">71</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">62</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">103</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">26</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">94</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">62</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">103</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -47,6 +47,8 @@
       <a href="#m22">22 · Multithreading</a>
       <a href="#m23">23 · Build</a>
       <a href="#m24">24 · Projects</a>
+      <a href="#m25">Quick Reference</a>
+      <a href="#m26">Interview Prep</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -1556,6 +1558,149 @@ int main() {
 <ol><li>Extend the Student Manager with search by name, delete by id and loading from the file.</li><li>Build the bank management system with custom exceptions for invalid operations.</li><li>Build the library system with a <code>Book</code> base class and <code>EBook</code>/<code>PrintedBook</code> derived classes.</li><li>Practise 20 array/string problems on LeetCode or HackerRank using the STL.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>An end-to-end C++ project combines classes and inheritance, STL containers and algorithms, smart pointers, exceptions and file I/O, organised into headers and source files and built with a tool like CMake.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m25">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>C++ Cheat Sheet</h2>
+            <p>Types · References · STL · Ownership · Build</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Types, Functions, and Constness</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Immutable local</td><td><code>const int limit = 10;</code></td></tr>
+<tr><td>Read-only parameter</td><td><code>void print(const std::string&amp; value);</code></td></tr>
+<tr><td>Value-initialized object</td><td><code>Widget widget{};</code></td></tr>
+<tr><td>Type deduction</td><td><code>auto count = items.size();</code></td></tr>
+<tr><td>Range loop</td><td><code>for (const auto&amp; item : items) { ... }</code></td></tr>
+<tr><td>Optional result</td><td><code>std::optional&lt;int&gt; find_id();</code></td></tr>
+<tr><td>Null pointer</td><td><code>Widget* item = nullptr;</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Standard Library and Ownership</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Dynamic array</td><td><code>std::vector&lt;T&gt;</code></td></tr>
+<tr><td>Ordered key lookup</td><td><code>std::map&lt;Key, Value&gt;</code></td></tr>
+<tr><td>Hash-based lookup</td><td><code>std::unordered_map&lt;Key, Value&gt;</code></td></tr>
+<tr><td>Sort a range</td><td><code>std::sort(values.begin(), values.end())</code></td></tr>
+<tr><td>Find a value</td><td><code>std::find(values.begin(), values.end(), target)</code></td></tr>
+<tr><td>Unique ownership</td><td><code>auto item = std::make_unique&lt;Widget&gt;();</code></td></tr>
+<tr><td>Shared ownership</td><td><code>auto item = std::make_shared&lt;Widget&gt;();</code></td></tr>
+<tr><td>Transfer ownership</td><td><code>destination = std::move(source);</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Lifetime, Errors, and Build</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Resource lifetime</td><td>Acquire in a constructor; release in a destructor (RAII)</td></tr>
+<tr><td>Custom exception</td><td><code>throw std::runtime_error("message");</code></td></tr>
+<tr><td>Catch by reference</td><td><code>catch (const std::exception&amp; error) { ... }</code></td></tr>
+<tr><td>Build one source</td><td><code>g++ -std=c++20 -Wall -Wextra -Wpedantic main.cpp -o app</code></td></tr>
+<tr><td>Build with CMake</td><td>Configure a build directory, then build the generated project</td></tr>
+</table>
+<div class="warn-box">Prefer the Rule of Zero and standard-library resource owners over manual <code>new</code> and <code>delete</code>. A <code>std::move</code> expression enables moving; it does not itself move an object.</div>
+</div>
+        </div>
+      </div>
+      <div class="module-card" id="m26">
+        <div class="module-header">
+          <span class="module-emoji">🎤</span>
+          <div class="module-title-group">
+            <h2>C++ Interview Questions &amp; Answers</h2>
+            <p>Object lifetime · Ownership · Polymorphism · Templates · STL</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Q: What is RAII?</h3>
+<p>Resource Acquisition Is Initialization ties a resource's lifetime to an object's lifetime. The constructor acquires or takes ownership, and the destructor releases it, including when control leaves a scope through an exception.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the Rule of Zero?</h3>
+<p>Prefer composing types that already manage their resources so the class does not need custom copy, move, or destruction operations. This reduces ownership bugs and often removes the need to implement the Rule of Five manually.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the Rule of Five?</h3>
+<p>If a type must define any of its destructor, copy constructor, copy assignment, move constructor, or move assignment, it may need to define or deliberately delete the others to preserve correct resource ownership.</p>
+</div>
+<div class="topic">
+<h3>Q: What does <code>std::move</code> do?</h3>
+<p><code>std::move</code> casts an expression to an rvalue reference category so move-aware overloads can be selected. It does not transfer resources by itself; the selected operation performs the move.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between a pointer and a reference?</h3>
+<p>A pointer is an object that can be null and reassigned to point elsewhere. A reference is an alias that must be initialized when declared and cannot be reseated; neither should outlive the object it refers to.</p>
+</div>
+<div class="topic">
+<h3>Q: When should a base class have a virtual destructor?</h3>
+<p>Give a polymorphic base class a public virtual destructor when callers may destroy derived objects through base pointers. This ensures the derived destructor also runs; a protected non-virtual destructor can instead prevent deletion through that interface.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between <code>unique_ptr</code> and <code>shared_ptr</code>?</h3>
+<p><code>unique_ptr</code> expresses exclusive ownership and is the lightweight default for dynamic ownership. <code>shared_ptr</code> shares ownership through a reference count; use it only when the lifetime is genuinely shared and be careful about ownership cycles.</p>
+</div>
+<div class="topic">
+<h3>Q: What does <code>weak_ptr</code> solve?</h3>
+<p><code>weak_ptr</code> observes an object managed by <code>shared_ptr</code> without increasing its strong reference count. It can break ownership cycles and must be locked to a <code>shared_ptr</code> before safely using the object.</p>
+</div>
+<div class="topic">
+<h3>Q: What is a dangling reference or pointer?</h3>
+<p>It refers to an object whose lifetime has ended or to storage that is no longer valid. Prevent it by clear ownership and lifetime design, returning values or owning smart pointers when appropriate, and avoiding references to local objects that escape their scope.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between <code>const T*</code> and <code>T* const</code>?</h3>
+<p><code>const T*</code> is a pointer to a const-qualified <code>T</code>, so the pointee cannot be modified through that pointer but the pointer can change. <code>T* const</code> is a const pointer to a mutable <code>T</code>, so the pointer cannot change but the pointee can.</p>
+</div>
+<div class="topic">
+<h3>Q: What does <code>const</code> on a member function mean?</h3>
+<p>A const member function promises not to modify the observable state of the object through ordinary non-mutable members. It can be called on const objects and const references.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between a virtual function and a pure virtual function?</h3>
+<p>A virtual function supports runtime dispatch and can provide a base implementation. A pure virtual function is declared with <code>= 0</code> and makes the class abstract until derived classes implement the required interface.</p>
+</div>
+<div class="topic">
+<h3>Q: What is object slicing?</h3>
+<p>Object slicing happens when a derived object is copied into a base object by value, discarding the derived portion. Use references, pointers, or suitable polymorphic value wrappers when preserving dynamic type matters.</p>
+</div>
+<div class="topic">
+<h3>Q: What is a template in C++?</h3>
+<p>A template defines a family of functions or types parameterized by types or values. The compiler instantiates specializations as needed, with constraints and diagnostics determined by the language version and template form.</p>
+</div>
+<div class="topic">
+<h3>Q: What are iterators used for in the STL?</h3>
+<p>Iterators provide a common way to traverse ranges of elements. Iterator categories express supported operations; algorithms require particular categories, so an algorithm's complexity and validity depend on the iterator type.</p>
+</div>
+<div class="topic">
+<h3>Q: What can invalidate iterators into a <code>std::vector</code>?</h3>
+<p>Operations that reallocate storage, such as some insertions or capacity changes, invalidate all iterators, pointers, and references to its elements. Erasing or inserting without reallocation can still invalidate iterators at or after the affected position.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between <code>std::map</code> and <code>std::unordered_map</code>?</h3>
+<p><code>std::map</code> keeps keys ordered and provides logarithmic lookup. <code>std::unordered_map</code> uses hashing and offers average constant-time lookup, with linear worst-case behavior and no sorted iteration order.</p>
+</div>
+<div class="topic">
+<h3>Q: Why should a <code>std::thread</code> be joined or detached?</h3>
+<p>A joinable thread must have its lifetime resolved before its thread object is destroyed; otherwise the program calls <code>std::terminate</code>. Joining waits for completion, while detaching gives up direct ownership of the running thread and requires careful lifetime control.</p>
+</div>
+<div class="topic">
+<h3>Q: What is a data race?</h3>
+<p>A data race occurs when threads access the same memory concurrently, at least one access is a write, and the accesses are not properly synchronized. In C++, a data race causes undefined behavior; use synchronization or safe ownership strategies.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between undefined behavior and an exception?</h3>
+<p>An exception is a defined language mechanism that can transfer control to a handler. Undefined behavior means the C++ standard imposes no requirements on the program's behavior, so it cannot be reliably handled as an exception.</p>
+</div>
         </div>
       </div>
     </div>
