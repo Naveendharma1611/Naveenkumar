@@ -686,3 +686,37 @@ Spend the most time on the Figure/Axes mental model and the core chart types (li
 2. Take any chart you've made before this material and list three concrete improvements from the best-practices module.
 3. Recreate one chart in three saved formats (PNG at 150 dpi, PNG at 300 dpi, and PDF) and compare the files.
 @interview Learning Matplotlib well means mastering the Figure/Axes model and the core chart types first, layering in subplots and polish second, and treating best practices — honest axes, the right chart for the data, accessible colors — as non-negotiable judgment rather than optional styling.
+
+@module m19 | 📋 | Quick Reference | Matplotlib Cheat Sheet | Figure · Axes · Chart types · Layout · Export
+@topic Figure and Axes Basics
+@table
+Need | Pattern
+Create one axes | `fig, ax = plt.subplots(figsize=(8, 5), layout="constrained")`
+Create grid | `fig, axs = plt.subplots(2, 2, figsize=(10, 8), layout="constrained")`
+Line | `ax.plot(x, y, marker="o", label="Series")`
+Bar | `ax.bar(categories, values)`
+Scatter | `ax.scatter(x, y, c=values, cmap="viridis")`
+Histogram | `ax.hist(values, bins=20, edgecolor="white")`
+@end
+@topic Label and Format Clearly
+@table
+Need | Pattern
+Title | `ax.set_title("Monthly revenue")`
+Axis labels | `ax.set_xlabel("Month"); ax.set_ylabel("Revenue ($)")`
+Legend | `ax.legend()` after assigning labels
+Grid | `ax.grid(True, axis="y", alpha=0.25)`
+Limits | `ax.set_xlim(left=0)`; choose limits that don't hide context
+Log scale | `ax.set_yscale("log")` only when appropriate and clearly labeled
+Colorbar | `fig.colorbar(scatter, ax=ax, label="Value")`
+@end
+@topic Layout, Style, and Export
+@table
+Need | Pattern
+Shared axes | `plt.subplots(2, 1, sharex=True)`
+Remove overlap | Use `layout="constrained"` or `fig.tight_layout()`
+Save figure | `fig.savefig("chart.png", dpi=300, bbox_inches="tight")`
+Vector export | `fig.savefig("chart.pdf", bbox_inches="tight")`
+Close figure | `plt.close(fig)` in batch scripts
+Accessible palette | Use perceptually uniform colors and more than color alone
+@end
+@warn Prefer the object-oriented `fig, ax` API for reusable code. Label units, show context for truncated axes, and don't use a dual axis or rainbow palette without a clear reason.

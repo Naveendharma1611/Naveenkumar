@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>📈 Matplotlib Complete Study Material</h1>
         <p>Learn Matplotlib from the Figure/Axes model through every common chart type to styling, saving and interview-ready answers for building publication-quality plots in Python.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">18</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">58</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">37</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">35</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">19</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">61</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">37</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">35</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -41,6 +41,7 @@
       <a href="#m16">16 · Mistakes &amp; Best Practices</a>
       <a href="#m17">17 · Interview Questions</a>
       <a href="#m18">18 · Learning Roadmap</a>
+      <a href="#m19">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -957,6 +958,56 @@ plt.show()</code></pre>
 <ol><li>Build the "cheat figure" described above: a 2x2 subplot grid with one of each core chart type, each labeled and titled.</li><li>Take any chart you've made before this material and list three concrete improvements from the best-practices module.</li><li>Recreate one chart in three saved formats (PNG at 150 dpi, PNG at 300 dpi, and PDF) and compare the files.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>Learning Matplotlib well means mastering the Figure/Axes model and the core chart types first, layering in subplots and polish second, and treating best practices — honest axes, the right chart for the data, accessible colors — as non-negotiable judgment rather than optional styling.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m19">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Matplotlib Cheat Sheet</h2>
+            <p>Figure · Axes · Chart types · Layout · Export</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Figure and Axes Basics</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Create one axes</td><td><code>fig, ax = plt.subplots(figsize=(8, 5), layout="constrained")</code></td></tr>
+<tr><td>Create grid</td><td><code>fig, axs = plt.subplots(2, 2, figsize=(10, 8), layout="constrained")</code></td></tr>
+<tr><td>Line</td><td><code>ax.plot(x, y, marker="o", label="Series")</code></td></tr>
+<tr><td>Bar</td><td><code>ax.bar(categories, values)</code></td></tr>
+<tr><td>Scatter</td><td><code>ax.scatter(x, y, c=values, cmap="viridis")</code></td></tr>
+<tr><td>Histogram</td><td><code>ax.hist(values, bins=20, edgecolor="white")</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Label and Format Clearly</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Title</td><td><code>ax.set_title("Monthly revenue")</code></td></tr>
+<tr><td>Axis labels</td><td><code>ax.set_xlabel("Month"); ax.set_ylabel("Revenue ($)")</code></td></tr>
+<tr><td>Legend</td><td><code>ax.legend()</code> after assigning labels</td></tr>
+<tr><td>Grid</td><td><code>ax.grid(True, axis="y", alpha=0.25)</code></td></tr>
+<tr><td>Limits</td><td><code>ax.set_xlim(left=0)</code>; choose limits that don't hide context</td></tr>
+<tr><td>Log scale</td><td><code>ax.set_yscale("log")</code> only when appropriate and clearly labeled</td></tr>
+<tr><td>Colorbar</td><td><code>fig.colorbar(scatter, ax=ax, label="Value")</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Layout, Style, and Export</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Shared axes</td><td><code>plt.subplots(2, 1, sharex=True)</code></td></tr>
+<tr><td>Remove overlap</td><td>Use <code>layout="constrained"</code> or <code>fig.tight_layout()</code></td></tr>
+<tr><td>Save figure</td><td><code>fig.savefig("chart.png", dpi=300, bbox_inches="tight")</code></td></tr>
+<tr><td>Vector export</td><td><code>fig.savefig("chart.pdf", bbox_inches="tight")</code></td></tr>
+<tr><td>Close figure</td><td><code>plt.close(fig)</code> in batch scripts</td></tr>
+<tr><td>Accessible palette</td><td>Use perceptually uniform colors and more than color alone</td></tr>
+</table>
+<div class="warn-box">Prefer the object-oriented <code>fig, ax</code> API for reusable code. Label units, show context for truncated axes, and don't use a dual axis or rainbow palette without a clear reason.</div>
+</div>
         </div>
       </div>
     </div>
