@@ -100,6 +100,10 @@ export const NOTES = {
     href: "sql-material.html", title: "🗃️ SQL Zero to Hero",
     text: "SQL in order across 24 modules: tables, queries, joins, subqueries, CTEs, window functions, transactions, design and performance — every query with its real result.",
   },
+  dbms: {
+    href: "dbms-material.html", title: "🗄️ DBMS Complete Study Material",
+    text: "Database systems from data models and normalization through transactions, concurrency, recovery, indexing, query processing, distributed systems, and governance.",
+  },
   django: {
     href: "django-material.html", title: "🌿 Django Zero to Hero",
     text: "Build a complete blog in 24 modules: URLs, views, templates, ORM, admin, forms, auth, REST APIs, testing, security, caching and deployment.",
