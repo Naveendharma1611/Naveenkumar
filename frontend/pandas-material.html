@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>🐼 Pandas Complete Study Material</h1>
         <p>Master pandas for real-world data analysis: build, inspect, clean, reshape, combine and summarize tabular data efficiently, then take it into production with confidence.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">20</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">63</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">45</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">38</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">21</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">67</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">45</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">38</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -43,6 +43,7 @@
       <a href="#m18">18 · Quick Visualization</a>
       <a href="#m19">19 · Interview Prep</a>
       <a href="#m20">20 · Roadmap</a>
+      <a href="#m21">Quick Reference</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -988,6 +989,61 @@ sns.barplot(data=df.melt(id_vars="month", value_vars=["revenue", "cost"]),
 <ol><li>Pick one real public dataset (sales, housing, or survey data) and carry it through all seven stages: load, clean, aggregate, join with a second table, reshape, optimize memory, and visualize the result.</li><li>Write a short README-style summary of that project's key findings, including at least one join you validated with <code>validate=</code> and one memory optimization you measured before/after.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>The roadmap from zero to job-ready with pandas is cleaning before aggregating, aggregating before joining, joining before reshaping, and scale/performance habits layered on top of all of it — real end-to-end projects, not isolated method drills, are what turn familiarity with the API into the kind of fluency interviews and real jobs actually test for.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m21">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Pandas Cheat Sheet</h2>
+            <p>Read · Inspect · Select · Transform · Join · Validate</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Read and Inspect Data</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Read CSV</td><td><code>df = pd.read_csv("data.csv")</code></td></tr>
+<tr><td>Read Parquet</td><td><code>df = pd.read_parquet("data.parquet")</code></td></tr>
+<tr><td>Inspect rows</td><td><code>df.head()</code>; <code>df.sample(5, random_state=0)</code></td></tr>
+<tr><td>Inspect schema</td><td><code>df.shape</code>; <code>df.dtypes</code>; <code>df.info()</code></td></tr>
+<tr><td>Summarize numeric columns</td><td><code>df.describe()</code></td></tr>
+<tr><td>Count missing values</td><td><code>df.isna().sum()</code></td></tr>
+<tr><td>Check duplicate rows</td><td><code>df.duplicated().sum()</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Select, Clean, and Transform</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Select columns</td><td><code>df[["name", "score"]]</code></td></tr>
+<tr><td>Select by label</td><td><code>df.loc[rows, columns]</code></td></tr>
+<tr><td>Select by position</td><td><code>df.iloc[row_positions, column_positions]</code></td></tr>
+<tr><td>Filter rows</td><td><code>df.loc[(df["score"] &gt;= 50) &amp; (df["status"] == "active")]</code></td></tr>
+<tr><td>Fill missing values</td><td><code>df["score"] = df["score"].fillna(df["score"].median())</code></td></tr>
+<tr><td>Parse dates</td><td><code>df["date"] = pd.to_datetime(df["date"], errors="coerce")</code></td></tr>
+<tr><td>Create a column</td><td><code>df["total"] = df["price"] * df["quantity"]</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Aggregate, Join, and Reshape</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Group summary</td><td><code>df.groupby("region", as_index=False).agg(total=("sales", "sum"))</code></td></tr>
+<tr><td>Transform within groups</td><td><code>df["group_mean"] = df.groupby("region")["sales"].transform("mean")</code></td></tr>
+<tr><td>Validated join</td><td><code>left.merge(right, on="id", how="left", validate="many_to_one")</code></td></tr>
+<tr><td>Append rows</td><td><code>pd.concat([first, second], ignore_index=True)</code></td></tr>
+<tr><td>Wide to long</td><td><code>df.melt(id_vars="id", var_name="metric", value_name="value")</code></td></tr>
+<tr><td>Pivot summary</td><td><code>df.pivot_table(index="region", columns="year", values="sales", aggfunc="sum")</code></td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Reliability and Performance</h3>
+<ul><li>Check shape, row counts, key uniqueness, and dtypes before and after joins or reshaping.</li><li>Use <code>.loc[...]</code> for explicit assignment and avoid chained indexing.</li><li>Prefer vectorized operations and built-in groupby methods over Python row loops.</li><li>Use <code>category</code> for repeated low-cardinality labels when measurement shows a benefit.</li><li>Read large files in chunks or use columnar formats when the workload supports it.</li></ul>
+<div class="warn-box">A many-to-many merge can multiply rows. Validate expected key relationships with <code>validate=</code> and reconcile row counts before trusting aggregates.</div>
+</div>
         </div>
       </div>
     </div>

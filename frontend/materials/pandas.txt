@@ -788,3 +788,44 @@ Stage | Focus | Outcome
 1. Pick one real public dataset (sales, housing, or survey data) and carry it through all seven stages: load, clean, aggregate, join with a second table, reshape, optimize memory, and visualize the result.
 2. Write a short README-style summary of that project's key findings, including at least one join you validated with `validate=` and one memory optimization you measured before/after.
 @interview The roadmap from zero to job-ready with pandas is cleaning before aggregating, aggregating before joining, joining before reshaping, and scale/performance habits layered on top of all of it — real end-to-end projects, not isolated method drills, are what turn familiarity with the API into the kind of fluency interviews and real jobs actually test for.
+
+@module m21 | 📋 | Quick Reference | Pandas Cheat Sheet | Read · Inspect · Select · Transform · Join · Validate
+@topic Read and Inspect Data
+@table
+Need | Pattern
+Read CSV | `df = pd.read_csv("data.csv")`
+Read Parquet | `df = pd.read_parquet("data.parquet")`
+Inspect rows | `df.head()`; `df.sample(5, random_state=0)`
+Inspect schema | `df.shape`; `df.dtypes`; `df.info()`
+Summarize numeric columns | `df.describe()`
+Count missing values | `df.isna().sum()`
+Check duplicate rows | `df.duplicated().sum()`
+@end
+@topic Select, Clean, and Transform
+@table
+Need | Pattern
+Select columns | `df[["name", "score"]]`
+Select by label | `df.loc[rows, columns]`
+Select by position | `df.iloc[row_positions, column_positions]`
+Filter rows | `df.loc[(df["score"] >= 50) & (df["status"] == "active")]`
+Fill missing values | `df["score"] = df["score"].fillna(df["score"].median())`
+Parse dates | `df["date"] = pd.to_datetime(df["date"], errors="coerce")`
+Create a column | `df["total"] = df["price"] * df["quantity"]`
+@end
+@topic Aggregate, Join, and Reshape
+@table
+Need | Pattern
+Group summary | `df.groupby("region", as_index=False).agg(total=("sales", "sum"))`
+Transform within groups | `df["group_mean"] = df.groupby("region")["sales"].transform("mean")`
+Validated join | `left.merge(right, on="id", how="left", validate="many_to_one")`
+Append rows | `pd.concat([first, second], ignore_index=True)`
+Wide to long | `df.melt(id_vars="id", var_name="metric", value_name="value")`
+Pivot summary | `df.pivot_table(index="region", columns="year", values="sales", aggfunc="sum")`
+@end
+@topic Reliability and Performance
+- Check shape, row counts, key uniqueness, and dtypes before and after joins or reshaping.
+- Use `.loc[...]` for explicit assignment and avoid chained indexing.
+- Prefer vectorized operations and built-in groupby methods over Python row loops.
+- Use `category` for repeated low-cardinality labels when measurement shows a benefit.
+- Read large files in chunks or use columnar formats when the workload supports it.
+@warn A many-to-many merge can multiply rows. Validate expected key relationships with `validate=` and reconcile row counts before trusting aggregates.
