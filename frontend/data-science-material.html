@@ -18,7 +18,7 @@
         <a href="study.html" class="muted">← Study materials</a>
         <h1>📊 Data Science Complete Study Material</h1>
         <p>Learn data science end to end: frame useful questions, collect and clean data, explore it, build reliable statistical and machine-learning models, communicate results and deploy responsible solutions.</p>
-        <div class="stats"><div class="stat"><div class="stat-num">32</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">65</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">22</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">64</div><div class="stat-lbl">Practice Qs</div></div></div>
+        <div class="stats"><div class="stat"><div class="stat-num">34</div><div class="stat-lbl">Modules</div></div><div class="stat"><div class="stat-num">88</div><div class="stat-lbl">Topics</div></div><div class="stat"><div class="stat-num">22</div><div class="stat-lbl">Code Examples</div></div><div class="stat"><div class="stat-num">64</div><div class="stat-lbl">Practice Qs</div></div></div>
       </div>
     </section>
 
@@ -55,6 +55,8 @@
       <a href="#m30">30 · Deployment</a>
       <a href="#m31">31 · Projects</a>
       <a href="#m32">Roadmap</a>
+      <a href="#m33">Quick Reference</a>
+      <a href="#m34">Interview Prep</a>
     </nav>
 
     <div class="wrap pm-content">
@@ -993,6 +995,146 @@ if len(prediction) != len(new_data):
 <ol><li>Plan a four-week learning schedule with one small deliverable each week.</li><li>Explain a model result to a nontechnical stakeholder without overstating causality.</li></ol>
 </div>
 <div class="interview-box"><strong>🎤 One-Line Interview Answer</strong><span>Data science competence is the ability to frame, analyze, validate and communicate evidence responsibly, not simply to train the most complex model.</span></div>
+        </div>
+      </div>
+      <div class="module-card" id="m33">
+        <div class="module-header">
+          <span class="module-emoji">📋</span>
+          <div class="module-title-group">
+            <h2>Data Science Cheat Sheet</h2>
+            <p>Problem framing · Data quality · Statistics · Modeling · Communication</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Frame the Question and Inspect the Data</h3>
+<table>
+<tr><th>Need</th><th>Check</th></tr>
+<tr><td>Decision</td><td>What action could the result change?</td></tr>
+<tr><td>Unit of analysis</td><td>What does one row represent?</td></tr>
+<tr><td>Target</td><td>What outcome is predicted or estimated, and when is it observed?</td></tr>
+<tr><td>Data provenance</td><td>Who collected the data, for what purpose, and with which permissions?</td></tr>
+<tr><td>Quality</td><td>Check types, ranges, duplicates, missingness, and impossible values</td></tr>
+<tr><td>Baseline</td><td>Compare with a simple rule or current decision process</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Validate an Analysis or Model</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Holdout</td><td>Split data before fitting transformations or models</td></tr>
+<tr><td>Cross-validation</td><td>Estimate performance across multiple training/validation folds</td></tr>
+<tr><td>Leakage check</td><td>Use only information available at prediction time</td></tr>
+<tr><td>Classification</td><td>Report a confusion matrix and relevant precision/recall trade-offs</td></tr>
+<tr><td>Regression</td><td>Compare MAE or RMSE with a clear baseline</td></tr>
+<tr><td>Uncertainty</td><td>Report intervals or variation, not only one point estimate</td></tr>
+</table>
+</div>
+<div class="topic">
+<h3>Communicate and Maintain Findings</h3>
+<table>
+<tr><th>Need</th><th>Pattern</th></tr>
+<tr><td>Finding</td><td>State the result, population, metric, and time period</td></tr>
+<tr><td>Limitation</td><td>Describe assumptions, coverage gaps, and plausible alternatives</td></tr>
+<tr><td>Reproducibility</td><td>Track code, data versions, parameters, and environment</td></tr>
+<tr><td>Monitoring</td><td>Watch data quality, input drift, outcome delay, and model performance</td></tr>
+<tr><td>Privacy</td><td>Minimize, protect, and retain data only as allowed and necessary</td></tr>
+</table>
+<div class="warn-box">Correlation alone does not establish causation. A predictive model's accuracy also does not prove that changing an input will change the outcome.</div>
+</div>
+        </div>
+      </div>
+      <div class="module-card" id="m34">
+        <div class="module-header">
+          <span class="module-emoji">🎤</span>
+          <div class="module-title-group">
+            <h2>Data Science Interview Questions &amp; Answers</h2>
+            <p>Framing · Statistics · Validation · Metrics · Responsible use</p>
+          </div>
+          <span class="module-toggle">▼</span>
+        </div>
+        <div class="module-body">
+<div class="topic">
+<h3>Q: How do you approach a data science problem?</h3>
+<p>Clarify the decision and success criteria, define the unit of analysis and target, inspect data provenance and quality, build a simple baseline, choose a valid evaluation design, and communicate results with uncertainty and limitations. Consider deployment and monitoring if the work will influence a live decision.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between supervised and unsupervised learning?</h3>
+<p>Supervised learning uses examples with target labels to predict or estimate an outcome. Unsupervised learning looks for structure in data without a supplied target, for example clusters or lower-dimensional representations.</p>
+</div>
+<div class="topic">
+<h3>Q: What is data leakage?</h3>
+<p>Leakage occurs when training or evaluation uses information that would not legitimately be available at prediction time, or when the evaluation process indirectly influences model fitting. It can produce optimistic metrics that do not hold in deployment.</p>
+</div>
+<div class="topic">
+<h3>Q: Why keep a test set separate from model selection?</h3>
+<p>Repeatedly selecting models based on test results leaks information from the test set into development. Keep it untouched until the final evaluation, and use training data with cross-validation for routine selection.</p>
+</div>
+<div class="topic">
+<h3>Q: What is cross-validation?</h3>
+<p>Cross-validation repeatedly fits and evaluates a model on different partitions of the training data. It estimates performance variability and supports model selection, but does not replace a final untouched test set when one is required.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the bias-variance trade-off?</h3>
+<p>High bias reflects a model that is too constrained to capture important patterns; high variance reflects sensitivity to the training sample. Model complexity, data quantity, regularization, and validation strategy all affect the balance.</p>
+</div>
+<div class="topic">
+<h3>Q: How does regularization help?</h3>
+<p>Regularization penalizes model complexity or large parameter values to discourage fitting noise. The strength must be selected using training data or cross-validation, not the final test set.</p>
+</div>
+<div class="topic">
+<h3>Q: How do precision and recall differ?</h3>
+<p>Precision is the fraction of predicted positives that are correct; recall is the fraction of actual positives found. Increasing one can reduce the other, so choose a threshold based on the relative costs of false positives and false negatives.</p>
+</div>
+<div class="topic">
+<h3>Q: What metrics are useful for an imbalanced classification problem?</h3>
+<p>Inspect class-specific precision and recall, a confusion matrix, and metrics such as F1 or precision-recall AUC. Include a baseline and choose metrics that match the decision costs; accuracy alone can be misleading.</p>
+</div>
+<div class="topic">
+<h3>Q: When might MAE be preferred to RMSE?</h3>
+<p>MAE gives errors linear weight and is often easier to interpret in the target's units. RMSE penalizes larger errors more heavily, which can be useful when large misses are especially costly; the choice should reflect the problem.</p>
+</div>
+<div class="topic">
+<h3>Q: How should missing data be handled?</h3>
+<p>First investigate why values are missing and whether missingness is related to the outcome or other variables. Then choose a defensible strategy such as exclusion, imputation, or an explicit missing indicator, and fit learned preprocessing using training data only.</p>
+</div>
+<div class="topic">
+<h3>Q: What is confounding?</h3>
+<p>A confounder is a factor associated with both a treatment or exposure and an outcome that can distort their observed relationship. Causal conclusions require a design and assumptions that address confounding; predictive association alone is not enough.</p>
+</div>
+<div class="topic">
+<h3>Q: What does a p-value mean?</h3>
+<p>Under a specified null hypothesis and model assumptions, a p-value is the probability of observing a result at least as extreme as the one obtained. It is not the probability that the null hypothesis is true or that a result happened by chance.</p>
+</div>
+<div class="topic">
+<h3>Q: How should a confidence interval be interpreted?</h3>
+<p>In a frequentist procedure, intervals produced by repeated samples at a stated confidence level would contain the fixed parameter at that long-run rate, assuming the method's conditions hold. A single interval is not a probability distribution over the parameter.</p>
+</div>
+<div class="topic">
+<h3>Q: Why randomize participants in an A/B test?</h3>
+<p>Random assignment helps balance measured and unmeasured factors between groups in expectation, supporting a causal comparison. Check implementation, sample-ratio balance, exposure, interference, and the planned analysis before interpreting results.</p>
+</div>
+<div class="topic">
+<h3>Q: Why establish a baseline model?</h3>
+<p>A baseline shows whether a more complex approach improves on a simple, reproducible reference such as a majority-class rule or training-set mean. It helps reveal leakage, metric mistakes, and unnecessary complexity.</p>
+</div>
+<div class="topic">
+<h3>Q: How do you prevent preprocessing leakage?</h3>
+<p>Split the data first, then fit transformations such as imputation, scaling, or feature selection using only the training partition. Apply the fitted transformations to validation and test data; a pipeline helps enforce this order.</p>
+</div>
+<div class="topic">
+<h3>Q: What is the difference between data drift and concept drift?</h3>
+<p>Data drift describes changes in the distribution of inputs. Concept drift describes changes in the relationship between inputs and the target. Either can reduce performance, and monitoring may require delayed outcome labels.</p>
+</div>
+<div class="topic">
+<h3>Q: How do you make an analysis reproducible?</h3>
+<p>Record code, data provenance and versions, dependencies, parameters, random seeds when relevant, and the steps needed to regenerate outputs. A seed alone does not guarantee reproducibility across every library version or execution environment.</p>
+</div>
+<div class="topic">
+<h3>Q: How do you communicate uncertainty to a nontechnical audience?</h3>
+<p>Explain the estimate, the population and time period it applies to, and a practical range of plausible values or scenarios. State important assumptions and limitations in direct language, and distinguish association from causal evidence.</p>
+</div>
         </div>
       </div>
     </div>

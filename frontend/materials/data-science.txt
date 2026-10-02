@@ -494,3 +494,77 @@ Focus first on Python, SQL, statistics, data cleaning, EDA, visualization, train
 1. Plan a four-week learning schedule with one small deliverable each week.
 2. Explain a model result to a nontechnical stakeholder without overstating causality.
 @interview Data science competence is the ability to frame, analyze, validate and communicate evidence responsibly, not simply to train the most complex model.
+
+@module m33 | 📋 | Quick Reference | Data Science Cheat Sheet | Problem framing · Data quality · Statistics · Modeling · Communication
+@topic Frame the Question and Inspect the Data
+@table
+Need | Check
+Decision | What action could the result change?
+Unit of analysis | What does one row represent?
+Target | What outcome is predicted or estimated, and when is it observed?
+Data provenance | Who collected the data, for what purpose, and with which permissions?
+Quality | Check types, ranges, duplicates, missingness, and impossible values
+Baseline | Compare with a simple rule or current decision process
+@end
+@topic Validate an Analysis or Model
+@table
+Need | Pattern
+Holdout | Split data before fitting transformations or models
+Cross-validation | Estimate performance across multiple training/validation folds
+Leakage check | Use only information available at prediction time
+Classification | Report a confusion matrix and relevant precision/recall trade-offs
+Regression | Compare MAE or RMSE with a clear baseline
+Uncertainty | Report intervals or variation, not only one point estimate
+@end
+@topic Communicate and Maintain Findings
+@table
+Need | Pattern
+Finding | State the result, population, metric, and time period
+Limitation | Describe assumptions, coverage gaps, and plausible alternatives
+Reproducibility | Track code, data versions, parameters, and environment
+Monitoring | Watch data quality, input drift, outcome delay, and model performance
+Privacy | Minimize, protect, and retain data only as allowed and necessary
+@end
+@warn Correlation alone does not establish causation. A predictive model's accuracy also does not prove that changing an input will change the outcome.
+
+@module m34 | 🎤 | Interview Prep | Data Science Interview Questions & Answers | Framing · Statistics · Validation · Metrics · Responsible use
+@topic Q: How do you approach a data science problem?
+Clarify the decision and success criteria, define the unit of analysis and target, inspect data provenance and quality, build a simple baseline, choose a valid evaluation design, and communicate results with uncertainty and limitations. Consider deployment and monitoring if the work will influence a live decision.
+@topic Q: What is the difference between supervised and unsupervised learning?
+Supervised learning uses examples with target labels to predict or estimate an outcome. Unsupervised learning looks for structure in data without a supplied target, for example clusters or lower-dimensional representations.
+@topic Q: What is data leakage?
+Leakage occurs when training or evaluation uses information that would not legitimately be available at prediction time, or when the evaluation process indirectly influences model fitting. It can produce optimistic metrics that do not hold in deployment.
+@topic Q: Why keep a test set separate from model selection?
+Repeatedly selecting models based on test results leaks information from the test set into development. Keep it untouched until the final evaluation, and use training data with cross-validation for routine selection.
+@topic Q: What is cross-validation?
+Cross-validation repeatedly fits and evaluates a model on different partitions of the training data. It estimates performance variability and supports model selection, but does not replace a final untouched test set when one is required.
+@topic Q: What is the bias-variance trade-off?
+High bias reflects a model that is too constrained to capture important patterns; high variance reflects sensitivity to the training sample. Model complexity, data quantity, regularization, and validation strategy all affect the balance.
+@topic Q: How does regularization help?
+Regularization penalizes model complexity or large parameter values to discourage fitting noise. The strength must be selected using training data or cross-validation, not the final test set.
+@topic Q: How do precision and recall differ?
+Precision is the fraction of predicted positives that are correct; recall is the fraction of actual positives found. Increasing one can reduce the other, so choose a threshold based on the relative costs of false positives and false negatives.
+@topic Q: What metrics are useful for an imbalanced classification problem?
+Inspect class-specific precision and recall, a confusion matrix, and metrics such as F1 or precision-recall AUC. Include a baseline and choose metrics that match the decision costs; accuracy alone can be misleading.
+@topic Q: When might MAE be preferred to RMSE?
+MAE gives errors linear weight and is often easier to interpret in the target's units. RMSE penalizes larger errors more heavily, which can be useful when large misses are especially costly; the choice should reflect the problem.
+@topic Q: How should missing data be handled?
+First investigate why values are missing and whether missingness is related to the outcome or other variables. Then choose a defensible strategy such as exclusion, imputation, or an explicit missing indicator, and fit learned preprocessing using training data only.
+@topic Q: What is confounding?
+A confounder is a factor associated with both a treatment or exposure and an outcome that can distort their observed relationship. Causal conclusions require a design and assumptions that address confounding; predictive association alone is not enough.
+@topic Q: What does a p-value mean?
+Under a specified null hypothesis and model assumptions, a p-value is the probability of observing a result at least as extreme as the one obtained. It is not the probability that the null hypothesis is true or that a result happened by chance.
+@topic Q: How should a confidence interval be interpreted?
+In a frequentist procedure, intervals produced by repeated samples at a stated confidence level would contain the fixed parameter at that long-run rate, assuming the method's conditions hold. A single interval is not a probability distribution over the parameter.
+@topic Q: Why randomize participants in an A/B test?
+Random assignment helps balance measured and unmeasured factors between groups in expectation, supporting a causal comparison. Check implementation, sample-ratio balance, exposure, interference, and the planned analysis before interpreting results.
+@topic Q: Why establish a baseline model?
+A baseline shows whether a more complex approach improves on a simple, reproducible reference such as a majority-class rule or training-set mean. It helps reveal leakage, metric mistakes, and unnecessary complexity.
+@topic Q: How do you prevent preprocessing leakage?
+Split the data first, then fit transformations such as imputation, scaling, or feature selection using only the training partition. Apply the fitted transformations to validation and test data; a pipeline helps enforce this order.
+@topic Q: What is the difference between data drift and concept drift?
+Data drift describes changes in the distribution of inputs. Concept drift describes changes in the relationship between inputs and the target. Either can reduce performance, and monitoring may require delayed outcome labels.
+@topic Q: How do you make an analysis reproducible?
+Record code, data provenance and versions, dependencies, parameters, random seeds when relevant, and the steps needed to regenerate outputs. A seed alone does not guarantee reproducibility across every library version or execution environment.
+@topic Q: How do you communicate uncertainty to a nontechnical audience?
+Explain the estimate, the population and time period it applies to, and a practical range of plausible values or scenarios. State important assumptions and limitations in direct language, and distinguish association from causal evidence.
