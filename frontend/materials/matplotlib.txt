@@ -1,0 +1,688 @@
+@page 📈 Matplotlib Complete Study Material
+@intro Learn Matplotlib from the Figure/Axes model through every common chart type to styling, saving and interview-ready answers for building publication-quality plots in Python.
+
+@module m1 | 🧭 | 1 · Introduction | Module 1 — What Is Matplotlib? | Figure · Axes · Axis · pyplot · Object-oriented API
+@topic 🧭 What Matplotlib is and why it matters
+Matplotlib is Python's foundational 2D plotting library. It renders line charts, bar charts, scatter plots, histograms, images and more, and it underlies higher-level tools such as pandas' `.plot()`, seaborn and many scientific visualization stacks. Learning Matplotlib's core model pays off even when you later reach for a higher-level library, because that library usually hands you back a Matplotlib `Figure` or `Axes` object to fine-tune.
+@topic 🏗️ The Figure, Axes and Axis hierarchy
+A **Figure** is the whole canvas or window — it can hold one or more plots. An **Axes** is a single plot area with its own data space, title, and x/y ranges; despite the name, one `Axes` is one chart, not an axis line. An **Axis** (singular) is the actual x or y number line on an Axes, with its own ticks, limits and label. Every Axes has exactly two Axis objects (x and y, or three for 3D), and a Figure can contain many Axes arranged in a grid.
+@code python
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()          # fig: the whole canvas, ax: one plot area
+print(type(fig), type(ax))
+print(type(ax.xaxis), type(ax.yaxis))   # the Axis objects that belong to ax
+@end
+@topic ⚖️ pyplot's state machine vs the object-oriented API
+Matplotlib offers two ways to build the same chart. The **pyplot API** (`plt.plot`, `plt.xlabel`, ...) is a state machine: each call implicitly acts on "the current figure and axes," which is convenient for quick, single-plot scripts. The **object-oriented (OO) API** creates explicit `Figure` and `Axes` objects and calls methods on them (`ax.plot`, `ax.set_xlabel`), which scales far better once you have multiple subplots, need to pass axes into functions, or build reusable plotting code.
+@code python
+# pyplot (state machine) style
+plt.plot([1, 2, 3], [4, 5, 6])
+plt.xlabel("x")
+plt.show()
+
+# Object-oriented style (preferred for anything beyond a one-off script)
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3], [4, 5, 6])
+ax.set_xlabel("x")
+plt.show()
+@end
+@info Mixing the two styles works for small scripts, but once a figure has multiple subplots, always address a specific Axes (`ax.plot(...)`) rather than relying on pyplot's "current axes."
+@practice
+1. Create a Figure with one Axes using `plt.subplots()` and print both objects' types.
+2. Rewrite a `plt.plot(...); plt.title(...)` snippet using the object-oriented `ax.plot(...); ax.set_title(...)` style.
+@interview A `Figure` is the whole canvas, an `Axes` is one plot area with its own x/y data space, and an `Axis` is a single number line on that Axes; pyplot drives an implicit "current axes," while the object-oriented API addresses `Figure`/`Axes` objects directly and scales better for multi-plot code.
+
+@module m2 | ✏️ | 2 · First Plot | Module 2 — Your First Plot | plt.plot · plt.show · Line plots · Chart anatomy
+@topic ✏️ Drawing your first line
+`plt.plot(x, y)` draws a line connecting paired x and y values; `plt.show()` renders the figure in a window or, in notebooks, inline. If you pass only one sequence, Matplotlib uses its index positions (0, 1, 2, ...) as the x-values.
+@code python
+import matplotlib.pyplot as plt
+
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 6, 8, 10]
+
+plt.plot(x, y)
+plt.show()
+@end
+@topic 🔎 The anatomy of a chart
+Every chart is built from recognizable parts: the **Figure** (outer canvas), the **Axes** (plot area), the **data** (the line, bars, or points), **axis labels**, a **title**, optional **tick marks**, a **legend**, and **spines** (the plot area's border lines). Knowing these names makes documentation and error messages far easier to parse.
+@code python
+fig, ax = plt.subplots()
+ax.plot(x, y, label="y = 2x")
+ax.set_title("My First Plot")
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+ax.legend()
+plt.show()
+@end
+@tip `plt.show()` is only needed outside Jupyter notebooks (or when a backend does not auto-display). In a notebook with `%matplotlib inline`, the figure renders automatically as the last expression of a cell.
+@practice
+1. Plot `y = x**2` for `x` from 0 to 10 and label both axes.
+2. Name five visual parts of a chart (Figure, Axes, title, tick, spine) and what each one is responsible for.
+@interview `plt.plot(x, y)` draws a connected line between paired points and `plt.show()` renders the figure; a chart's anatomy — Figure, Axes, data, labels, ticks, legend and spines — gives you the vocabulary to customize any part of it.
+
+@module m3 | 🖼️ | 3 · Subplots | Module 3 — Figures & Subplots | plt.subplots · Grids of axes · figsize · sharex/sharey
+@topic 🖼️ Creating a grid with plt.subplots
+`plt.subplots(nrows, ncols)` returns a `Figure` and either a single `Axes` or a NumPy array of `Axes` objects, one per grid cell. This is the standard way to build multi-panel figures, because it hands you addressable `Axes` objects instead of relying on pyplot's implicit current axes.
+@code python
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(10, 6))
+
+axes[0, 0].plot([1, 2, 3], [1, 4, 9])
+axes[0, 0].set_title("Top left")
+axes[1, 1].bar(["A", "B", "C"], [3, 7, 5])
+axes[1, 1].set_title("Bottom right")
+
+fig.tight_layout()
+plt.show()
+@end
+@topic 📏 Controlling size and resolution with figsize
+`figsize=(width, height)` sets the figure's size in inches; `dpi` (dots per inch) controls resolution/sharpness, especially important when saving for print or high-density screens. Larger `figsize` with the same `dpi` produces a physically bigger image at the same crispness; higher `dpi` with the same `figsize` produces a sharper but larger-in-pixels image.
+@code python
+fig, ax = plt.subplots(figsize=(8, 4), dpi=150)
+ax.plot([1, 2, 3], [3, 1, 4])
+plt.show()
+@end
+@topic 🔗 Sharing axes with sharex and sharey
+`sharex=True` / `sharey=True` lock the corresponding axis limits and ticks across subplots, which is essential when comparing panels directly — readers should not have to recheck each panel's scale. `plt.subplots(2, 1, sharex=True)` is a common layout for stacked time-series panels.
+@code python
+fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, figsize=(8, 5))
+ax1.plot([1, 2, 3, 4], [10, 12, 9, 15])
+ax1.set_ylabel("Revenue")
+ax2.plot([1, 2, 3, 4], [2, 3, 1, 4])
+ax2.set_ylabel("Errors")
+ax2.set_xlabel("Day")
+plt.show()
+@end
+@warn Forgetting `fig.tight_layout()` (or `constrained_layout=True` in `subplots()`) on multi-panel figures often leaves titles and labels overlapping or clipped, especially with rotated tick labels.
+@practice
+1. Build a 1-row, 3-column grid of subplots and give each a distinct title.
+2. Create two stacked subplots that share the x-axis and explain why sharing matters here.
+@interview `plt.subplots(nrows, ncols)` returns a Figure plus an array of addressable Axes for building multi-panel layouts; `figsize` sets physical size, `dpi` sets resolution, and `sharex`/`sharey` lock axis scales across panels so comparisons are visually fair.
+
+@module m4 | 📈 | 4 · Line Plots | Module 4 — Line Plots in Depth | color · linestyle · linewidth · markers · Multiple series
+@topic 📈 Styling a line: color, linestyle, linewidth, markers
+`plot()` accepts `color` (or the shorthand `c`), `linestyle` (`"-"`, `"--"`, `"-."`, `":"`), `linewidth` (or `lw`), and `marker` (`"o"`, `"s"`, `"^"`, `"x"`, ...) to control a line's appearance. A compact format string like `"ro--"` combines color, marker and linestyle in one argument.
+@code python
+import matplotlib.pyplot as plt
+
+x = [1, 2, 3, 4, 5]
+y = [2, 3, 5, 7, 11]
+
+fig, ax = plt.subplots()
+ax.plot(x, y, color="tab:blue", linestyle="--", linewidth=2, marker="o", markersize=6)
+plt.show()
+@end
+@topic 🎻 Plotting multiple series on one Axes
+Calling `ax.plot()` more than once on the same Axes overlays series on shared axes — ideal for comparing trends. Give each call a `label` and then call `ax.legend()` once so readers can tell the lines apart; let each series get a distinct color or style rather than relying on memory.
+@code python
+days = [1, 2, 3, 4, 5]
+product_a = [20, 25, 22, 30, 28]
+product_b = [15, 18, 24, 21, 26]
+
+fig, ax = plt.subplots()
+ax.plot(days, product_a, label="Product A", marker="o")
+ax.plot(days, product_b, label="Product B", marker="s")
+ax.set_xlabel("Day")
+ax.set_ylabel("Units sold")
+ax.legend()
+plt.show()
+@end
+@table
+Argument | Purpose | Example values
+`color` / `c` | Line color | `"tab:red"`, `"#1f77b4"`, `"green"`
+`linestyle` / `ls` | Dash pattern | `"-"`, `"--"`, `"-."`, `":"`
+`linewidth` / `lw` | Line thickness | `1.5`, `2`, `3`
+`marker` | Point symbol at each data value | `"o"`, `"s"`, `"^"`, `"x"`
+`alpha` | Transparency (0 to 1) | `0.3`, `0.7`, `1.0`
+@end
+@practice
+1. Plot two series on the same Axes with different colors, linestyles and markers, and add a legend.
+2. Use a compact format string (e.g. `"g^:"`) to style one line in a single argument.
+@interview Line styling in Matplotlib is controlled through `color`, `linestyle`, `linewidth` and `marker` (or a compact format string); multiple `ax.plot()` calls on the same Axes overlay series, and labeling each call lets `ax.legend()` build a clear key.
+
+@module m5 | 📊 | 5 · Bar Charts | Module 5 — Bar Charts | Vertical/horizontal · Grouped · Stacked · When to use bars
+@topic 📊 Vertical and horizontal bars
+`ax.bar(categories, values)` draws vertical bars; `ax.barh(categories, values)` draws horizontal bars, which read more easily when category labels are long or numerous, since the text runs horizontally instead of being rotated.
+@code python
+import matplotlib.pyplot as plt
+
+languages = ["Python", "JavaScript", "SQL", "Java"]
+usage = [68, 55, 49, 33]
+
+fig, ax = plt.subplots()
+ax.bar(languages, usage, color="tab:blue")
+ax.set_ylabel("Usage (%)")
+plt.show()
+
+fig, ax = plt.subplots()
+ax.barh(languages, usage, color="tab:orange")
+ax.set_xlabel("Usage (%)")
+plt.show()
+@end
+@topic 🧱 Grouped and stacked bars
+A **grouped bar chart** places bars for each category's sub-groups side by side, which is best for comparing sub-group magnitudes directly. A **stacked bar chart** stacks sub-groups on top of each other, which is best for seeing both sub-group values and their total at a glance, at the cost of making it harder to compare middle segments precisely.
+@code python
+import numpy as np
+
+categories = ["Q1", "Q2", "Q3", "Q4"]
+product_a = np.array([20, 25, 30, 22])
+product_b = np.array([15, 18, 20, 25])
+x = np.arange(len(categories))
+width = 0.35
+
+fig, ax = plt.subplots()
+ax.bar(x - width / 2, product_a, width, label="Product A")
+ax.bar(x + width / 2, product_b, width, label="Product B")
+ax.set_xticks(x)
+ax.set_xticklabels(categories)
+ax.legend()
+plt.show()
+
+fig, ax = plt.subplots()
+ax.bar(categories, product_a, label="Product A")
+ax.bar(categories, product_b, bottom=product_a, label="Product B")
+ax.legend()
+plt.show()
+@end
+@topic 🤔 When a bar chart is the right choice
+Bar charts are strongest for comparing **discrete categories** by magnitude — rankings, counts, survey responses. They are a poor choice for showing a continuous trend over time (a line plot is clearer) or for showing the relationship between two numeric variables (a scatter plot is clearer). Bar charts should also almost always start their value axis at zero, since bar length is the visual cue readers use to judge magnitude.
+@info Use `bottom=` on `ax.bar()` to stack a series on top of the previous one; each stacked series' `bottom` should equal the running sum of everything beneath it.
+@practice
+1. Draw grouped bars comparing two products across four quarters.
+2. Convert the same data into a stacked bar chart and explain when each version communicates better.
+@interview `ax.bar()`/`ax.barh()` draw vertical/horizontal bars; grouped bars (offset by `width`) compare sub-group magnitudes side by side, while stacked bars (using `bottom=`) show both parts and totals — and bar charts belong on category comparisons with a zero-based value axis, not on continuous trends.
+
+@module m6 | 🎯 | 6 · Scatter Plots | Module 6 — Scatter Plots | Size encoding · Color encoding · alpha · Overplotting
+@topic 🎯 A basic scatter and encoding a third variable with size
+`ax.scatter(x, y)` plots individual points rather than connecting them with a line, which is the right choice when you want to examine the relationship between two numeric variables rather than imply a continuous path between observations. Passing an array to `s=` scales each point's size, letting a third numeric variable (e.g. population, revenue) ride along visually.
+@code python
+import matplotlib.pyplot as plt
+import numpy as np
+
+rng = np.random.default_rng(7)
+hours_studied = rng.uniform(1, 10, 50)
+test_score = hours_studied * 7 + rng.normal(0, 8, 50)
+effort = rng.uniform(20, 200, 50)   # third variable -> point size
+
+fig, ax = plt.subplots()
+ax.scatter(hours_studied, test_score, s=effort, alpha=0.6)
+ax.set_xlabel("Hours studied")
+ax.set_ylabel("Test score")
+plt.show()
+@end
+@topic 🌈 Encoding a fourth variable with color, and alpha for overplotting
+Passing an array to `c=` colors each point by a numeric or categorical variable, letting one scatter plot encode up to four dimensions (x, y, size, color). `alpha` (0 to 1) makes points semi-transparent, which is essential when many points overlap ("overplotting") — dense clusters become visibly darker instead of collapsing into an indistinguishable blob.
+@code python
+grade_level = rng.integers(9, 13, 50)   # fourth variable -> color
+
+fig, ax = plt.subplots()
+scatter = ax.scatter(hours_studied, test_score, s=effort, c=grade_level,
+                      cmap="viridis", alpha=0.7, edgecolors="black", linewidths=0.5)
+fig.colorbar(scatter, ax=ax, label="Grade level")
+ax.set_xlabel("Hours studied")
+ax.set_ylabel("Test score")
+plt.show()
+@end
+@warn With thousands of overlapping points, even `alpha` stops helping — consider a hexbin plot (`ax.hexbin`) or a 2D histogram instead, which aggregate density directly rather than relying on visual transparency.
+@practice
+1. Build a scatter plot where point size encodes a third variable and add appropriate axis labels.
+2. Add `alpha=0.3` to a scatter plot of 5,000 overlapping points and describe what changes.
+@interview `ax.scatter()` encodes up to four variables at once — x position, y position, point size (`s=`) and point color (`c=`) — making it the right chart for showing relationships between numeric variables; `alpha` fights overplotting by letting dense regions visually darken instead of hiding individual points.
+
+@module m7 | 🔔 | 7 · Histograms | Module 7 — Histograms & Distributions | hist · Bin selection · Density vs count · Overlapping histograms
+@topic 🔔 Drawing a histogram and choosing bins
+`ax.hist(data, bins=...)` buckets continuous values into intervals and plots the count (or density) per bucket, revealing a variable's distribution shape — skew, modality, outliers — that a single summary statistic hides. Too few bins hide structure; too many bins turn the chart into noise. `bins="auto"` or an explicit integer are reasonable starting points; always sanity-check by trying two or three bin counts.
+@code python
+import matplotlib.pyplot as plt
+import numpy as np
+
+rng = np.random.default_rng(1)
+scores = rng.normal(loc=72, scale=12, size=500)
+
+fig, ax = plt.subplots()
+ax.hist(scores, bins=20, color="tab:blue", edgecolor="white")
+ax.set_xlabel("Score")
+ax.set_ylabel("Count")
+plt.show()
+@end
+@topic 📐 Density vs count
+By default `hist()` plots raw **counts** per bin. Passing `density=True` instead normalizes the histogram so the total area under the bars equals 1, turning it into an estimate of a probability density — this is what lets you overlay a fitted distribution curve for comparison, or compare two histograms with different sample sizes on the same vertical scale.
+@code python
+fig, ax = plt.subplots()
+ax.hist(scores, bins=20, density=True, color="tab:green", alpha=0.7)
+ax.set_ylabel("Density")
+plt.show()
+@end
+@topic 🪞 Overlapping histograms for comparison
+To compare two groups' distributions, plot both histograms on the same Axes with `alpha` transparency and consistent `bins`, and always add a legend so viewers know which color is which group.
+@code python
+group_a = rng.normal(70, 10, 300)
+group_b = rng.normal(78, 9, 300)
+bins = np.linspace(30, 110, 25)   # shared bin edges for a fair comparison
+
+fig, ax = plt.subplots()
+ax.hist(group_a, bins=bins, alpha=0.5, label="Section A")
+ax.hist(group_b, bins=bins, alpha=0.5, label="Section B")
+ax.legend()
+plt.show()
+@end
+@info Use the same `bins` array (not just the same bin count) when comparing two histograms, so bin edges align and the comparison is not distorted by offset buckets.
+@practice
+1. Plot a histogram of a normal sample with 10, 30 and 100 bins and describe how the shape appears to change.
+2. Overlay two groups' histograms with `alpha=0.5` and shared bin edges, and add a legend.
+@interview `ax.hist()` bins continuous data to reveal distribution shape; bin count is a real analytical choice (too few hides structure, too many adds noise), `density=True` normalizes area to 1 for comparing differently-sized samples, and overlapping histograms need shared bin edges plus `alpha` to compare fairly.
+
+@module m8 | 🏷️ | 8 · Labels & Legends | Module 8 — Labels, Titles & Legends | Axis labels · Chart titles · Legend placement · Custom handles
+@topic 🏷️ Axis labels and chart titles
+`ax.set_xlabel()`, `ax.set_ylabel()` and `ax.set_title()` (or the pyplot equivalents `plt.xlabel`, `plt.ylabel`, `plt.title`) name what each axis and the chart as a whole represent, including units where relevant (e.g. "Revenue ($M)"). A chart without axis labels forces readers to guess, which undermines even an otherwise well-made plot.
+@code python
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3, 4], [10, 14, 11, 18])
+ax.set_xlabel("Week")
+ax.set_ylabel("Revenue ($K)")
+ax.set_title("Weekly Revenue Trend")
+plt.show()
+@end
+@topic 🗂️ Controlling legend placement
+`ax.legend()` auto-places a legend using labeled artists (those created with `label=`). The `loc` parameter (`"upper right"`, `"lower left"`, `"best"`, ...) controls placement, and `bbox_to_anchor` moves the legend entirely outside the plotting area when it would otherwise overlap data.
+@code python
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3], [1, 2, 3], label="Series A")
+ax.plot([1, 2, 3], [3, 2, 1], label="Series B")
+ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=2)
+plt.show()
+@end
+@topic 🧩 Building a legend from custom handles
+When a chart's colors or markers do not come from simple labeled `plot`/`bar` calls (e.g. a scatter colored by a colormap, or a manually composed key), build the legend explicitly from `Line2D` or `Patch` handles rather than relying on auto-detection.
+@code python
+from matplotlib.lines import Line2D
+
+handles = [
+    Line2D([0], [0], color="tab:blue", marker="o", linestyle="", label="Low risk"),
+    Line2D([0], [0], color="tab:red", marker="o", linestyle="", label="High risk"),
+]
+fig, ax = plt.subplots()
+ax.scatter([1, 2, 3], [1, 2, 3], color="tab:blue")
+ax.scatter([4, 5], [1, 2], color="tab:red")
+ax.legend(handles=handles)
+plt.show()
+@end
+@practice
+1. Add an axis-labeled, titled chart and place its legend outside the plot area using `bbox_to_anchor`.
+2. Build a legend from custom `Line2D` handles for a scatter plot colored by a third category.
+@interview Axis labels and titles via `set_xlabel`/`set_ylabel`/`set_title` tell the reader what they're looking at; `ax.legend()` auto-builds a key from labeled artists and `loc`/`bbox_to_anchor` control its placement, while custom `Line2D`/`Patch` handles build a legend when auto-detection does not match what the colors actually mean.
+
+@module m9 | 📐 | 9 · Ticks & Spines | Module 9 — Customizing Ticks & Spines | Locators · Formatters · Rotating labels · Removing spines
+@topic 📐 Tick locators and formatters
+A **locator** decides where ticks appear (`MultipleLocator`, `MaxNLocator`, `AutoLocator`); a **formatter** decides how each tick's value is displayed as text (`FuncFormatter`, `PercentFormatter`, `FixedFormatter`). Together they give precise control instead of accepting Matplotlib's automatic defaults.
+@code python
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+
+fig, ax = plt.subplots()
+ax.plot([0, 1, 2, 3, 4, 5], [0, 1500, 2800, 2600, 4100, 5000])
+ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
+ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda v, pos: f"${v:,.0f}"))
+plt.show()
+@end
+@topic 🔄 Rotating tick labels
+Long category labels overlap when drawn horizontally. `ax.tick_params(axis="x", rotation=45)` (or `plt.xticks(rotation=45, ha="right")`) angles the labels so they stay legible without shrinking the font or truncating text.
+@code python
+categories = ["Customer Support", "Engineering", "Marketing", "Sales", "Finance"]
+values = [42, 85, 37, 60, 29]
+
+fig, ax = plt.subplots()
+ax.bar(categories, values)
+ax.tick_params(axis="x", rotation=45)
+fig.tight_layout()
+plt.show()
+@end
+@topic ✂️ Removing spines for a cleaner look
+**Spines** are the border lines around the plot area (top, bottom, left, right). Removing the top and right spines is a common, low-risk polish step that reduces visual clutter without losing any information, since those two borders rarely carry meaning.
+@code python
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3], [2, 4, 3])
+ax.spines["top"].set_visible(False)
+ax.spines["right"].set_visible(False)
+plt.show()
+@end
+@tip `ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))` is a quick fix when an integer-valued axis (like a count) shows confusing fractional tick labels.
+@practice
+1. Format a y-axis to show values as currency using `FuncFormatter`.
+2. Rotate x-axis labels 45 degrees for a bar chart with long category names, and remove the top/right spines.
+@interview Locators decide where ticks go and formatters decide how their labels read, giving full control over an axis beyond Matplotlib's automatic defaults; rotating long tick labels and hiding the top/right spines are the two most common, lowest-risk polish steps for a cleaner chart.
+
+@module m10 | 💬 | 10 · Annotations & Text | Module 10 — Annotations & Text | annotate · Arrows · Text positioning · Highlighting a point
+@topic 💬 Annotating a point with annotate and an arrow
+`ax.annotate(text, xy=..., xytext=..., arrowprops=...)` draws a label connected by an arrow from `xytext` (where the text sits) to `xy` (the data point being called out) — the standard way to highlight a specific, meaningful value such as a peak, an outlier or an inflection point.
+@code python
+import matplotlib.pyplot as plt
+
+x = [1, 2, 3, 4, 5, 6]
+y = [10, 14, 22, 18, 30, 25]
+
+fig, ax = plt.subplots()
+ax.plot(x, y, marker="o")
+ax.annotate("Peak value", xy=(5, 30), xytext=(3.2, 33),
+            arrowprops=dict(facecolor="black", arrowstyle="->"))
+plt.show()
+@end
+@topic 📍 Plain text positioning and highlighting a data point
+`ax.text(x, y, text)` places text at a specific data coordinate without an arrow — useful for labeling individual bars or points directly. Combine it with a distinct marker or color on the highlighted point so the annotation and the data it describes are visually tied together.
+@code python
+fig, ax = plt.subplots()
+ax.plot(x, y, marker="o", color="gray")
+ax.plot(5, 30, marker="o", color="red", markersize=10)   # highlight the peak
+ax.text(5.1, 29, "Record high", color="red", fontsize=10, va="top")
+ax.set_ylim(0, 35)
+plt.show()
+@end
+@info `ha` (horizontal alignment: `"left"`, `"center"`, `"right"`) and `va` (vertical alignment: `"top"`, `"center"`, `"bottom"`) control how text is positioned relative to its `(x, y)` anchor point — essential for keeping labels from colliding with the data or chart edges.
+@practice
+1. Annotate the minimum point of a line plot with an arrow and a short label.
+2. Highlight one bar in a bar chart with a different color and add its exact value as text above it.
+@interview `ax.annotate()` draws a text label connected by an arrow to a specific data point, which is the standard way to call out peaks, outliers or thresholds; `ax.text()` places plain text at a coordinate, and combining a highlighted marker color with nearby text ties the annotation visually to the data it describes.
+
+@module m11 | 🎨 | 11 · Colors & Colormaps | Module 11 — Colors & Colormaps | Named colors · Sequential · Diverging · Categorical · Misleading choices
+@topic 🎨 Specifying colors
+Matplotlib accepts named colors (`"red"`, `"tab:blue"`), hex strings (`"#1f77b4"`), RGB(A) tuples (`(0.2, 0.4, 0.6)`), or the default "tab10" color cycle used automatically when you don't specify a color. The `"tabX"` named colors are designed to look good together and are a safe default palette for categorical series.
+@code python
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3], [1, 2, 1], color="tab:blue", label="Named")
+ax.plot([1, 2, 3], [2, 3, 2], color="#2ca02c", label="Hex")
+ax.plot([1, 2, 3], [3, 4, 3], color=(0.8, 0.2, 0.4), label="RGB tuple")
+ax.legend()
+plt.show()
+@end
+@topic 🌡️ Choosing the right colormap family
+Colormaps fall into three families, and picking the wrong one actively distorts how data reads. **Sequential** colormaps (`"viridis"`, `"plasma"`, `"Blues"`) go from low to high intensity and fit ordered numeric data (e.g. temperature, density). **Diverging** colormaps (`"coolwarm"`, `"RdBu"`) have a meaningful midpoint and fit data with a natural center, like deviation from zero or from a baseline. **Qualitative/categorical** colormaps (`"tab10"`, `"Set2"`) use visually distinct, unordered colors and fit discrete categories with no inherent ranking.
+@table
+Data type | Right colormap family | Example
+Ordered numeric magnitude | Sequential | `"viridis"`, `"Blues"`
+Values with a meaningful zero/midpoint | Diverging | `"coolwarm"`, `"RdBu"`
+Unordered categories | Qualitative | `"tab10"`, `"Set2"`
+@end
+@code python
+import numpy as np
+
+data = np.random.default_rng(0).normal(0, 1, (10, 10))
+fig, ax = plt.subplots()
+im = ax.imshow(data, cmap="coolwarm")   # diverging: data centers around 0
+fig.colorbar(im, ax=ax)
+plt.show()
+@end
+@topic ⚠️ When a colormap choice misleads
+Using a sequential colormap like the old default **"jet"** on ordered data is a classic mistake: "jet" is not perceptually uniform, so equal numeric steps do not look like equal visual steps, and it can manufacture false boundaries where none exist in the data. Using a diverging colormap on data with no natural midpoint implies a meaningful center that isn't there. Prefer perceptually uniform colormaps (`"viridis"`, `"cividis"`, `"magma"`) for sequential data, and always check your palette against common forms of color vision deficiency.
+@warn Applying a rainbow/"jet"-style colormap to continuous scientific data is widely considered a visualization anti-pattern — it can visually exaggerate noise and hide real structure because its perceived brightness does not change uniformly with value.
+@practice
+1. Plot a heatmap of correlation data (naturally centered at 0) using an appropriate diverging colormap.
+2. Explain why `"jet"` is a risky default for a sequential variable like elevation or temperature.
+@interview Colors come from named strings, hex codes, RGB(A) tuples or the default color cycle, but colormap family matters more than color choice alone: use sequential colormaps for ordered magnitude, diverging colormaps only when there's a real midpoint, and categorical colormaps for unordered groups — a mismatched or non-perceptually-uniform colormap like "jet" can visually fabricate structure that isn't in the data.
+
+@module m12 | 🔀 | 12 · Combining Plot Types | Module 12 — Multiple Plot Types Together | twinx · Bar + line · Secondary y-axis pitfalls
+@topic 🔀 Twin axes with twinx
+`ax.twinx()` creates a second Axes sharing the same x-axis but with an independent y-axis, letting you plot two series with very different scales or units (e.g. revenue in dollars and conversion rate in percent) on one chart without one flattening the other.
+@code python
+import matplotlib.pyplot as plt
+
+days = [1, 2, 3, 4, 5]
+revenue = [1200, 1500, 1100, 1800, 2000]
+conversion_rate = [2.1, 2.4, 1.9, 2.8, 3.0]
+
+fig, ax1 = plt.subplots()
+ax1.plot(days, revenue, color="tab:blue", marker="o")
+ax1.set_ylabel("Revenue ($)", color="tab:blue")
+ax1.tick_params(axis="y", labelcolor="tab:blue")
+
+ax2 = ax1.twinx()
+ax2.plot(days, conversion_rate, color="tab:red", marker="s")
+ax2.set_ylabel("Conversion rate (%)", color="tab:red")
+ax2.tick_params(axis="y", labelcolor="tab:red")
+
+ax1.set_xlabel("Day")
+plt.show()
+@end
+@topic 🧮 Combining a bar chart with a line
+A common pattern is bars for a volume metric (e.g. monthly orders) with a line overlay for a rate metric (e.g. cumulative percent or a moving average) sharing or twinning the y-axis, giving readers both the raw scale and the trend in one view.
+@code python
+import numpy as np
+
+months = ["Jan", "Feb", "Mar", "Apr", "May"]
+orders = [120, 150, 170, 140, 200]
+avg_order_value = [45, 47, 44, 50, 52]
+
+fig, ax1 = plt.subplots()
+ax1.bar(months, orders, color="lightsteelblue", label="Orders")
+ax1.set_ylabel("Orders")
+
+ax2 = ax1.twinx()
+ax2.plot(months, avg_order_value, color="darkorange", marker="o", label="Avg order value ($)")
+ax2.set_ylabel("Avg order value ($)")
+
+fig.legend(loc="upper left", bbox_to_anchor=(0.12, 0.88))
+plt.show()
+@end
+@topic ⚠️ Secondary y-axis pitfalls
+A twin/secondary y-axis is easy to misread or, worse, to use manipulatively: two independently-scaled axes can be aligned (even accidentally) to make two unrelated series appear to move together, implying a correlation the data doesn't support. Always color-code each axis and series to match, label both axes explicitly, and consider whether two separate stacked subplots (via `sharex=True`) communicate more honestly than a single dual-axis chart.
+@warn Dual-axis charts are one of the most commonly abused chart types — readers often assume the two axes share a scale or origin unless told otherwise. If a dual-axis chart isn't clearly necessary, a faceted pair of subplots is usually the safer, more honest choice.
+@practice
+1. Build a dual-axis chart with revenue as bars and conversion rate as a line, each axis color-matched to its series.
+2. Explain one way a dual-axis chart could be constructed to mislead, and how `sharex=True` subplots would avoid that risk.
+@interview `ax.twinx()` adds a second y-axis sharing the x-axis, useful for comparing series with different units in one chart, and it pairs naturally with bar+line combinations for volume-plus-rate stories; but dual axes are easy to misread or manipulate by aligning unrelated scales, so color-code both axes clearly and consider stacked `sharex=True` subplots as the more honest default.
+
+@module m13 | 🐼 | 13 · Plotting from pandas | Module 13 — Plotting Directly from pandas | .plot() accessor · Underlying matplotlib calls
+@topic 🐼 The .plot() accessor
+Every pandas `Series` and `DataFrame` exposes a `.plot()` accessor that is a thin convenience wrapper over Matplotlib: `df.plot(kind="bar")`, `df.plot.line()`, `df["col"].plot.hist()` all route straight to matplotlib calls, inferring x-values from the index and series names from column names.
+@code python
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.DataFrame({
+    "month": ["Jan", "Feb", "Mar", "Apr"],
+    "revenue": [1200, 1500, 1100, 1800],
+    "costs": [800, 900, 850, 1000],
+}).set_index("month")
+
+df.plot(kind="bar", figsize=(7, 4))
+plt.ylabel("Amount ($)")
+plt.show()
+@end
+@topic 🔧 How .plot() relates to the underlying Matplotlib calls
+`df.plot()` returns an ordinary Matplotlib `Axes` object, so anything you can do with `ax.set_title()`, `ax.legend()` or `fig.savefig()` still works after calling it — pandas is not a separate plotting engine, it's a convenience layer. Passing `ax=` lets you draw a pandas plot onto an Axes you created yourself, which is the cleanest way to combine pandas convenience with full Matplotlib control (subplots, twin axes, custom styling).
+@code python
+fig, ax = plt.subplots(figsize=(7, 4))
+df["revenue"].plot(kind="line", ax=ax, marker="o", color="tab:green", label="Revenue")
+df["costs"].plot(kind="line", ax=ax, marker="s", color="tab:red", label="Costs")
+ax.set_title("Revenue vs Costs")
+ax.set_ylabel("Amount ($)")
+ax.legend()
+fig.savefig("revenue_vs_costs.png", dpi=200, bbox_inches="tight")
+plt.show()
+@end
+@info `df.plot(subplots=True)` draws one subplot per column automatically — a fast way to eyeball several series at once before building a custom figure.
+@practice
+1. Build a DataFrame of three product's monthly sales and plot it with `df.plot(kind="line")`.
+2. Create your own `fig, ax` first, then draw a pandas Series onto it using `ax=` and customize the title.
+@interview `DataFrame`/`Series.plot()` is a convenience accessor that calls Matplotlib under the hood and returns an ordinary `Axes`, inferring x-values from the index and labels from column names; passing `ax=` lets you draw pandas data onto a Matplotlib Axes you control directly, combining pandas' speed with full customization.
+
+@module m14 | 💾 | 14 · Saving Figures | Module 14 — Saving Figures | savefig · DPI · File formats · bbox_inches="tight"
+@topic 💾 Saving with savefig and controlling DPI
+`fig.savefig("name.png")` writes the current figure to disk; the format is inferred from the file extension. `dpi=` controls pixel density at save time — raise it for print or detailed raster output, since `plt.show()`'s on-screen rendering may not reflect the saved file's final resolution.
+@code python
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3], [1, 4, 9])
+fig.savefig("chart.png", dpi=300)
+@end
+@topic 🖨️ Choosing a format for print vs web
+**Raster formats** (PNG, JPEG) store a fixed pixel grid: PNG is lossless and best for charts with sharp lines/text; JPEG suits photographic content but introduces compression artifacts around sharp chart edges, so it's rarely a good fit for plots. **Vector formats** (PDF, SVG, EPS) store drawing instructions rather than pixels, so they stay perfectly sharp at any zoom or print size — the standard choice for journal figures, posters, or anything that will be resized or printed.
+@table
+Use case | Recommended format | Why
+Web/dashboard display | PNG | Lossless, universally supported, reasonable file size
+Print or publication figure | PDF or SVG | Infinitely scalable, no pixelation
+Editable in design software | SVG or EPS | Vector paths remain editable
+Embedding in a Word/PowerPoint doc | PNG (high dpi) or EMF | Broad compatibility
+@end
+@code python
+fig.savefig("chart.pdf")          # vector, perfect for print/publication
+fig.savefig("chart.svg")          # vector, editable, web-friendly
+fig.savefig("chart_web.png", dpi=150)   # raster, good for web/dashboards
+@end
+@topic ✂️ bbox_inches="tight" and transparent backgrounds
+By default, `savefig` can clip axis labels, titles, or legends placed outside the plot area. `bbox_inches="tight"` recalculates the saved bounding box to include everything, trimming excess whitespace in the process. `transparent=True` saves without a background fill, useful for overlaying a chart onto a colored slide or webpage.
+@code python
+fig.savefig("chart_clean.png", dpi=300, bbox_inches="tight", transparent=True)
+@end
+@warn Always call `savefig()` *before* `plt.show()` in scripts — in some backends, `show()` can clear or close the figure, producing a blank or missing saved file afterward.
+@practice
+1. Save the same chart once as PNG at 150 dpi and once as PDF, and explain when you'd choose each.
+2. Save a figure with an outside-the-axes legend using `bbox_inches="tight"` and confirm the legend isn't clipped.
+@interview `fig.savefig()` writes the figure in the format implied by its file extension; raster formats like PNG suit screens and web use while vector formats like PDF/SVG suit print and resizing without quality loss, `dpi` controls resolution for raster output, and `bbox_inches="tight"` prevents labels or legends outside the axes from being clipped.
+
+@module m15 | 🎭 | 15 · Styles & Themes | Module 15 — Styles & Themes | plt.style.use · Built-in styles · rcParams
+@topic 🎭 Switching the whole look with plt.style.use
+`plt.style.use("style-name")` applies a bundle of defaults (colors, fonts, grid, backgrounds) to every subsequent plot in the session, giving a consistent look without manually restyling each chart. Built-in styles include `"ggplot"`, `"seaborn-v0_8"`, `"fivethirtyeight"`, `"dark_background"`, and `"bmh"`; `plt.style.available` lists everything installed.
+@code python
+import matplotlib.pyplot as plt
+
+print(plt.style.available[:5])
+
+plt.style.use("ggplot")
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3, 4], [1, 4, 9, 16])
+plt.show()
+@end
+@topic ⚙️ rcParams for fine-grained global defaults
+`plt.rcParams` is a dictionary-like object controlling every default Matplotlib setting — font size, line width, figure size, grid visibility, and more. Editing it directly gives finer control than a packaged style, and it's the standard way to set one global default (like a larger base font size for presentation slides) without affecting anything else.
+@code python
+plt.rcParams["figure.figsize"] = (8, 5)
+plt.rcParams["font.size"] = 12
+plt.rcParams["axes.grid"] = True
+plt.rcParams["lines.linewidth"] = 2
+
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3], [3, 1, 4])
+plt.show()
+@end
+@tip Use `with plt.style.context("ggplot"):` to apply a style only within a `with` block, leaving global settings untouched for code that runs afterward — safer than `plt.style.use()` inside shared notebooks or libraries.
+@practice
+1. List the first five available built-in styles and apply one to a line chart.
+2. Set a global `rcParams` default for figure size and font size, then draw two charts to confirm both pick it up.
+@interview `plt.style.use()` swaps in a bundled set of visual defaults (colors, grid, fonts) for consistent-looking charts with one line, while `plt.rcParams` offers item-by-item control over every default setting; `plt.style.context()` scopes a style change to a `with` block instead of mutating global state.
+
+@module m16 | ⚠️ | 16 · Mistakes & Best Practices | Module 16 — Common Mistakes & Best Practices | Truncated y-axis · Chart junk · Right chart for the data · Colorblind-safe palettes
+@topic ⚠️ Misleading axes and a truncated y-axis
+Starting a bar chart's y-axis above zero visually exaggerates differences between bars, since bar length (not just position) is the cue readers use for magnitude — a 2% real difference can look like a 10x difference if the axis starts at, say, 90 instead of 0. Line charts are more forgiving of a non-zero baseline since position (not length) carries the signal, but any truncation should be labeled clearly so it isn't missed.
+@code python
+import matplotlib.pyplot as plt
+
+values = [95, 97, 94, 98]
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
+ax1.bar(["A", "B", "C", "D"], values)
+ax1.set_ylim(0, 100)
+ax1.set_title("Honest: starts at 0")
+
+ax2.bar(["A", "B", "C", "D"], values)
+ax2.set_ylim(90, 100)
+ax2.set_title("Misleading: truncated axis")
+plt.show()
+@end
+@topic 🧹 Chart junk and the right chart for the data
+"Chart junk" is any visual element that doesn't convey data — heavy gridlines, 3D effects on 2D data, decorative gradients, redundant legends — and it competes with the actual information for attention. Pair that discipline with choosing the right chart family in the first place: lines for trends over a continuous axis, bars for category comparisons, scatter for relationships between two numeric variables, histograms for single-variable distributions. The wrong chart type can't be fixed by better styling.
+@table
+Goal | Right chart | Avoid
+Trend over time | Line plot | Pie chart, 3D bar
+Compare categories | Bar chart | Line plot (implies continuity)
+Relationship between two numeric variables | Scatter plot | Bar chart
+Distribution of one variable | Histogram / box plot | Single bar of the mean only
+Part-to-whole (few categories) | Stacked bar | Exploded 3D pie
+@end
+@topic ✅ Accessibility and colorblind-safe palettes
+Roughly 1 in 12 men have some form of color vision deficiency, most commonly red-green. Relying on red-vs-green alone to distinguish series (a frequent default for "good/bad" charts) excludes a meaningful share of readers. Use colorblind-safe, perceptually uniform palettes (`"viridis"`, `"cividis"`, or Okabe-Ito categorical colors), and back up color coding with a second channel — different markers, linestyles, or direct labels — so the chart still works in grayscale or for colorblind viewers.
+@code python
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3], [1, 2, 1], color="tab:blue", marker="o", label="Group A")
+ax.plot([1, 2, 3], [2, 3, 2], color="tab:orange", marker="s", linestyle="--", label="Group B")
+ax.legend()
+plt.show()
+@end
+@warn Red/green as the *only* distinguishing cue between two series is one of the most common and most avoidable accessibility failures in data visualization; always add a second visual channel (shape, pattern, or direct labeling).
+@practice
+1. Recreate a bar chart with a truncated y-axis, then fix it, and write one sentence explaining the visual distortion that was removed.
+2. Take a line chart that uses only red vs. green and redesign it to be distinguishable by shape and linestyle as well as color.
+@interview The most common chart mistakes are a non-zero y-axis baseline on bar charts (which exaggerates differences), unnecessary chart junk that competes with the data, and choosing the wrong chart family for the question being asked; good practice also means avoiding color-only encodings like red-vs-green and backing color with a second channel — shape, linestyle, or direct labels — for colorblind-safe, honest charts.
+
+@module m17 | 🎤 | 17 · Interview Questions | Module 17 — Matplotlib Interview Questions | Core concepts · API choices · Practical scenarios
+@topic Q: What's the difference between a Figure and an Axes?
+A `Figure` is the entire canvas or window that can hold one or more plots; an `Axes` is a single plot area within that figure, with its own x/y data range, title and ticks. In code, `fig, ax = plt.subplots()` gives you one Figure and one Axes, while `fig, axes = plt.subplots(2, 2)` gives you one Figure holding a 2x2 array of four Axes. The distinction matters because almost every customization method — `set_title`, `set_xlabel`, `legend` — is called on the Axes, not the Figure; the Figure mainly handles things like overall size, saving, and arranging subplots.
+
+@topic Q: Should I use the pyplot API or the object-oriented API, and why?
+For a quick, throwaway single-plot script, `plt.plot()`/`plt.show()` is fine and faster to type. For anything with multiple subplots, reusable plotting functions, or code that will be maintained, I use the object-oriented API — explicit `fig, ax = plt.subplots()` then `ax.plot()`, `ax.set_title()`, and so on. The OO API avoids pyplot's implicit "current axes" state, which becomes ambiguous and error-prone once a script has more than one Axes or when plotting happens inside functions. Most production codebases standardize on the OO API for exactly that reason.
+
+@topic Q: How do you create a grid of subplots, and how do you address an individual one?
+`fig, axes = plt.subplots(nrows, ncols)` returns a NumPy array of Axes objects shaped `(nrows, ncols)`; you index into it like `axes[0, 1]` to get a specific panel and call plotting methods on that Axes directly. If `nrows` or `ncols` is 1, `axes` collapses to a 1D array or a single Axes object, so I either guard for that or pass `squeeze=False` to always get a consistent 2D array. I follow up with `fig.tight_layout()` or `constrained_layout=True` to prevent titles and labels from overlapping between panels.
+
+@topic Q: How do you control figure size and resolution for a publication-quality chart?
+`figsize=(width, height)` in inches controls the physical size, and `dpi` controls how many pixels are packed into each inch — together they determine the final pixel dimensions of a rendered or saved figure. For print or journal submission I typically set a modest `figsize` matching the target column width and a high `dpi` (300 or more) on `savefig`, plus a vector format like PDF or SVG so the figure stays crisp at any size rather than depending on a fixed pixel count at all.
+
+@topic Q: What's the correct way to save a figure so nothing gets cut off?
+I call `fig.savefig("name.png", dpi=300, bbox_inches="tight")` before calling `plt.show()`. `bbox_inches="tight"` recalculates the saved bounding box to include elements that sit outside the main axes, like a legend placed via `bbox_to_anchor` or rotated tick labels, which would otherwise get clipped. Order matters: in some backends calling `show()` first can clear the figure, so I always save first, display second, in any script meant to produce a file.
+
+@topic Q: How do you decide between a line chart, bar chart, scatter plot, and histogram?
+I match the chart to the question. A line chart suits a trend over a continuous, ordered axis like time. A bar chart suits comparing magnitudes across discrete categories, and should almost always start its value axis at zero. A scatter plot suits examining the relationship between two numeric variables. A histogram suits the distribution of a single numeric variable. Picking the wrong family — like a line chart over unordered categories, which implies a continuity that doesn't exist — misleads readers no matter how well the chart is styled afterward.
+
+@topic Q: How do you customize ticks, and when would you need to?
+I use locators to control where ticks appear (`MultipleLocator`, `MaxNLocator`) and formatters to control how their labels are displayed (`FuncFormatter`, `PercentFormatter`). I reach for this when the automatic defaults produce confusing output — fractional ticks on an integer-only axis, dates that need a custom format, or values that should show as currency or percentages. For long categorical labels I rotate tick text with `ax.tick_params(axis="x", rotation=45)` rather than shrinking the font, which keeps the labels legible.
+
+@topic Q: How do legends work, and how do you place one outside the plot?
+`ax.legend()` automatically collects every artist created with a `label=` argument and builds a key; `loc` controls placement within the axes, like `"upper right"`. To move a legend fully outside the plotting area — common when it would otherwise cover data — I use `bbox_to_anchor` together with `loc`, for example `ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=2)` to place a horizontal legend below the chart. When the colors or markers in a chart don't come from simple labeled calls, I build the legend manually from `Line2D` or `Patch` handles instead of relying on auto-detection.
+
+@topic Q: What is twinx used for, and what's the risk of using it?
+`ax.twinx()` creates a second y-axis sharing the same x-axis, which lets you plot two series with very different units or scales — like revenue in dollars and a conversion rate in percent — on one chart. The risk is that dual-axis charts are easy to misread or even construct to mislead, because two independently scaled axes can be aligned so unrelated series appear correlated when they aren't. I color-code each axis to match its series and consider whether two stacked subplots with `sharex=True` would tell the story more honestly before defaulting to a dual axis.
+
+@topic Q: How does plotting from pandas relate to plotting with Matplotlib directly?
+`DataFrame.plot()` and `Series.plot()` are convenience accessors that call Matplotlib under the hood and return an ordinary `Axes` object — pandas isn't a separate rendering engine, just a shortcut that infers x-values from the index and series names from columns. Because the return value is a real Axes, I can keep customizing it afterward with `ax.set_title()` or `ax.legend()`, or pass in my own `ax=` to combine a pandas-drawn series with other Matplotlib elements on the same figure.
+
+@topic Q: How do you handle a scatter plot with tens of thousands of overlapping points?
+A first step is lowering `alpha` so dense regions visually darken instead of collapsing into a solid blob, and shrinking marker size with `s=`. Beyond a certain density, transparency alone stops helping — at that point I switch to an aggregated view like `ax.hexbin()` or a 2D histogram (`ax.hist2d`), which bin and color by point density directly rather than relying on the eye to parse thousands of overlapping markers. Downsampling or plotting a representative random subsample is also reasonable when the full dataset isn't necessary to see the pattern.
+
+@topic Q: How do you choose a colormap, and what can go wrong?
+I match the colormap family to the data: sequential colormaps like `"viridis"` for ordered magnitude with no natural center, diverging colormaps like `"coolwarm"` only when there's a meaningful midpoint such as deviation from zero, and qualitative colormaps like `"tab10"` for unordered categories. The classic mistake is using a non-perceptually-uniform colormap like the old "jet" default on continuous data — its perceived brightness doesn't change uniformly with value, so it can visually manufacture boundaries or hide real structure that isn't actually in the data.
+
+@topic Q: What's the difference between a view/copy-style trap in data prep and a visualization-level mistake like a truncated axis?
+They're different failure modes but both distort what the reader concludes. A truncated y-axis on a bar chart exaggerates the apparent difference between bars because bar *length* carries the visual signal, and starting above zero inflates small real differences into large-looking ones — that's a chart-construction mistake. Upstream of that, if the underlying data itself was wrongly aggregated or filtered (a data-prep mistake), no amount of correct axis scaling fixes a wrong number; I always sanity-check the data going into a chart independently of how the chart itself is styled.
+
+@topic Q: How would you make a chart accessible to colorblind viewers?
+I avoid relying on color alone, and specifically avoid red-vs-green as the only way to distinguish two series, since that's the most common form of color vision deficiency. I back color coding with a second channel — different markers, linestyles, or direct data labels — and prefer perceptually uniform, colorblind-safe palettes like `"viridis"` or `"cividis"` over the rainbow-style maps that read very differently (or not at all) to colorblind viewers. Checking a chart in grayscale is a quick sanity test: if the series become indistinguishable, color was doing too much of the work.
+
+@interview Strong Matplotlib interview answers connect API choices to the underlying Figure/Axes model and to real chart-design trade-offs — when to use the object-oriented API, how to pick the right chart and colormap for the data, and how axis scaling, dual axes, and overplotting can each quietly mislead if left unchecked.
+
+@module m18 | 🗺️ | 18 · Learning Roadmap | Module 18 — Matplotlib Learning Roadmap | Stages · Priorities · Outcomes
+@topic 🗺️ A staged path from zero to publication-quality charts
+Matplotlib rewards learning the Figure/Axes model first — nearly everything else is a variation on "create axes, call a plotting method, customize it." Build fluency with single charts before multi-panel figures, and save styling/accessibility concerns for after the core chart types feel automatic.
+@table
+Stage | Focus | Outcome
+1. Foundations | Figure/Axes model, pyplot vs OO API, your first plot | Comfortably create and show a basic line chart using `ax.plot()`
+2. Core chart types | Line, bar, scatter, histogram | Choose and build the right chart type for a given dataset and question
+3. Structure & layout | Subplots, figsize/dpi, sharex/sharey, twin axes | Build clear multi-panel figures and dual-scale charts without misleading readers
+4. Polish & communication | Labels, legends, ticks, annotations, colors/colormaps | Produce charts that are self-explanatory without a caption
+5. Production workflow | Saving figures, styles/rcParams, pandas `.plot()` | Generate consistent, reusable, publication-ready output at the right resolution and format
+6. Judgment & best practices | Avoiding misleading axes, chart junk, accessible palettes, interview fluency | Critique and fix a flawed chart, and explain design choices confidently
+@end
+@topic 🎯 How to prioritize your time
+Spend the most time on the Figure/Axes mental model and the core chart types (line, bar, scatter, histogram) — they cover the large majority of real plotting tasks. Learn subplots and labeling next, since almost every real chart needs more than one panel or a clear legend. Treat styles, colormap choices and savefig options as "look them up when needed" rather than memorization, but do internalize the best-practices module — avoiding a truncated axis or a misleading colormap is a judgment call you need instantly, not a syntax you can look up mid-conversation.
+@info Build a personal "cheat figure": one script with a subplot grid covering a line, bar, scatter and histogram, each fully labeled. Revisiting and extending that single file is often faster to learn from than isolated snippets.
+@practice
+1. Build the "cheat figure" described above: a 2x2 subplot grid with one of each core chart type, each labeled and titled.
+2. Take any chart you've made before this material and list three concrete improvements from the best-practices module.
+3. Recreate one chart in three saved formats (PNG at 150 dpi, PNG at 300 dpi, and PDF) and compare the files.
+@interview Learning Matplotlib well means mastering the Figure/Axes model and the core chart types first, layering in subplots and polish second, and treating best practices — honest axes, the right chart for the data, accessible colors — as non-negotiable judgment rather than optional styling.

@@ -1,6 +1,8 @@
 // Study-material pages (python-material.html, c-material.html, etc.):
 // W3Schools-inspired learning interface:
-// - Top language/tutorial switcher bar (Java, Data Science, Machine Learning, Deep Learning, AI, Python, NumPy, Excel, C, C++, HTML, CSS, SQL, Django)
+// - Top language/tutorial switcher bar (Java, Data Science, Machine Learning, Deep Learning, AI,
+//   Generative AI, Agentic AI, Python, NumPy, Pandas, Matplotlib, Seaborn, Statistics, Excel,
+//   Power BI, C, C++, HTML, CSS, SQL, Django, FastAPI)
 // - Left sidebar with ALL headings in the left side corner
 // - Clicking any heading displays ALL context on the right side
 // - Previous / Next navigation controls at top & bottom
@@ -15,15 +17,23 @@ const TUTORIALS = [
   { slug: "machine-learning", file: "machine-learning-material.html", name: "Machine Learning", emoji: "🤖" },
   { slug: "deep-learning", file: "deep-learning-material.html", name: "Deep Learning", emoji: "🧠" },
   { slug: "ai", file: "ai-material.html", name: "AI", emoji: "✨" },
+  { slug: "generative-ai", file: "generative-ai-material.html", name: "Generative AI", emoji: "🪄" },
+  { slug: "agentic-ai", file: "agentic-ai-material.html", name: "Agentic AI", emoji: "🧭" },
   { slug: "python", file: "python-material.html", name: "Python", emoji: "🐍" },
   { slug: "numpy", file: "numpy-material.html", name: "NumPy", emoji: "🔢" },
+  { slug: "pandas", file: "pandas-material.html", name: "Pandas", emoji: "🐼" },
+  { slug: "matplotlib", file: "matplotlib-material.html", name: "Matplotlib", emoji: "📈" },
+  { slug: "seaborn", file: "seaborn-material.html", name: "Seaborn", emoji: "🌊" },
+  { slug: "statistics", file: "statistics-material.html", name: "Statistics", emoji: "🧮" },
   { slug: "excel", file: "excel-material.html", name: "Excel", emoji: "📗" },
+  { slug: "power-bi", file: "power-bi-material.html", name: "Power BI", emoji: "🔶" },
   { slug: "c", file: "c-material.html", name: "C", emoji: "💻" },
   { slug: "cpp", file: "cpp-material.html", name: "C++", emoji: "⚙️" },
   { slug: "html", file: "html-material.html", name: "HTML", emoji: "🌐" },
   { slug: "css", file: "css-material.html", name: "CSS", emoji: "🎨" },
   { slug: "sql", file: "sql-material.html", name: "SQL", emoji: "🗃️" },
   { slug: "django", file: "django-material.html", name: "Django", emoji: "🌿" },
+  { slug: "fastapi", file: "fastapi-material.html", name: "FastAPI", emoji: "⚡" },
 ];
 
 page(async (app) => {

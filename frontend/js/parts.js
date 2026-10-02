@@ -28,6 +28,14 @@ export const NOTES = {
     href: "ai-material.html", title: "✨ Artificial Intelligence Complete Study Material",
     text: "AI end to end in 20 modules: search, knowledge representation, NLP, computer vision, reinforcement learning, generative AI/LLMs, agents, ethics and safety, with a 20-question interview module.",
   },
+  "generative-ai": {
+    href: "generative-ai-material.html", title: "🪄 Generative AI Complete Study Material",
+    text: "Applied generative AI in 18 modules: prompting, embeddings, vector search, building a RAG pipeline, fine-tuning vs RAG, tool calling, evaluation and responsible use, with a 17-question interview module.",
+  },
+  "agentic-ai": {
+    href: "agentic-ai-material.html", title: "🧭 Agentic AI Complete Study Material",
+    text: "AI agents in 16 modules: the agent loop, tool calling, planning, memory, multi-agent systems, guardrails, failure modes and evaluation, with a 17-question interview module.",
+  },
   java: {
     href: "java-material.html", title: "☕ Java Complete End-to-End Study Material",
     text: "Java from fundamentals to professional development in 74 modules: OOP, collections, modern Java, concurrency, JDBC, Spring Boot, REST, security, microservices, Docker, cloud and projects.",
@@ -36,9 +44,29 @@ export const NOTES = {
     href: "numpy-material.html", title: "🔢 NumPy Complete Study Material",
     text: "NumPy end to end in 39 modules: arrays, indexing, broadcasting, statistics, linear algebra, data science and machine learning, with examples, practice and projects.",
   },
+  pandas: {
+    href: "pandas-material.html", title: "🐼 Pandas Complete Study Material",
+    text: "Pandas end to end in 20 modules: Series/DataFrame, selection, filtering, missing data, groupby, merging, reshaping, strings, dates, performance and I/O, with a 17-question interview module.",
+  },
+  matplotlib: {
+    href: "matplotlib-material.html", title: "📈 Matplotlib Complete Study Material",
+    text: "Matplotlib end to end in 18 modules: the Figure/Axes model, every core chart type, styling, annotations, colormaps, saving figures and best practices, with a 15-question interview module.",
+  },
+  seaborn: {
+    href: "seaborn-material.html", title: "🌊 Seaborn Complete Study Material",
+    text: "Seaborn end to end in 16 modules: relational, categorical and distribution plots, regression plots, heatmaps, pair/facet grids, styling and a full EDA workflow, with a 13-question interview module.",
+  },
+  statistics: {
+    href: "statistics-material.html", title: "🧮 Statistics Complete Study Material",
+    text: "Statistics for data science in 22 modules: distributions, probability, the CLT, confidence intervals, hypothesis testing, regression and A/B testing, with a 20-question interview module.",
+  },
   excel: {
     href: "excel-material.html", title: "📗 Excel Complete Study Material",
     text: "Excel end to end in 25 modules: formulas, lookups, PivotTables, Power Query, Power Pivot/DAX, macros/VBA, dashboards and a 19-question interview module.",
+  },
+  "power-bi": {
+    href: "power-bi-material.html", title: "🔶 Power BI Complete Study Material",
+    text: "Power BI end to end in 19 modules: Power Query, data modeling, DAX, CALCULATE and filter context, visuals, publishing, RLS and performance, with an 18-question interview module.",
   },
   python: {
     href: "python-material.html", title: "🐍 Python Complete Study Material",
@@ -67,6 +95,10 @@ export const NOTES = {
   django: {
     href: "django-material.html", title: "🌿 Django Zero to Hero",
     text: "Build a complete blog in 24 modules: URLs, views, templates, ORM, admin, forms, auth, REST APIs, testing, security, caching and deployment.",
+  },
+  fastapi: {
+    href: "fastapi-material.html", title: "⚡ FastAPI Complete Study Material",
+    text: "FastAPI end to end in 21 modules: path/query/body params, Pydantic, dependency injection, async, auth, databases, testing and deployment, with a 17-question interview module.",
   },
 };
 
