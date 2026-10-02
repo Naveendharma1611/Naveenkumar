@@ -1,0 +1,496 @@
+@page 📊 Data Science Complete Study Material
+@intro Learn data science end to end: frame useful questions, collect and clean data, explore it, build reliable statistical and machine-learning models, communicate results and deploy responsible solutions.
+
+@module m1 | 🧭 | 1 · Introduction | Module 1 — What Is Data Science? | Questions · Data · Decisions · Lifecycle
+@topic 📊 From data to a decision
+Data science combines domain knowledge, statistics, computing and communication to turn data into evidence for decisions. A model is one possible tool, not the goal by itself. Start by asking what decision should improve and who will use the result.
+@topic 🔄 The iterative lifecycle
+A practical lifecycle is: frame the problem → acquire data → inspect and clean → explore → build a baseline → validate → communicate → deploy and monitor. Real projects revisit earlier stages when assumptions fail or new evidence appears.
+@table
+Discipline | Main contribution
+Statistics | Quantifies variation and uncertainty
+Computer science | Makes data processing reliable and scalable
+Domain knowledge | Defines what data and outcomes mean
+Communication | Turns evidence into an actionable decision
+@end
+@practice
+1. Choose a real question and name the decision a data analysis could change.
+2. Why is a high model score not enough to prove a project is useful?
+@interview Data science uses statistics, programming and domain understanding to extract reliable evidence and support decisions throughout a data lifecycle.
+
+@module m2 | 🛠️ | 2 · Workbench | Module 2 — Python Data Science Environment | Python · Jupyter · Git · Environments
+@topic 🛠️ Set up a reproducible workspace
+Use a supported Python version, a virtual environment and pinned project dependencies. Jupyter notebooks are useful for exploration; move stable reusable logic into tested Python modules. Git records source changes, not large private datasets or secrets.
+@code bash
+python -m venv .venv
+python -m pip install numpy pandas matplotlib seaborn scikit-learn jupyter
+python -m pip freeze > requirements.txt
+@end
+@topic 📓 Notebook habits
+Use Markdown to state questions and assumptions, keep cells small, set random seeds for repeatable examples and restart/run all before sharing. Avoid relying on hidden state, local absolute paths or outputs that expose private data.
+@practice
+1. Create an environment and install NumPy, pandas and scikit-learn.
+2. Explain when exploratory notebook code should move into a module.
+@interview A reliable data science environment isolates dependencies, tracks code, documents exploratory reasoning and keeps secrets and sensitive data out of source control.
+
+@module m3 | 🐍 | 3 · Python | Module 3 — Python Foundations for Data Work | Collections · Functions · Comprehensions · Types
+@topic 🐍 Python building blocks
+Know variables, numeric and string types, lists, tuples, dictionaries, sets, loops, conditionals, functions and exceptions. Prefer clear functions for repeatable cleaning or analysis steps. Use comprehensions for simple transformations, not dense business logic.
+@code python
+records = [{"region": "north", "sales": 12}, {"region": "south", "sales": 9}]
+by_region = {}
+for record in records:
+    by_region[record["region"]] = record["sales"]
+@end
+@topic 🧱 Work with library objects
+NumPy arrays represent homogeneous numerical values; pandas Series and DataFrames add labels and tabular operations. Understand shapes, dtypes and missing values before calculating statistics. See the separate Python and NumPy materials for language and array depth.
+@practice
+1. Write a function that returns the average of a list of numbers.
+2. Explain the difference between a Python list, NumPy array and pandas DataFrame.
+@interview Python supplies general-purpose programming; NumPy and pandas add efficient arrays and labeled tabular operations for common data workflows.
+
+@module m4 | 🎯 | 4 · Problem Framing | Module 4 — Define the Problem & Success Metric | Stakeholders · Baselines · Constraints · Metrics
+@topic 🎯 Translate a request into a question
+Clarify the stakeholder, intended decision, unit of analysis, prediction time, target outcome and constraints. Check that each proposed input would actually be known when the decision is made. Define what a false positive or false negative costs.
+@topic 📏 Establish a baseline
+Choose a measurable success metric tied to the decision and record a simple baseline, such as the current process or a majority-class prediction. Agree on latency, interpretability, fairness, privacy and maintenance requirements before model selection.
+@table
+Question | Example
+Who acts on the result? | A support team prioritizing incoming requests
+What is one row? | One request at its creation time
+What is success? | More urgent cases handled within a response target
+What is a constraint? | Prediction must use only information available at intake
+@end
+@practice
+1. Frame a churn prediction problem with its unit, decision and baseline.
+2. Name one way a target can be technically accurate but operationally useless.
+@interview Start with the decision, prediction unit, available-at-prediction inputs and business-aligned success metric before selecting an algorithm.
+
+@module m5 | 📥 | 5 · Data Sources | Module 5 — Acquire & Understand Data | CSV · APIs · SQL · Sampling · Permissions
+@topic 📥 Common data sources
+Data may arrive as CSV/Parquet files, database tables, APIs, event logs, surveys or sensor streams. Check ownership, collection method, time period, permissions, schema, refresh cadence and known biases before analysis.
+@code python
+import pandas as pd
+
+df = pd.read_csv("data/sales.csv", parse_dates=["order_date"])
+print(df.shape)
+print(df.head())
+@end
+@topic 🔐 Treat access and collection as part of the method
+Use least-privilege credentials, parameterized SQL and approved APIs. Do not scrape or republish restricted personal data. Record source versions and extraction times so the analysis can be reproduced.
+@warn A large dataset is not automatically representative. Selection effects, missing populations and changes in collection can bias conclusions.
+@practice
+1. Inspect a data source's schema, date range and collection method.
+2. What permissions and privacy questions should be answered before joining customer data?
+@interview Data acquisition includes provenance, sampling, permissions, schema and freshness, not just loading a file into Python.
+
+@module m6 | 🗄️ | 6 · Tables | Module 6 — Tabular Data with pandas | DataFrame · Selection · Grouping · Merge
+@topic 🗄️ Think in rows and columns
+A DataFrame is a labeled table. Rows represent observations and columns represent variables. Use `head`, `shape`, `dtypes`, `describe`, `loc` for label-based selection and `iloc` for position-based selection.
+@code python
+import pandas as pd
+
+sales = pd.DataFrame({"region": ["north", "south", "north"], "amount": [12, 9, 15]})
+print(sales.groupby("region")["amount"].mean())
+@end
+@topic 🔗 Combine and summarize carefully
+`groupby` summarizes groups; `merge` joins tables by keys. Check key uniqueness and row counts before and after merges because duplicate keys can multiply rows. Use NumPy for numerical arrays and pandas for labeled, mixed-column tables.
+@practice
+1. Find total sales by region.
+2. Join customers to orders and verify the merge did not duplicate orders unexpectedly.
+@interview pandas DataFrames organize labeled observations; grouping and joins are powerful but require validating keys and output row counts.
+
+@module m7 | 🔎 | 7 · Data Quality | Module 7 — Inspect Data Quality | Schema · Duplicates · Ranges · Consistency
+@topic 🔎 Inspect before analysis
+Check row/column counts, data types, unique identifiers, duplicates, missingness, value ranges and category spellings. Validate units, currencies, time zones and impossible values with domain experts. A clean-looking table can still encode the wrong meaning.
+@code python
+print(df.shape)
+print(df.dtypes)
+print(df.isna().sum())
+print(df.duplicated().sum())
+print(df.describe(include="all"))
+@end
+@topic 🧾 Add explicit quality checks
+Use assertions or validation code for assumptions such as unique IDs and nonnegative amounts. Keep raw data immutable; write cleaned outputs separately and document every exclusion or correction.
+@practice
+1. Write checks for unique IDs, nonnegative prices and valid dates.
+2. Why should raw input data be preserved?
+@interview Data quality checks validate schema, ranges, uniqueness, missingness and domain assumptions before statistics or modeling.
+
+@module m8 | 🧹 | 8 · Cleaning | Module 8 — Cleaning & Missing Values | Nulls · Duplicates · Imputation · Missingness
+@topic 🧹 Understand why values are missing
+Missing data may be random, related to observed variables, or related to the unseen value itself. Inspect patterns by time, group and source before dropping rows or imputing. Missingness can be informative and should sometimes become its own feature.
+@code python
+missing_rate = df.isna().mean().sort_values(ascending=False)
+deduplicated = df.drop_duplicates(subset=["order_id"])
+@end
+@topic 🧮 Choose an imputation policy
+Numeric median and categorical most-frequent imputation are simple baselines, not universal truths. Fit imputers on training data only. Preserve missingness indicators when useful and compare complete-case analysis with reasonable alternatives.
+@warn Never calculate imputation values on the full dataset before splitting; validation and test information would leak into training.
+@practice
+1. Compare missing rates by region and by month.
+2. Explain why a training-fitted median must be used on validation data.
+@interview Handle missing values based on their cause and downstream purpose; fit imputers only on training data and validate the effect of each policy.
+
+@module m9 | 📏 | 9 · Outliers | Module 9 — Outliers & Data Errors | Errors · Heavy tails · Robust summaries · Clipping
+@topic 📏 Investigate extreme values
+An outlier may be a measurement error, a rare valid event or a different population. Verify units and source records first. Use histograms, quantiles and domain limits; a z-score rule alone is unreliable for skewed or heavy-tailed data.
+@topic 🧰 Robust approaches
+Median and interquartile range are less sensitive to extremes than mean and standard deviation. Transformations, robust models or justified clipping may help, but keep the original value and record the policy. Do not remove inconvenient observations solely to improve a score.
+@code python
+low, high = df["amount"].quantile([0.01, 0.99])
+clipped = df["amount"].clip(lower=low, upper=high)
+@end
+@practice
+1. Investigate an extreme transaction and decide whether it is invalid or rare-but-real.
+2. Compare how mean and median react when one value becomes very large.
+@interview Investigate extreme observations against domain context; robust statistics and clipping are options only when their assumptions and impact are understood.
+
+@module m10 | 📊 | 10 · EDA | Module 10 — Exploratory Data Analysis | Univariate · Bivariate · Segments · Hypotheses
+@topic 📊 Explore distributions and relationships
+Univariate analysis examines one variable; bivariate analysis examines pairs; multivariate analysis considers several together. Use histograms and quantiles for numeric distributions, counts for categories, and scatterplots or grouped summaries for relationships.
+@code python
+print(df["amount"].describe(percentiles=[0.25, 0.5, 0.75, 0.9]))
+print(df.groupby("region")["amount"].agg(["count", "mean", "median"]))
+@end
+@topic 🧭 Explore with questions, not endless charts
+Compare meaningful segments and time periods, check target balance, and look for data collection changes. Treat patterns discovered during exploration as hypotheses to validate on held-out data or with additional evidence; exploration can overfit too.
+@practice
+1. Explore a numeric variable, one category and their relationship.
+2. State a hypothesis suggested by a chart and how you would validate it.
+@interview EDA uses summaries and visualizations to understand distributions, segments, data quality and plausible relationships while separating exploration from confirmation.
+
+@module m11 | 📈 | 11 · Statistics | Module 11 — Descriptive Statistics & Uncertainty | Mean · Median · Variance · Confidence intervals
+@topic 📈 Summarize, then explain
+Mean is sensitive to extremes; median is a robust center. Variance and standard deviation measure spread in squared units and original units respectively. Quantiles describe positions in a distribution; always report sample size and relevant context.
+@code python
+import numpy as np
+
+values = np.array([10, 12, 13, 15, 50])
+print(np.mean(values), np.median(values), np.std(values))
+print(np.quantile(values, [0.25, 0.5, 0.75]))
+@end
+@topic 🎯 Quantify uncertainty
+A confidence interval describes uncertainty in a procedure under its assumptions; it is not a probability statement that a fixed parameter moves around. Standard errors shrink with more independent information, but repeated measurements, clusters and selection bias violate simple assumptions.
+@practice
+1. Explain why a mean and median can differ substantially.
+2. Report a group difference together with sample sizes and uncertainty.
+@interview Descriptive statistics summarize center and spread; inferential claims require uncertainty estimates, study assumptions and an understanding of sampling.
+
+@module m12 | 🎲 | 12 · Probability | Module 12 — Probability, Sampling & Distributions | Events · Conditional probability · Sampling bias
+@topic 🎲 Reason about uncertainty
+Probability ranges from 0 to 1. Conditional probability asks how likely an event is given another event. Independence is a substantive assumption, not the same as observing no correlation. Base rates matter when outcomes are rare.
+@topic 🧪 Sampling determines what conclusions travel
+A sample is informative about a population only under a defensible sampling process. Convenience samples, nonresponse and survivorship can distort estimates. Bootstrap resampling estimates variability by repeatedly resampling observed units, but it cannot repair a biased sample.
+@code python
+rng = np.random.default_rng(42)
+sample_means = [rng.choice(values, size=len(values), replace=True).mean() for _ in range(1000)]
+print(np.quantile(sample_means, [0.025, 0.975]))
+@end
+@practice
+1. Give an example of selection bias in an online survey.
+2. Explain why a larger biased sample does not necessarily estimate a population well.
+@interview Probability reasoning requires clear events and assumptions; sampling design and base rates often matter more than a formula.
+
+@module m13 | 🧪 | 13 · Experiments | Module 13 — Hypothesis Tests & A/B Experiments | Randomization · Effect size · p-value · Power
+@topic 🧪 Design before measuring
+Define one primary outcome, eligible population, assignment unit, duration and stopping rule before running an experiment. Random assignment helps balance confounders on average; assignment and analysis units must match, especially for users clustered by household or account.
+@topic 📐 Interpret results responsibly
+A p-value is the probability of data at least this extreme under a specified null model; it is not the probability the null is true. Report effect size and confidence interval, not only statistical significance. Consider power, multiple testing, practical importance and guardrail metrics.
+@practice
+1. Design an A/B test for a checkout change and choose a primary metric.
+2. Explain why repeatedly checking significance and stopping early can mislead.
+@interview A/B testing needs randomized assignment, a predeclared metric and stopping rule, and interpretation of effect size and uncertainty rather than p-values alone.
+
+@module m14 | 📉 | 14 · Visualization | Module 14 — Communicate with Charts | Matplotlib · Seaborn · Encodings · Accessibility
+@topic 📉 Match chart to question
+Use a histogram for distributions, bar charts for category comparisons, line charts for ordered time, scatterplots for two numeric variables and boxplots for robust distribution comparisons. Avoid 3D effects and truncated axes that exaggerate differences.
+@code python
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.scatterplot(data=df, x="advertising_spend", y="sales", hue="region")
+plt.xlabel("Advertising spend ($)")
+plt.ylabel("Sales ($)")
+plt.title("Sales and advertising spend by region")
+plt.tight_layout()
+@end
+@topic 🎨 Make evidence legible
+Label units, state the population and date range, choose color palettes that remain readable for color-vision differences, and include uncertainty where relevant. A chart should support one clear takeaway and show enough context to challenge it.
+@practice
+1. Choose a chart for monthly revenue by region and justify it.
+2. Redesign a chart with unlabeled axes and a misleading scale.
+@interview Good visualization encodes the question clearly, labels units and context, avoids distortion and remains accessible.
+
+@module m15 | 🧱 | 15 · Features | Module 15 — Feature Engineering | Types · Dates · Categories · Domain logic
+@topic 🧱 Represent useful information
+Features are inputs available at prediction time. Derive date parts, group summaries or domain ratios only when they can be computed consistently at serving time. Encode categories appropriately; one-hot encoding suits nominal categories, while ordinal encoding implies order.
+@code python
+orders["order_month"] = orders["order_date"].dt.month
+orders["items_per_order"] = orders["item_count"] / orders["item_count"].replace(0, np.nan)
+@end
+@topic ⚠️ Avoid target leakage
+A feature leaks when it contains information unavailable at the prediction moment, including post-outcome fields or aggregates calculated using future records. Build features using the information timeline and test on later time periods where that matches deployment.
+@practice
+1. Identify a feature that would leak the outcome of a loan application.
+2. Create a useful date feature and explain when it is available.
+@interview Feature engineering encodes domain-relevant, prediction-time information; prevent leakage and make training transformations reproducible in production.
+
+@module m16 | ⚖️ | 16 · Preprocessing | Module 16 — Scaling, Encoding & Pipelines | Standardization · One-hot · ColumnTransformer
+@topic ⚖️ Scale and encode appropriately
+Standardization centers numeric features and scales by standard deviation; min-max scaling maps a range. Scaling matters for distance-based and gradient-based algorithms but usually not for decision trees. Fit scalers and encoders on training data only.
+@code python
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+preprocess = ColumnTransformer([
+    ("numeric", StandardScaler(), numeric_columns),
+    ("category", OneHotEncoder(handle_unknown="ignore"), category_columns),
+])
+@end
+@topic 🔗 Keep transformations with the model
+A scikit-learn Pipeline applies preprocessing and estimation together. This prevents train/test leakage during cross-validation and provides one object to persist and reuse. Handle unknown categories and missing values as explicit production cases.
+@practice
+1. Pick preprocessing for numeric and nominal columns.
+2. Explain why preprocessing belongs inside a cross-validation pipeline.
+@interview Pipelines combine train-fitted preprocessing with an estimator so validation remains leakage-safe and deployment repeats the same transformations.
+
+@module m17 | 🧪 | 17 · Data Splits | Module 17 — Train, Validation & Test Sets | Holdout · Stratification · Time order · Leakage
+@topic 🧪 Separate model building from final evaluation
+Training data fits model parameters; validation data supports model and hyperparameter choices; a test set estimates final generalization after choices are complete. Repeatedly consulting the test score turns it into another validation set.
+@topic 🕰️ Split to match deployment
+For independent IID rows, random splits may be reasonable; stratification can preserve class proportions. For grouped people or devices, split groups together. For forecasting, preserve time order and train on the past. Never let duplicates or related observations straddle splits.
+@code python
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+@end
+@practice
+1. Choose random, grouped or time-based splitting for a dataset and justify it.
+2. Give an example of target leakage across train and test.
+@interview Split data according to its dependence and deployment timeline; reserve test data until model selection is finished to keep its estimate meaningful.
+
+@module m18 | 📉 | 18 · Regression | Module 18 — Regression Models | Linear · Regularization · Trees · Residuals
+@topic 📉 Predict a numeric outcome
+Linear regression models a response as a weighted sum of features. Coefficients are interpretable under assumptions about design and data; correlation does not prove causation. Regularization such as Ridge shrinks coefficients and can reduce variance.
+@code python
+from sklearn.linear_model import Ridge
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+regression = make_pipeline(StandardScaler(), Ridge(alpha=1.0))
+regression.fit(X_train, y_train)
+predictions = regression.predict(X_test)
+@end
+@topic 🔍 Inspect residuals
+A residual is observed minus predicted. Plot residuals against predictions and important inputs to look for nonlinearity, changing variance, dependence and outliers. Compare against a simple baseline and evaluate on the right scale.
+@practice
+1. Fit a regression baseline and compute mean absolute error.
+2. What pattern in a residual plot suggests a linear model is missing structure?
+@interview Regression predicts numeric values; choose a metric aligned with cost and inspect residual assumptions rather than trusting one aggregate score.
+
+@module m19 | 🏷️ | 19 · Classification | Module 19 — Classification Models | Logistic regression · Trees · Probabilities · Thresholds
+@topic 🏷️ Predict classes or probabilities
+Classification predicts a category. Logistic regression models class probabilities; decision trees and ensembles model nonlinear rules. A classifier's default threshold is not automatically the correct operational decision threshold.
+@code python
+from sklearn.linear_model import LogisticRegression
+
+classifier = LogisticRegression(max_iter=1000)
+classifier.fit(X_train, y_train)
+probability = classifier.predict_proba(X_test)[:, 1]
+predicted_class = probability >= 0.35
+@end
+@topic 🎚️ Choose thresholds from costs
+A threshold trades false positives against false negatives. Select it using validation data and the real decision costs, then lock it before final test evaluation. Calibrate probabilities if probability quality matters.
+@practice
+1. Explain the effect of raising a positive-class threshold.
+2. Choose a threshold for a high-cost false negative and explain the trade-off.
+@interview Classification outputs labels or probabilities; select a decision threshold from validation evidence and error costs, not habit.
+
+@module m20 | 📏 | 20 · Metrics | Module 20 — Model Evaluation Metrics | MAE · RMSE · Precision · Recall · ROC · PR
+@topic 📏 Metrics reflect different errors
+Regression: MAE is average absolute error; RMSE penalizes large errors more; R-squared compares with a mean baseline under its definition. Classification: accuracy can mislead with imbalance; precision measures how many predicted positives are correct, recall how many actual positives are found, and F1 balances them.
+@table
+Metric | Useful interpretation | Watch out
+MAE | Typical absolute regression error | Same units as target
+RMSE | Penalizes large residuals more | Sensitive to outliers
+Precision | Reliability of positive alerts | May miss many positives
+Recall | Fraction of positives found | May create more false alarms
+@end
+@topic 📈 Threshold-independent views
+ROC-AUC measures ranking across thresholds; with rare positives, precision-recall curves often show the trade-off more directly. Always report class prevalence, a baseline and uncertainty where possible.
+@practice
+1. Choose metrics for fraud alerts with rare positives.
+2. Explain why accuracy can be 99% while a classifier is useless.
+@interview Choose evaluation metrics based on prevalence and error costs; report baselines and interpret precision, recall and threshold trade-offs.
+
+@module m21 | 🔁 | 21 · Cross Validation | Module 21 — Cross-Validation & Tuning | Folds · GridSearchCV · RandomizedSearchCV
+@topic 🔁 Estimate variability across folds
+Cross-validation rotates held-out folds and averages performance, using a splitter that respects groups, time or class balance. Every learned preprocessing step belongs inside the pipeline so each fold fits it on only its training portion.
+@code python
+from sklearn.model_selection import cross_val_score
+
+scores = cross_val_score(pipeline, X, y, cv=5, scoring="f1")
+print(scores.mean(), scores.std())
+@end
+@topic 🎛️ Tune efficiently
+Grid search tests a specified parameter grid; randomized search samples combinations and can explore large spaces efficiently. Tune using validation/CV, keep a final test set untouched, and consider compute budgets and simpler baselines.
+@practice
+1. Choose a CV splitter for grouped medical measurements.
+2. Explain why tuning repeatedly on a test set invalidates its estimate.
+@interview Cross-validation estimates performance over multiple splits; tune inside training data and preserve a final test set for one final evaluation.
+
+@module m22 | 🌳 | 22 · Ensembles | Module 22 — Trees & Ensemble Learning | Decision trees · Random forests · Boosting
+@topic 🌳 Learn nonlinear decision rules
+Decision trees split features into regions and can model nonlinear interactions with little scaling. Deep trees can overfit. Random forests average decorrelated trees to reduce variance; gradient boosting builds trees sequentially to correct previous errors.
+@topic 🚦 Trade-offs and tuning
+Tree ensembles often perform strongly on tabular data, but can be larger and less transparent than a linear baseline. Tune depth, learning rate, number of estimators and regularization using validation; inspect calibration and subgroup performance too.
+@practice
+1. Compare a single tree and random forest in terms of variance and interpretability.
+2. Name two gradient-boosting controls that help reduce overfitting.
+@interview Ensembles combine estimators to improve predictive performance; choose complexity and explanation methods according to risk and operational needs.
+
+@module m23 | 🧭 | 23 · Unsupervised | Module 23 — Clustering & Dimensionality Reduction | K-means · PCA · Scaling · Interpretation
+@topic 🧭 Find structure without target labels
+Clustering groups observations by a chosen distance or similarity. K-means minimizes within-cluster squared distance and requires choosing `k`; scale features when units differ. A cluster is a mathematical grouping, not automatically a real-world segment.
+@code python
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
+scaled = StandardScaler().fit_transform(X_numeric)
+labels = KMeans(n_clusters=3, random_state=42, n_init="auto").fit_predict(scaled)
+@end
+@topic 📉 Reduce dimensions with PCA
+Principal Component Analysis finds orthogonal directions of maximum variance. Standardize when feature scales differ; components are combinations of original features and may be hard to interpret. Fit PCA on training data only when evaluating a predictive workflow.
+@practice
+1. Cluster customers using appropriate standardized features and profile clusters afterward.
+2. Explain why PCA components may not correspond to meaningful real-world variables.
+@interview Unsupervised methods reveal structure without labels; validate cluster usefulness with stability and domain interpretation rather than assuming clusters are ground truth.
+
+@module m24 | ⏳ | 24 · Time Series | Module 24 — Time-Based Data & Forecasting | Trend · Seasonality · Lag · Backtesting
+@topic ⏳ Respect time order
+Time series may include trend, seasonality, autocorrelation and changing variance. Create lag and rolling features using past observations only. Random shuffling leaks future information into training.
+@code python
+series = df.sort_values("date").set_index("date")["demand"]
+features = pd.DataFrame({
+    "lag_1": series.shift(1),
+    "rolling_mean_7": series.shift(1).rolling(7).mean(),
+})
+@end
+@topic 🔮 Backtest like production
+Use rolling-origin evaluation: train on earlier periods and validate on later ones. Compare with simple naive and seasonal-naive forecasts. Keep the forecast horizon and update cadence consistent with actual operations.
+@practice
+1. Create a one-step lag and a 7-period rolling mean without using the current target.
+2. Explain why a random train/test split is unsafe for forecasting.
+@interview Forecasting evaluation must respect temporal order and horizon; compare models with realistic rolling backtests and simple naive baselines.
+
+@module m25 | ⚖️ | 25 · Imbalanced Data | Module 25 — Rare Events & Class Imbalance | Baselines · Weights · Resampling · PR curves
+@topic ⚖️ Evaluate rare classes
+When positives are rare, a majority-class classifier can have high accuracy and no value. Examine precision, recall, PR-AUC, confusion matrices and operational capacity. Set the decision threshold based on the cost of missed events and false alarms.
+@topic 🧪 Resample only training folds
+Class weights or over/undersampling may help, but resampling the full dataset before splitting leaks information. Put samplers inside an imbalanced-learn pipeline when using cross-validation. Check calibration and prevalence shifts in deployment.
+@practice
+1. A 1% fraud dataset gets 99% accuracy from predicting no fraud. Explain.
+2. Describe how to apply oversampling without contaminating validation data.
+@interview Rare-event evaluation needs prevalence-aware metrics and operational thresholds; any resampling must occur only inside training folds.
+
+@module m26 | 🔍 | 26 · Interpretability | Module 26 — Explain Models & Decisions | Coefficients · Permutation · SHAP · Limitations
+@topic 🔍 Explain what a model uses
+Linear coefficients describe conditional associations under feature scaling and modeling assumptions. Permutation importance measures score change when a feature is shuffled; correlated features can mask one another. SHAP and other local explanations attribute predictions relative to a background reference, not causal effects.
+@topic 🧠 Match explanation to decision
+Distinguish global behavior from an explanation for one prediction. Check explanation stability, correlated inputs and subgroup variation. If an explanation supports a high-impact decision, validate it with domain experts and a clear appeal process.
+@practice
+1. Compare a coefficient explanation with permutation importance.
+2. Explain why feature importance does not establish causation.
+@interview Interpretability methods describe model behavior under their assumptions; they do not prove causal effects or guarantee a faithful human explanation.
+
+@module m27 | ⚖️ | 27 · Responsible AI | Module 27 — Fairness, Privacy & Ethics | Bias · Consent · Governance · Human impact
+@topic ⚖️ Identify harms early
+Data may encode historical inequity, unequal measurement or under-representation. Define affected groups, intended and unintended uses, accessibility needs and recourse before deployment. Fairness metrics can conflict; choose with stakeholders and explain trade-offs.
+@topic 🔐 Protect people and data
+Collect only necessary data, follow consent and retention rules, restrict access, remove identifiers where appropriate and assess re-identification risk. Anonymization is not always irreversible. Document limitations, provenance, intended use and human oversight.
+@warn A model's output can influence access to important services even when described as advisory. Evaluate the full decision process and provide accountable review.
+@practice
+1. Create a risk checklist for a model used to prioritize job applicants.
+2. Explain why removing a sensitive column does not guarantee a fair model.
+@interview Responsible data science assesses privacy, representativeness, subgroup outcomes, transparency, recourse and governance across the whole decision system.
+
+@module m28 | 🗃️ | 28 · SQL | Module 28 — SQL for Data Analysis | SELECT · JOIN · GROUP BY · Window functions
+@topic 🗃️ Query close to the source
+Use SQL to filter and aggregate large tables before moving selected data into Python. Learn `SELECT`, `WHERE`, joins, `GROUP BY`, `CASE`, common table expressions and window functions. Use parameters and appropriate access controls.
+@code sql
+SELECT region, COUNT(*) AS orders, AVG(amount) AS average_order
+FROM orders
+WHERE order_date >= DATE '2026-01-01'
+GROUP BY region
+ORDER BY average_order DESC;
+@end
+@topic 🔗 Validate joins and aggregates
+Understand row grain and join cardinality. A one-to-many join can duplicate measures if aggregation happens at the wrong stage. Check counts and totals against known controls; add indexes based on query plans and workload.
+@practice
+1. Calculate monthly sales by region using SQL.
+2. Join customer and order tables while preserving order-level totals.
+@interview SQL filters and summarizes data in its source; understand table grain, join cardinality and aggregation to prevent duplicated counts.
+
+@module m29 | 🔄 | 29 · Reproducibility | Module 29 — Reproducible Analysis & Delivery | Seeds · Versioning · Tests · Data contracts
+@topic 🔄 Make results repeatable
+Track code version, dependency versions, random seeds, data snapshot or query, feature definitions and model parameters. A seed helps reproduce pseudorandom steps but cannot make nondeterministic hardware or changing external data identical.
+@topic ✅ Test data workflows
+Test transformations on representative normal and edge cases, including empty input, nulls, unexpected categories and date boundaries. Validate schemas and output ranges. Separate tests of deterministic functions from integration checks against real infrastructure.
+@code python
+assert df["order_id"].is_unique
+assert df["amount"].dropna().ge(0).all()
+assert set(required_columns).issubset(df.columns)
+@end
+@practice
+1. List the artifacts needed to reproduce a reported model result.
+2. Write two validation checks for an incoming batch of data.
+@interview Reproducibility records code, data lineage, dependencies and parameters while automated checks protect assumptions at each pipeline boundary.
+
+@module m30 | 🚀 | 30 · Deployment | Module 30 — Deploy a Data Product | Batch · API · Monitoring · Drift
+@topic 🚀 Serve predictions responsibly
+A model can run in batch, inside an application or behind an API. Package preprocessing with the estimator, validate inputs, set latency and availability goals, control versions and provide a fallback when predictions fail.
+@topic 📉 Monitor after release
+Track input quality, missingness, prediction distributions, latency, errors and outcome metrics when labels arrive. Data drift is a change in inputs; concept drift is a change in the relationship between inputs and outcomes. Drift signals investigation, not automatic proof that retraining is needed.
+@code python
+prediction = pipeline.predict(new_data)
+if len(prediction) != len(new_data):
+    raise ValueError("Prediction count does not match input rows")
+@end
+@practice
+1. Choose batch or API serving for a nightly inventory forecast and explain why.
+2. Name four signals to monitor after deploying a model.
+@interview Deployment includes repeatable preprocessing, input validation, versioning, operational monitoring, fallbacks and a plan for model updates.
+
+@module m31 | 🧪 | 31 · Projects | Module 31 — Data Science Projects & Portfolio | Questions · End-to-end work · Communication
+@topic 🌱 Beginner projects
+Analyze a public weather, transport or retail dataset: document its source, clean it, summarize distributions, make two useful charts and state limitations. Avoid projects that only reproduce a tutorial without adding a question or interpretation.
+@topic 🌿 Intermediate and advanced projects
+Build a churn analysis with leakage-safe validation; forecast demand with rolling backtests; evaluate a classifier on imbalanced data; or perform an experiment analysis with uncertainty. Include a baseline, metrics tied to a decision, segment checks and clear recommendations.
+@topic 🧾 Present a finished project
+A strong portfolio includes a concise problem statement, data provenance, reproducible environment, notebook or pipeline, tests, charts, model evaluation, limitations, privacy notes and a README that explains how to run it. Share only data you are allowed to publish.
+@practice
+1. Select a dataset and propose a question, unit of analysis and success metric.
+2. Draft a short executive summary with one finding, uncertainty and recommendation.
+@interview A data science portfolio demonstrates the full reasoning chain from a useful question through reproducible analysis, validation, communication and responsible limitations.
+
+@module m32 | 🗺️ | Roadmap | Module 32 — Data Science Learning Roadmap | Foundations · Analysis · Modeling · Production
+@topic 🗺️ Learn in dependency order
+Build Python and SQL foundations, then statistics, NumPy and pandas. Practice data quality, EDA and visualization before supervised learning. Learn splitting, leakage, metrics and validation before tuning. Add deployment, monitoring, ethics and domain-specific depth as projects require.
+@table
+Stage | Focus | Outcome
+Foundations | Python, SQL, probability, descriptive statistics | Read and question data confidently
+Analysis | pandas, NumPy, cleaning, EDA, charts | Produce reliable descriptive findings
+Modeling | Features, baselines, validation, metrics, ML | Estimate generalization honestly
+Practice | Experiments, interpretation, ethics, projects | Communicate evidence and trade-offs
+Production | Pipelines, deployment, monitoring, governance | Maintain a useful data product
+@end
+@topic 🎯 Prioritize for an AI or data science role
+Focus first on Python, SQL, statistics, data cleaning, EDA, visualization, train/test discipline, leakage, baseline models and communication. Deep learning and distributed systems are later tools, not prerequisites for every data scientist. Choose topics based on the work you want to do.
+@info Every project should answer: What decision is this for? What does one row mean? What information was available at that moment? What baseline is hard to beat? What could make the conclusion wrong?
+@practice
+1. Plan a four-week learning schedule with one small deliverable each week.
+2. Explain a model result to a nontechnical stakeholder without overstating causality.
+@interview Data science competence is the ability to frame, analyze, validate and communicate evidence responsibly, not simply to train the most complex model.

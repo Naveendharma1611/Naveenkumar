@@ -1,6 +1,6 @@
 // Study-material pages (python-material.html, c-material.html, etc.):
 // W3Schools-inspired learning interface:
-// - Top language/tutorial switcher bar (Java, Python, NumPy, C, C++, HTML, CSS, SQL, Django)
+// - Top language/tutorial switcher bar (Java, Data Science, Python, NumPy, C, C++, HTML, CSS, SQL, Django)
 // - Left sidebar with ALL headings in the left side corner
 // - Clicking any heading displays ALL context on the right side
 // - Previous / Next navigation controls at top & bottom
@@ -11,6 +11,7 @@ import { page, setTitle } from "../ui.js";
 
 const TUTORIALS = [
   { slug: "java", file: "java-material.html", name: "Java", emoji: "☕" },
+  { slug: "data-science", file: "data-science-material.html", name: "Data Science", emoji: "📊" },
   { slug: "python", file: "python-material.html", name: "Python", emoji: "🐍" },
   { slug: "numpy", file: "numpy-material.html", name: "NumPy", emoji: "🔢" },
   { slug: "c", file: "c-material.html", name: "C", emoji: "💻" },

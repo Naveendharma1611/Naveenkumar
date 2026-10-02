@@ -12,6 +12,10 @@ const meta = (...parts) => {
 // Complete study-material pages (static HTML), keyed by study topic slug, in display order.
 // A backend topic with the same slug is shown through this card instead of its own card.
 export const NOTES = {
+  "data-science": {
+    href: "data-science-material.html", title: "📊 Data Science Complete Study Material",
+    text: "Data science end to end in 32 modules: statistics, SQL, data cleaning, EDA, visualization, machine learning, responsible AI, deployment and projects.",
+  },
   java: {
     href: "java-material.html", title: "☕ Java Complete End-to-End Study Material",
     text: "Java from fundamentals to professional development in 74 modules: OOP, collections, modern Java, concurrency, JDBC, Spring Boot, REST, security, microservices, Docker, cloud and projects.",
