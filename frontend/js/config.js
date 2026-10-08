@@ -1,5 +1,5 @@
-// Where the Django REST API lives. Change PRODUCTION_API_URL when you deploy.
-const PRODUCTION_API_URL = "https://portfolio.onrender.com/api";
+// Where the Django REST API lives. Live Render Backend URL:
+const PRODUCTION_API_URL = "https://naveenkumar-qelp.onrender.com/api";
 
 const urlParams = typeof window !== "undefined" && window.location ? new URLSearchParams(window.location.search) : null;
 const apiParam = urlParams ? urlParams.get("api") : null;
