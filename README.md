@@ -19,7 +19,7 @@ A full-stack portfolio, resume, project showcase and student learning platform f
 
 | Layer | Technology |
 |---|---|
-| Frontend | `frontend/`: plain HTML pages, one stylesheet, vanilla JavaScript modules (no build step). marked + DOMPurify, highlight.js and model-viewer from CDNs |
+| Frontend | `frontend/`: plain HTML pages and vanilla JavaScript modules; the NK Practice Portal is built from `practice-portal/` and served at `/practice/` |
 | Backend | `backend/`: Django 6, Django ORM, Django REST Framework, SimpleJWT, Django admin |
 | Database | PostgreSQL (SQLite fallback for quick local dev) |
 | Storage | Local media in development, S3-compatible storage in production (`USE_S3=true`) |
@@ -37,6 +37,8 @@ Browser ──► frontend/ (static HTML + CSS + JS, e.g. http://localhost:3000)
 ```
 
 The backend also still contains a server-rendered version of the site (`backend/apps/web`, served at http://localhost:8000/). It is optional.
+
+The integrated NK Practice Portal is served by the same static frontend at `/practice/`. It remains a React app backed by its own Supabase project; its users, questions, submissions, and grading are separate from the Django learning platform.
 
 ## Project structure
 
@@ -87,7 +89,18 @@ python serve.py                 # http://localhost:3000
 
 No Node.js, npm or build step is needed. Keep the Django server running on port 8000: the pages load their data from `http://localhost:8000/api`.
 
-### 3. Log in
+### 3. Build the integrated practice portal
+
+Configure `practice-portal/.env` from `.env.example` with the Supabase project URL and anon key, then build from the repository root:
+
+```bash
+npm --prefix practice-portal install
+npm --prefix practice-portal run build
+```
+
+With the frontend server running, open `http://localhost:3000/practice/`. The portal uses the same origin under `/practice/`, while authentication and practice data remain in Supabase.
+
+### 4. Log in
 
 - **Admin:** log in at `login.html` with your superuser. You land on `admin.html` (overview, users, messages). Content is edited in the Django admin at `http://localhost:8000/django-admin/`.
 - **Students:** register at `register.html`, then track lessons, bookmarks, notes and quiz scores on `student.html`. Visitors can upgrade to a student account on `account.html`.
@@ -148,7 +161,7 @@ cd backend && python manage.py test apps       # 22 API tests: auth, roles, lear
 
 **Backend + database (Render):** `render.yaml` defines the Django service and a PostgreSQL database. Create a Blueprint from the repo, then set `FRONTEND_URL` and `CORS_ALLOWED_ORIGINS` on the API to the frontend's URL (e.g. `https://portfolio-frontend.onrender.com`). `backend/build.sh` installs dependencies, collects static files, migrates and seeds. Railway and AWS work the same way: run `build.sh`, then `gunicorn config.wsgi:application`.
 
-**Frontend (Render static site, Netlify, Vercel or GitHub Pages):** publish the `frontend/` folder as-is. Before deploying, set `PRODUCTION_API_URL` in `frontend/js/config.js` to your API URL. `render.yaml` already includes a static site for it.
+**Frontend (Render static site, Netlify, Vercel or GitHub Pages):** publish the `frontend/` folder. The Render blueprint builds `practice-portal/` into `frontend/practice/` and serves it at `/practice/`. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in the static-site build environment, and allow the deployed `/practice/` URL in Supabase Auth redirect settings. Set `PRODUCTION_API_URL` in `frontend/js/config.js` to your Django API URL before deployment.
 
 **Media files in production:** Render's disk is ephemeral, so set `USE_S3=true` with an S3 / Cloudflare R2 bucket for uploads.
 
@@ -173,5 +186,6 @@ Never commit `.env` files.
 - Code execution sandbox for coding questions
 - Certificates of completion for students
 - Full-text search with PostgreSQL `SearchVector`
-#   s t u d y m a t e r i a l  
+#   s t u d y m a t e r i a l 
+ 
  

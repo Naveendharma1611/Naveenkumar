@@ -6,6 +6,7 @@ for JavaScript modules on Windows and serves 404.html for unknown pages.
 import functools
 import http.server
 from pathlib import Path
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).parent
 PORT = 3000
@@ -14,6 +15,13 @@ PORT = 3000
 class Handler(http.server.SimpleHTTPRequestHandler):
     extensions_map = {**http.server.SimpleHTTPRequestHandler.extensions_map,
                       ".js": "text/javascript", ".css": "text/css", ".html": "text/html", ".svg": "image/svg+xml"}
+
+    def translate_path(self, path):
+        translated = Path(super().translate_path(path))
+        requested = urlsplit(path).path
+        if requested.startswith("/practice/") and not translated.exists() and not Path(requested).suffix:
+            return str(ROOT / "practice" / "index.html")
+        return str(translated)
 
     def send_error(self, code, message=None, explain=None):
         page = ROOT / "404.html"

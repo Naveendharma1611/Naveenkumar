@@ -36,6 +36,14 @@ services:
   - type: web
     name: portfolio-frontend
     runtime: static
-    rootDir: frontend
-    buildCommand: echo "static site, no build"
-    staticPublishPath: .
+    buildCommand: npm --prefix practice-portal ci && npm --prefix practice-portal run build
+    staticPublishPath: frontend
+    envVars:
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+    routes:
+      - type: rewrite
+        source: /practice/*
+        destination: /practice/index.html

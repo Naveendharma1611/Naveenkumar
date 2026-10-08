@@ -19,6 +19,8 @@ export default function QuestionPage() {
   const [testCases, setTestCases] = useState([]);
   const [siblings, setSiblings] = useState([]);
   const [code, setCode] = useState("");
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [answerText, setAnswerText] = useState("");
   const [results, setResults] = useState(null);
   const [resultsKind, setResultsKind] = useState("run"); // "run" | "submit"
   const [failedAttempts, setFailedAttempts] = useState(0);
@@ -60,9 +62,13 @@ export default function QuestionPage() {
       setSiblings(siblingRows || []);
     }
 
-    const draft = localStorage.getItem(draftKey(questionId));
-    setCode(draft ?? q.starter_code ?? "");
-    warmUpRunner();
+    setSelectedOption(null);
+    setAnswerText("");
+    if (q.question_type === "code" || !q.question_type) {
+      const draft = localStorage.getItem(draftKey(questionId));
+      setCode(draft ?? q.starter_code ?? "");
+      warmUpRunner();
+    }
   }, [questionId, slug, user.id]);
 
   useEffect(() => {
@@ -70,7 +76,7 @@ export default function QuestionPage() {
   }, [load]);
 
   useEffect(() => {
-    if (question) localStorage.setItem(draftKey(questionId), code);
+    if (question && question.question_type === "code") localStorage.setItem(draftKey(questionId), code);
   }, [code, questionId, question]);
 
   const sampleCases = useMemo(() => testCases.filter((t) => t.is_sample), [testCases]);
@@ -99,16 +105,31 @@ export default function QuestionPage() {
   };
 
   const handleSubmit = async () => {
+    const type = question.question_type || "code";
+    if (type === "mcq" && selectedOption == null) {
+      setError("Select an option first.");
+      return;
+    }
+    if (type === "fill_blank" && !answerText.trim()) {
+      setError("Enter an answer first.");
+      return;
+    }
+
     setError("");
     setBusy(true);
     setResultsKind("submit");
     try {
-      // Graded against sample + HIDDEN test cases server-side (Edge Function,
-      // service role) — the client never sees hidden expected/actual values
-      // or writes the submissions row itself. See SECURITY_REPORT.md.
-      const { data, error: fnError } = await supabase.functions.invoke("grade-submission", {
-        body: { questionId, code },
-      });
+      // Graded server-side (Edge Function, service role) for every question
+      // type — the client never writes the submissions row itself, and for
+      // code questions never sees hidden expected/actual values. See
+      // SECURITY_REPORT.md.
+      const body =
+        type === "mcq"
+          ? { questionId, selectedOption }
+          : type === "fill_blank"
+          ? { questionId, answerText }
+          : { questionId, code };
+      const { data, error: fnError } = await supabase.functions.invoke("grade-submission", { body });
       if (fnError) {
         // supabase-js puts a non-2xx response body on fnError.context; surface it if present.
         const detail = await fnError.context?.json?.().catch(() => null);
@@ -184,23 +205,61 @@ export default function QuestionPage() {
         </div>
 
         <div>
-          <CodeEditor value={code} onChange={setCode} />
+          {question.question_type === "mcq" ? (
+            <div className="card space-y-2 p-5">
+              {(question.options || []).map((opt, idx) => (
+                <label
+                  key={idx}
+                  className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 text-sm transition ${
+                    selectedOption === idx
+                      ? "border-brand-500 bg-brand-50 dark:bg-brand-900/20"
+                      : "border-slate-200 dark:border-slate-700"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="mcq-option"
+                    checked={selectedOption === idx}
+                    onChange={() => setSelectedOption(idx)}
+                  />
+                  {opt}
+                </label>
+              ))}
+            </div>
+          ) : question.question_type === "fill_blank" ? (
+            <div className="card p-5">
+              <label className="label" htmlFor="fill-blank-answer">Your answer</label>
+              <input
+                id="fill-blank-answer"
+                className="input"
+                value={answerText}
+                onChange={(e) => setAnswerText(e.target.value)}
+                placeholder="Type the missing word or phrase…"
+              />
+            </div>
+          ) : (
+            <CodeEditor value={code} onChange={setCode} />
+          )}
 
           <div className="mt-3 flex flex-wrap gap-2">
-            <button className="btn-secondary" onClick={handleRun} disabled={busy}>
-              {busy && resultsKind === "run" ? "Running…" : "▶ Run"}
-            </button>
+            {(question.question_type === "code" || !question.question_type) && (
+              <button className="btn-secondary" onClick={handleRun} disabled={busy}>
+                {busy && resultsKind === "run" ? "Running…" : "▶ Run"}
+              </button>
+            )}
             <button className="btn-primary" onClick={handleSubmit} disabled={busy}>
               {busy && resultsKind === "submit" ? "Submitting…" : "Submit"}
             </button>
-            <button
-              className="btn-ghost"
-              onClick={() => setCode(question.starter_code || "")}
-              disabled={busy}
-              title="Reset to starter code"
-            >
-              ↺ Reset
-            </button>
+            {(question.question_type === "code" || !question.question_type) && (
+              <button
+                className="btn-ghost"
+                onClick={() => setCode(question.starter_code || "")}
+                disabled={busy}
+                title="Reset to starter code"
+              >
+                ↺ Reset
+              </button>
+            )}
             {nextQuestion && (
               <Link to={`/topics/${slug}/questions/${nextQuestion.id}`} className="btn-ghost ml-auto">
                 Next question →

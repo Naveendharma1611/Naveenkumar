@@ -43,6 +43,9 @@ export default function Navbar() {
               {label}
             </NavLink>
           ))}
+          <a href="/index.html" className={linkClass({ isActive: false })}>
+            Portfolio
+          </a>
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
@@ -85,6 +88,9 @@ export default function Navbar() {
                 {label}
               </NavLink>
             ))}
+            <a href="/index.html" className={linkClass({ isActive: false })} onClick={() => setOpen(false)}>
+              Portfolio
+            </a>
             <div className="mt-2 flex items-center justify-between">
               <ThemeToggle />
               {user ? (

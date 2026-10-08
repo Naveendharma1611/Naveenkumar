@@ -70,6 +70,35 @@ export default function TopicPage() {
         </div>
       </div>
 
+      {(topic.try_it_examples || []).length > 0 && (
+        <div className="card mt-4 p-5">
+          <h2 className="mb-3 text-lg font-semibold">Try it yourself</h2>
+          <div className="space-y-4">
+            {topic.try_it_examples.map((ex, idx) => (
+              <div key={idx}>
+                {ex.description && <p className="mb-1 text-sm text-slate-600 dark:text-slate-300">{ex.description}</p>}
+                <pre className="overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100">
+                  <code>{ex.code}</code>
+                </pre>
+                {ex.output && (
+                  <div className="mt-2 rounded-lg bg-slate-100 p-3 text-sm dark:bg-slate-700/50">
+                    <p className="mb-1 text-xs font-semibold uppercase text-slate-500 dark:text-slate-400">Output</p>
+                    <pre className="whitespace-pre-wrap">{ex.output}</pre>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {topic.common_mistakes && (
+        <div className="card mt-4 p-5">
+          <h2 className="mb-3 text-lg font-semibold">⚠️ Common mistakes</h2>
+          <Markdown>{topic.common_mistakes}</Markdown>
+        </div>
+      )}
+
       <h2 className="mt-8 mb-3 text-lg font-semibold">Practice questions</h2>
       <div className="space-y-2">
         {questions.map((q, idx) => {
@@ -93,6 +122,11 @@ export default function TopicPage() {
                 <span className="font-medium">{q.title}</span>
               </div>
               <div className="flex items-center gap-2">
+                {q.question_type && q.question_type !== "code" && (
+                  <span className="badge bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                    {q.question_type === "mcq" ? "MCQ" : "Fill in the blank"}
+                  </span>
+                )}
                 <span className="text-xs text-slate-400">{q.points} pts</span>
                 <DifficultyBadge difficulty={q.difficulty} />
               </div>

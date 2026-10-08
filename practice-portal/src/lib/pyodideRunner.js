@@ -12,7 +12,7 @@ let nextRequestId = 1;
 const pending = new Map();
 
 function createWorker() {
-  const w = new Worker("/pyodide-worker.js");
+  const w = new Worker(`${import.meta.env.BASE_URL}pyodide-worker.js`);
   w.onmessage = (event) => {
     const { requestId, ok, results, error } = event.data;
     const entry = pending.get(requestId);

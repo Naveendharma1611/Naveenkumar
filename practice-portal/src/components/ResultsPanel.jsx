@@ -1,5 +1,22 @@
 export default function ResultsPanel({ results, title }) {
   if (!results?.length) return null;
+
+  // MCQ / fill-in-the-blank: a single pass/fail result, not a list of test cases.
+  if (results.length === 1 && (results[0].type === "mcq" || results[0].type === "fill_blank")) {
+    const r = results[0];
+    return (
+      <div
+        className={`mt-4 rounded-lg border p-4 text-sm ${
+          r.passed
+            ? "border-emerald-200 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-900/20"
+            : "border-rose-200 bg-rose-50 dark:border-rose-900 dark:bg-rose-900/20"
+        }`}
+      >
+        <span className="font-medium">{r.passed ? "✅ Correct!" : "❌ Not quite — try again."}</span>
+      </div>
+    );
+  }
+
   const passedCount = results.filter((r) => r.passed).length;
 
   return (

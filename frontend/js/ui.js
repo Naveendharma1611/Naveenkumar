@@ -50,9 +50,12 @@ export const homeFor = (user) => (user?.is_admin ? "admin.html" : user?.role ===
 
 const NAV = [
   ["about.html", "About"], ["projects.html", "Projects"], ["study.html", "Learn"], ["interview.html", "Interview"],
-  ["practice.html", "Practice"], ["blog.html", "Blog"], ["contact.html", "Contact"],
+  ["practice.html", "Practice"], ["practice/", "Python Lab"], ["blog.html", "Blog"], ["contact.html", "Contact"],
 ];
-const current = () => location.pathname.split("/").pop() || "index.html";
+const current = () => {
+  const path = location.pathname.split("/").pop();
+  return path || (location.pathname.startsWith("/practice/") ? "practice/" : "index.html");
+};
 
 function renderLayout() {
   const user = auth.user;

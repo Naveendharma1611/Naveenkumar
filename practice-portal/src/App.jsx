@@ -18,7 +18,7 @@ import AdminStudents from "./pages/admin/AdminStudents";
 export default function App() {
   return (
     <ThemeProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
         <AuthProvider>
           <Routes>
             <Route element={<Layout />}>

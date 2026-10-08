@@ -49,8 +49,10 @@ department(s) (see `SECURITY_REPORT.md`).
 cd practice-portal
 cp .env.example .env     # then paste your Supabase URL + anon key into .env
 npm install
-npm run dev               # http://localhost:5173
+npm run dev               # http://localhost:5173/practice/
 ```
+
+The portfolio serves the built portal at `http://localhost:3000/practice/`. To rebuild that integrated copy, run `npm run build` from this directory; Vite outputs to `../frontend/practice/`. The portal keeps its own Supabase authentication and database.
 
 ## 3. Create your first admin/faculty account
 
@@ -119,8 +121,4 @@ TEST_REPORT.md       Pass/Fail verification log, appended to after every phase
 
 ## Deployment
 
-This is a static site once built (`npm run build` → `dist/`) — deploy `dist/` to Netlify, Vercel,
-GitHub Pages, or Render's static site hosting, the same way `frontend/` elsewhere in this repo is
-deployed. Set the `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` environment variables in your
-hosting provider's dashboard (don't commit `.env`). No server process is needed — Supabase is the
-only external service.
+This is a static site once built. In this repository, `npm run build` outputs to `../frontend/practice/`, where the portfolio serves it at `/practice/`; Render's static-site configuration also rewrites nested routes to the app entry. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in the hosting provider's build environment and allow the deployed `/practice/` redirect URL in Supabase Auth settings. Never commit `.env`. No portal server process is needed — Supabase remains its backend.

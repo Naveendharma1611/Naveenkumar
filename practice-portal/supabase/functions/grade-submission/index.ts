@@ -99,18 +99,14 @@ Deno.serve(async (req) => {
   const studentId = userData.user.id;
 
   // --- Parse & validate input -------------------------------------------------
-  let body: { questionId?: unknown; code?: unknown };
+  let body: { questionId?: unknown; code?: unknown; selectedOption?: unknown; answerText?: unknown };
   try {
     body = await req.json();
   } catch {
     return json({ error: "Invalid JSON body" }, 400);
   }
-  const { questionId, code } = body;
+  const { questionId, code, selectedOption, answerText } = body;
   if (!isUuid(questionId)) return json({ error: "questionId must be a valid UUID" }, 400);
-  if (typeof code !== "string" || !code.trim()) return json({ error: "code must be a non-empty string" }, 400);
-  if (code.length > MAX_CODE_LENGTH) {
-    return json({ error: `code exceeds the ${MAX_CODE_LENGTH}-character limit` }, 400);
-  }
 
   // --- Rate limiting -----------------------------------------------------------
   const nowIso = new Date().toISOString();
@@ -135,40 +131,70 @@ Deno.serve(async (req) => {
     return json({ error: "Hourly submission limit reached. Try again later." }, 429);
   }
 
-  // --- Load the question + its test cases (sample AND hidden) ----------------
-  const { data: question } = await admin.from("questions").select("id").eq("id", questionId).maybeSingle();
+  // --- Load the question --------------------------------------------------------
+  const { data: question } = await admin
+    .from("questions")
+    .select("id, question_type, correct_option, correct_answer")
+    .eq("id", questionId)
+    .maybeSingle();
   if (!question) return json({ error: "Question not found" }, 404);
 
-  const [{ data: sampleCases }, { data: hiddenCases }] = await Promise.all([
-    admin.from("test_cases").select("id, stdin, expected_output, order_index").eq("question_id", questionId).order("order_index"),
-    admin.from("hidden_test_cases").select("id, stdin, expected_output, order_index").eq("question_id", questionId).order("order_index"),
-  ]);
+  let results: unknown[];
+  let passed: boolean;
 
-  const allCases = [
-    ...(sampleCases ?? []).map((c) => ({ ...c, isSample: true })),
-    ...(hiddenCases ?? []).map((c) => ({ ...c, isSample: false })),
-  ];
-  if (!allCases.length) return json({ error: "This question has no test cases configured" }, 500);
-
-  // --- Run against the real judge, one test case at a time --------------------
-  const results = [];
-  for (const tc of allCases) {
-    try {
-      const { output, error } = await runOnPiston(code, tc.stdin ?? "");
-      const actual = output.trim();
-      const expected = (tc.expected_output ?? "").trim();
-      const passed = !error && actual === expected;
-      results.push(
-        tc.isSample
-          ? { id: tc.id, isSample: true, stdin: tc.stdin, expected, actual, error, passed }
-          : { id: tc.id, isSample: false, error, passed } // hidden: pass/fail only, never the expected/actual values
-      );
-    } catch (err) {
-      results.push({ id: tc.id, isSample: tc.isSample, passed: false, error: String(err) });
+  if (question.question_type === "mcq") {
+    if (!Number.isInteger(selectedOption)) {
+      return json({ error: "selectedOption must be an integer" }, 400);
     }
-  }
+    passed = selectedOption === question.correct_option;
+    results = [{ type: "mcq", selectedOption, passed }];
+  } else if (question.question_type === "fill_blank") {
+    if (typeof answerText !== "string" || !answerText.trim()) {
+      return json({ error: "answerText must be a non-empty string" }, 400);
+    }
+    if (answerText.length > 500) return json({ error: "answerText is too long" }, 400);
+    const normalize = (s: string) => s.trim().toLowerCase().replace(/\s+/g, " ");
+    passed = normalize(answerText) === normalize(question.correct_answer ?? "");
+    results = [{ type: "fill_blank", answerText, passed }];
+  } else {
+    // 'code' — the original flow: run against sample + hidden test cases via Piston.
+    if (typeof code !== "string" || !code.trim()) {
+      return json({ error: "code must be a non-empty string" }, 400);
+    }
+    if (code.length > MAX_CODE_LENGTH) {
+      return json({ error: `code exceeds the ${MAX_CODE_LENGTH}-character limit` }, 400);
+    }
 
-  const passed = results.every((r) => r.passed);
+    const [{ data: sampleCases }, { data: hiddenCases }] = await Promise.all([
+      admin.from("test_cases").select("id, stdin, expected_output, order_index").eq("question_id", questionId).order("order_index"),
+      admin.from("hidden_test_cases").select("id, stdin, expected_output, order_index").eq("question_id", questionId).order("order_index"),
+    ]);
+
+    const allCases = [
+      ...(sampleCases ?? []).map((c) => ({ ...c, isSample: true })),
+      ...(hiddenCases ?? []).map((c) => ({ ...c, isSample: false })),
+    ];
+    if (!allCases.length) return json({ error: "This question has no test cases configured" }, 500);
+
+    const codeResults = [];
+    for (const tc of allCases) {
+      try {
+        const { output, error } = await runOnPiston(code, tc.stdin ?? "");
+        const actual = output.trim();
+        const expected = (tc.expected_output ?? "").trim();
+        const casePassed = !error && actual === expected;
+        codeResults.push(
+          tc.isSample
+            ? { id: tc.id, isSample: true, stdin: tc.stdin, expected, actual, error, passed: casePassed }
+            : { id: tc.id, isSample: false, error, passed: casePassed } // hidden: pass/fail only, never expected/actual
+        );
+      } catch (err) {
+        codeResults.push({ id: tc.id, isSample: tc.isSample, passed: false, error: String(err) });
+      }
+    }
+    results = codeResults;
+    passed = codeResults.every((r) => r.passed);
+  }
 
   // --- Record the attempt (service role — this is the only writer) -----------
   const { count: priorCount } = await admin
@@ -177,10 +203,17 @@ Deno.serve(async (req) => {
     .eq("student_id", studentId)
     .eq("question_id", questionId);
 
+  const submittedAnswer =
+    question.question_type === "mcq"
+      ? `[selected option ${selectedOption}]`
+      : question.question_type === "fill_blank"
+      ? String(answerText)
+      : String(code);
+
   const { error: insertErr } = await admin.from("submissions").insert({
     student_id: studentId,
     question_id: questionId,
-    code,
+    code: submittedAnswer,
     passed,
     is_submit: true,
     results,
