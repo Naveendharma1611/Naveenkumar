@@ -4,10 +4,11 @@ import { educationList } from "../parts.js";
 page(async (app) => {
   setTitle("About");
   const [p, education, achievements] = await Promise.all([getProfile(), api("education/"), api("achievements/")]);
+  const fullName = (p.full_name && p.full_name !== "Your Name") ? p.full_name : "Naveenkumar";
   const list = (title, items) => (items.length
     ? `<div class="card"><h3>${title}</h3><ul>${items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul></div>` : "");
   app.innerHTML = `<section class="wrap section narrow">
-    ${p.photo ? `<img src="${esc(media(p.photo))}" alt="${esc(p.full_name)}" class="avatar-lg">` : ""}
+    ${p.photo ? `<img src="${esc(media(p.photo))}" alt="${esc(fullName)}" class="avatar-lg">` : ""}
     <h1>About me</h1>
     ${p.short_bio ? `<p class="lead">${esc(p.short_bio)}</p>` : ""}
     <div class="prose">${md(p.about)}</div>

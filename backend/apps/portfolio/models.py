@@ -8,7 +8,7 @@ from apps.core.validators import image_validators, pdf_validators
 class SiteProfile(TimeStampedModel):
     """Singleton holding the site owner's personal info. Edit it in the admin; nothing is hardcoded."""
 
-    full_name = models.CharField(max_length=150, default="Your Name")
+    full_name = models.CharField(max_length=150, default="Naveenkumar")
     headline = models.CharField(max_length=200, default="AI / Data Science / Python Developer")
     tagline = models.TextField(
         default="I build intelligent applications, machine learning solutions, "

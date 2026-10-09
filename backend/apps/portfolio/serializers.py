@@ -29,6 +29,12 @@ class SiteProfileSerializer(serializers.ModelSerializer):
     def get_current_learning_list(self, obj):
         return split_lines(obj.current_learning)
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        if ret.get("full_name") in ("Your Name", "", None):
+            ret["full_name"] = "Naveenkumar"
+        return ret
+
 
 class SkillSerializer(serializers.ModelSerializer):
     category_label = serializers.CharField(source="get_category_display", read_only=True)

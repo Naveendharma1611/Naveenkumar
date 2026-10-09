@@ -106,7 +106,10 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
-        SiteProfile.load()
+        profile = SiteProfile.load()
+        if profile.full_name in ("Your Name", "", None):
+            profile.full_name = "Naveenkumar"
+            profile.save(update_fields=["full_name"])
 
         for order, (name, icon) in enumerate(STUDY_CATEGORIES):
             defaults = {"icon": icon, "order": order}

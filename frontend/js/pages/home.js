@@ -6,7 +6,8 @@ page(async (app) => {
     getProfile(), api("stats/"), api("projects/?is_featured=true&page_size=6"),
     api("skills/?is_featured=true"), api("blog/posts/?page_size=3"), api("experience/"), api("education/"),
   ]);
-  setTitle(profile.full_name, profile.headline);
+  const fullName = (profile.full_name && profile.full_name !== "Your Name") ? profile.full_name : "Naveenkumar";
+  setTitle(fullName, profile.headline);
   const counts = [["Projects", stats.projects], ["Lessons", stats.study_materials], ["Topics", stats.study_categories],
     ["Skills", stats.skills], ["Certifications", stats.certifications]].filter(([, n]) => n > 0);
   const contact = [
@@ -21,9 +22,9 @@ page(async (app) => {
     <section class="hero">
       <canvas id="hero-canvas" aria-hidden="true"></canvas>
       <div class="wrap hero-inner">
-        ${profile.photo ? `<img src="${esc(media(profile.photo))}" alt="${esc(profile.full_name)}" class="avatar-lg">` : ""}
+        ${profile.photo ? `<img src="${esc(media(profile.photo))}" alt="${esc(fullName)}" class="avatar-lg">` : ""}
         <p class="eyebrow">${esc(profile.headline)}</p>
-        <h1>Hi, I'm ${esc(profile.full_name)}</h1>
+        <h1>Hi, I'm ${esc(fullName)}</h1>
         <p class="lead">${esc(profile.tagline)}</p>
         <div class="chips center">${profile.hero_badges_list.map((b) => `<span class="chip">${esc(b)}</span>`).join("")}</div>
         <div class="actions center">

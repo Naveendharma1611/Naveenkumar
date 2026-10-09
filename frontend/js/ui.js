@@ -64,7 +64,7 @@ function renderLayout() {
   header.className = "nav";
   header.innerHTML = `
     <div class="wrap nav-inner">
-      <a href="index.html" class="brand" data-brand>Portfolio</a>
+      <a href="index.html" class="brand" data-brand>Naveenkumar</a>
       <button class="icon-btn menu-btn" aria-label="Menu" aria-expanded="false">☰</button>
       <nav id="nav">
         ${NAV.map(([href, label]) => `<a href="${href}" ${here === href ? 'class="active"' : ""}>${label}</a>`).join("")}
@@ -84,7 +84,7 @@ function renderLayout() {
   footer.className = "footer";
   footer.innerHTML = `
     <div class="wrap footer-inner">
-      <p>© ${new Date().getFullYear()} <span data-brand>Portfolio</span>. Built with HTML, CSS &amp; JavaScript + Django.</p>
+      <p>© ${new Date().getFullYear()} <span data-brand>Naveenkumar</span>. Built with HTML, CSS &amp; JavaScript + Django.</p>
       <p data-social><a href="skills.html">Skills</a><a href="experience.html">Experience</a>
         <a href="certifications.html">Certifications</a><a href="resume.html">Resume</a></p>
     </div>`;
@@ -107,7 +107,8 @@ function renderLayout() {
   });
 
   getProfile().then((p) => {
-    document.querySelectorAll("[data-brand]").forEach((el) => (el.textContent = p.full_name));
+    const brandName = (p.full_name && p.full_name !== "Your Name") ? p.full_name : "Naveenkumar";
+    document.querySelectorAll("[data-brand]").forEach((el) => (el.textContent = brandName));
     const social = footer.querySelector("[data-social]");
     if (p.github_url) social.insertAdjacentHTML("afterbegin", `<a href="${esc(p.github_url)}" target="_blank" rel="noopener">GitHub</a>`);
     if (p.linkedin_url) social.insertAdjacentHTML("afterbegin", `<a href="${esc(p.linkedin_url)}" target="_blank" rel="noopener">LinkedIn</a>`);
@@ -115,7 +116,8 @@ function renderLayout() {
 }
 
 export function setTitle(title, description) {
-  document.title = title ? `${title} · Portfolio` : "Portfolio";
+  const brand = "Naveenkumar";
+  document.title = title ? `${title} · ${brand}` : `${brand} · Portfolio`;
   if (description) document.querySelector('meta[name="description"]')?.setAttribute("content", description);
 }
 
