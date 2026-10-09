@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm --prefix practice-portal ci && npm --prefix practice-portal run build",
+  "outputDirectory": "frontend",
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/practice/(.*)",
+      "destination": "/practice/index.html"
+    }
+  ]
+}

@@ -1,7 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 
-const url = import.meta.env.VITE_SUPABASE_URL;
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const url =
+  import.meta.env.VITE_SUPABASE_URL ||
+  "https://yijjamxxovaguxfeenuy.supabase.co";
+const anonKey =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  "sb_publishable_A_dpT1pxY_BLr6jG4BlTIQ_WkMshgdI";
 
 if (!url || !anonKey) {
   // eslint-disable-next-line no-console

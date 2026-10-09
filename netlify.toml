@@ -1,0 +1,8 @@
+[build]
+  command = "npm --prefix practice-portal ci && npm --prefix practice-portal run build"
+  publish = "frontend"
+
+[[redirects]]
+  from = "/practice/*"
+  to = "/practice/index.html"
+  status = 200

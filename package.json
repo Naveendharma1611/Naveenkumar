@@ -1,0 +1,11 @@
+{
+  "name": "naveen-portfolio-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack portfolio, learning platform, and practice portal",
+  "scripts": {
+    "build": "npm --prefix practice-portal ci && npm --prefix practice-portal run build",
+    "build:practice": "npm --prefix practice-portal ci && npm --prefix practice-portal run build",
+    "install:practice": "npm --prefix practice-portal ci"
+  }
+}

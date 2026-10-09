@@ -189,11 +189,17 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = env_list("CORS_ALLOWED_ORIGINS", FRONTEND_URL)
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.onrender\.com$",
+    r"^https://.*\.vercel\.app$",
+    r"^https://.*\.netlify\.app$",
+    r"^https://.*\.github\.io$",
     r"^http://localhost:\d+$",
     r"^http://127\.0\.0\.1:\d+$",
 ]
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", f"{FRONTEND_URL},https://*.onrender.com")
+CSRF_TRUSTED_ORIGINS = env_list(
+    "CSRF_TRUSTED_ORIGINS",
+    f"{FRONTEND_URL},https://*.onrender.com,https://*.vercel.app,https://*.netlify.app,https://*.github.io",
+)
 
 # Email: console backend in development, SMTP in production.
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
